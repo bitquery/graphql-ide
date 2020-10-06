@@ -39,11 +39,22 @@ export default {
 			query: '',
 			currentQuery: '',
 			currentTab: '1',
-			tabs: ['1']
+			tabs: ['1'],
+			params: {
+				account_id: 2,
+				query: this.currentQuery,
+				arguments: 'arguments',
+				success_count: 1,
+				error_count: 0,
+				created_at: new Date().toISOString().slice(0, 19).replace('T', ' ')
+			}
 		}
 	},
 	methods: {
 		async fetcher(graphQLParams) {
+			let params = this.params
+			params.description = 'request'
+			this.saveQuery()
 			const data = await fetch(
 				'https://graphql.bitquery.io',
 				{

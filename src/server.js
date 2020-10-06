@@ -47,7 +47,21 @@ server.get('/getquery/:url', (req, res) => {
 })
 server.post('/addquery', jsonParser, (req, res) => {
 	let value = req.body.params
-	addQuery(value)
+	sql = 'select id from query where id=(select id from query where account_id=2 order by id desc limit 0,1) and name is null and description is null'
+	db.query(sql, (err, result) => {
+		if (err) throw error
+		if (!result.length) {
+			value.description = 'request'
+			addQuery(value)
+			res.send('saved in new row')
+		} else {
+			sql = `update query set description = ? where id=${result[0][Object.keys(result[0])[0]]}`
+			db.query(sql, ['request'], (err, result) => {
+				if (err) throw err
+				res.end('saved last edited row')
+			})
+		}
+	})
 	res.send('row added')
 })
 server.post('/updatequery', jsonParser, (req, res) => {
@@ -78,15 +92,6 @@ server.post('/updatequery', jsonParser, (req, res) => {
 			}
 		})
 	})
-	
-	/* 
-		else {
-			sql = 'UPDATE query SET query = ? where id=(select id from query where account_id=2 order by id desc limit 0,1)'
-			db.query(sql, [value.query], (err, result) => {
-				if (err) throw err
-				res.send('query updated')
-			})
-		} */
 })
 
 
