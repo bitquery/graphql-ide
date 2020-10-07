@@ -38,11 +38,11 @@ server.get('/createdb', (req, res) => {
 	})
 })
 server.get('/getquery/:url', (req, res) => {
-	let sql = `SELECT query FROM query WHERE url='${req.params.url}'`
+	let sql = `SELECT * FROM query WHERE url='${req.params.url}'`
 	db.query(sql, (err, result) => {
 		if (err) throw err
 		console.log(typeof result)
-		res.send(result[0].query)
+		res.send(result[0])
 	})
 })
 server.post('/addquery', jsonParser, (req, res) => {
@@ -51,9 +51,8 @@ server.post('/addquery', jsonParser, (req, res) => {
 	db.query(sql, (err, result) => {
 		if (err) throw error
 		if (!result.length) {
-			value.description = 'request'
 			addQuery(value)
-			res.send('saved in new row')
+			res.end('saved in new row')
 		} else {
 			sql = `update query set description = ? where id=${result[0][Object.keys(result[0])[0]]}`
 			db.query(sql, ['request'], (err, result) => {
@@ -81,8 +80,8 @@ server.post('/updatequery', jsonParser, (req, res) => {
 				addQuery(value)
 				res.send('row added')
 			} else if (thereIsNotSavedRow) {
-				sql = 'UPDATE query SET query = ? where id=(select id from query where account_id=2 order by id desc limit 0,1)'
-				db.query(sql, [value.query], (err, result) => {
+				sql = 'UPDATE query SET query = ?, url = ? where id=(select id from query where account_id=2 order by id desc limit 0,1)'
+				db.query(sql, [value.query, value.url || '\N'], (err, result) => {
 					if (err) throw err
 					res.send('query updated')
 				})

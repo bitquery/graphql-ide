@@ -8,7 +8,11 @@ const routes = [
   {
     path: '/',
     name: 'Main',
-    component: Main
+    component: Main,
+    children: [
+      {path: ':url',
+      component: Main,}
+    ]
   },
   {
     path: '/about',
