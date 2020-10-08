@@ -1,7 +1,7 @@
 <template>
 	<div @click="executeQuery" class="main">
-		<modal-window :showModal="showModal" @hide="closeModal">
-			<div slot="body" class="modal__save">
+		<modal-window :showModal="showModal" @hide="showModal = false">
+			<div slot="body" class="modal modal__save">
 				<p>Enter query name (required)</p>			
 				<input class="query__save" type="text" v-model="query_name">
 				<p>Enter description</p>			
@@ -10,8 +10,27 @@
 				<p v-if="link">Your link {{link}}</p>
 			</div>
 		</modal-window>
-		<button class="button button__save" @click="openModal">Save Query</button>
-		<button class="button button__copyLink" @click="openModal">Copy Link</button>
+		<modal-window :showModal="showRegister" @hide="showRegister = false">
+			<div slot="body" class="modal modal__signup">
+				<!-- <p>Username (Email)</p>			
+				<input class="query__save" type="text" v-model="email">
+				<p>Password</p>			
+				<input class="query__save" type="password" v-model="password">
+				<button class="button button__signup" @click="login">SignUp</button> -->
+				
+			</div>
+		</modal-window>
+		<form v-on:submit="login">
+					<p>user@email.com</p>
+					<input type="text" name="email"/><br>
+					<p>password</p>
+					<input type="password" name="password"/><br>
+					<input type="submit" value="Login"/>
+				</form>
+		<button class="button button__save" @click="showModal = true">Save Query</button>
+		<button class="button button__copyLink" @click="showModal = true">Copy Link</button>
+		<button class="button button__signin" @click="logout" >Sign In</button>
+		<button class="button button__signup" @click="showRegister = true">Sign Up</button>
 		<div class="tabs">
 			<ul>
 				<li
@@ -49,6 +68,9 @@ export default {
 	},
 	data() {
 		return {
+			showRegister: false,
+			email: '',
+			password: '',
 			link: '',
 			queryButton: false,
 			query_name: '',
@@ -79,6 +101,58 @@ export default {
 		}
 	},
 	methods: {
+		login: (e) => {
+      e.preventDefault()
+      let email = e.target.elements.email.value
+      let password = e.target.elements.password.value
+
+      let login = () => {
+        let data = {
+          email: email,
+          password: password
+        }
+
+        axios.post("/api/login", data, {
+			withCredentials: true,
+  			credentials: 'include',
+		})
+          .then((response) => {
+            console.log("Logged in", response)
+            //router.push("/dashboard")
+          })
+          .catch((errors) => {
+            console.log("Cannot log in", errors)
+          })
+      }
+      login()
+    },
+		/* login() {
+			axios.post('http://localhost:3000/api/login', {
+				
+					email: this.email,
+					// authenticated_by: 'local',
+					password: this.password,
+					// created_at: new Date().toISOString().slice(0, 19).replace('T', ' ')
+				
+			}).then(res => {
+				console.log(res)
+			}).catch(e => console.log(e))
+		}, */
+		logout() {
+			axios.get('http://localhost:3000/logout').then(res => console.log(res)).catch(err => console.log(err))
+		},
+		signUp() {
+			axios.post('http://localhost:3000/signup', {
+				
+					email: this.email,
+					// authenticated_by: 'local',
+					password: this.password,
+					// created_at: new Date().toISOString().slice(0, 19).replace('T', ' ')
+				
+			}).then(res => {
+				console.log(res)
+			}).catch(e => console.log(e))
+		},
 		executeQuery(event) {
 			if (event.target.classList.value === 'execute-button' ) {
 				this.queryButton = true
@@ -91,13 +165,6 @@ export default {
 		},
 		showTarget(e) {
 			console.log(e.target)
-		},
-		openModal() {
-			this.showModal = true
-		},
-		closeModal() {
-			this.showModal = false
-			setTimeout(() => {this.bulk++}, 0)
 		},
 		async fetcher(graphQLParams) {
 			if (this.queryButton) {
@@ -220,9 +287,7 @@ export default {
 	}
 }
 .button {
-	&__copyLink, &__save {
-		width: 100px;
-	}
+	width: 100px;
 }
 .query {
 	&__save {
@@ -234,7 +299,7 @@ export default {
 		text-align: center;
 	}
 }
-.modal__save {
+.modal {
 	display: flex;
 	flex-direction: column;
 	.button {
