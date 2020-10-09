@@ -6,31 +6,36 @@
 				<input class="query__save" type="text" v-model="query_name">
 				<p>Enter description</p>			
 				<input class="query__save" type="text" v-model="query_description">
-				<button class="button button__save" @click="shareQuery">Save</button>
-				<p v-if="link">Your link {{link}}</p>
+				<button class="button button__save" @click="saveWithParams">Save</button>
+				<button class="button button__save" @click="shareQuery">Save & Link</button>
+				<p v-if="link">Your link <a :href="`http://localhost:8080/${link}`">{{`http://localhost:8080/${link}`}}</a></p>
 			</div>
 		</modal-window>
 		<modal-window :showModal="showRegister" @hide="showRegister = false">
 			<div slot="body" class="modal modal__signup">
-				<!-- <p>Username (Email)</p>			
+				<p>Username (Email)</p>			
 				<input class="query__save" type="text" v-model="email">
 				<p>Password</p>			
 				<input class="query__save" type="password" v-model="password">
-				<button class="button button__signup" @click="login">SignUp</button> -->
+				<button class="button button__signup" @click="signUp">SignUp</button>
 				
 			</div>
 		</modal-window>
-		<form v-on:submit="login">
-					<p>user@email.com</p>
-					<input type="text" name="email"/><br>
-					<p>password</p>
-					<input type="password" name="password"/><br>
-					<input type="submit" value="Login"/>
-				</form>
-		<button class="button button__save" @click="showModal = true">Save Query</button>
-		<button class="button button__copyLink" @click="showModal = true">Copy Link</button>
-		<button class="button button__signin" @click="logout" >Sign In</button>
-		<button class="button button__signup" @click="showRegister = true">Sign Up</button>
+		<form v-if="!user" v-on:submit="login">
+			<p>user@email.com</p>
+			<input type="text" name="email"/><br>
+			<p>password</p>
+			<input type="password" name="password"/><br>
+			<input type="submit" value="Login"/>
+		</form>
+		<p v-else> Hello, {{this.user.email}} </p>
+		<div class="control">
+			<button class="button button__save" @click="showModal = true">Save Query</button>
+			<button class="button button__signin" @click="showRegister = true" >Sign In</button>
+			<button class="button button__signup" @click="showRegister = true">Sign Up</button>
+			<button v-if="user" class="button button__logout" @click="logout">Logout</button>
+		</div>
+		
 		<div class="tabs">
 			<ul>
 				<li
@@ -68,6 +73,7 @@ export default {
 	},
 	data() {
 		return {
+			user: null,
 			showRegister: false,
 			email: '',
 			password: '',
@@ -92,7 +98,7 @@ export default {
 	async mounted() {
 		this.currentQuery = localStorage.getItem('graphiql:query')
 		if (this.$route.params.url) {
-			let { data } = await axios.get(`http://localhost:3000/getquery/${this.$route.params.url}`)
+			let { data } = await axios.get(`/getquery/${this.$route.params.url}`)
 			if (data) {
 				this.tabs.push(data.name)
 				this.currentTab = data.name
@@ -101,57 +107,52 @@ export default {
 		}
 	},
 	methods: {
-		login: (e) => {
-      e.preventDefault()
-      let email = e.target.elements.email.value
-      let password = e.target.elements.password.value
+		getUser() {
+			return axios.get('/api/user')
+		},
+		login(e) {
+			e.preventDefault()
+			let email = e.target.elements.email.value
+			let password = e.target.elements.password.value
+			let data = {
+			email: email,
+			password: password
+			}
 
-      let login = () => {
-        let data = {
-          email: email,
-          password: password
-        }
-
-        axios.post("/api/login", data, {
-			withCredentials: true,
-  			credentials: 'include',
-		})
-          .then((response) => {
-            console.log("Logged in", response)
-            //router.push("/dashboard")
-          })
-          .catch((errors) => {
-            console.log("Cannot log in", errors)
-          })
-      }
-      login()
-    },
-		/* login() {
-			axios.post('http://localhost:3000/api/login', {
-				
-					email: this.email,
-					// authenticated_by: 'local',
-					password: this.password,
-					// created_at: new Date().toISOString().slice(0, 19).replace('T', ' ')
-				
-			}).then(res => {
-				console.log(res)
-			}).catch(e => console.log(e))
-		}, */
+			axios.post("/api/login", data, {
+				withCredentials: true,
+				credentials: 'include',
+			})
+			.then((response) => {
+				console.log("Logged in", response)
+				this.getUser().then(res => {
+					console.log(res)
+					this.user = res.data.user[0]
+				}).catch(e => console.log(e))
+			})
+			.catch((errors) => {
+				console.log("Cannot log in", errors)
+			})
+		},
+		
 		logout() {
-			axios.get('http://localhost:3000/logout').then(res => console.log(res)).catch(err => console.log(err))
+			axios.get('/api/logout').then(res => {console.log(res); this.user = null;}).catch(err => console.log(err))
 		},
 		signUp() {
-			axios.post('http://localhost:3000/signup', {
-				
+			axios.post("/api/signup", {
 					email: this.email,
-					// authenticated_by: 'local',
 					password: this.password,
-					// created_at: new Date().toISOString().slice(0, 19).replace('T', ' ')
-				
-			}).then(res => {
-				console.log(res)
-			}).catch(e => console.log(e))
+			}, {
+				withCredentials: true,
+				credentials: 'include',
+			})
+			.then((response) => {
+				console.log("Signed up", response)
+				//router.push("/dashboard")
+			})
+			.catch((errors) => {
+				console.log("signup error", errors)
+			})
 		},
 		executeQuery(event) {
 			if (event.target.classList.value === 'execute-button' ) {
@@ -161,6 +162,7 @@ export default {
 			}
 		},
 		switchTab(tab) {
+			this.queryButton = false
 			this.currentTab = tab
 		},
 		showTarget(e) {
@@ -184,6 +186,7 @@ export default {
 					credentials: 'same-origin'
 				}
 			)
+			this.queryButton = false
 			return data.json().catch(() => data.text())
 			
 		},
@@ -207,7 +210,7 @@ export default {
 			this.currentTab = this.tabs[index+1] || this.tabs[0] || '1'
 		},
 		saveQuery(params) {
-			axios.post('http://localhost:3000/addquery', {
+			axios.post('/addquery', {
 				params: params || this.params
 			})
 			.then(res => console.log('saved', res))
@@ -215,7 +218,7 @@ export default {
 		},
 		onEditQuery(query) {
 			this.currentQuery = query
-			axios.post('http://localhost:3000/updatequery', {
+			axios.post('/updatequery', {
 				params: {
 					account_id: 2,
 					query: this.currentQuery,
@@ -279,15 +282,32 @@ export default {
 			background-color: #d1d1d1;
 			&:hover, &.active {
 				background-color: #f7f7f7;
+				
 			}
 			.close-tab {
 				padding-left: 10px;
 			}
+			-webkit-box-shadow: 10px 10px 10px 0px rgba(176,176,176,0.78);
+			-moz-box-shadow: 10px 10px 10px 0px rgba(176,176,176,0.78);
+			box-shadow: 10px 10px 10px 0px rgba(176,176,176,0.78);
 		}
 	}
 }
 .button {
-	width: 100px;
+	cursor: pointer;
+	width: 150px;
+	border: 1px solid #c27a7a38;
+	background-color: #bb7a7a;
+	color: #d7d7d7;
+	padding: 20px;
+	border-radius: 10px;
+	outline: none;
+	&:not(:last-child) {
+		margin: 10px 10px 0 0;
+	}
+	&:hover {
+		background-color: #ae9669;
+	}
 }
 .query {
 	&__save {

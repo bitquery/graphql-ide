@@ -62,7 +62,7 @@ export default {
 	display: flex;
 	flex-direction: column;
 	position: relative;
-	max-height: 80vh;
+	//max-height: 80vh;
 	min-width: 450px;
 	width: 40%;
 	top: 0;
@@ -75,7 +75,6 @@ export default {
 }
 
 .modal-header {
-	padding: 20px;
 	h3 {
 		margin-top: 0;
 		color: #42b983;
@@ -88,7 +87,6 @@ export default {
 	overflow-y: auto;
 }
 .modal-footer {
-	padding: 20px;
 }
 
 .modal-default-button {
