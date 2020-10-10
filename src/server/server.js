@@ -1,13 +1,8 @@
 const express = require('express')
 const cors = require('cors')
 const mysql = require('mysql')
-const db = mysql.createConnection({
-	host: 'localhost',
-	port: 3307,
-	user: 'root',
-	password: '',
-	database: 'bitquery'
-})
+const dbconfig = require('./databaseConfig')
+const db = mysql.createConnection(dbconfig.connection)
 const app = express()
 const cookieSession = require('cookie-session')
 const bodyParser = require('body-parser')
@@ -21,6 +16,8 @@ app.use(cookieSession({
   }))
 app.use(passport.initialize());
 app.use(passport.session());
+
+db.query(`USE ${dbconfig.database}`)
 
 require('./passport')(passport, db)
 

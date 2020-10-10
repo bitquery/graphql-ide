@@ -5,7 +5,7 @@ module.exports = {
         'password': '',
         port: 3307
     },
-    'database': 'mydb',
+    'database': 'bitquery',
     'query_table': 'query',
     'users_table': 'accounts'
 };
