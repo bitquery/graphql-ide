@@ -13,7 +13,7 @@ connection.query(`
 		query LONGTEXT not null,
 		arguments LONGTEXT not null,
 		url VARCHAR(128),
-		name VARCHAR(20),
+		name VARCHAR(50),
 		description LONGTEXT,
 		share VARCHAR(64),
 		published BOOLEAN,
@@ -27,7 +27,7 @@ connection.query(`
 		id INT(10) not null auto_increment primary key,
 		email VARCHAR(50) not null,
 		authenticated_by VARCHAR(20),
-		encrypted_credentials VARCHAR(20),
+		encrypted_credentials VARCHAR(100),
 		updated_at TIMESTAMP,
 		created_at TIMESTAMP not null default CURRENT_TIMESTAMP
 )`)
