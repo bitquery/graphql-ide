@@ -5,6 +5,7 @@ module.exports = {
         'password': '',
         port: 3307
     },
-	'database': 'my_schema',
+    'database': 'mydb',
+    'query_table': 'query',
     'users_table': 'accounts'
 };

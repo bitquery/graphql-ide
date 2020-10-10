@@ -115,8 +115,8 @@ export default {
 			let email = e.target.elements.email.value
 			let password = e.target.elements.password.value
 			let data = {
-			email: email,
-			password: password
+				email: email,
+				password: password
 			}
 
 			axios.post("/api/login", data, {
