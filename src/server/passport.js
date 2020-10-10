@@ -1,5 +1,5 @@
 var LocalStrategy   = require('passport-local').Strategy
-var bcrypt = require('bcrypt-nodejs')
+var bcrypt = require('bcrypt')
 
 module.exports = function(passport, db) {
     passport.serializeUser((user, done) => {
@@ -25,14 +25,21 @@ module.exports = function(passport, db) {
 			} else {
 				let newUser = [{}]
 				newUser[0].email = email
-				newUser[0].password = password
-				let insertQuery = "INSERT INTO accounts ( email, encrypted_credentials ) values ('" + email +"','"+ password +"')"
-				db.query(insertQuery, (err,rows) => {
-					console.log(rows)
-					newUser[0].id = rows.insertId
-					console.log(newUser)
-					return done(null, newUser)
+				newUser[0].authenticated_by = 'local_email'
+				bcrypt.hash(password, 5, (err, hash) => {
+					if (err) throw err
+					console.log('hash', hash)
+					newUser[0].password = hash
+					let insertQuery = "INSERT INTO accounts ( email, encrypted_credentials ) values ('" + email +"','"+ hash +"')"
+					console.log(insertQuery)
+					db.query(insertQuery, (err,rows) => {
+						console.log(rows)
+						newUser[0].id = rows.insertId
+						console.log(newUser)
+						return done(null, newUser)
+					})
 				})
+				
 			}	
 		})
 	}))
@@ -40,14 +47,17 @@ module.exports = function(passport, db) {
 		usernameField: 'email',
 		passwordField: 'password'
 	}, (username, password, done) => {
-			db.query(`select * from accounts where email = '${username}' and encrypted_credentials = '${password}'`, (err, user) => {
-			if (err) return done(err)
-			if (user.length) {
-				console.log(user)
-				return done(null, user)
-			} else {
-				return done(null, false, {message: 'Incorrect username or password'})
-			}
-		})	        
+			db.query(`select * from accounts where email = '${username}'`, (err, user) => {
+				if (err) throw err
+				if (!user.length) done(null, false, {message: 'Incorrect user name'})
+				if (user.length) {
+					console.log( password, user[0].encrypted_credentials )
+					bcrypt.compare(password, user[0].encrypted_credentials, (err, result) => {
+						if (err) throw err
+						console.log(result)
+						return result ? done(null, user) : done(null, false, {message: 'Wrong password'})
+					})
+				}
+			})
 	}))
 }

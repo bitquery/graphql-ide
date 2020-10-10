@@ -5,14 +5,14 @@
 npm install
 ```
 
-### Compiles and hot-reloads for development
+### Create DB
 ```
-npm run serve
+npm run createdb
 ```
 
-### Compiles and minifies for production
+### Start App
 ```
-npm run build
+npm run dev
 ```
 
 ### Lints and fixes files

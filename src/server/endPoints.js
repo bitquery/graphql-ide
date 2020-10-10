@@ -103,7 +103,13 @@ module.exports = function(app, passport, db) {
 			(err, user) => {
 				if (err) throw err
 				console.log([user, req.session])
-				res.send({user: user})
+				let userSend = [{
+					id: user[0].id,
+					email: user[0].email,
+					updated_at: user[0].updated_at,
+					created_at: user[0].created_at
+				}]
+				res.send({user: userSend})
 			})
 	})
 

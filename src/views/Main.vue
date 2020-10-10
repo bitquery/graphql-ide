@@ -17,23 +17,15 @@
 				<input class="query__save" type="text" v-model="email">
 				<p>Password</p>			
 				<input class="query__save" type="password" v-model="password">
+				<button class="button button__signup" @click="login">SignIn</button>
 				<button class="button button__signup" @click="signUp">SignUp</button>
-				
 			</div>
 		</modal-window>
-		<form v-if="!user" v-on:submit="login">
-			<p>user@email.com</p>
-			<input type="text" name="email"/><br>
-			<p>password</p>
-			<input type="password" name="password"/><br>
-			<input type="submit" value="Login"/>
-		</form>
-		<p v-else> Hello, {{this.user.email}} </p>
+		<p v-if="user"> Hello, {{this.user.email}} </p>
 		<div class="control">
-			<button class="button button__save" @click="showModal = true">Save Query</button>
-			<button class="button button__signin" @click="showRegister = true" >Sign In</button>
-			<button class="button button__signup" @click="showRegister = true">Sign Up</button>
+			<button v-if="user" class="button button__save" @click="showModal = true">Save Query</button>
 			<button v-if="user" class="button button__logout" @click="logout">Logout</button>
+			<button v-else class="button button__signin" @click="showRegister = true" >Sign In</button>
 		</div>
 		
 		<div class="tabs">
@@ -96,6 +88,10 @@ export default {
 		}
 	},
 	async mounted() {
+		this.getUser().then(res => {
+			console.log(res)
+			this.user = res.data.user[0]
+		}).catch(e => console.log(e))
 		this.currentQuery = localStorage.getItem('graphiql:query')
 		if (this.$route.params.url) {
 			let { data } = await axios.get(`/getquery/${this.$route.params.url}`)
@@ -110,16 +106,11 @@ export default {
 		getUser() {
 			return axios.get('/api/user')
 		},
-		login(e) {
-			e.preventDefault()
-			let email = e.target.elements.email.value
-			let password = e.target.elements.password.value
-			let data = {
-				email: email,
-				password: password
-			}
-
-			axios.post("/api/login", data, {
+		login() {
+			axios.post("/api/login", {
+					email: this.email,
+					password: this.password,
+			}, {
 				withCredentials: true,
 				credentials: 'include',
 			})
@@ -128,7 +119,8 @@ export default {
 				this.getUser().then(res => {
 					console.log(res)
 					this.user = res.data.user[0]
-				}).catch(e => console.log(e))
+				})
+				this.showRegister = false
 			})
 			.catch((errors) => {
 				console.log("Cannot log in", errors)
@@ -148,7 +140,11 @@ export default {
 			})
 			.then((response) => {
 				console.log("Signed up", response)
-				//router.push("/dashboard")
+				this.getUser().then(res => {
+					console.log(res)
+					this.user = res.data.user[0]
+				})
+				this.showRegister = false
 			})
 			.catch((errors) => {
 				console.log("signup error", errors)
