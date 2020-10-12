@@ -42,18 +42,18 @@
 			</ul>
 		</div>
 		<graphiql 
-			
 			v-for="(tab ) in tabs" :key="tab"
 			:class="['giql__wrapper', {'giql__wrapper_active': currentTab === tab} ]"
 			:fetcher="fetcher" 
 			:query="query || undefined"
-			@onEditQuery="onEditQuery"
+			:onEditQuery="onEditQuery"
 		/>
 	</div>
 </template>
 
 <script>
 import graphiql from 'graphiql'
+import { signUp, login, logout, getUser, getQuery } from '../api/api'
 import ModalWindow from '../components/ModalWindow'
 import axios from 'axios'
 import { generateLink } from '../utils/common'
@@ -79,7 +79,6 @@ export default {
 			currentTab: '1',
 			tabs: ['1'],
 			params: {
-				account_id: 2,
 				arguments: 'arguments',
 				success_count: 1,
 				error_count: 0,
@@ -88,13 +87,13 @@ export default {
 		}
 	},
 	async mounted() {
-		this.getUser().then(res => {
+		getUser().then(res => {
 			console.log(res)
 			this.user = res.data.user[0]
 		}).catch(e => console.log(e))
 		this.currentQuery = localStorage.getItem('graphiql:query')
 		if (this.$route.params.url) {
-			let { data } = await axios.get(`/getquery/${this.$route.params.url}`)
+			let { data } = await getQuery(this.$route.params.url)
 			if (data) {
 				this.tabs.push(data.name)
 				this.currentTab = data.name
@@ -103,20 +102,10 @@ export default {
 		}
 	},
 	methods: {
-		getUser() {
-			return axios.get('/api/user')
-		},
 		login() {
-			axios.post("/api/login", {
-					email: this.email,
-					password: this.password,
-			}, {
-				withCredentials: true,
-				credentials: 'include',
-			})
-			.then((response) => {
+			login(this.email, this.password).then((response) => {
 				console.log("Logged in", response)
-				this.getUser().then(res => {
+				getUser().then(res => {
 					console.log(res)
 					this.user = res.data.user[0]
 				})
@@ -126,21 +115,14 @@ export default {
 				console.log("Cannot log in", errors)
 			})
 		},
-		
 		logout() {
-			axios.get('/api/logout').then(res => {console.log(res); this.user = null;}).catch(err => console.log(err))
+			logout().then(res => {console.log(res); this.user = null;}).catch(err => console.log(err))
 		},
 		signUp() {
-			axios.post("/api/signup", {
-					email: this.email,
-					password: this.password,
-			}, {
-				withCredentials: true,
-				credentials: 'include',
-			})
+			signUp(this.email, this.password)
 			.then((response) => {
 				console.log("Signed up", response)
-				this.getUser().then(res => {
+				getUser().then(res => {
 					console.log(res)
 					this.user = res.data.user[0]
 				})
@@ -165,9 +147,10 @@ export default {
 			console.log(e.target)
 		},
 		async fetcher(graphQLParams) {
-			if (this.queryButton) {
+			if (this.queryButton && this.user) {
 				let params = this.params
 				params.description = 'request'
+				params.account_id = this.user.id
 				this.saveQuery(params)
 			}
 			const data = await fetch(
@@ -188,8 +171,9 @@ export default {
 		},
 		saveWithParams() {
 			let params = this.params
-			params.name = this.query_name
 			params.query = this.currentQuery
+			params.name = this.query_name
+			params.account_id = this.user.id
 			if (this.query_description) params.description = this.query_description
 			this.saveQuery(params)
 			this.tabs[this.tabs.indexOf(this.currentTab)] = this.query_name
@@ -213,19 +197,21 @@ export default {
 			.catch(error => console.log(error))
 		},
 		onEditQuery(query) {
-			this.currentQuery = query
-			axios.post('/updatequery', {
-				params: {
-					account_id: 2,
-					query: this.currentQuery,
-					arguments: 'arguments',
-					success_count: 1,
-					error_count: 0,
-					created_at: new Date().toISOString().slice(0, 19).replace('T', ' ')
-				}
-			})
-			.then(res => console.log('updated', res))
-			.catch(error => console.log(error))
+			if (this.user) {
+				this.currentQuery = query
+				axios.post('/updatequery', {
+					params: {
+						account_id: this.user.id,
+						query: this.currentQuery,
+						arguments: 'arguments',
+						success_count: 1,
+						error_count: 0,
+						created_at: new Date().toISOString().slice(0, 19).replace('T', ' ')
+					}
+				})
+				.then(res => console.log('updated', res))
+				.catch(error => console.log(error))
+			}
 		},
 		shareQuery() {
 			let params = this.params

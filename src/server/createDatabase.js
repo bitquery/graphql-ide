@@ -28,9 +28,16 @@ connection.query(`
 		email VARCHAR(50) not null,
 		authenticated_by VARCHAR(20),
 		encrypted_credentials VARCHAR(100),
+		active BOOLEAN default false,
 		updated_at TIMESTAMP,
 		created_at TIMESTAMP not null default CURRENT_TIMESTAMP
 )`)
+connection.query(`
+	create table ${dbconfig.database}.activation (
+		user_id INT(10) not null,
+		code VARCHAR(128) not null
+	)
+`)
 
 console.log('Success: Database Created!')
 

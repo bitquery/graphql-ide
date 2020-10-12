@@ -45,15 +45,15 @@ module.exports = function(app, passport, db) {
 
 	app.post('/addquery', (req, res) => {
 		let value = req.body.params
-		sql = 'select id from query where id=(select id from query where account_id=2 order by id desc limit 0,1) and name is null and description is null'
+		sql = `select id from query where id=(select id from query where account_id=${value.account_id} order by id desc limit 0,1) and name is null and description is null`
 		db.query(sql, (err, result) => {
 			if (err) throw error
 			if (!result.length) {
 				addQuery(value)
 				res.end('saved in new row')
 			} else {
-				sql = `update query set description = ? where id=${result[0][Object.keys(result[0])[0]]}`
-				db.query(sql, ['request'], (err, result) => {
+				sql = `update query set name = ?, description = ?, account_id=? where id=${result[0][Object.keys(result[0])[0]]}`
+				db.query(sql, [value.name || null, value.description || 'request', value.account_id], (err, result) => {
 					if (err) throw err
 					res.end('saved last edited row')
 				})
@@ -66,11 +66,12 @@ module.exports = function(app, passport, db) {
 		let tableEmpty = true
 		let thereIsNotSavedRow = true
 		let value = req.body.params
+		console.log(value)
 		let sql = 'SELECT COUNT(*) FROM query'
 		db.query(sql, (err, result) => {
 			if (err) throw err
 			tableEmpty = result[0][Object.keys(result[0])[0]] ? false : true
-			sql = 'select id from query where id=(select id from query where account_id=2 order by id desc limit 0,1) and name is null and description is null'
+			sql = `select id from query where id=(select id from query where account_id=${value.account_id} order by id desc limit 0,1) and name is null and description is null`
 			db.query(sql, (err, result) => {
 				if (err) throw err
 				thereIsNotSavedRow = result.length ? true : false
@@ -79,7 +80,7 @@ module.exports = function(app, passport, db) {
 					addQuery(value)
 					res.send('row added')
 				} else if (thereIsNotSavedRow) {
-					sql = 'UPDATE query SET query = ?, url = ? where id=(select id from query where account_id=2 order by id desc limit 0,1)'
+					sql = `UPDATE query SET query = ?, url = ? where id=(select id from query where account_id=${value.account_id} order by id desc limit 0,1)`
 					db.query(sql, [value.query, value.url || null], (err, result) => {
 						if (err) throw err
 						res.send('query updated')
