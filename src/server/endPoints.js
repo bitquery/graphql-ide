@@ -1,4 +1,18 @@
+const transporter = require('./mailer')
+const crypto = require('crypto')
+const bcrypt = require('bcrypt')
+
 module.exports = function(app, passport, db) {
+
+	app.get('/check', (req, res) => {
+		let code = crypto.randomBytes(60).toString('hex')
+		bcrypt.hash(code, 5, (err, hash) => {
+			if (err) throw err
+			console.log('hash', hash)
+		})
+		console.log(code)
+		res.send('ok')
+	}) 
 
 	function addQuery(value) {
 		let sql = `INSERT INTO query SET ?`
@@ -36,6 +50,23 @@ module.exports = function(app, passport, db) {
 				return res.status(400).send([user, "user already exist"])
 			}
 			console.log("you are in ............")
+			let code = crypto.randomBytes(60).toString('hex')
+			bcrypt.hash(code, 5, (err, hash) => {
+				if (err) throw err
+				db.query('INSERT INTO activation SET ?', {user_id: user[0].id, code: hash}, (err, res) => {
+					if (err) throw err
+					console.log(res)
+				})
+				let message = {
+					from : 'fedorenki@gmail.com',
+					to: user[0].email,
+					subject: 'Account activation',
+					text: 'Plaintext version of the message',
+					html: `<p>To activate your account follow this <a href="http://localhost:3000/activate?code=${code}">link</a> </p>`
+				}
+				transporter.sendMail(message)
+			})
+			
 			req.login(user, (err) => {
 				console.log(user)
 				res.send("Signed up ")
@@ -122,4 +153,21 @@ module.exports = function(app, passport, db) {
 		})
 	})
 
+	app.get('/activate', (req, res) => {
+		db.query(`select code from activation where user_id = ${req.session.passport.user}`, (err, code) => {
+			if (err) throw err
+			bcrypt.compare(req.query.code, code[0][Object.keys(code[0])[0]], (err, result) => {
+				if (err) throw err
+				if (result) {
+					db.query(`update accounts set active = true where id = ${req.session.passport.user}`, (err, result) => {
+						if (err) throw err
+						console.log('account activated', result)
+						res.send('Account activated!')
+					})
+				} else {
+					res.send('Something went wrong...')
+				}
+			})
+		})
+	})
 }

@@ -23,7 +23,7 @@ connection.query(`
 		created_at TIMESTAMP not null default CURRENT_TIMESTAMP
 )`)
 connection.query(`
-	create table ${dbconfig.database}.${dbconfig.users_table} (
+	create table ${dbconfig.database}.${dbconfig.users_table} accounts (
 		id INT(10) not null auto_increment primary key,
 		email VARCHAR(50) not null,
 		authenticated_by VARCHAR(20),

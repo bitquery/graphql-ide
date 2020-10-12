@@ -1,5 +1,5 @@
-var LocalStrategy   = require('passport-local').Strategy
-var bcrypt = require('bcrypt')
+const LocalStrategy = require('passport-local').Strategy
+const bcrypt = require('bcrypt')
 
 module.exports = function(passport, db) {
     passport.serializeUser((user, done) => {
@@ -30,9 +30,10 @@ module.exports = function(passport, db) {
 					if (err) throw err
 					console.log('hash', hash)
 					newUser[0].password = hash
-					let insertQuery = "INSERT INTO accounts ( email, encrypted_credentials ) values ('" + email +"','"+ hash +"')"
+					let insertQuery = "INSERT INTO accounts ( email, encrypted_credentials, authenticated_by ) values ('" + email +"','"+ hash +"', 'local_email')"
 					console.log(insertQuery)
 					db.query(insertQuery, (err,rows) => {
+						if (err) throw err
 						console.log(rows)
 						newUser[0].id = rows.insertId
 						console.log(newUser)

@@ -143,9 +143,6 @@ export default {
 			this.queryButton = false
 			this.currentTab = tab
 		},
-		showTarget(e) {
-			console.log(e.target)
-		},
 		async fetcher(graphQLParams) {
 			if (this.queryButton && this.user) {
 				let params = this.params

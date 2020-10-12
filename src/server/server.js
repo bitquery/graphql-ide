@@ -19,6 +19,32 @@ app.use(passport.session());
 
 db.query(`USE ${dbconfig.database}`)
 
+//mailer=================================
+
+/* let transporter = nodemailer.createTransport({
+  host: 'smtp.gmail.com',
+  port: 587,
+  secure: false,
+  auth: {
+    user: 'fedorenki@gmail.com',
+    pass: 'szsptfldlilvymft'
+  }
+})
+let message = {
+  from : 'fedorenki@gmail.com',
+  to: 'spendil@mail.ru',
+  subject: "Message title",
+  text: "Plaintext version of the message",
+  html: "<p>HTML version of the message</p>"
+} */
+
+/* transporter.sendMail(message, (err, info) => {
+  if (err) throw err
+  console.log(info)
+}) */
+
+//mailer=================================
+
 require('./passport')(passport, db)
 
 require('./endPoints')(app, passport, db)
