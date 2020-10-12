@@ -2,22 +2,19 @@
 	<div @click="executeQuery" class="main">
 		<modal-window :showModal="showModal" @hide="showModal = false">
 			<div slot="body" class="modal modal__save">
-				<p>Enter query name (required)</p>			
-				<input class="query__save" type="text" v-model="query_name">
-				<p>Enter description</p>			
-				<input class="query__save" type="text" v-model="query_description">
+				<reg-input v-model="query_name" :label="'Enter query name (required)'" />
+				<reg-input v-model="query_description" :label="'Enter description'" />
 				<button class="button button__save" @click="saveWithParams">Save</button>
 				<button class="button button__save" @click="shareQuery">Save & Link</button>
-				<p v-if="link">Your link <a :href="`http://localhost:8080/${link}`">{{`http://localhost:8080/${link}`}}</a></p>
+				<p v-if="link">Your link <a :href="`http://localhost:8080/query/${link}`">{{`http://localhost:8080/query/${link}`}}</a></p>
 			</div>
 		</modal-window>
 		<modal-window :showModal="showRegister" @hide="showRegister = false">
 			<div slot="body" class="modal modal__signup">
-				<p>Username (Email)</p>			
-				<input class="query__save" type="text" v-model="email">
-				<p>Password</p>			
-				<input class="query__save" type="password" v-model="password">
+				<reg-input v-model="email" :label="'Username (email)'" />
+				<reg-input v-model="password" :label="'Password'" />
 				<button class="button button__signup" @click="login">SignIn</button>
+				<a href="javascript:void(0)" @click="$router.push('/forgot')">Forgot password?</a>
 				<button class="button button__signup" @click="signUp">SignUp</button>
 			</div>
 		</modal-window>
@@ -27,7 +24,6 @@
 			<button v-if="user" class="button button__logout" @click="logout">Logout</button>
 			<button v-else class="button button__signin" @click="showRegister = true" >Sign In</button>
 		</div>
-		
 		<div class="tabs">
 			<ul>
 				<li
@@ -53,6 +49,7 @@
 
 <script>
 import graphiql from 'graphiql'
+import RegInput from '../components/RegInput'
 import { signUp, login, logout, getUser, getQuery } from '../api/api'
 import ModalWindow from '../components/ModalWindow'
 import axios from 'axios'
@@ -61,7 +58,8 @@ export default {
 	name: 'Main',
 	components: {
 		graphiql,
-		ModalWindow
+		ModalWindow,
+		RegInput
 	},
 	data() {
 		return {
@@ -286,16 +284,6 @@ export default {
 	}
 	&:hover {
 		background-color: #ae9669;
-	}
-}
-.query {
-	&__save {
-		padding: 10px;
-		border-radius: 5px;
-		border: none;
-		border-bottom: 1px solid #aaa;
-		outline: none;
-		text-align: center;
 	}
 }
 .modal {

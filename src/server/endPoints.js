@@ -170,4 +170,49 @@ module.exports = function(app, passport, db) {
 			})
 		})
 	})
+
+	app.post('/forgot', (req, res) => {
+		let token = crypto.randomBytes(20).toString('hex')
+		db.query(`update accounts set reset_token = '${token}' where email = '${req.body.email}'`, (err, result) => {
+			if (err) throw err
+			if (result.affectedRows) {
+				let message = {
+					from : 'fedorenki@gmail.com',
+					to: req.body.email,
+					subject: 'Account password reset',
+					text: 'You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n' +
+						'Please click on the following link, or paste this into your browser to complete the process:\n\n' +
+						'http://' + req.headers.host + '/reset/' + token + '\n\n' +
+						'If you did not request this, please ignore this email and your password will remain unchanged.\n',
+				}
+				transporter.sendMail(message)
+				res.send('An e-mail has been sent to ' + req.params.email + ' with further instructions.')
+			} else {
+				res.send('There is no such account with this email')
+			}
+		})
+	})
+
+	app.get('/reset/:token', (req, res) => {
+		db.query(`select id from accounts where reset_token = '${req.params.token}'`, (err, result) => {
+			if (err) throw err
+			if (result.length) {
+				res.redirect(`http://localhost:8080/reset/${req.params.token}`)
+			} else {
+				res.send('Something went wrong')
+			}
+		})
+	})
+
+	app.post('/reset', (req, res) => {
+		bcrypt.hash(req.body.password, 5, (err, hash) => {
+			if (err) throw err
+			db.query(`update accounts set encrypted_credentials = '${hash}' where reset_token = '${req.body.token}'`, (err, result) => {
+				if (err) throw err
+				console.log(result)
+				res.send('Password changed!')
+			})
+		})
+	})
+	
 }
