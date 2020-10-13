@@ -1,7 +1,7 @@
 <template>
 	<fragment>
 		<p>{{label}}</p>			
-		<input ref="reginput" class="query__save" type="text" @input="handleInput">
+		<input ref="reginput" :value="value" class="query__save" type="text" @input="handleInput">
 	</fragment>
 </template>
 
@@ -10,6 +10,10 @@ export default {
 	name: 'RegInput',
 	props: {
 		label: {
+			type: String,
+			default: ''
+		},
+		value: {
 			type: String,
 			default: ''
 		}
@@ -32,6 +36,7 @@ export default {
 		border-bottom: 1px solid #aaa;
 		outline: none;
 		text-align: center;
+		background: #414457;
 	}
 }
 </style>

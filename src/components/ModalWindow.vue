@@ -66,7 +66,7 @@ export default {
 	min-width: 450px;
 	width: 40%;
 	top: 0;
-	background-color: #fff;
+	background-color: #353848;
 	background-clip: padding-box;
 	border: 1px solid rgba(0, 0, 0, 0.2);
 	border-radius: 0.3rem;

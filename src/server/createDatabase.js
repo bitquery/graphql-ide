@@ -1,4 +1,3 @@
-const { connect } = require('mongoose');
 let mysql = require('mysql');
 let dbconfig = require('./databaseConfig');
 
@@ -23,7 +22,7 @@ connection.query(`
 		created_at TIMESTAMP not null default CURRENT_TIMESTAMP
 )`)
 connection.query(`
-	create table ${dbconfig.database}.${dbconfig.users_table} accounts (
+	create table ${dbconfig.database}.${dbconfig.users_table} (
 		id INT(10) not null auto_increment primary key,
 		email VARCHAR(50) not null,
 		authenticated_by VARCHAR(20),
@@ -33,7 +32,7 @@ connection.query(`
 		created_at TIMESTAMP not null default CURRENT_TIMESTAMP
 )`)
 connection.query(`
-	create table ${dbconfig.database}.activation (
+	create table ${dbconfig.database}.${dbconfig.activation_table} (
 		user_id INT(10) not null,
 		code VARCHAR(128) not null
 	)

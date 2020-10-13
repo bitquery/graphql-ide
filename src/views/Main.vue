@@ -27,19 +27,22 @@
 						@click="switchTab(tab)"
 					>
 						{{tab}}
-						<span class="tab__close" @click.stop="removeTab(index)">❌</span>
+						<span v-if="currentTab === tab" class="tab__close" @click.stop="removeTab(index)">❌</span>
 					</li>
 					<li @click="addNewTab" >+</li>
 				</ul>
 			</div>
 			<div v-if="user" class="profile flex">
 				<img @click="$router.push('/profile')" src="../assets/images/user.svg" alt="Profile">
-				<p>{{this.user.email}}</p>
+				<p class="profile__email">{{this.user.email}}</p>
 			</div>
 			<div class="controls">
 				<button v-if="user" class="button button__save" @click="showModal = true">Save Query</button>
 				<button v-if="user" class="button button__logout" @click="logout">Logout</button>
 				<button v-else class="button button__signin" @click="showRegister = true" >Sign In</button>
+			</div>
+			<div class="endpoint_url">
+				<reg-input v-model="endpoint_url" />
 			</div>
 		</div>
 		<graphiql 
@@ -48,6 +51,7 @@
 			:fetcher="fetcher" 
 			:query="query || undefined"
 			:onEditQuery="onEditQuery"
+			:editorTheme="'dracula'"
 		/>
 	</div>
 </template>
@@ -55,7 +59,7 @@
 <script>
 import graphiql from 'graphiql'
 import RegInput from '../components/RegInput'
-import { signUp, login, logout, getUser, getQuery } from '../api/api'
+import { login, logout, getUser, getQuery } from '../api/api'
 import ModalWindow from '../components/ModalWindow'
 import axios from 'axios'
 import { generateLink } from '../utils/common'
@@ -68,6 +72,7 @@ export default {
 	},
 	data() {
 		return {
+			endpoint_url: 'https://graphql.bitquery.io',
 			user: null,
 			showRegister: false,
 			email: '',
@@ -144,7 +149,7 @@ export default {
 				this.saveQuery(params)
 			}
 			const data = await fetch(
-				'https://graphql.bitquery.io',
+				this.endpoint_url,
 				{
 					method: 'POST',
 					headers: {
@@ -224,13 +229,9 @@ export default {
 	flex-direction: column;
 	padding-top: 20px;
 }
-#graphiql {
-	min-height: 100%;
-}
 .CodeMirror{
- 	&-line {
+	&-line {
 		text-align: left;
-		margin-left: 5px !important;
 	}
 	&-lines {
 		font-size: 20px;
@@ -244,6 +245,19 @@ export default {
 	display: none;
 	&_active {
 		display: block;
+	}
+	.topBar {
+		height: 54px !important;
+		background: #353848 !important;
+		color: #d7d7d7;
+		border-bottom: none !important;
+	}
+	.secondary-editor-title {
+		background: #353848 !important;
+		border: none !important;
+	}
+	.resultWrap {
+		border-color: #353848 !important;
 	}
 }
 .tab {
@@ -261,27 +275,41 @@ export default {
 			display: block;
 			cursor: pointer;
 			padding: 20px;
-			margin: 0 10px;
-			background-color: #d1d1d1;
+			margin: 0 7px;
+			color: #fff;
+			background-color: #282a36;
 			&:hover, &.active {
-				background-color: #f7f7f7;
+				background-color:#353848;
 				
 			}
 			.close-tab {
 				padding-left: 10px;
 			}
-			-webkit-box-shadow: 10px 10px 10px 0px rgba(176,176,176,0.78);
-			-moz-box-shadow: 10px 10px 10px 0px rgba(176,176,176,0.78);
-			box-shadow: 10px 10px 10px 0px rgba(176,176,176,0.78);
+			
 		}
 	}
 }
 .controlpanel {
 	align-items: center;
+	position: relative;
+	.endpoint_url {
+		position: absolute;
+		top: 44.5px;
+		left: 460px;
+		input {
+			text-align: left;
+			width: 200%;
+			border: none;
+			color: #d7d7d7;
+		}
+	}
 }
 .profile{
 	align-items: center;
 	margin: 0 5px 0 0;
+	&__email {
+		color:  #d7d7d7;
+	}
 	img {
 		cursor: pointer;
 	}
@@ -290,7 +318,7 @@ export default {
 	cursor: pointer;
 	width: 150px;
 	border: 1px solid #c27a7a38;
-	background-color: #bb7a7a;
+	background-color:#353848;
 	color: #d7d7d7;
 	padding: 10px;
 	margin: 0 5px 0 0;

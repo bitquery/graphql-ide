@@ -7,5 +7,6 @@ module.exports = {
     },
     'database': 'bitquery',
     'query_table': 'query',
-    'users_table': 'accounts'
+    'users_table': 'accounts',
+    'activation_table': 'activation'
 };
