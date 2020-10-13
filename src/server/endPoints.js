@@ -138,6 +138,7 @@ module.exports = function(app, passport, db) {
 				let userSend = [{
 					id: user[0].id,
 					email: user[0].email,
+					active: user[0].active,
 					updated_at: user[0].updated_at,
 					created_at: user[0].created_at
 				}]
@@ -207,11 +208,13 @@ module.exports = function(app, passport, db) {
 	app.post('/reset', (req, res) => {
 		bcrypt.hash(req.body.password, 5, (err, hash) => {
 			if (err) throw err
-			db.query(`update accounts set encrypted_credentials = '${hash}' where reset_token = '${req.body.token}'`, (err, result) => {
-				if (err) throw err
-				console.log(result)
-				res.send('Password changed!')
-			})
+			if (req.body.token) {
+				db.query(`update accounts set encrypted_credentials = '${hash}' where reset_token = '${req.body.token}'`, (err, result) => {
+					if (err) throw err
+					console.log(result)
+					res.send('Password changed!')
+				})
+			} else res.send(400, 'Token expired!')
 		})
 	})
 
@@ -229,7 +232,7 @@ module.exports = function(app, passport, db) {
 						})
 					})
 				} else {
-					res.send('Wrong password!')
+					res.send(400, 'Wrong password!')
 				}
 			})
 		})

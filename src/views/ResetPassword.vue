@@ -35,26 +35,34 @@ export default {
 		next()
 	},
 	methods: {
+		redirectToMain(res) {
+			if (res.status === 200) {
+				setTimeout(() => {
+					this.$router.push('/')
+				}, 5000)
+			}
+		},
 		resetPassword() {
-			if (this.password === this.confirm_password && !this.old_password) {
+			if (this.password === this.confirm_password && !this.old_password && this.password) {
 				axios.post('/reset', {
 					password: this.password,
 					token: this.$route.params.token
 				}).then(res => {
-					if (res.status === 200) {
-						setTimeout(() => {
-							this.$router.push('/')
-						}, 5000)
-					}
-					console.log(res)
-				}).catch(e => {console.log('Passwords does not match!');console.log(e);})
-			} else if (this.password === this.confirm_password && this.old_password) {
+					this.redirectToMain(res)
+					this.$toast(res.data)
+					this.$toast('Will be redirect in 5 sec')
+				}).catch(e => this.$toast(e.response.data))
+			} else if (this.password === this.confirm_password && this.old_password && this.password) {
 				axios.post('/changepassword', {
 					old_password: this.old_password,
 					password: this.password
-				})
-					.then(res => console.log(res))
-					.catch(e => console.log(e))
+				}).then(res => {
+					this.redirectToMain(res)
+					this.$toast(res.data)
+					this.$toast('Will be redirect in 5 sec')
+				}).catch(e => this.$toast(e.response.data))
+			} else {
+				this.$toast('Fill in all the fields!')
 			}
 		}
 	}

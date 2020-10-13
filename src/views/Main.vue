@@ -93,47 +93,37 @@ export default {
 		getUser().then(res => {
 			console.log(res)
 			this.user = res.data.user[0]
-		}).catch(e => console.log(e))
+		}).catch(e => console.log(e.response.data))
 		this.currentQuery = localStorage.getItem('graphiql:query')
 		if (this.$route.params.url) {
-			let { data } = await getQuery(this.$route.params.url)
-			if (data) {
-				this.tabs.push(data.name)
-				this.currentTab = data.name
-				this.query = this.currentQuery = data.query
+			try {
+				let { data } = await getQuery(this.$route.params.url)
+				if (data) {
+					this.tabs.push(data.name)
+					this.currentTab = data.name
+					this.query = this.currentQuery = data.query
+				}
+			} catch (e) {
+				this.$toast(e.response.data)
 			}
 		}
 	},
 	methods: {
 		login() {
 			login(this.email, this.password).then((response) => {
-				console.log("Logged in", response)
+				this.$toast(response.data)
 				getUser().then(res => {
 					console.log(res)
 					this.user = res.data.user[0]
 				})
 				this.showRegister = false
 			})
-			.catch((errors) => {
-				console.log("Cannot log in", errors)
+			.catch((e) => {
+				this.$toast(e.response.data[2].message)
 			})
 		},
 		logout() {
-			logout().then(res => {console.log(res); this.user = null;}).catch(err => console.log(err))
-		},
-		signUp() {
-			signUp(this.email, this.password)
-			.then((response) => {
-				console.log("Signed up", response)
-				getUser().then(res => {
-					console.log(res)
-					this.user = res.data.user[0]
-				})
-				this.showRegister = false
-			})
-			.catch((errors) => {
-				console.log("signup error", errors)
-			})
+			logout().then(res => {console.log(res.data); this.user = null;}).catch(err => console.log(err))
 		},
 		executeQuery(event) {
 			if (event.target.classList.value === 'execute-button' ) {

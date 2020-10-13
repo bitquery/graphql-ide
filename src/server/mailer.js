@@ -5,7 +5,7 @@ module.exports = nodemailer.createTransport({
 	port: 587,
 	secure: false,
 	auth: {
-	  user: 'fedorenki@gmail.com',
-	  pass: 'szsptfldlilvymft'
+	  user: process.env.SMTP_USER,
+	  pass: process.env.SMTP_PASS
 	}
   })

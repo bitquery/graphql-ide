@@ -26,8 +26,8 @@ export default {
 			axios.post('/forgot', {
 				email: this.email
 			})
-				.then(res => console.log(res))
-				.catch(e => console.log(e))
+				.then(res => this.$toast(res.data))
+				.catch(e => this.$toast(e.response.data))
 		}
 	}
 }

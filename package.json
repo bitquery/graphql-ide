@@ -43,6 +43,7 @@
     "vue-cookies": "^1.7.4",
     "vue-fragment": "^1.5.1",
     "vue-router": "^3.2.0",
+    "vue-toastification": "^1.7.8",
     "vuera": "^0.2.7",
     "vuex": "^3.4.0"
   },

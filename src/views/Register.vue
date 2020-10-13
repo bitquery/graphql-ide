@@ -27,11 +27,11 @@ export default {
 		signUp() {
 			signUp(this.email, this.password)
 			.then((response) => {
-				console.log("Signed up", response)
+				this.$toast(response.data)
 				this.$router.push('/')
 			})
 			.catch((errors) => {
-				console.log("signup error", errors)
+				this.$toast(errors.response.data[1])
 			})
 		}
 	}

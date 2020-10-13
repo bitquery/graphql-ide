@@ -6,6 +6,10 @@
 			<p> {{user.email}} </p>
 		</div>
 		<div class="profile__info">
+			<h1 v-if="user.active">ACTIVE</h1>
+			<h1 v-else>NOT ACTIVE</h1>
+		</div>
+		<div class="profile__info">
 			<h1>ID</h1>
 			<p> {{user.id}} </p>
 		</div>
