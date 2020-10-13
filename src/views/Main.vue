@@ -33,7 +33,7 @@
 				</ul>
 			</div>
 			<div v-if="user" class="profile flex">
-				<img src="../assets/images/user.svg" alt="">
+				<img @click="$router.push('/profile')" src="../assets/images/user.svg" alt="Profile">
 				<p>{{this.user.email}}</p>
 			</div>
 			<div class="controls">
@@ -292,6 +292,9 @@ export default {
 .profile{
 	align-items: center;
 	margin: 0 5px 0 0;
+	img {
+		cursor: pointer;
+	}
 }
 .button {
 	cursor: pointer;

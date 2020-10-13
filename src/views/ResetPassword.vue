@@ -2,7 +2,8 @@
 	<div class="reset">
 		<form @submit.prevent="resetPassword" class="reset__form" >
 			<h2>Reset Password</h2>
-			<reg-input class="email" v-model="password" :label="'New Password'" />
+			<reg-input v-if="change" class="password" v-model="old_password" :label="'Old password'" />
+			<reg-input class="password" v-model="password" :label="'New Password'" />
 			<reg-input class="confirm_password" v-model="confirm_password" :label="'Confirm Password'" />
 			<button class="button button__submit" type="submit">Apply</button>
 		</form>
@@ -17,15 +18,25 @@ export default {
 	data() {
 		return {
 			password: '',
-			confirm_password: ''
+			old_password: '',
+			confirm_password: '',
+			change: false,
 		}
 	},
 	components: {
 		RegInput
 	},
+	beforeRouteEnter: (to, from, next) => {
+		if (from.name === 'Profile') {
+			next(vm => {
+				vm.change = true
+			})
+		}
+		next()
+	},
 	methods: {
 		resetPassword() {
-			if (this.password === this.confirm_password) {
+			if (this.password === this.confirm_password && !this.old_password) {
 				axios.post('/reset', {
 					password: this.password,
 					token: this.$route.params.token
@@ -36,9 +47,14 @@ export default {
 						}, 5000)
 					}
 					console.log(res)
-				}).catch(e => console.log(e))
-			} else {
-				console.log('Passwords does not match!')
+				}).catch(e => {console.log('Passwords does not match!');console.log(e);})
+			} else if (this.password === this.confirm_password && this.old_password) {
+				axios.post('/changepassword', {
+					old_password: this.old_password,
+					password: this.password
+				})
+					.then(res => console.log(res))
+					.catch(e => console.log(e))
 			}
 		}
 	}

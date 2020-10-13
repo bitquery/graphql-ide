@@ -19,6 +19,9 @@
 		font-size: 35px;
 		padding: 30px 0 30px 0;
 	}
+	h1 {
+		font-size: 28px;
+	}
 	overflow: hidden;
 }
 .flex{

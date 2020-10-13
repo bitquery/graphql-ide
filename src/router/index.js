@@ -4,6 +4,7 @@ import Main from '../views/Main.vue'
 import ForgotPassword from '../views/ForgotPassword'
 import ResetPassword from '../views/ResetPassword'
 import Register from '../views/Register'
+import Profile from '../views/Profile'
 
 Vue.use(VueRouter)
 
@@ -25,14 +26,26 @@ const routes = [
 		component: ForgotPassword
 	},
 	{
-		path: '/reset/:token',
+		path: '/reset',
 		name: 'ResetPassword',
-		component: ResetPassword
+		component: ResetPassword,
+		children: [
+			{
+				path: ':token',
+				name: 'ResetPassword',
+				component: ResetPassword
+			}
+		]
 	},
 	{
 		path: '/register',
 		name: 'Register',
 		component: Register
+	},
+	{
+		path: '/profile',
+		name: 'Profile',
+		component: Profile
 	}
 ]
 

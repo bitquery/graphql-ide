@@ -214,5 +214,26 @@ module.exports = function(app, passport, db) {
 			})
 		})
 	})
+
+	app.post('/changepassword', (req, res) => {
+		db.query(`select encrypted_credentials from accounts where id = ${req.session.passport.user}`, (err, pass) => {
+			bcrypt.compare(req.body.old_password, pass[0][Object.keys(pass[0])[0]], (err, result) => {
+				if (err) throw err
+				if (result) {
+					bcrypt.hash(req.body.password, 5, (err, hash) => {
+						if (err) throw err
+						db.query(`update accounts set encrypted_credentials = '${hash}' where id = ${req.session.passport.user}`, (err, result) => {
+							if (err) throw err
+							console.log(result)
+							res.send('Password changed!')
+						})
+					})
+				} else {
+					res.send('Wrong password!')
+				}
+			})
+		})
+		
+	})
 	
 }
