@@ -15,27 +15,32 @@
 				<reg-input v-model="password" :label="'Password'" />
 				<button class="button button__signup" @click="login">SignIn</button>
 				<a href="javascript:void(0)" @click="$router.push('/forgot')">Forgot password?</a>
-				<button class="button button__signup" @click="signUp">SignUp</button>
+				<a href="javascript:void(0)" @click="$router.push('/register')">Do not have account?</a>
 			</div>
 		</modal-window>
-		<p v-if="user"> Hello, {{this.user.email}} </p>
-		<div class="control">
-			<button v-if="user" class="button button__save" @click="showModal = true">Save Query</button>
-			<button v-if="user" class="button button__logout" @click="logout">Logout</button>
-			<button v-else class="button button__signin" @click="showRegister = true" >Sign In</button>
-		</div>
-		<div class="tabs">
-			<ul>
-				<li
-					v-for="(tab, index) in tabs" :key="tab"
-					:class="{'active': currentTab === tab}"
-					@click="switchTab(tab)"
-				>
-					{{tab}}
-					<span class="tab__close" @click.stop="removeTab(index)">❌</span>
-				</li>
-				<li @click="addNewTab" >+</li>
-			</ul>
+		<div class="controlpanel flex">
+			<div class="tabs">
+				<ul>
+					<li
+						v-for="(tab, index) in tabs" :key="tab"
+						:class="{'active': currentTab === tab}"
+						@click="switchTab(tab)"
+					>
+						{{tab}}
+						<span class="tab__close" @click.stop="removeTab(index)">❌</span>
+					</li>
+					<li @click="addNewTab" >+</li>
+				</ul>
+			</div>
+			<div v-if="user" class="profile flex">
+				<img src="../assets/images/user.svg" alt="">
+				<p>{{this.user.email}}</p>
+			</div>
+			<div class="controls">
+				<button v-if="user" class="button button__save" @click="showModal = true">Save Query</button>
+				<button v-if="user" class="button button__logout" @click="logout">Logout</button>
+				<button v-else class="button button__signin" @click="showRegister = true" >Sign In</button>
+			</div>
 		</div>
 		<graphiql 
 			v-for="(tab ) in tabs" :key="tab"
@@ -227,12 +232,22 @@ export default {
 	height: 100vh;
 	display: flex;
 	flex-direction: column;
+	padding-top: 20px;
 }
 #graphiql {
 	min-height: 100%;
 }
-.CodeMirror-line {
-	text-align: left;
+.CodeMirror{
+ 	&-line {
+		text-align: left;
+		margin-left: 5px !important;
+	}
+	&-lines {
+		font-size: 20px;
+	}
+	&-foldgutter{
+		width: 1em !important;
+	}
 }
 .giql__wrapper {
 	min-height: 100%;
@@ -247,6 +262,7 @@ export default {
 	}
 }
 .tabs {
+	flex: 1 1 auto;
 	ul {
 		display: flex;
 		list-style: none;
@@ -270,18 +286,23 @@ export default {
 		}
 	}
 }
+.controlpanel {
+	align-items: center;
+}
+.profile{
+	align-items: center;
+	margin: 0 5px 0 0;
+}
 .button {
 	cursor: pointer;
 	width: 150px;
 	border: 1px solid #c27a7a38;
 	background-color: #bb7a7a;
 	color: #d7d7d7;
-	padding: 20px;
+	padding: 10px;
+	margin: 0 5px 0 0;
 	border-radius: 10px;
 	outline: none;
-	&:not(:last-child) {
-		margin: 10px 10px 0 0;
-	}
 	&:hover {
 		background-color: #ae9669;
 	}

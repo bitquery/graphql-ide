@@ -6,6 +6,7 @@ import store from './store'
 import VueCookies from "vue-cookies"
 import Fragment from 'vue-fragment'
 import 'graphiql/graphiql.css'
+import './style/main.css'
 
 Vue.config.productionTip = false
 Vue.use(VuePlugin)
