@@ -33,14 +33,15 @@
 				</ul>
 			</div>
 			<div v-if="user" class="profile flex">
-				<img @click="$router.push('/profile')" src="../assets/images/user.svg" alt="Profile">
+				<img @click="toggleProfileMenu" src="../assets/images/user.svg" alt="Profile" >
 				<p class="profile__email">{{this.user.email}}</p>
+				<div :class="['profile__controls', 'flex', 'flex-col', {'active': show_profile_menu}]" >
+					<button class="button button__save" @click="showModal = true" >Save query</button>
+					<button @click="$router.push('/reset')" class="button button__reset">Change password</button>
+					<button class="button button__logout" @click="logout" >Logout</button>
+				</div>
 			</div>
-			<div class="controls">
-				<button v-if="user" class="button button__save" @click="showModal = true">Save Query</button>
-				<button v-if="user" class="button button__logout" @click="logout">Logout</button>
-				<button v-else class="button button__signin" @click="showRegister = true" >Login</button>
-			</div>
+			<button v-else class="button button__signin" @click="showRegister = true" >Login</button>
 			<div class="endpoint_url">
 				<reg-input v-model="endpoint_url" />
 			</div>
@@ -72,6 +73,7 @@ export default {
 	data() {
 		return {
 			endpoint_url: 'https://graphql.bitquery.io',
+			show_profile_menu: false,
 			user: null,
 			showRegister: false,
 			email: '',
@@ -146,7 +148,7 @@ export default {
 			try {
 				const { data } = await getUser()
 				this.user = data.user[0]
-			} catch (e) { this.$toast(e) } 
+			} catch (e) { console.log(e.response.data) } 
 		},
 		async login() {
 			try {
@@ -159,6 +161,7 @@ export default {
 		async logout() {
 			await logout().catch(e => console.log(e))
 			this.user = null
+			this.show_profile_menu = false
 		},
 		async saveQuery(params) {
 			try {
@@ -187,6 +190,11 @@ export default {
 			this.tabs.splice(index, 1)
 			this.tabs.length === 0 && this.addNewTab()
 			this.currentTab = this.tabs[index+1] || this.tabs[0] || '1'
+		},
+		toggleProfileMenu() {
+			if (this.user) {
+				this.show_profile_menu = !this.show_profile_menu
+			}
 		}
 	}
 }
@@ -295,11 +303,23 @@ export default {
 }
 .profile{
 	align-items: center;
+	flex-direction: row-reverse;
+	justify-content: flex-end;
+	position: relative;
 	margin: 0 5px 0 0;
-	&__email {
-		color:  #d7d7d7;
+	&__controls {
+		background-color: #16162c;
+		padding: 10px;
+		z-index: 3;
+		position: absolute;
+		display: none;
+		top: 50px;
+		&.active {
+			display: block;
+		}
 	}
 	img {
+		padding: 0 10px;
 		cursor: pointer;
 	}
 }

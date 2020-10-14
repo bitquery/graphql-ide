@@ -184,7 +184,12 @@ module.exports = function(app, passport, db) {
 					console.log(result)
 					res.send('Password changed!')
 				})
-			} else res.send(400, 'Token expired!')
+			} else if (req.session.passport.user) {
+				db.query(`update accounts set encrypted_credentials = '${hash}' where id = ${req.session.passport.user}`, (err, result) => {
+					if (err) throw err
+					res.send('Password changed!')
+				})
+			} else { res.send(400, 'Token expired!') }
 		})
 	})
 

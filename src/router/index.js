@@ -4,7 +4,6 @@ import Main from '../views/Main.vue'
 import ForgotPassword from '../views/ForgotPassword'
 import ResetPassword from '../views/ResetPassword'
 import Register from '../views/Register'
-import Profile from '../views/Profile'
 
 Vue.use(VueRouter)
 
@@ -41,11 +40,6 @@ const routes = [
 		path: '/register',
 		name: 'Register',
 		component: Register
-	},
-	{
-		path: '/profile',
-		name: 'Profile',
-		component: Profile
 	}
 ]
 
