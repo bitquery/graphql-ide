@@ -29,7 +29,7 @@
 						{{tab}}
 						<span class="tab__close" @click.stop="removeTab(index)" />
 					</li>
-					<li @click="addNewTab" ><span class="tab__add" /></li>
+					<li @click="addNewTab" class="tabs__add" ><span class="tab__add" /></li>
 				</ul>
 			</div>
 			<div v-if="user" class="profile flex">
@@ -213,12 +213,6 @@ export default {
 	&-line {
 		text-align: left;
 	}
-	&-lines {
-		font-size: 20px;
-	}
-	&-foldgutter{
-		width: 1em !important;
-	}
 }
 .giql__wrapper {
 	min-height: 100%;
@@ -243,16 +237,19 @@ export default {
 }
 .tabs {
 	flex: 1 1 auto;
+	&__add {
+		padding: 20px 10px 0;
+	}
 	.tab {
 		&__close{
 			background: url('../assets/images/letter-x.svg') center no-repeat ;
 			margin-left: 15px;
-			padding-left: 14px;
+			padding-left: 12px;
 			opacity: 0%;
 		}
 		&__add {
 			background: url('../assets/images/plus.svg') center no-repeat ;
-			padding: 10px;
+			padding: 7px;
 			opacity: 50%;
 		}
 	}
@@ -260,10 +257,12 @@ export default {
 		display: flex;
 		list-style: none;
 		margin-bottom: 0;
+		li:not(.tabs__add) {
+			padding: 20px 10px 20px 20px;
+		}
 		li {
 			display: block;
 			cursor: pointer;
-			padding: 20px;
 			margin: 0 7px;
 			color: #c2c2c2;
 			background-color: #282a36;
@@ -291,7 +290,7 @@ export default {
 	position: relative;
 	.endpoint_url {
 		position: absolute;
-		top: 44.5px;
+		top: 42px;
 		left: 460px;
 		input {
 			text-align: left;

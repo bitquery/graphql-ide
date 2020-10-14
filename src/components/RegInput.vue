@@ -29,7 +29,7 @@ export default {
 <style lang="scss">
 .query {
 	&__save {
-		font-size: 20px;
+		font-size: 14px;
 		padding: 10px;
 		border-radius: 5px;
 		border: none;
