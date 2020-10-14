@@ -4,8 +4,8 @@
 			<div slot="body" class="modal modal__save">
 				<reg-input v-model="query_name" :label="'Enter query name (required)'" />
 				<reg-input v-model="query_description" :label="'Enter description'" />
-				<button class="button button__save" @click="saveWithParams">Save</button>
-				<button class="button button__save" @click="shareQuery">Save & Link</button>
+				<button class="button button__save" @click="saveQuery(params.value())">Save</button>
+				<button class="button button__save" @click="saveQuery(params.withUrl())">Save & Link</button>
 				<p v-if="link">Your link <a :href="`http://localhost:8080/query/${link}`">{{`http://localhost:8080/query/${link}`}}</a></p>
 			</div>
 		</modal-window>
@@ -13,7 +13,7 @@
 			<div slot="body" class="modal modal__signup">
 				<reg-input v-model="email" :label="'Username (email)'" />
 				<reg-input v-model="password" :label="'Password'" />
-				<button class="button button__signup" @click="login">SignIn</button>
+				<button class="button button__signup" @click="login">Login</button>
 				<a href="javascript:void(0)" @click="$router.push('/forgot')">Forgot password?</a>
 				<a href="javascript:void(0)" @click="$router.push('/register')">Do not have account?</a>
 			</div>
@@ -27,9 +27,9 @@
 						@click="switchTab(tab)"
 					>
 						{{tab}}
-						<span v-if="currentTab === tab" class="tab__close" @click.stop="removeTab(index)">❌</span>
+						<span class="tab__close" @click.stop="removeTab(index)" />
 					</li>
-					<li @click="addNewTab" >+</li>
+					<li @click="addNewTab" ><span class="tab__add" /></li>
 				</ul>
 			</div>
 			<div v-if="user" class="profile flex">
@@ -39,7 +39,7 @@
 			<div class="controls">
 				<button v-if="user" class="button button__save" @click="showModal = true">Save Query</button>
 				<button v-if="user" class="button button__logout" @click="logout">Logout</button>
-				<button v-else class="button button__signin" @click="showRegister = true" >Sign In</button>
+				<button v-else class="button button__signin" @click="showRegister = true" >Login</button>
 			</div>
 			<div class="endpoint_url">
 				<reg-input v-model="endpoint_url" />
@@ -50,7 +50,6 @@
 			:class="['giql__wrapper', {'giql__wrapper_active': currentTab === tab} ]"
 			:fetcher="fetcher" 
 			:query="query || undefined"
-			:onEditQuery="onEditQuery"
 			:editorTheme="'dracula'"
 		/>
 	</div>
@@ -85,20 +84,11 @@ export default {
 			query: '',
 			currentQuery: '',
 			currentTab: '1',
-			tabs: ['1'],
-			params: {
-				arguments: 'arguments',
-				success_count: 1,
-				error_count: 0,
-				created_at: new Date().toISOString().slice(0, 19).replace('T', ' ')
-			}
+			tabs: ['1']
 		}
 	},
 	async mounted() {
-		getUser().then(res => {
-			console.log(res)
-			this.user = res.data.user[0]
-		}).catch(e => console.log(e.response.data))
+		this.getUser()
 		this.currentQuery = localStorage.getItem('graphiql:query')
 		if (this.$route.params.url) {
 			try {
@@ -113,40 +103,28 @@ export default {
 			}
 		}
 	},
-	methods: {
-		login() {
-			login(this.email, this.password).then((response) => {
-				this.$toast(response.data)
-				getUser().then(res => {
-					console.log(res)
-					this.user = res.data.user[0]
-				})
-				this.showRegister = false
-			})
-			.catch((e) => {
-				this.$toast(e.response.data[2].message)
-			})
-		},
-		logout() {
-			logout().then(res => {console.log(res.data); this.user = null;}).catch(err => console.log(err))
-		},
-		executeQuery(event) {
-			if (event.target.classList.value === 'execute-button' ) {
-				this.queryButton = true
-			} else {
-				this.queryButton = false
+	computed: {
+		params() {
+			let params = {
+				account_id: this.user.id,
+				query: this.currentQuery,
+				arguments: 'arguments',
+				name: this.query_name || null,
+				description: this.query_description || null
 			}
-		},
-		switchTab(tab) {
-			this.queryButton = false
-			this.currentTab = tab
-		},
+			return {
+				value: () => params,
+				withUrl: () => {
+					params.url = this.link = generateLink()
+					return params
+				}
+			}
+		}
+	},
+	methods: {
 		async fetcher(graphQLParams) {
 			if (this.queryButton && this.user) {
-				let params = this.params
-				params.description = 'request'
-				params.account_id = this.user.id
-				this.saveQuery(params)
+				this.saveQuery(this.params.value())
 			}
 			const data = await fetch(
 				this.endpoint_url,
@@ -164,16 +142,42 @@ export default {
 			return data.json().catch(() => data.text())
 			
 		},
-		saveWithParams() {
-			let params = this.params
-			params.query = this.currentQuery
-			params.name = this.query_name
-			params.account_id = this.user.id
-			if (this.query_description) params.description = this.query_description
-			this.saveQuery(params)
-			this.tabs[this.tabs.indexOf(this.currentTab)] = this.query_name
-			this.showModal = false
-			this.currentTab = this.query_name
+		async getUser() {
+			try {
+				const { data } = await getUser()
+				this.user = data.user[0]
+			} catch (e) { this.$toast(e) } 
+		},
+		async login() {
+			try {
+				const { data } = await login(this.email, this.password)
+				this.$toast(data)
+				this.getUser()
+				this.showRegister = false 
+			} catch (e) { this.$toast(e.response.data[2].message) }
+		},
+		async logout() {
+			await logout().catch(e => console.log(e))
+			this.user = null
+		},
+		async saveQuery(params) {
+			try {
+				if (!this.queryButton) {
+					this.tabs[this.tabs.indexOf(this.currentTab)] = this.query_name
+					this.currentTab = this.query_name
+				}
+				const { data } = await axios.post('/addquery', { params })
+				this.$toast(data)
+			} catch (e) { console.log(e) }
+			
+		},
+		executeQuery(event) {
+			this.queryButton = ( event.target.classList.value === 'execute-button' )
+				? true : false
+		},
+		switchTab(tab) {
+			this.queryButton = false
+			this.currentTab = tab
 		},
 		addNewTab() {
 			this.tabs.push((+this.tabs[this.tabs.length-1]+1) || '1')
@@ -183,41 +187,6 @@ export default {
 			this.tabs.splice(index, 1)
 			this.tabs.length === 0 && this.addNewTab()
 			this.currentTab = this.tabs[index+1] || this.tabs[0] || '1'
-		},
-		saveQuery(params) {
-			axios.post('/addquery', {
-				params: params || this.params
-			})
-			.then(res => console.log('saved', res))
-			.catch(error => console.log(error))
-		},
-		onEditQuery(query) {
-			if (this.user) {
-				this.currentQuery = query
-				axios.post('/updatequery', {
-					params: {
-						account_id: this.user.id,
-						query: this.currentQuery,
-						arguments: 'arguments',
-						success_count: 1,
-						error_count: 0,
-						created_at: new Date().toISOString().slice(0, 19).replace('T', ' ')
-					}
-				})
-				.then(res => console.log('updated', res))
-				.catch(error => console.log(error))
-			}
-		},
-		shareQuery() {
-			let params = this.params
-			params.query = this.currentQuery
-			params.name = this.query_name
-			if (this.query_description) params.description = this.query_description
-			params.url = generateLink()
-			this.saveQuery(params)
-			this.tabs[this.tabs.indexOf(this.currentTab)] = this.query_name
-			this.link = params.url
-			this.currentTab = this.query_name
 		}
 	}
 }
@@ -230,6 +199,9 @@ export default {
 	padding-top: 20px;
 }
 .CodeMirror{
+	&-cursor {
+		border-color: #d7d7d7 !important;
+	}
 	&-line {
 		text-align: left;
 	}
@@ -243,6 +215,7 @@ export default {
 .giql__wrapper {
 	min-height: 100%;
 	display: none;
+	caret-color: #d7d7d7;
 	&_active {
 		display: block;
 	}
@@ -260,13 +233,21 @@ export default {
 		border-color: #353848 !important;
 	}
 }
-.tab {
-	&__close{
-		padding-left: 10px;
-	}
-}
 .tabs {
 	flex: 1 1 auto;
+	.tab {
+		&__close{
+			background: url('../assets/images/letter-x.svg') center no-repeat ;
+			margin-left: 15px;
+			padding-left: 14px;
+			opacity: 0%;
+		}
+		&__add {
+			background: url('../assets/images/plus.svg') center no-repeat ;
+			padding: 10px;
+			opacity: 50%;
+		}
+	}
 	ul {
 		display: flex;
 		list-style: none;
@@ -276,11 +257,19 @@ export default {
 			cursor: pointer;
 			padding: 20px;
 			margin: 0 7px;
-			color: #fff;
+			color: #c2c2c2;
 			background-color: #282a36;
 			&:hover, &.active {
 				background-color:#353848;
-				
+				.tab {
+					&__close {
+						opacity: 50%;
+					}
+				}
+			}
+			&.active {
+				color: #fff;
+				// padding-right: 10px;
 			}
 			.close-tab {
 				padding-left: 10px;

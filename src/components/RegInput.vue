@@ -37,6 +37,7 @@ export default {
 		outline: none;
 		text-align: center;
 		background: #414457;
+		color: #d7d7d7;
 	}
 }
 </style>

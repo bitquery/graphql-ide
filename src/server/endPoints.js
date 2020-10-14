@@ -59,6 +59,7 @@ module.exports = function(app, passport, db) {
 				})
 				let message = {
 					from : 'fedorenki@gmail.com',
+					// from : 'hello@bitquery.io',
 					to: user[0].email,
 					subject: 'Account activation',
 					text: 'Plaintext version of the message',
@@ -78,7 +79,7 @@ module.exports = function(app, passport, db) {
 		let value = req.body.params
 		sql = `select id from query where id=(select id from query where account_id=${value.account_id} order by id desc limit 0,1) and name is null and description is null`
 		db.query(sql, (err, result) => {
-			if (err) throw error
+			if (err) throw err
 			if (!result.length) {
 				addQuery(value)
 				res.end('saved in new row')
@@ -91,37 +92,6 @@ module.exports = function(app, passport, db) {
 			}
 		})
 		res.send('row added')
-	})
-
-	app.post('/updatequery', (req, res) => {
-		let tableEmpty = true
-		let thereIsNotSavedRow = true
-		let value = req.body.params
-		console.log(value)
-		let sql = 'SELECT COUNT(*) FROM query'
-		db.query(sql, (err, result) => {
-			if (err) throw err
-			tableEmpty = result[0][Object.keys(result[0])[0]] ? false : true
-			sql = `select id from query where id=(select id from query where account_id=${value.account_id} order by id desc limit 0,1) and name is null and description is null`
-			db.query(sql, (err, result) => {
-				if (err) throw err
-				thereIsNotSavedRow = result.length ? true : false
-				if (tableEmpty) {
-					console.log('adding query')
-					addQuery(value)
-					res.send('row added')
-				} else if (thereIsNotSavedRow) {
-					sql = `UPDATE query SET query = ?, url = ? where id=(select id from query where account_id=${value.account_id} order by id desc limit 0,1)`
-					db.query(sql, [value.query, value.url || null], (err, result) => {
-						if (err) throw err
-						res.send('query updated')
-					})
-				} else {
-					addQuery(value)
-					res.send('new row added')
-				}
-			})
-		})
 	})
 
 	app.get('/api/logout', (req, res) => {
