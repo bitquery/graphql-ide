@@ -91,7 +91,7 @@ module.exports = function(app, passport, db) {
 				})
 			}
 		})
-		res.send('row added')
+		res.send('Query successfully saved!')
 	})
 
 	app.get('/api/logout', (req, res) => {
@@ -121,6 +121,12 @@ module.exports = function(app, passport, db) {
 		db.query(sql, (err, result) => {
 			if (err) throw err
 			res.send(result[0])
+		})
+	})
+	app.get('/getqueries', (req, res) => {
+		db.query('select query from query', (err, queries) => {
+			if (err) throw err
+			res.send(queries)
 		})
 	})
 

@@ -42,17 +42,31 @@
 				</div>
 			</div>
 			<button v-else class="button button__signin" @click="showRegister = true" >Login</button>
-			<div class="endpoint_url">
+			<!-- <div class="endpoint_url">
 				<reg-input v-model="endpoint_url" />
-			</div>
+			</div> -->
 		</div>
-		<graphiql 
-			v-for="(tab ) in tabs" :key="tab"
-			:class="['giql__wrapper', {'giql__wrapper_active': currentTab === tab} ]"
-			:fetcher="fetcher" 
-			:query="query || undefined"
-			:editorTheme="'dracula'"
-		/>
+		<div class="content flex">
+			<div class="gallery flex flex-col">
+				<div class="gallery__header flex">
+					<h1>Gallery</h1>
+				</div>
+				<ul class="gallery__queries">
+					<li v-for="(query, index) in queries" :key="index"
+						class="gallery__query"
+					>
+						{{query.query}}
+					</li>
+				</ul>
+			</div>
+			<graphiql 
+				v-for="(tab ) in tabs" :key="tab"
+				:class="['giql__wrapper', {'giql__wrapper_active': currentTab === tab} ]"
+				:fetcher="fetcher" 
+				:query="query || undefined"
+				:editorTheme="'dracula'"
+			/>
+		</div>
 	</div>
 </template>
 
@@ -73,6 +87,7 @@ export default {
 	data() {
 		return {
 			endpoint_url: 'https://graphql.bitquery.io',
+			queries: null,
 			show_profile_menu: false,
 			user: null,
 			showRegister: false,
@@ -92,6 +107,10 @@ export default {
 	async mounted() {
 		this.getUser()
 		this.currentQuery = localStorage.getItem('graphiql:query')
+		try {
+			const { data } = await axios.get('/getqueries')
+			this.queries = data
+		} catch (e) { console.log(e) }
 		if (this.$route.params.url) {
 			try {
 				let { data } = await getQuery(this.$route.params.url)
@@ -214,12 +233,60 @@ export default {
 		text-align: left;
 	}
 }
+.content {
+	height: 100%;
+	overflow: hidden;
+	.gallery {
+		display: none;
+		position: relative;
+		flex: 1 0 10% ;
+		overflow: auto;
+		background-color: #282a36;
+		border-right: 1px solid #353848 ;
+		&::-webkit-scrollbar {
+			display: none;
+		}
+		&__queries {
+			text-align: left;
+		}
+		&__query {
+			word-break: break-all;
+			font-size: 12px;
+			border-bottom: 1px solid #a9a9a9;
+			padding: 10px 5px;
+			cursor: pointer;
+			color: #a9a9a9;
+			&:hover {
+				color: #d7d7d7;
+			}
+		}
+		&__header {
+			position: sticky;
+			background-color: #353848 ;
+			height: 54px;
+			justify-content: center;
+			align-items: center;
+			flex: 1 0 auto;
+		}
+		&.active {
+			display: flex;
+		}
+	}
+}
 .giql__wrapper {
-	min-height: 100%;
+	display: flex;
+	flex: 1 1 90%;
+	height: 100%;
 	display: none;
 	caret-color: #d7d7d7;
 	&_active {
 		display: block;
+	}
+	.toolbar-button, .docExplorerShow, .execute-button {
+		background: #282a36 !important;
+		box-shadow: none !important;
+		color: #bababa !important;
+		fill: #bababa !important;
 	}
 	.topBar {
 		height: 54px !important;
@@ -234,11 +301,14 @@ export default {
 	.resultWrap {
 		border-color: #353848 !important;
 	}
+	.editorWrap {
+		overflow-y: hidden;
+	}
 }
 .tabs {
 	flex: 1 1 auto;
 	&__add {
-		padding: 20px 10px 0;
+		padding: 10px 10px 0;
 	}
 	.tab {
 		&__close{
@@ -258,7 +328,7 @@ export default {
 		list-style: none;
 		margin-bottom: 0;
 		li:not(.tabs__add) {
-			padding: 20px 10px 20px 20px;
+			padding: 10px 10px 10px 20px;
 		}
 		li {
 			display: block;
@@ -320,6 +390,7 @@ export default {
 	img {
 		padding: 0 10px;
 		cursor: pointer;
+		width: 55px;
 	}
 }
 .button {
