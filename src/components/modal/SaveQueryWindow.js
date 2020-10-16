@@ -1,6 +1,8 @@
-import React, { useContext } from 'react'
+import { useObserver } from 'mobx-react'
+import { observer } from 'mobx-react-lite'
+import React from 'react'
 import Modal from 'react-modal'
-import { ModalContext } from './ModalContext'
+import modalStore from '../../store/modalStore'
 
 const customStyles = {
 	overlay: {
@@ -34,11 +36,10 @@ const customStyles = {
 }
 Modal.setAppElement('#root')
 
-function SaveQueryWindow() {
+const SaveQueryWindow = observer(() => {
+	const { saveQueryIsOpen, toggleSaveQuery } = modalStore
 
-	const { saveQueryIsOpen, toggleSaveQuery } = useContext(ModalContext)
-
-    return (
+    return useObserver(() => (
 		<Modal
 			isOpen={saveQueryIsOpen}
 			onRequestClose={toggleSaveQuery}
@@ -57,8 +58,7 @@ function SaveQueryWindow() {
 				</p>
 			</div>
 		</Modal>
-    )
-}
+    ))
+})
 
-// ReactDOM.render(<App />, appElement);
 export default SaveQueryWindow

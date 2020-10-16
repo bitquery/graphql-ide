@@ -1,10 +1,11 @@
 import React, { useContext, useState } from 'react'
-import { ModalContext } from './modal/ModalContext'
 import profileImg from '../assets/images/user.svg'
 import { logout } from '../api/api'
+import { observer } from 'mobx-react-lite'
+import ModalStore from '../store/modalStore'
 
-function Profile({ user, setUser }) {
-	const { toggleRegister } = useContext(ModalContext)
+const Profile = observer(({ user, setUser }) => {
+	const { toggleRegister, registerIsOpen } = ModalStore
 	const [showProfileMenu, setShowProfileMenu] = useState(false)
 	const toggleProfileMenu = () => user && setShowProfileMenu(prev => !prev)
 	const logOut = async () => {
@@ -30,6 +31,6 @@ function Profile({ user, setUser }) {
 			</div>
 		</div>
 	)
-}
+})
 
 export default Profile

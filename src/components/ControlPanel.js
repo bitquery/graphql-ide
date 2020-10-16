@@ -1,6 +1,7 @@
 import React from 'react'
 import TabsComponent from './TabsComponent'
 import Profile from './Profile'
+// import modal from '../store/modalStore'
 
 function ControlPanel({ tabs, currentTab, setCurrentTab, setTabs, user, setUser }) {
 	return (
@@ -11,7 +12,7 @@ function ControlPanel({ tabs, currentTab, setCurrentTab, setTabs, user, setUser 
 				setCurrentTab={setCurrentTab}
 				setTabs={setTabs}
 			/>
-			<Profile user={user} setUser={setUser} />
+			<Profile user={user} setUser={setUser}  />
 		</div>
 	)
 }

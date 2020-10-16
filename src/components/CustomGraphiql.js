@@ -1,10 +1,10 @@
-import React, { useState, useRef, useMemo, useContext } from 'react';
+import React, { useState, useRef, useMemo } from 'react';
 import '../App.scss';
 import GraphiQL from 'graphiql'
-import { ModalContext } from './modal/ModalContext'
+import modalStore from '../store/modalStore';
 
 export const CustomGraphiql = ({tabs, currentTab}) => {
-	const { toggleSaveQuery } = useContext(ModalContext)
+	const { toggleSaveQuery } = modalStore
 	const graphiql = useRef(null)
 	const [fetchURL, setFetchURL] = useState('https://graphql.bitquery.io')
 	const [currentQuery, setCurrentQuery] = useState('')
@@ -21,6 +21,7 @@ export const CustomGraphiql = ({tabs, currentTab}) => {
 		console.log('savim query')
 	}
 	const shareQuery = () => {
+		toggleSaveQuery()
 		console.log('sharim query')
 	}
 	const copyQuery = () => {

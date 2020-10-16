@@ -7,7 +7,7 @@ import 'graphiql/graphiql.css'
 
 
 ReactDOM.render(
-	<App />,
+	<App/>,
 	document.getElementById('root')
 );
 

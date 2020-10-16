@@ -1,10 +1,11 @@
-import React, { useState, useContext } from 'react'
+import React, { useState } from 'react'
 import ReactDOM from 'react-dom'
 import Modal from 'react-modal'
 import { login } from '../../api/api'
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
-import { ModalContext } from './ModalContext'
+import modalStore from '../../store/modalStore'
+import { observer } from 'mobx-react-lite'
 
 const customStyles = {
 	overlay: {
@@ -38,10 +39,10 @@ const customStyles = {
 }
 Modal.setAppElement('#root')
 
-function RegisterWindow({ getUser }) {
+const RegisterWindow = observer(({ getUser }) => {
+	const { registerIsOpen, toggleRegister } = modalStore
 	const [email, setEmail] = useState('')
 	const [password, setPassword] = useState('')
-	const { registerIsOpen, toggleRegister } = useContext(ModalContext)
 
 	const notify = message => toast(message)
 	const logIn = async () => {
@@ -49,7 +50,6 @@ function RegisterWindow({ getUser }) {
 			const { data } = await login(email, password)
 			notify(data)
 			getUser()
-			toggleRegister()
 		} catch (e) { notify(e.response.data[2].message) }
 	}
 
@@ -71,6 +71,6 @@ function RegisterWindow({ getUser }) {
 			</div>
 		</Modal>
     )
-}
+})
 
 export default RegisterWindow

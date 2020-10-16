@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react'
+import React, { useState, useEffect } from 'react'
 import './App.scss'
 import { CustomGraphiql } from './components/CustomGraphiql'
 import RegisterWindow from './components/modal/RegisterWindow'
@@ -6,8 +6,7 @@ import SaveQueryWindow from './components/modal/SaveQueryWindow'
 import axios from 'axios'
 import { getUser } from './api/api'
 import { generateLink } from './utils/common'
-import { ToastContainer, toast } from 'react-toastify'
-import { ModalProvider } from './components/modal/ModalContext'
+import { toast } from 'react-toastify'
 import ControlPanel from './components/ControlPanel'
 
 function App() {
@@ -17,8 +16,8 @@ function App() {
 	const [currentQuery, setCurrentQuery] = useState('')
 	const [queries, setQueries] = useState(null)
 
-	const notify = message => toast(message)
-	const params = () => {
+	// const notify = message => toast(message)
+	/* const params = () => {
 		let params = {
 			account_id: user.id,
 			query: currentQuery,
@@ -33,7 +32,7 @@ function App() {
 				return params
 			}
 		}
-	}
+	} */
 	const getMyUser = async () => {
 		try {
 			const { data } = await getUser()
@@ -53,23 +52,21 @@ function App() {
 	}, [])
 
 	return (
-		<ModalProvider >
-			<div className="App">
-				<RegisterWindow getUser={getMyUser} />
-				<SaveQueryWindow />
-				<ControlPanel 
-					tabs={tabs}
-					currentTab={currentTab}
-					setCurrentTab={setCurrentTab}
-					setTabs={setTabs}
-					user={user} setUser={setUser}
-				/>
-				<CustomGraphiql 
-					currentTab={currentTab}
-					tabs={tabs}  
-				/>
-			</div>
-		</ModalProvider>
+		<div className="App">
+			<RegisterWindow getUser={getMyUser}  />
+			{<SaveQueryWindow />}
+			<ControlPanel 
+				tabs={tabs}
+				currentTab={currentTab}
+				setCurrentTab={setCurrentTab}
+				setTabs={setTabs}
+				user={user} setUser={setUser}
+			/>
+			<CustomGraphiql 
+				currentTab={currentTab}
+				tabs={tabs}  
+			/>
+		</div>
 	)
 }
 
