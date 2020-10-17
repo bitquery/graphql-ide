@@ -1,25 +1,9 @@
+import { observer } from 'mobx-react-lite'
 import React, { useEffect } from 'react'
+import tabsStore from '../store/tabsStore'
 
-function TabsComponent({tabs, currentTab, setCurrentTab, setTabs}) {
-
-	useEffect(() => {
-		tabs.length === 0 && addNewTab()
-		setCurrentTab( tabs[tabs.length-1] )
-		console.log('render')
-	}, [tabs])
-
-	const switchTab = tab => {
-		setCurrentTab(tab)
-	}
-	const removeTab = (index, event) => {
-		event.stopPropagation()
-		setTabs(tabs.filter((tab, i) => i !== index))
-		setCurrentTab( tabs[index+1] || tabs[0] || '1' )
-	}
-	const addNewTab = () => {
-		setTabs([...tabs, +tabs[tabs.length-1]+1 || '1'])
-		
-	}
+const TabsComponent = observer(() => {
+	const { tabs, currentTab, switchTab, removeTab, addNewTab, setCurrentTab } = tabsStore
 
 	return (
 		<div className="tabs">
@@ -45,6 +29,6 @@ function TabsComponent({tabs, currentTab, setCurrentTab, setTabs}) {
 			</ul>
 		</div>
 	)
-}
+})
 
 export default TabsComponent

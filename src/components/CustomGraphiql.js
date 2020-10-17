@@ -2,9 +2,12 @@ import React, { useState, useRef, useMemo } from 'react';
 import '../App.scss';
 import GraphiQL from 'graphiql'
 import modalStore from '../store/modalStore';
+import tabsStore from '../store/tabsStore';
+import { observer } from 'mobx-react-lite';
 
-export const CustomGraphiql = ({tabs, currentTab}) => {
+export const CustomGraphiql = observer(() => {
 	const { toggleSaveQuery } = modalStore
+	const { tabs, currentTab } = tabsStore
 	const graphiql = useRef(null)
 	const [fetchURL, setFetchURL] = useState('https://graphql.bitquery.io')
 	const [currentQuery, setCurrentQuery] = useState('')
@@ -93,4 +96,4 @@ export const CustomGraphiql = ({tabs, currentTab}) => {
 			</div>
 		))
 	)
-}
+})

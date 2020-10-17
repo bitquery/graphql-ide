@@ -50,6 +50,7 @@ const RegisterWindow = observer(({ getUser }) => {
 			const { data } = await login(email, password)
 			notify(data)
 			getUser()
+			toggleRegister()
 		} catch (e) { notify(e.response.data[2].message) }
 	}
 

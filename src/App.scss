@@ -264,8 +264,8 @@
 .button {
 	cursor: pointer;
 	width: 150px;
-	border: 1px solid #c27a7a38;
-	background-color:#353848;
+	// border: 1px solid #c27a7a38;
+	background-color:#16162c;
 	color: #d7d7d7;
 	padding: 8px;
 	margin: 0 5px 0 0;
@@ -285,6 +285,8 @@
 	display: flex;
 	flex-direction: column;
 	.button {
+		background-color: #353848;
+		border: 1px solid #c27a7a38;
 		margin: 35px auto 0;
 	}
 }

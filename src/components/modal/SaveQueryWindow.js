@@ -1,4 +1,3 @@
-import { useObserver } from 'mobx-react'
 import { observer } from 'mobx-react-lite'
 import React from 'react'
 import Modal from 'react-modal'
@@ -39,7 +38,7 @@ Modal.setAppElement('#root')
 const SaveQueryWindow = observer(() => {
 	const { saveQueryIsOpen, toggleSaveQuery } = modalStore
 
-    return useObserver(() => (
+    return (
 		<Modal
 			isOpen={saveQueryIsOpen}
 			onRequestClose={toggleSaveQuery}
@@ -58,7 +57,7 @@ const SaveQueryWindow = observer(() => {
 				</p>
 			</div>
 		</Modal>
-    ))
+    )
 })
 
 export default SaveQueryWindow

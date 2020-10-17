@@ -10,10 +10,7 @@ import { toast } from 'react-toastify'
 import ControlPanel from './components/ControlPanel'
 
 function App() {
-	const [tabs, setTabs] = useState(['1'])
-	const [currentTab, setCurrentTab] = useState('1')
 	const [user, setUser] = useState(null)
-	const [currentQuery, setCurrentQuery] = useState('')
 	const [queries, setQueries] = useState(null)
 
 	// const notify = message => toast(message)
@@ -41,7 +38,6 @@ function App() {
 	}
 	useEffect(() => {
 		getMyUser()
-		setCurrentQuery(localStorage.getItem('graphiql:query'))
 		async function getQueries() {
 			try {
 				const { data } = await axios.get('/api/getqueries')
@@ -53,19 +49,12 @@ function App() {
 
 	return (
 		<div className="App">
-			<RegisterWindow getUser={getMyUser}  />
-			{<SaveQueryWindow />}
+			<RegisterWindow getUser={getMyUser} />
+			<SaveQueryWindow />
 			<ControlPanel 
-				tabs={tabs}
-				currentTab={currentTab}
-				setCurrentTab={setCurrentTab}
-				setTabs={setTabs}
 				user={user} setUser={setUser}
 			/>
-			<CustomGraphiql 
-				currentTab={currentTab}
-				tabs={tabs}  
-			/>
+			<CustomGraphiql />
 		</div>
 	)
 }
