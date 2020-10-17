@@ -199,12 +199,12 @@ module.exports = function(app, passport, db) {
 		})
 	})
 
-	app.post('/api/changepassword', (req, res) => {
+	app.post('/api/changepassword', authMiddleware, (req, res) => {
 		db.query(`select encrypted_credentials from accounts where id = ${req.session.passport.user}`, (err, pass) => {
-			bcrypt.compare(req.body.old_password, pass[0][Object.keys(pass[0])[0]], (err, result) => {
+			bcrypt.compare(req.body.oldPwd, pass[0][Object.keys(pass[0])[0]], (err, result) => {
 				if (err) throw err
 				if (result) {
-					bcrypt.hash(req.body.password, 5, (err, hash) => {
+					bcrypt.hash(req.body.newPwd, 5, (err, hash) => {
 						if (err) throw err
 						db.query(`update accounts set encrypted_credentials = '${hash}' where id = ${req.session.passport.user}`, (err, result) => {
 							if (err) throw err
@@ -213,7 +213,7 @@ module.exports = function(app, passport, db) {
 						})
 					})
 				} else {
-					res.send(400, 'Wrong password!')
+					res.status(400).send('Wrong password!')
 				}
 			})
 		})

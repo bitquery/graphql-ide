@@ -54,7 +54,7 @@ export const CustomGraphiql = observer(() => {
 	return (
 		tabs.map((tab, i) => (
 			<div 
-				className={'graphiql__wrapper ' + (currentTab == tab ? 'graphiql__wrapper_active' : '')}
+				className={'graphiql__wrapper ' + (currentTab === tab ? 'graphiql__wrapper_active' : '')}
 				key={i}
 			>
 				<GraphiQL 

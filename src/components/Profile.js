@@ -3,6 +3,7 @@ import profileImg from '../assets/images/user.svg'
 import { logout } from '../api/api'
 import { observer } from 'mobx-react-lite'
 import ModalStore from '../store/modalStore'
+import { Link } from 'react-router-dom'
 
 const Profile = observer(({ user, setUser }) => {
 	const { toggleRegister, registerIsOpen } = ModalStore
@@ -26,7 +27,9 @@ const Profile = observer(({ user, setUser }) => {
 			<div
 				className={'profile__controls flex flex-col ' + (showProfileMenu && 'active')}
 			>
-				<button className="button button__reset">Change password</button>
+				<button className="button button__reset">
+					<Link to="/changepwd" >Change password</Link>
+				</button>
 				<button className="button button__logout" onClick={logOut} >Logout</button>
 			</div>
 		</div>

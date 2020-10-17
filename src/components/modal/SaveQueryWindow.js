@@ -6,7 +6,7 @@ import modalStore from '../../store/modalStore'
 const customStyles = {
 	overlay: {
 		position: 'fixed',
-		zIndex: 4,
+		zIndex: 10,
 		top: 0,
 		left: 0,
 		right: 0,
@@ -50,7 +50,7 @@ const SaveQueryWindow = observer(() => {
 				<input type="text" className="query__save"  />  
 				<p className="p-modal">Description (optional)</p>
 				<input type="text" className="query__save" />  
-				<button className="button button__signup">Save</button>
+				<button className="button button_filled">Save</button>
 				<p v-if="link">
 					Your link 
 					<a href="">{`http://localhost:8080/query/`}</a>

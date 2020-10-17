@@ -2,15 +2,13 @@ import React, { useState } from 'react'
 import ReactDOM from 'react-dom'
 import Modal from 'react-modal'
 import { login } from '../../api/api'
-import { ToastContainer, toast } from 'react-toastify'
-import 'react-toastify/dist/ReactToastify.css'
 import modalStore from '../../store/modalStore'
 import { observer } from 'mobx-react-lite'
 
 const customStyles = {
 	overlay: {
 		position: 'fixed',
-		zIndex: 4,
+		zIndex: 10,
 		top: 0,
 		left: 0,
 		right: 0,
@@ -44,14 +42,13 @@ const RegisterWindow = observer(({ getUser }) => {
 	const [email, setEmail] = useState('')
 	const [password, setPassword] = useState('')
 
-	const notify = message => toast(message)
 	const logIn = async () => {
 		try {
 			const { data } = await login(email, password)
-			notify(data)
+			console.log(data)
 			getUser()
 			toggleRegister()
-		} catch (e) { notify(e.response.data[2].message) }
+		} catch (e) { console.log(e.response.data[2].message) }
 	}
 
     return (
@@ -66,7 +63,7 @@ const RegisterWindow = observer(({ getUser }) => {
 				<input type="text" className="query__save" value={email} onChange={e => setEmail(e.target.value)} />  
 				<p className="p-modal">Password</p>
 				<input type="password" className="query__save" value={password} onChange={e => setPassword(e.target.value)} />  
-				<button className="button button__signup"onClick={logIn}>Login</button>
+				<button className="button button_filled"onClick={logIn}>Login</button>
 				<a href="" >Forgot password?</a>
 				<a href="" >Do not have account?</a>
 			</div>

@@ -1,13 +1,16 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.scss';
-import App from './App';
-import * as serviceWorker from './serviceWorker';
+import './index.scss'
+import App from './App'
+import * as serviceWorker from './serviceWorker'
 import 'graphiql/graphiql.css'
+import { ToastProvider } from 'react-toast-notifications'
 
 
 ReactDOM.render(
-	<App/>,
+	<ToastProvider autoDismiss={true} >
+		<App/>
+	</ToastProvider>,
 	document.getElementById('root')
 );
 

@@ -6,8 +6,9 @@ import SaveQueryWindow from './components/modal/SaveQueryWindow'
 import axios from 'axios'
 import { getUser } from './api/api'
 import { generateLink } from './utils/common'
-import { toast } from 'react-toastify'
 import ControlPanel from './components/ControlPanel'
+import PasswordReset from './components/ChangePassword'
+import { BrowserRouter, Route, Switch } from 'react-router-dom'
 
 function App() {
 	const [user, setUser] = useState(null)
@@ -49,12 +50,21 @@ function App() {
 
 	return (
 		<div className="App">
-			<RegisterWindow getUser={getMyUser} />
-			<SaveQueryWindow />
-			<ControlPanel 
-				user={user} setUser={setUser}
-			/>
-			<CustomGraphiql />
+			<BrowserRouter>
+				<Switch>
+					<Route path="/changepwd" >
+						<PasswordReset />
+					</Route>
+					<Route path="/">
+						<RegisterWindow getUser={getMyUser} />
+						<SaveQueryWindow />
+						<ControlPanel 
+							user={user} setUser={setUser}
+						/>
+						<CustomGraphiql />
+					</Route>
+				</Switch>
+			</BrowserRouter>
 		</div>
 	)
 }
