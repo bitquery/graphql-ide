@@ -18,4 +18,4 @@ export const logout = () => axios.get('/api/logout')
 
 export const getUser = () => axios.get('/api/user')
 
-export const getQuery = url => axios.get(`/api/getquery/${url}`)
+export const getQuery = url => axios.get(`/getquery/${url}`)
