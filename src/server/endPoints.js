@@ -4,7 +4,7 @@ const bcrypt = require('bcrypt')
 
 module.exports = function(app, passport, db) {
 
-	app.get('/check', (req, res) => {
+	app.get('/api/check', (req, res) => {
 		let code = crypto.randomBytes(60).toString('hex')
 		bcrypt.hash(code, 5, (err, hash) => {
 			if (err) throw err
@@ -75,7 +75,7 @@ module.exports = function(app, passport, db) {
 		})(req, res, next)
 	})
 
-	app.post('/addquery', (req, res) => {
+	app.post('/api/addquery', (req, res) => {
 		let value = req.body.params
 		sql = `select id from query where id=(select id from query where account_id=${value.account_id} order by id desc limit 0,1) and name is null and description is null`
 		db.query(sql, (err, result) => {
@@ -116,21 +116,21 @@ module.exports = function(app, passport, db) {
 			})
 	})
 
-	app.get('/getquery/:url', (req, res) => {
+	app.get('/api/getquery/:url', (req, res) => {
 		let sql = `SELECT * FROM query WHERE url='${req.params.url}'`
 		db.query(sql, (err, result) => {
 			if (err) throw err
 			res.send(result[0])
 		})
 	})
-	app.get('/getqueries', (req, res) => {
+	app.get('/api/getqueries', (req, res) => {
 		db.query('select query from query', (err, queries) => {
 			if (err) throw err
 			res.send(queries)
 		})
 	})
 
-	app.get('/activate', (req, res) => {
+	app.get('/api/activate', (req, res) => {
 		db.query(`select code from activation where user_id = ${req.session.passport.user}`, (err, code) => {
 			if (err) throw err
 			bcrypt.compare(req.query.code, code[0][Object.keys(code[0])[0]], (err, result) => {
@@ -148,7 +148,7 @@ module.exports = function(app, passport, db) {
 		})
 	})
 
-	app.post('/forgot', (req, res) => {
+	app.post('/api/forgot', (req, res) => {
 		let token = crypto.randomBytes(20).toString('hex')
 		db.query(`update accounts set reset_token = '${token}' where email = '${req.body.email}'`, (err, result) => {
 			if (err) throw err
@@ -170,7 +170,7 @@ module.exports = function(app, passport, db) {
 		})
 	})
 
-	app.get('/reset/:token', (req, res) => {
+	app.get('/api/reset/:token', (req, res) => {
 		db.query(`select id from accounts where reset_token = '${req.params.token}'`, (err, result) => {
 			if (err) throw err
 			if (result.length) {
@@ -181,7 +181,7 @@ module.exports = function(app, passport, db) {
 		})
 	})
 
-	app.post('/reset', (req, res) => {
+	app.post('/api/reset', (req, res) => {
 		bcrypt.hash(req.body.password, 5, (err, hash) => {
 			if (err) throw err
 			if (req.body.token) {
@@ -199,12 +199,12 @@ module.exports = function(app, passport, db) {
 		})
 	})
 
-	app.post('/changepassword', (req, res) => {
+	app.post('/api/changepassword', authMiddleware, (req, res) => {
 		db.query(`select encrypted_credentials from accounts where id = ${req.session.passport.user}`, (err, pass) => {
-			bcrypt.compare(req.body.old_password, pass[0][Object.keys(pass[0])[0]], (err, result) => {
+			bcrypt.compare(req.body.oldPwd, pass[0][Object.keys(pass[0])[0]], (err, result) => {
 				if (err) throw err
 				if (result) {
-					bcrypt.hash(req.body.password, 5, (err, hash) => {
+					bcrypt.hash(req.body.newPwd, 5, (err, hash) => {
 						if (err) throw err
 						db.query(`update accounts set encrypted_credentials = '${hash}' where id = ${req.session.passport.user}`, (err, result) => {
 							if (err) throw err
@@ -213,7 +213,7 @@ module.exports = function(app, passport, db) {
 						})
 					})
 				} else {
-					res.send(400, 'Wrong password!')
+					res.status(400).send('Wrong password!')
 				}
 			})
 		})
