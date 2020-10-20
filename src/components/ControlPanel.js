@@ -1,12 +1,12 @@
 import React from 'react'
 import TabsComponent from './TabsComponent'
-import Profile from './Profile'
+import ProfileComponent from './ProfileComponent'
 
 function ControlPanel({ user, setUser }) {
 	return (
 		<div className="controlpanel">
 			<TabsComponent />
-			<Profile user={user} setUser={setUser}  />
+			<ProfileComponent user={user} setUser={setUser}  />
 		</div>
 	)
 }

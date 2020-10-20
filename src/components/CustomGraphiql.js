@@ -1,16 +1,17 @@
-import React, { useState, useRef, useMemo } from 'react';
+import React, { useState, useRef, useMemo, useEffect } from 'react';
 import '../App.scss';
 import GraphiQL from 'graphiql'
 import modalStore from '../store/modalStore';
 import tabsStore from '../store/tabsStore';
 import { observer } from 'mobx-react-lite';
+import QueriesStore from '../store/queriesStore'
 
-export const CustomGraphiql = observer(() => {
+export const CustomGraphiql = observer(({ user }) => {
 	const { toggleSaveQuery } = modalStore
 	const { tabs, currentTab } = tabsStore
+	const { toggleGallery, setCurrentQuery, setCurrentVariables } = QueriesStore
 	const graphiql = useRef(null)
 	const [fetchURL, setFetchURL] = useState('https://graphql.bitquery.io')
-	const [currentQuery, setCurrentQuery] = useState('')
 
 	const handleClickPrettifyButton = () => {
 		const editor = graphiql.current.getQueryEditor();
@@ -19,19 +20,12 @@ export const CustomGraphiql = observer(() => {
 		const prettyText = print(parse(currentText));
 		editor.setValue(prettyText);
 	}
-	const saveQuery = () => {
-		toggleSaveQuery()
-		console.log('savim query')
-	}
 	const shareQuery = () => {
 		toggleSaveQuery()
 		console.log('sharim query')
 	}
 	const copyQuery = () => {
 		console.log('copim query')
-	}
-	const toggleGallery = () => {
-		console.log('togglimGallery')
 	}
 	const fetcher = useMemo(() => {
 		return async graphQLParams => {
@@ -50,6 +44,10 @@ export const CustomGraphiql = observer(() => {
 			return data.json().catch(() => data.text())
 		}
 	}, [])
+	useEffect(() => {
+		setCurrentQuery(localStorage.getItem('graphiql:query'))
+		setCurrentVariables(localStorage.getItem('graphiql:variables'))
+	}, [])
 
 	return (
 		tabs.map((tab, i) => (
@@ -63,6 +61,7 @@ export const CustomGraphiql = observer(() => {
 					fetcher={fetcher}
 					editorTheme="dracula"
 					onEditQuery={query => setCurrentQuery(query)}
+					onEditVariables={variables => setCurrentVariables(variables)}
 				>
 					<GraphiQL.Toolbar>
 						<GraphiQL.Button 
@@ -80,16 +79,16 @@ export const CustomGraphiql = observer(() => {
 							label="Prettify"
 							title="Prettify Query (Shift-Ctrl-P)"
 						/>
-						<GraphiQL.Button 
-							onClick={saveQuery}
+						{ user && <GraphiQL.Button 
+							onClick={toggleSaveQuery}
 							label="Save"
 							title="Save Query"
-						/>
-						<GraphiQL.Button 
+						/> }
+						{ user && <GraphiQL.Button 
 							onClick={shareQuery}
 							label="Share"
 							title="Share Query"
-						/>
+						/> }
 						<input className="endpointURL" type="text" value={fetchURL} onChange={(e) => setFetchURL(e.target.value)} />
 					</GraphiQL.Toolbar>
 				</GraphiQL>

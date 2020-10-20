@@ -1,7 +1,11 @@
 import { observer } from 'mobx-react-lite'
-import React from 'react'
+import React, { useState } from 'react'
 import Modal from 'react-modal'
+import { Link } from 'react-router-dom'
 import modalStore from '../../store/modalStore'
+import queriesStore from '../../store/queriesStore'
+import tabsStore from '../../store/tabsStore'
+import { generateLink } from '../../utils/common'
 
 const customStyles = {
 	overlay: {
@@ -35,8 +39,40 @@ const customStyles = {
 }
 Modal.setAppElement('#root')
 
-const SaveQueryWindow = observer(() => {
+const SaveQueryWindow = observer(({ user }) => {
+	const [queryLink, setQueryLink] = useState('')
+	const [name, setName] = useState('')
+	const [description, setDescription] = useState('')
 	const { saveQueryIsOpen, toggleSaveQuery } = modalStore
+	const { currentQuery, saveQuery, currentVariables } = queriesStore
+	const { renameCurrentTab } = tabsStore
+
+	const params = () => {
+		let params = {
+			account_id: user.id,
+			query: currentQuery,
+			arguments: currentVariables,
+			name: name,
+			description: description || null,
+		}
+		return {
+			value: () => params,
+			withLink: () => {
+				params.url = generateLink()
+				setQueryLink(params.url)
+				return params
+			}
+		}
+	}
+	const saveHandler = () => {
+		saveQuery(params().value())
+		toggleSaveQuery()
+		renameCurrentTab(name)
+	}
+	const shareHandler = () => {
+		saveQuery(params().withLink())
+		renameCurrentTab(name)
+	}
 
     return (
 		<Modal
@@ -47,14 +83,16 @@ const SaveQueryWindow = observer(() => {
 		>
 			<div className="modal modal__signup">
 				<p className="p-modal">Query name (required)</p>
-				<input type="text" className="query__save"  />  
+				<input type="text" className="query__save"  
+					value={name} onChange={e => setName(e.target.value)}
+				/>  
 				<p className="p-modal">Description (optional)</p>
-				<input type="text" className="query__save" />  
-				<button className="button button_filled">Save</button>
-				<p v-if="link">
-					Your link 
-					<a href="">{`http://localhost:8080/query/`}</a>
-				</p>
+				<input type="text" className="query__save" 
+					value={description} onChange={e => setDescription(e.target.value)}
+				/>  
+				<button className="button button_filled" onClick={saveHandler} >Save</button>
+				<button className="button button_filled" onClick={shareHandler} >Share</button>
+				{ queryLink && <Link to={`/${queryLink}`}>http://localhost:3000/{queryLink}</Link> }
 			</div>
 		</Modal>
     )

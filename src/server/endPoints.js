@@ -124,7 +124,13 @@ module.exports = function(app, passport, db) {
 		})
 	})
 	app.get('/api/getqueries', (req, res) => {
-		db.query('select query from query', (err, queries) => {
+		db.query('select query, name, description from query', (err, queries) => {
+			if (err) throw err
+			res.send(queries)
+		})
+	})
+	app.get('/api/getmyqueries', (req, res) => {
+		db.query(`select query, name, description from query where account_id=${req.session.passport.user}`, (err, queries) => {
 			if (err) throw err
 			res.send(queries)
 		})
@@ -170,11 +176,11 @@ module.exports = function(app, passport, db) {
 		})
 	})
 
-	app.get('/api/reset/:token', (req, res) => {
+	app.get('/reset/:token', (req, res) => {
 		db.query(`select id from accounts where reset_token = '${req.params.token}'`, (err, result) => {
 			if (err) throw err
 			if (result.length) {
-				res.redirect(`http://localhost:8080/reset/${req.params.token}`)
+				res.redirect(`http://localhost:3000/reset/${req.params.token}`)
 			} else {
 				res.send('Something went wrong')
 			}
@@ -195,7 +201,7 @@ module.exports = function(app, passport, db) {
 					if (err) throw err
 					res.send('Password changed!')
 				})
-			} else { res.send(400, 'Token expired!') }
+			} else { res.status(400).send('Token expired!') }
 		})
 	})
 

@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
-import ReactDOM from 'react-dom'
 import Modal from 'react-modal'
 import { login } from '../../api/api'
 import modalStore from '../../store/modalStore'
 import { observer } from 'mobx-react-lite'
+import { Link } from 'react-router-dom'
 
 const customStyles = {
 	overlay: {
@@ -64,8 +64,8 @@ const RegisterWindow = observer(({ getUser }) => {
 				<p className="p-modal">Password</p>
 				<input type="password" className="query__save" value={password} onChange={e => setPassword(e.target.value)} />  
 				<button className="button button_filled"onClick={logIn}>Login</button>
-				<a href="" >Forgot password?</a>
-				<a href="" >Do not have account?</a>
+				<Link to="/reset" >Forgot password?</Link>
+				<Link to="/register" >Do not have account?</Link>
 			</div>
 		</Modal>
     )

@@ -11,7 +11,8 @@ class Tabs {
 			switchTab: action,
 			removeTab: action,
 			addNewTab: action,
-			setCurrentTab: action
+			setCurrentTab: action,
+			renameCurrentTab: action
 		})
 	}
 	
@@ -26,9 +27,14 @@ class Tabs {
 	}
 	addNewTab = () => {
 		this.tabs.push(this.tabs[this.tabs.length-1]+1 || 1)
+		this.switchTab(this.tabs[this.tabs.length-1])
 	}
 	setCurrentTab = newCurrTab => {
 		this.currentTab = newCurrTab
+	}
+	renameCurrentTab = name => {
+		this.tabs[this.tabs.indexOf(this.currentTab)] = name
+		this.setCurrentTab(name)
 	}
 	
 }

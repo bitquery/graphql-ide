@@ -55,6 +55,9 @@
     transform: rotate(360deg);
   }
 }
+#switch {
+	display: none;
+}
 @mixin endpointURL {
 	font-size: 14px;
 	padding: 10px;
@@ -92,7 +95,7 @@
 	.gallery {
 		display: none;
 		position: relative;
-		flex: 1 0 10% ;
+		flex: 0 0 10% ;
 		overflow: auto;
 		background-color: #282a36;
 		border-right: 1px solid #353848 ;
@@ -101,8 +104,10 @@
 		}
 		&__queries {
 			text-align: left;
+			padding-top: 54px;
 		}
 		&__query {
+			position: relative;
 			word-break: break-all;
 			font-size: 12px;
 			border-bottom: 1px solid #a9a9a9;
@@ -114,7 +119,9 @@
 			}
 		}
 		&__header {
-			position: sticky;
+			position: fixed;
+			width: 10%;
+			z-index: 1;
 			background-color: #353848 ;
 			height: 54px;
 			justify-content: center;
@@ -124,11 +131,27 @@
 		&.active {
 			display: flex;
 		}
+		&__switch {
+			.myqueries, .allqueries {
+				width: 25px;
+				height: 25px;
+				background-color: #282a36;
+			}
+			#switch {
+				&:not(:checked) + label .myqueries {
+					background-color: #414457;
+				}
+				&:checked + label .allqueries {
+					background-color: #414457;
+				}
+			}
+		}
 	}
 }
 .graphiql__wrapper {
 	height: 100vh;
 	display: none;
+	flex: 1 1 auto;
 	&_active {
 		display: block;
 	}
@@ -250,7 +273,7 @@
 		position: absolute;
 		display: none;
 		top: 35px;
-		left: -10px;
+		right: 0;
 		&.active {
 			display: block;
 		}
@@ -288,4 +311,12 @@
 .modal {
 	display: flex;
 	flex-direction: column;
+	a {
+		padding-top: 10px;
+		color: #d7d7d7;
+		font-size: 16px;
+		&:hover {
+			color: #fff;
+		}
+	}
 }

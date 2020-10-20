@@ -28,6 +28,7 @@ connection.query(`
 		authenticated_by VARCHAR(20),
 		encrypted_credentials VARCHAR(100),
 		active BOOLEAN default false,
+		reset_token VARCHAR(128), 
 		updated_at TIMESTAMP,
 		created_at TIMESTAMP not null default CURRENT_TIMESTAMP
 )`)
