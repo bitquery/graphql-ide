@@ -4,6 +4,7 @@ import { login } from '../../api/api'
 import modalStore from '../../store/modalStore'
 import { observer } from 'mobx-react-lite'
 import { Link } from 'react-router-dom'
+import { UserStore } from '../../store/queriesStore'
 
 const customStyles = {
 	overlay: {
@@ -37,7 +38,8 @@ const customStyles = {
 }
 Modal.setAppElement('#root')
 
-const RegisterWindow = observer(({ getUser }) => {
+const RegisterWindow = observer(() => {
+	const { getUser } = UserStore
 	const { registerIsOpen, toggleRegister } = modalStore
 	const [email, setEmail] = useState('')
 	const [password, setPassword] = useState('')

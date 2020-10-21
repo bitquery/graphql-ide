@@ -2,11 +2,11 @@ import React from 'react'
 import TabsComponent from './TabsComponent'
 import ProfileComponent from './ProfileComponent'
 
-function ControlPanel({ user, setUser }) {
+function ControlPanel() {
 	return (
 		<div className="controlpanel">
 			<TabsComponent />
-			<ProfileComponent user={user} setUser={setUser}  />
+			<ProfileComponent />
 		</div>
 	)
 }

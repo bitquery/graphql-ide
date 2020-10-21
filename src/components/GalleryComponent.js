@@ -1,15 +1,15 @@
 import axios from 'axios'
 import { observer } from 'mobx-react-lite'
 import React, { useEffect, useState } from 'react'
-import QueriesStore from '../store/queriesStore'
+import QueriesStore, { UserStore } from '../store/queriesStore'
 import QueriesComponent from './QueriesComponent'
 
-const GalleryComponent = observer(({ user }) => {
+const GalleryComponent = observer(() => {
 	const [allQueries, setAllQueries] = useState([])
 	const [myQueries, setMyQueries] = useState([])
 	const [showAllQueries, toggleQueries] = useState(true)
 	const { showGallery } = QueriesStore
-	
+	const { user } = UserStore
 
 	useEffect(() => {
 		const getQueries = async () => {

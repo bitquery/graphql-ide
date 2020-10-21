@@ -1,21 +1,63 @@
 import { makeObservable, observable, action } from "mobx"
 import axios from 'axios'
+import { getUser } from "../api/api"
+
+class User {
+	user = null
+
+	constructor() {
+		makeObservable(this, {
+			user: observable,
+			getUser: action,
+			setUser: action
+		})
+	}
+
+	setUser = user => {
+		this.user = user
+	}
+
+	getUser = async () => {
+		try {
+			const { data } = await getUser()
+			this.setUser(data.user[0])
+		} catch (error) {
+			console.log(error.response.data)
+		}
+	}
+}
 
 class Queries {
+	currentVariables = ''
 	showGallery = true
 	currentQuery = ''
-	currentVariables = ''
+	queryParams = {
+		account_id: UserStore.user && UserStore.user.id || null,
+		query: this.currentQuery,
+		arguments: this.currentVariables
+	}
 	
 	constructor() {
 		makeObservable(this, {
-			showGallery: observable,
-			currentQuery: observable,
 			currentVariables: observable,
+			currentQuery: observable,
+			showGallery: observable,
+			queryParams: observable,
 			setCurrentVariables: action,
 			setCurrentQuery: action,
+			setQueryParams: action,
 			toggleGallery: action,
 			saveQuery: action
 		})
+	}
+
+	setQueryParams = (name, description, url) => {
+		this.queryParams = {
+			...this.params,
+			name: name || null,
+			description: description || null,
+			url: url || null
+		}
 	}
 
 	toggleGallery = () => {
@@ -38,4 +80,5 @@ class Queries {
 
 }
 
+export let UserStore = new User()
 export default new Queries()

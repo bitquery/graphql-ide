@@ -4,12 +4,13 @@ import GraphiQL from 'graphiql'
 import modalStore from '../store/modalStore';
 import tabsStore from '../store/tabsStore';
 import { observer } from 'mobx-react-lite';
-import QueriesStore from '../store/queriesStore'
+import QueriesStore, { UserStore } from '../store/queriesStore'
 
-export const CustomGraphiql = observer(({ user }) => {
+export const CustomGraphiql = observer(() => {
 	const { toggleSaveQuery, toggleShareQuery } = modalStore
 	const { tabs, currentTab } = tabsStore
 	const { toggleGallery, setCurrentQuery, setCurrentVariables } = QueriesStore
+	const { user } = UserStore
 	const graphiql = useRef(null)
 	const [fetchURL, setFetchURL] = useState('https://graphql.bitquery.io')
 

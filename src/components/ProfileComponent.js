@@ -1,11 +1,13 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import profileImg from '../assets/images/user.svg'
 import { logout } from '../api/api'
 import { observer } from 'mobx-react-lite'
 import ModalStore from '../store/modalStore'
 import { Link } from 'react-router-dom'
+import { UserStore } from '../store/queriesStore'
 
-const Profile = observer(({ user, setUser }) => {
+const Profile = observer(() => {
+	const { getUser, user, setUser } = UserStore
 	const { toggleRegister } = ModalStore
 	const [showProfileMenu, setShowProfileMenu] = useState(false)
 	const toggleProfileMenu = () => user && setShowProfileMenu(prev => !prev)
@@ -14,6 +16,9 @@ const Profile = observer(({ user, setUser }) => {
 		setUser(null)
 		setShowProfileMenu(prev => !prev)
 	}
+	useEffect(() => {
+		getUser()
+	}, [])
 
 	if (!user) return (
 		<button className="button button__signin"

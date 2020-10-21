@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import Modal from 'react-modal'
 import { Link } from 'react-router-dom'
 import modalStore from '../../store/modalStore'
-import queriesStore from '../../store/queriesStore'
+import queriesStore, { UserStore } from '../../store/queriesStore'
 import tabsStore from '../../store/tabsStore'
 import { generateLink } from '../../utils/common'
 import copy from 'copy-to-clipboard'
@@ -43,7 +43,7 @@ const customStyles = {
 }
 Modal.setAppElement('#root')
 
-const SaveQueryWindow = observer(({ user }) => {
+const SaveQueryWindow = observer(() => {
 	const { addToast } = useToasts()
 	const [name, setName] = useState('')
 	const [description, setDescription] = useState('')
@@ -51,6 +51,7 @@ const SaveQueryWindow = observer(({ user }) => {
 	const { saveQueryIsOpen, shareQueryIsOpen, toggleSaveQuery, toggleShareQuery } = modalStore
 	const { currentQuery, saveQuery, currentVariables } = queriesStore
 	const { renameCurrentTab } = tabsStore
+	const { user } = UserStore
 	const [params, setParams] = useState({})
 
 	useEffect(() => {
@@ -90,7 +91,7 @@ const SaveQueryWindow = observer(({ user }) => {
 				style={customStyles}
 				contentLabel="Example Modal"
 			>
-				<SaveQueryForm user={user} />
+				<SaveQueryForm />
 			</Modal>
 			<Modal
 				isOpen={shareQueryIsOpen}
