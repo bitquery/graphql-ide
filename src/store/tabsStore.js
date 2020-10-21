@@ -26,7 +26,7 @@ class Tabs {
 		this.currentTab = this.tabs[this.tabs.length-1] || this.tabs[0] || 1
 	}
 	addNewTab = () => {
-		this.tabs.push(this.tabs[this.tabs.length-1]+1 || 1)
+		this.tabs.push(+this.tabs[this.tabs.length-1]+1 || 1)
 		this.switchTab(this.tabs[this.tabs.length-1])
 	}
 	setCurrentTab = newCurrTab => {

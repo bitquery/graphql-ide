@@ -7,7 +7,7 @@ import { observer } from 'mobx-react-lite';
 import QueriesStore from '../store/queriesStore'
 
 export const CustomGraphiql = observer(({ user }) => {
-	const { toggleSaveQuery } = modalStore
+	const { toggleSaveQuery, toggleShareQuery } = modalStore
 	const { tabs, currentTab } = tabsStore
 	const { toggleGallery, setCurrentQuery, setCurrentVariables } = QueriesStore
 	const graphiql = useRef(null)
@@ -16,7 +16,7 @@ export const CustomGraphiql = observer(({ user }) => {
 	const handleClickPrettifyButton = () => {
 		const editor = graphiql.current.getQueryEditor();
 		const currentText = editor.getValue();
-		const { parse, print } = require('graphql');
+		const { parse, print, graphql } = require('graphql');
 		const prettyText = print(parse(currentText));
 		editor.setValue(prettyText);
 	}
@@ -70,14 +70,14 @@ export const CustomGraphiql = observer(({ user }) => {
 							title="Copy Query"
 						/>
 						<GraphiQL.Button 
-							onClick={toggleGallery}
-							label="Gallery"
-							title="Gallery Toggle"
-						/>
-						<GraphiQL.Button 
 							onClick={handleClickPrettifyButton}
 							label="Prettify"
 							title="Prettify Query (Shift-Ctrl-P)"
+						/>
+						<GraphiQL.Button 
+							onClick={toggleGallery}
+							label="Gallery"
+							title="Gallery Toggle"
 						/>
 						{ user && <GraphiQL.Button 
 							onClick={toggleSaveQuery}
@@ -85,7 +85,7 @@ export const CustomGraphiql = observer(({ user }) => {
 							title="Save Query"
 						/> }
 						{ user && <GraphiQL.Button 
-							onClick={shareQuery}
+							onClick={toggleShareQuery}
 							label="Share"
 							title="Share Query"
 						/> }

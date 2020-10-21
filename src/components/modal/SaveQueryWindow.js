@@ -1,11 +1,15 @@
 import { observer } from 'mobx-react-lite'
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import Modal from 'react-modal'
 import { Link } from 'react-router-dom'
 import modalStore from '../../store/modalStore'
 import queriesStore from '../../store/queriesStore'
 import tabsStore from '../../store/tabsStore'
 import { generateLink } from '../../utils/common'
+import copy from 'copy-to-clipboard'
+import { useToasts } from 'react-toast-notifications'
+import SaveQueryForm from '../SaveQueryForm'
+import ShareQueryForm from '../ShareQueryForm'
 
 const customStyles = {
 	overlay: {
@@ -40,61 +44,63 @@ const customStyles = {
 Modal.setAppElement('#root')
 
 const SaveQueryWindow = observer(({ user }) => {
-	const [queryLink, setQueryLink] = useState('')
+	const { addToast } = useToasts()
 	const [name, setName] = useState('')
 	const [description, setDescription] = useState('')
-	const { saveQueryIsOpen, toggleSaveQuery } = modalStore
+	const [queryLink, setQueryLink] = useState('')
+	const { saveQueryIsOpen, shareQueryIsOpen, toggleSaveQuery, toggleShareQuery } = modalStore
 	const { currentQuery, saveQuery, currentVariables } = queriesStore
 	const { renameCurrentTab } = tabsStore
+	const [params, setParams] = useState({})
 
-	const params = () => {
-		let params = {
-			account_id: user.id,
-			query: currentQuery,
-			arguments: currentVariables,
-			name: name,
-			description: description || null,
+	useEffect(() => {
+		user &&
+			setParams({
+				account_id: user.id,
+				query: currentQuery,
+				arguments: currentVariables,
+				name: name,
+				description: description || null
+			})
+	}, [user, name, description, currentVariables, currentQuery])
+	useEffect(() => {
+		if(user) {
+			setParams({...params, url: queryLink})
+			copy(`http://localhost:3000/${queryLink}`)
 		}
-		return {
-			value: () => params,
-			withLink: () => {
-				params.url = generateLink()
-				setQueryLink(params.url)
-				return params
-			}
-		}
-	}
-	const saveHandler = () => {
-		saveQuery(params().value())
-		toggleSaveQuery()
-		renameCurrentTab(name)
-	}
-	const shareHandler = () => {
-		saveQuery(params().withLink())
-		renameCurrentTab(name)
+	}, [queryLink])
+	useEffect(() => {
+		user && saveQuery(params)
+	}, [params.url])
+
+	function shareHandler() {
+		if (name) {
+			setQueryLink(generateLink())
+			toggleSaveQuery()
+			renameCurrentTab(name)
+			addToast('Query link copied to clipboard', {appearance: 'success'})
+		} else { addToast('Name is required', {appearance: 'error'}) }
 	}
 
     return (
-		<Modal
-			isOpen={saveQueryIsOpen}
-			onRequestClose={toggleSaveQuery}
-			style={customStyles}
-			contentLabel="Example Modal"
-		>
-			<div className="modal modal__signup">
-				<p className="p-modal">Query name (required)</p>
-				<input type="text" className="query__save"  
-					value={name} onChange={e => setName(e.target.value)}
-				/>  
-				<p className="p-modal">Description (optional)</p>
-				<input type="text" className="query__save" 
-					value={description} onChange={e => setDescription(e.target.value)}
-				/>  
-				<button className="button button_filled" onClick={saveHandler} >Save</button>
-				<button className="button button_filled" onClick={shareHandler} >Share</button>
-				{ queryLink && <Link to={`/${queryLink}`}>http://localhost:3000/{queryLink}</Link> }
-			</div>
-		</Modal>
+		<>
+			<Modal
+				isOpen={saveQueryIsOpen}
+				onRequestClose={toggleSaveQuery}
+				style={customStyles}
+				contentLabel="Example Modal"
+			>
+				<SaveQueryForm user={user} />
+			</Modal>
+			<Modal
+				isOpen={shareQueryIsOpen}
+				onRequestClose={toggleShareQuery}
+				style={customStyles}
+				contentLabel="Example Modal"
+			>
+				<ShareQueryForm user={user} />
+			</Modal>
+		</>
     )
 })
 
