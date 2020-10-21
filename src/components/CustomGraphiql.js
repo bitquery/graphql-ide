@@ -21,10 +21,7 @@ export const CustomGraphiql = observer(() => {
 		const prettyText = print(parse(currentText));
 		editor.setValue(prettyText);
 	}
-	const shareQuery = () => {
-		toggleSaveQuery()
-		console.log('sharim query')
-	}
+
 	const copyQuery = () => {
 		console.log('copim query')
 	}

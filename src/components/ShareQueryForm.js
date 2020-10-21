@@ -6,42 +6,30 @@ import tabsStore from '../store/tabsStore'
 import copy from 'copy-to-clipboard'
 import { generateLink } from '../utils/common'
 
-function ShareQueryForm({ user }) {
+function ShareQueryForm() {
 	const { addToast } = useToasts()
 	const [name, setName] = useState('')
 	const [queryLink, setQueryLink] = useState('')
 	const [description, setDescription] = useState('')
-	const { currentQuery, saveQuery, currentVariables } = queriesStore
-	const { toggleSaveQuery } = modalStore
+	const { saveQuery, queryParams } = queriesStore
+	const { toggleShareQuery } = modalStore
 	const { renameCurrentTab } = tabsStore
-	const [params, setParams] = useState({})
 
 	useEffect(() => {
-		user &&
-			setParams({
-				account_id: user.id,
-				query: currentQuery,
-				arguments: currentVariables,
-				name: name,
-				description: description || null
-			})
-	}, [user, name, description, currentVariables, currentQuery])
-	useEffect(() => {
-		if(user) {
-			setParams({...params, url: queryLink})
-			copy(`http://localhost:3000/${queryLink}`)
-		}
+		copy(`http://localhost:3000/${queryLink}`)
 	}, [queryLink])
-	useEffect(() => {
-		user && params.url && saveQuery(params)
-	}, [params.url])
-	function shareHandler(e) {
+
+	const shareHandler = (e) => {
 		e.preventDefault()
+		let params = queryParams
 		if (name) {
-			setQueryLink(generateLink())
-			toggleSaveQuery()
+			params.name = name
+			if(description) params.description = description
+			params.url = generateLink()
+			setQueryLink(params.url)
+			saveQuery(params)
 			renameCurrentTab(name)
-			addToast('Query link copied to clipboard', {appearance: 'success'})
+			toggleShareQuery()
 		} else { addToast('Name is required', {appearance: 'error'}) }
 	}
 

@@ -1,13 +1,7 @@
 import { observer } from 'mobx-react-lite'
-import React, { useEffect, useRef, useState } from 'react'
+import React from 'react'
 import Modal from 'react-modal'
-import { Link } from 'react-router-dom'
 import modalStore from '../../store/modalStore'
-import queriesStore, { UserStore } from '../../store/queriesStore'
-import tabsStore from '../../store/tabsStore'
-import { generateLink } from '../../utils/common'
-import copy from 'copy-to-clipboard'
-import { useToasts } from 'react-toast-notifications'
 import SaveQueryForm from '../SaveQueryForm'
 import ShareQueryForm from '../ShareQueryForm'
 
@@ -44,44 +38,7 @@ const customStyles = {
 Modal.setAppElement('#root')
 
 const SaveQueryWindow = observer(() => {
-	const { addToast } = useToasts()
-	const [name, setName] = useState('')
-	const [description, setDescription] = useState('')
-	const [queryLink, setQueryLink] = useState('')
 	const { saveQueryIsOpen, shareQueryIsOpen, toggleSaveQuery, toggleShareQuery } = modalStore
-	const { currentQuery, saveQuery, currentVariables } = queriesStore
-	const { renameCurrentTab } = tabsStore
-	const { user } = UserStore
-	const [params, setParams] = useState({})
-
-	useEffect(() => {
-		user &&
-			setParams({
-				account_id: user.id,
-				query: currentQuery,
-				arguments: currentVariables,
-				name: name,
-				description: description || null
-			})
-	}, [user, name, description, currentVariables, currentQuery])
-	useEffect(() => {
-		if(user) {
-			setParams({...params, url: queryLink})
-			copy(`http://localhost:3000/${queryLink}`)
-		}
-	}, [queryLink])
-	useEffect(() => {
-		user && saveQuery(params)
-	}, [params.url])
-
-	function shareHandler() {
-		if (name) {
-			setQueryLink(generateLink())
-			toggleSaveQuery()
-			renameCurrentTab(name)
-			addToast('Query link copied to clipboard', {appearance: 'success'})
-		} else { addToast('Name is required', {appearance: 'error'}) }
-	}
 
     return (
 		<>
@@ -99,7 +56,7 @@ const SaveQueryWindow = observer(() => {
 				style={customStyles}
 				contentLabel="Example Modal"
 			>
-				<ShareQueryForm user={user} />
+				<ShareQueryForm />
 			</Modal>
 		</>
     )

@@ -1,35 +1,26 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { useToasts } from 'react-toast-notifications'
 import modalStore from '../store/modalStore'
-import queriesStore, { UserStore } from '../store/queriesStore'
+import queriesStore from '../store/queriesStore'
 import tabsStore from '../store/tabsStore'
 
 function SaveQueryForm() {
 	const { addToast } = useToasts()
 	const [name, setName] = useState('')
 	const [description, setDescription] = useState('')
-	const { currentQuery, saveQuery, currentVariables } = queriesStore
+	const { saveQuery, queryParams } = queriesStore
 	const { toggleSaveQuery } = modalStore
 	const { renameCurrentTab } = tabsStore
-	const { user } = UserStore
-	const [params, setParams] = useState({})
 
-	useEffect(() => {
-		user &&
-			setParams({
-				account_id: user.id,
-				query: currentQuery,
-				arguments: currentVariables,
-				name: name,
-				description: description || null,
-				url: null
-			})
-	}, [user, name, description, currentVariables, currentQuery])
-	const saveHandler = () => {
+	const saveHandler = (e) => {
+		e.preventDefault()
+		let params = queryParams
 		if (name) {
+			params.name = name
+			if (description) params.description = description
 			saveQuery(params)
-			toggleSaveQuery()
 			renameCurrentTab(name)
+			toggleSaveQuery()
 		} else { addToast('Name is required', {appearance: 'error'}) }
 	}
 
