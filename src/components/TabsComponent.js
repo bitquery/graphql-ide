@@ -14,8 +14,7 @@ const TabsComponent = observer(() => {
 		async function updateTabs() {
 			if (query) {
 				const { data } = await getQuery(query)
-				addNewTab()
-				renameCurrentTab(data.name)
+				addNewTab(data.name)
 				setCurrentQuery(data.query)
 			}
 		}
@@ -28,10 +27,10 @@ const TabsComponent = observer(() => {
 				{
 					tabs.map((tab, i) => (
 						<li 
-							className={(currentTab === tab ? 'active' : '')} key={i}
-							onClick={() => switchTab(tab)}
+							className={(currentTab === tab.id ? 'active' : '')} key={i}
+							onClick={() => switchTab(tab.id)}
 						>
-							{ tab }
+							{ tab.name }
 							<span 
 								className="tab__close"
 								onClick={(e) => removeTab(i, e)}
@@ -41,7 +40,7 @@ const TabsComponent = observer(() => {
 				}
 				<li 
 					className="tabs__add"
-					onClick={addNewTab}
+					onClick={() => addNewTab(null)}
 				><span className="tab__add" /></li>
 			</ul>
 		</div>

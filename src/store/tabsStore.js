@@ -1,42 +1,53 @@
 import { makeObservable, observable, action } from "mobx"
 
 class Tabs {
-	tabs = [1]
-	currentTab = 1
+	id = 0
+	tabs = [
+		{
+			name: 'New Tab',
+			id: this.id
+		}
+	]
+	currentTab = 0
 
 	constructor() {
 		makeObservable(this, {
 			tabs: observable,
+			id: observable,
 			currentTab: observable,
 			switchTab: action,
+			incID: action,
 			removeTab: action,
 			addNewTab: action,
-			setCurrentTab: action,
 			renameCurrentTab: action
 		})
 	}
-	
-	switchTab = tab => {
-		this.currentTab = tab
+
+	incID = () => {
+		this.id = this.id + 1
+	}
+	switchTab = tabID => {
+		this.currentTab = tabID
+	}
+	renameCurrentTab = name => {
+		this.tabs[this.currentTab].name = name
+	}
+	addNewTab = name => {
+		this.incID()
+		this.tabs.push({
+			name: name || 'New Tab',
+			id: this.id
+		})
+		this.switchTab(this.id)
 	}
 	removeTab = (index, event) => {
 		event.stopPropagation()
 		this.tabs.splice(index, 1)
-		this.tabs.length === 0 && this.addNewTab()
-		this.currentTab = this.tabs[this.tabs.length-1] || this.tabs[0] || 1
+		this.tabs.length === 0 
+			? this.addNewTab() 
+			: this.switchTab(this.tabs[this.tabs.length-1].id)
 	}
-	addNewTab = () => {
-		this.tabs.push(+this.tabs[this.tabs.length-1]+1 || 1)
-		this.switchTab(this.tabs[this.tabs.length-1])
-	}
-	setCurrentTab = newCurrTab => {
-		this.currentTab = newCurrTab
-	}
-	renameCurrentTab = name => {
-		this.tabs[this.tabs.indexOf(this.currentTab)] = name
-		this.setCurrentTab(name)
-	}
-	
+
 }
 
 export default new Tabs()

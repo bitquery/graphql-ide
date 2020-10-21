@@ -31,17 +31,20 @@ class Queries {
 	currentVariables = ''
 	showGallery = true
 	currentQuery = ''
+	query = ''
 	
 	constructor() {
 		makeObservable(this, {
 			currentVariables: observable,
 			currentQuery: observable,
 			showGallery: observable,
+			query: observable,
 			queryParams: computed,
 			setCurrentVariables: action,
 			setCurrentQuery: action,
 			toggleGallery: action,
-			saveQuery: action
+			saveQuery: action,
+			setQuery: action
 		})
 	}
 	get queryParams() {
@@ -50,6 +53,10 @@ class Queries {
 			query: this.currentQuery,
 			arguments: this.currentVariables
 		}
+	}
+
+	setQuery = query => {
+		this.query = query
 	}
 
 	toggleGallery = () => {

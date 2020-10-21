@@ -9,10 +9,11 @@ import QueriesStore, { UserStore } from '../store/queriesStore'
 export const CustomGraphiql = observer(() => {
 	const { toggleSaveQuery, toggleShareQuery } = modalStore
 	const { tabs, currentTab } = tabsStore
-	const { toggleGallery, setCurrentQuery, setCurrentVariables } = QueriesStore
+	const { toggleGallery, setCurrentQuery, setCurrentVariables, query } = QueriesStore
 	const { user } = UserStore
 	const graphiql = useRef(null)
 	const [fetchURL, setFetchURL] = useState('https://graphql.bitquery.io')
+	// const [query, setQuery] = useState('')
 
 	const handleClickPrettifyButton = () => {
 		const editor = graphiql.current.getQueryEditor();
@@ -50,7 +51,7 @@ export const CustomGraphiql = observer(() => {
 	return (
 		tabs.map((tab, i) => (
 			<div 
-				className={'graphiql__wrapper ' + (currentTab === tab ? 'graphiql__wrapper_active' : '')}
+				className={'graphiql__wrapper ' + (currentTab === tab.id ? 'graphiql__wrapper_active' : '')}
 				key={i}
 			>
 				<GraphiQL 
