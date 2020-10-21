@@ -9,11 +9,10 @@ import QueriesStore, { UserStore } from '../store/queriesStore'
 export const CustomGraphiql = observer(() => {
 	const { toggleSaveQuery, toggleShareQuery } = modalStore
 	const { tabs, currentTab } = tabsStore
-	const { toggleGallery, setCurrentQuery, setCurrentVariables, query } = QueriesStore
+	const { toggleGallery, setCurrentQuery, setCurrentVariables, query, setQuery, updateQuery } = QueriesStore
 	const { user } = UserStore
 	const graphiql = useRef(null)
 	const [fetchURL, setFetchURL] = useState('https://graphql.bitquery.io')
-	// const [query, setQuery] = useState('')
 
 	const handleClickPrettifyButton = () => {
 		const editor = graphiql.current.getQueryEditor();
@@ -46,7 +45,13 @@ export const CustomGraphiql = observer(() => {
 	useEffect(() => {
 		setCurrentQuery(localStorage.getItem('graphiql:query'))
 		setCurrentVariables(localStorage.getItem('graphiql:variables'))
+		setQuery(localStorage.getItem('graphiql:query'))
 	}, [])
+	const editQueryHandler = (query, index) => {
+		setCurrentQuery(query)
+		updateQuery(query, index)
+	}
+	
 
 	return (
 		tabs.map((tab, i) => (
@@ -58,8 +63,9 @@ export const CustomGraphiql = observer(() => {
 					ref={graphiql}
 					style={{ height: '100vh' }}
 					fetcher={fetcher}
+					query={query[i]}
 					editorTheme="dracula"
-					onEditQuery={query => setCurrentQuery(query)}
+					onEditQuery={query => editQueryHandler(query, i)}
 					onEditVariables={variables => setCurrentVariables(variables)}
 				>
 					<GraphiQL.Toolbar>

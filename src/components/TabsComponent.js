@@ -8,18 +8,27 @@ import tabsStore from '../store/tabsStore'
 const TabsComponent = observer(() => {
 	const { tabs, currentTab, switchTab, removeTab, addNewTab, renameCurrentTab } = tabsStore
 	const { query } = useParams()
-	const { setCurrentQuery } = queriesStore
+	const { setCurrentQuery, setQuery, removeQuery } = queriesStore
 
 	useEffect(() => {
 		async function updateTabs() {
 			if (query) {
 				const { data } = await getQuery(query)
+				setQuery(data.query)
 				addNewTab(data.name)
 				setCurrentQuery(data.query)
 			}
 		}
 		updateTabs()
 	}, [])
+	const addNewTabHandler = () => {
+		addNewTab('New Tab')
+		setQuery('{}')
+	}
+	const removeTabHandler = (index, event) => {
+		removeQuery(index)
+		removeTab(index, event)
+	}
 
 	return (
 		<div className="tabs">
@@ -33,14 +42,14 @@ const TabsComponent = observer(() => {
 							{ tab.name }
 							<span 
 								className="tab__close"
-								onClick={(e) => removeTab(i, e)}
+								onClick={(e) => removeTabHandler(i, e)}
 							/> 
 						</li>
 					))
 				}
 				<li 
 					className="tabs__add"
-					onClick={() => addNewTab(null)}
+					onClick={addNewTabHandler}
 				><span className="tab__add" /></li>
 			</ul>
 		</div>

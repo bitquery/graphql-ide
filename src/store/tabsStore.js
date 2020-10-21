@@ -30,12 +30,13 @@ class Tabs {
 		this.currentTab = tabID
 	}
 	renameCurrentTab = name => {
-		this.tabs[this.currentTab].name = name
+		let id = this.tabs.map((tab, i) => tab.id).indexOf(this.currentTab)
+		this.tabs[id].name = name
 	}
 	addNewTab = name => {
 		this.incID()
 		this.tabs.push({
-			name: name || 'New Tab',
+			name: name,
 			id: this.id
 		})
 		this.switchTab(this.id)

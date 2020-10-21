@@ -31,7 +31,7 @@ class Queries {
 	currentVariables = ''
 	showGallery = true
 	currentQuery = ''
-	query = ''
+	query = []
 	
 	constructor() {
 		makeObservable(this, {
@@ -43,6 +43,8 @@ class Queries {
 			setCurrentVariables: action,
 			setCurrentQuery: action,
 			toggleGallery: action,
+			updateQuery: action,
+			removeQuery: action,
 			saveQuery: action,
 			setQuery: action
 		})
@@ -56,9 +58,14 @@ class Queries {
 	}
 
 	setQuery = query => {
-		this.query = query
+		this.query.push(query)
 	}
-
+	updateQuery = (query, index) => {
+		this.query.splice(index, 1, query)
+	}
+	removeQuery = index => {
+		this.query.splice(index, 1)
+	}
 	toggleGallery = () => {
 		this.showGallery = !this.showGallery
 	}
