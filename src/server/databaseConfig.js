@@ -6,7 +6,8 @@ module.exports = {
         port: 3307
     },
     'database': 'bitquery',
-    'query_table': 'query',
+    'queries_table': 'queries',
+    'query_logs_table': 'query_logs',
     'users_table': 'accounts',
-    'activation_table': 'activation'
+    'activations_table': 'activations'
 };

@@ -30,7 +30,10 @@ class User {
 class Queries {
 	currentVariables = ''
 	showGallery = true
-	currentQuery = ''
+	currentQuery = {
+		query: '',
+		id: null
+	}
 	query = []
 	
 	constructor() {
@@ -51,8 +54,9 @@ class Queries {
 	}
 	get queryParams() {
 		return {
+			id: this.currentQuery.id,
 			account_id: UserStore.user && UserStore.user.id || null,
-			query: this.currentQuery,
+			query: this.currentQuery.query,
 			arguments: this.currentVariables
 		}
 	}
@@ -69,8 +73,9 @@ class Queries {
 	toggleGallery = () => {
 		this.showGallery = !this.showGallery
 	}
-	setCurrentQuery = query => {
-		this.currentQuery = query
+	setCurrentQuery = (query, id) => {
+		this.currentQuery.query = query
+		id ? this.currentQuery.id = id : this.currentQuery.id = null
 	}
 	setCurrentVariables = variables => {
 		this.currentVariables = variables
@@ -78,6 +83,16 @@ class Queries {
 	saveQuery = async params => {
 		try {
 			const { data } = await axios.post('/api/addquery', { 
+				params
+			})
+			console.log(data)
+		} catch (e) {
+			console.log(e)
+		}
+	}
+	logQuery = async params => {
+		try {
+			const { data } = await axios.post('/api/addquerylog', { 
 				params
 			})
 			console.log(data)

@@ -6,7 +6,7 @@ let connection = mysql.createConnection(dbconfig.connection);
 connection.query('CREATE DATABASE ' + dbconfig.database);
 
 connection.query(`
-	CREATE TABLE ${dbconfig.database}.${dbconfig.query_table} (
+	CREATE TABLE ${dbconfig.database}.${dbconfig.queries_table} (
 		id INT(10) not null auto_increment primary key,
 		account_id INT(10) not null,
 		query LONGTEXT not null,
@@ -16,9 +16,6 @@ connection.query(`
 		description LONGTEXT,
 		share VARCHAR(64),
 		published BOOLEAN,
-		success_count INT(10) not null,
-		error_count INT(10) not null,
-		last_called TIMESTAMP,
 		created_at TIMESTAMP not null default CURRENT_TIMESTAMP
 )`)
 connection.query(`
@@ -33,7 +30,16 @@ connection.query(`
 		created_at TIMESTAMP not null default CURRENT_TIMESTAMP
 )`)
 connection.query(`
-	create table ${dbconfig.database}.${dbconfig.activation_table} (
+	create table ${dbconfig.database}.${dbconfig.query_logs_table} (
+		id INT(10) not null,
+		account_id INT(10),
+		success BOOLEAN not null DEFAULT 0,
+		error BOOLEAN not null DEFAULT 0,
+		called_at TIMESTAMP not null default CURRENT_TIMESTAMP
+	)
+`)
+connection.query(`
+	create table ${dbconfig.database}.${dbconfig.activations_table} (
 		user_id INT(10) not null,
 		code VARCHAR(128) not null
 	)

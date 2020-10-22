@@ -9,7 +9,10 @@ import QueriesStore, { UserStore } from '../store/queriesStore'
 export const CustomGraphiql = observer(() => {
 	const { toggleSaveQuery, toggleShareQuery } = modalStore
 	const { tabs, currentTab } = tabsStore
-	const { toggleGallery, setCurrentQuery, setCurrentVariables, query, setQuery, updateQuery } = QueriesStore
+	const { toggleGallery, setCurrentQuery, 
+		setCurrentVariables, query, 
+		setQuery, updateQuery, 
+		saveQuery, queryParams, logQuery } = QueriesStore
 	const { user } = UserStore
 	const graphiql = useRef(null)
 	const [fetchURL, setFetchURL] = useState('https://graphql.bitquery.io')
@@ -21,12 +24,15 @@ export const CustomGraphiql = observer(() => {
 		const prettyText = print(parse(currentText));
 		editor.setValue(prettyText);
 	}
-
-	const copyQuery = () => {
-		console.log('copim query')
+	const handleQuery = result => {
+		//addQueryToDatabase
+		(queryParams.id === null) && saveQuery(queryParams)
+		//addQueryLog
+		let params = {...queryParams}
+		params[result] = true
+		logQuery(params)
 	}
-	const fetcher = useMemo(() => {
-		return async graphQLParams => {
+	const fetcher = async graphQLParams => {
 			const data = await fetch(
 				fetchURL,
 				{
@@ -39,9 +45,19 @@ export const CustomGraphiql = observer(() => {
 					credentials: 'same-origin',
 				},
 			)
+			data.clone().json().then(json => {
+				if ('data' in json) {
+					if (!('__schema' in json.data)) {
+						handleQuery('success')
+						console.log('respone', json.data)
+					}
+				} else if ('errors' in json) {
+					handleQuery('error')
+					console.log('error', json.errors)
+				}
+			})
 			return data.json().catch(() => data.text())
-		}
-	}, [])
+	}
 	useEffect(() => {
 		setCurrentQuery(localStorage.getItem('graphiql:query'))
 		setCurrentVariables(localStorage.getItem('graphiql:variables'))
@@ -70,7 +86,7 @@ export const CustomGraphiql = observer(() => {
 				>
 					<GraphiQL.Toolbar>
 						<GraphiQL.Button 
-							onClick={copyQuery}
+							onClick={() => {}}
 							label="Copy"
 							title="Copy Query"
 						/>

@@ -59,7 +59,6 @@ module.exports = function(app, passport, db) {
 				})
 				let message = {
 					from : 'fedorenki@gmail.com',
-					// from : 'hello@bitquery.io',
 					to: user[0].email,
 					subject: 'Account activation',
 					text: 'Plaintext version of the message',
@@ -76,23 +75,42 @@ module.exports = function(app, passport, db) {
 	})
 
 	app.post('/api/addquery', (req, res) => {
-		let value = req.body.params
-		sql = `select id from query where id=(select id from query where account_id=${value.account_id} order by id desc limit 0,1) and name is null and description is null`
-		db.query(sql, (err, result) => {
-			if (err) throw err
-			if (!result.length) {
-				addQuery(value)
-				res.end('saved in new row')
-			} else {
-				sql = `update query set name = ?, description = ?, account_id=? where id=${result[0][Object.keys(result[0])[0]]}`
-				db.query(sql, [value.name || null, value.description || 'request', value.account_id], (err, result) => {
-					if (err) throw err
-					res.end('saved last edited row')
-				})
-			}
-		})
+		addQuery(req.body.params)
 		res.send('Query successfully saved!')
 	})
+
+	app.post('/api/addquerylog', (req, response) => {
+		let value = req.body.params
+		let id = null
+		if (!value.id) {
+			db.query(`select id from query order by id desc limit 1`, (err, res) => {
+				if (err) throw err
+				id = res[0].id
+				db.query(`INSERT INTO query_logs SET ?`, {
+					id: id,
+					account_id: value.account_id,
+					success: value.success || 0,
+					error: value.error || 0
+				}, (err, res) => {
+					if (err) throw err
+					console.log(res)
+					response.send('Query logged')
+				})
+			})
+		} else  {
+			db.query(`INSERT INTO query_logs SET ?`, {
+				id: value.id,
+				account_id: value.account_id,
+				success: value.success || 0,
+				error: value.error || 0
+			}, (err, res) => {
+				if (err) throw err
+				console.log(res)
+				response.send('Query logged')
+			})
+		}
+		
+	}) 
 
 	app.get('/api/logout', (req, res) => {
 		req.logout()
@@ -124,7 +142,7 @@ module.exports = function(app, passport, db) {
 		})
 	})
 	app.get('/api/getqueries', (req, res) => {
-		db.query('select query, name, description from query', (err, queries) => {
+		db.query('select id, query, name, description from query', (err, queries) => {
 			if (err) throw err
 			res.send(queries)
 		})
