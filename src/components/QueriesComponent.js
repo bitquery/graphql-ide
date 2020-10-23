@@ -19,7 +19,7 @@ function QueriesComponent ({ queries }) {
 					onMouseLeave={() => setHoverElementIndex(-1)}
 					onClick={() => handleClick(query.name, query.query, query.id)}
 				> 
-					{`${query.name}${query.query}`} 
+					{query.name} <br /> {query.query}
 				</p>
 				{ 
 					showDescription(hoverElementIndex, index) && 

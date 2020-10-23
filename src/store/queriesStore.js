@@ -79,7 +79,10 @@ class Queries {
 		})
 	}
 	removeQuery = index => {
-		this.query.splice(index, 1)
+		this.query.length!==1 ? this.query.splice(index, 1) : this.query.splice(index, 1, {
+			query: '{}',
+			id: null
+		})
 	}
 	toggleGallery = () => {
 		this.showGallery = !this.showGallery
@@ -145,8 +148,9 @@ class Tabs {
 	}
 	switchTab = tabID => {
 		this.currentTab = tabID
-		let cQuery = QueriesStore.query[tabID] && QueriesStore.query[tabID].query
-		let cQueryID = QueriesStore.query[tabID] && QueriesStore.query[tabID].id
+		let id = this.tabs.map(tab => tab.id).indexOf(this.currentTab)
+		let cQuery = QueriesStore.query[id] && QueriesStore.query[id].query
+		let cQueryID = QueriesStore.query[id] && QueriesStore.query[id].id
 		QueriesStore.setCurrentQuery( cQuery || '{}', cQueryID || null)
 	}
 	renameCurrentTab = name => {
@@ -165,7 +169,7 @@ class Tabs {
 		event.stopPropagation()
 		this.tabs.splice(index, 1)
 		this.tabs.length === 0 
-			? this.addNewTab() 
+			? this.addNewTab('New Tab') 
 			: this.switchTab(this.tabs[this.tabs.length-1].id)
 	}
 
