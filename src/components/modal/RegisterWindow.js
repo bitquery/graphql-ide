@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import Modal from 'react-modal'
 import { login } from '../../api/api'
 import modalStore from '../../store/modalStore'
+import { useToasts } from 'react-toast-notifications'
 import { observer } from 'mobx-react-lite'
 import { Link } from 'react-router-dom'
 import { UserStore } from '../../store/queriesStore'
@@ -40,17 +41,21 @@ Modal.setAppElement('#root')
 
 const RegisterWindow = observer(() => {
 	const { getUser } = UserStore
+	const { addToast } = useToasts()
 	const { registerIsOpen, toggleRegister } = modalStore
 	const [email, setEmail] = useState('')
 	const [password, setPassword] = useState('')
 
 	const logIn = async () => {
-		try {
-			const { data } = await login(email, password)
-			console.log(data)
-			getUser()
-			toggleRegister()
-		} catch (e) { console.log(e.response.data[2].message) }
+		if (email && password) {
+			try {
+				const { data } = await login(email, password)
+				console.log(data)
+				addToast(data, {appearance: 'success'})
+				getUser()
+				toggleRegister()
+			} catch (e) { addToast(e.response.data[2].message, {appearance: 'error'}) }
+		}
 	}
 
     return (

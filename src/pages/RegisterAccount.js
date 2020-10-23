@@ -1,11 +1,13 @@
 import React, { useState } from 'react'
 import { signUp } from '../api/api'
 import { useToasts } from 'react-toast-notifications'
+import { useHistory } from 'react-router-dom'
 
 function RegisterAccount() {
 	const [email, setEmail] = useState('')
 	const [password, setPassword] = useState('')
 	const { addToast } = useToasts()
+	let history = useHistory()
 
 	const style = {
 		display: 'flex',
@@ -14,11 +16,16 @@ function RegisterAccount() {
 	}
 	const register = async e => {
 		e.preventDefault()
-		try {
-			const { data } = await signUp(email, password)
-			addToast(data, {appearance: 'success'})
-		} catch (e) {
-			addToast(e.response.data[1], {appearance: 'error'})
+		if (password && email) {
+			try {
+				const { data } = await signUp(email, password)
+				addToast(data, {appearance: 'success'})
+				setTimeout(() => {
+					history.push('/')
+				}, 3000)
+			} catch (e) {
+				addToast(e.response.data[1], {appearance: 'error'})
+			}
 		}
 	}
 
