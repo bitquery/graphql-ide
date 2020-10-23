@@ -61,7 +61,7 @@ export const CustomGraphiql = observer(() => {
 	useEffect(() => {
 		setCurrentQuery(localStorage.getItem('graphiql:query'))
 		setCurrentVariables(localStorage.getItem('graphiql:variables'))
-		setQuery(localStorage.getItem('graphiql:query'))
+		// setQuery(localStorage.getItem('graphiql:query'))
 	}, [])
 	const editQueryHandler = (query, index) => {
 		setCurrentQuery(query)
@@ -77,8 +77,8 @@ export const CustomGraphiql = observer(() => {
 				<GraphiQL 
 					ref={graphiql}
 					style={{ height: '100vh' }}
+					query={query[i].query}
 					fetcher={fetcher}
-					query={query[i]}
 					editorTheme="dracula"
 					onEditQuery={query => editQueryHandler(query, i)}
 					onEditVariables={variables => setCurrentVariables(variables)}

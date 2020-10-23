@@ -27,6 +27,96 @@ class User {
 	}
 }
 
+
+
+class Queries {
+	currentVariables = ''
+	showGallery = true
+	currentQuery = {
+		query: '',
+		id: null
+	}
+	query = [{
+		query: '',
+		id: null
+	}]
+	
+	constructor() {
+		makeObservable(this, {
+			currentVariables: observable,
+			currentQuery: observable,
+			showGallery: observable,
+			query: observable,
+			queryParams: computed,
+			setCurrentVariables: action,
+			setCurrentQuery: action,
+			toggleGallery: action,
+			updateQuery: action,
+			removeQuery: action,
+			saveQuery: action,
+			setQuery: action
+		})
+	}
+	get queryParams() {
+		return {
+			id: this.currentQuery.id,
+			account_id: UserStore.user && UserStore.user.id || null,
+			query: this.currentQuery.query,
+			arguments: this.currentVariables
+		}
+	}
+
+	setQuery = (query, id) => {
+		this.query.push({
+			query: query,
+			id: id ? id : null
+		})
+	}
+	updateQuery = (query, index, id) => {
+		this.query.splice(index, 1, {
+			query: query,
+			id: id ? id : null
+		})
+	}
+	removeQuery = index => {
+		this.query.splice(index, 1)
+	}
+	toggleGallery = () => {
+		this.showGallery = !this.showGallery
+	}
+	setCurrentQuery = (query, id) => {
+		this.currentQuery.query = query
+		id ? this.currentQuery.id = id : this.currentQuery.id = null
+	}
+	setCurrentVariables = variables => {
+		this.currentVariables = variables
+	}
+	saveQuery = async params => {
+		try {
+			const { data } = await axios.post('/api/addquery', { 
+				params
+			})
+			let id = TabsStore.tabs.map(tab => tab.id).indexOf(TabsStore.currentTab)
+			this.updateQuery(params.query, id, data.id)
+			this.setCurrentQuery(params.query, data.id)
+			console.log(data)
+		} catch (e) {
+			console.log(e)
+		}
+	}
+	logQuery = async params => {
+		try {
+			const { data } = await axios.post('/api/addquerylog', { 
+				params
+			})
+			console.log(data)
+		} catch (e) {
+			console.log(e)
+		}
+	}
+
+}
+
 class Tabs {
 	id = 0
 	tabs = [
@@ -55,10 +145,12 @@ class Tabs {
 	}
 	switchTab = tabID => {
 		this.currentTab = tabID
-		
+		let cQuery = QueriesStore.query[tabID] && QueriesStore.query[tabID].query
+		let cQueryID = QueriesStore.query[tabID] && QueriesStore.query[tabID].id
+		QueriesStore.setCurrentQuery( cQuery || '{}', cQueryID || null)
 	}
 	renameCurrentTab = name => {
-		let id = this.tabs.map((tab, i) => tab.id).indexOf(this.currentTab)
+		let id = this.tabs.map(tab => tab.id).indexOf(this.currentTab)
 		this.tabs[id].name = name
 	}
 	addNewTab = name => {
@@ -75,82 +167,6 @@ class Tabs {
 		this.tabs.length === 0 
 			? this.addNewTab() 
 			: this.switchTab(this.tabs[this.tabs.length-1].id)
-	}
-
-}
-
-class Queries {
-	currentVariables = ''
-	showGallery = true
-	currentQuery = {
-		query: '',
-		id: null
-	}
-	query = []
-	
-	constructor() {
-		makeObservable(this, {
-			currentVariables: observable,
-			currentQuery: observable,
-			showGallery: observable,
-			query: observable,
-			queryParams: computed,
-			setCurrentVariables: action,
-			setCurrentQuery: action,
-			toggleGallery: action,
-			updateQuery: action,
-			removeQuery: action,
-			saveQuery: action,
-			setQuery: action
-		})
-	}
-	get queryParams() {
-		return {
-			id: this.currentQuery.id,
-			account_id: UserStore.user && UserStore.user.id || null,
-			query: this.currentQuery.query,
-			arguments: this.currentVariables
-		}
-	}
-
-	setQuery = query => {
-		this.query.push(query)
-	}
-	updateQuery = (query, index) => {
-		this.query.splice(index, 1, query)
-	}
-	removeQuery = index => {
-		this.query.splice(index, 1)
-	}
-	toggleGallery = () => {
-		this.showGallery = !this.showGallery
-	}
-	setCurrentQuery = (query, id) => {
-		this.currentQuery.query = query
-		id ? this.currentQuery.id = id : this.currentQuery.id = null
-	}
-	setCurrentVariables = variables => {
-		this.currentVariables = variables
-	}
-	saveQuery = async params => {
-		try {
-			const { data } = await axios.post('/api/addquery', { 
-				params
-			})
-			console.log(data)
-		} catch (e) {
-			console.log(e)
-		}
-	}
-	logQuery = async params => {
-		try {
-			const { data } = await axios.post('/api/addquerylog', { 
-				params
-			})
-			console.log(data)
-		} catch (e) {
-			console.log(e)
-		}
 	}
 
 }

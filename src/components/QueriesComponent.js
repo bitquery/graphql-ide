@@ -7,9 +7,8 @@ function QueriesComponent ({ queries }) {
 	const { setQuery, setCurrentQuery } = QueriesStore
 	const showDescription = (i1, i2) => i1===i2 ? true : false
 	const handleClick = (name, query, id) => {
+		setQuery(query, id)
 		addNewTab(name)
-		setQuery(query)
-		setCurrentQuery(query, id)
 	}
 
 	return (
