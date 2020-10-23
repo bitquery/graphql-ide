@@ -1,6 +1,7 @@
 const transporter = require('./mailer')
 const crypto = require('crypto')
 const bcrypt = require('bcrypt')
+const { queries } = require('@testing-library/react')
 
 module.exports = function(app, passport, db) {
 
@@ -120,10 +121,15 @@ module.exports = function(app, passport, db) {
 		})
 	})
 	app.get('/api/getqueries', (req, res) => {
-		db.query('select id, query, name, description from query', (err, queries) => {
-			if (err) throw err
-			res.send(queries)
-		})
+		db.query(`
+			SELECT query.*, COUNT(query_logs.id) as number FROM query
+			INNER JOIN query_logs
+			ON query.id=query_logs.id
+			GROUP BY query.id
+			ORDER BY number DESC`, (err, queries) => {
+				if (err) throw err
+				res.send(queries)
+			})
 	})
 	app.get('/api/getmyqueries', (req, res) => {
 		db.query(`select query, name, description from query where account_id=${req.session.passport.user}`, (err, queries) => {
