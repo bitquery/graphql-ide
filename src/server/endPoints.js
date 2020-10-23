@@ -53,7 +53,7 @@ module.exports = function(app, passport, db) {
 					console.log(res)
 				})
 				let message = {
-					from : 'fedorenki@gmail.com',
+					from : process.env.DEFAULT_EMAIL,
 					to: user[0].email,
 					subject: 'Account activation',
 					text: 'Plaintext version of the message',
@@ -162,7 +162,7 @@ module.exports = function(app, passport, db) {
 			if (err) throw err
 			if (result.affectedRows) {
 				let message = {
-					from : 'fedorenki@gmail.com',
+					from : process.env.DEFAULT_EMAIL,
 					to: req.body.email,
 					subject: 'Account password reset',
 					text: 'You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n' +

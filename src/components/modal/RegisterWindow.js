@@ -66,8 +66,8 @@ const RegisterWindow = observer(() => {
 				<p className="p-modal">Password</p>
 				<input type="password" className="query__save" value={password} onChange={e => setPassword(e.target.value)} />  
 				<button className="button button_filled"onClick={logIn}>Login</button>
-				<Link to="/reset" >Forgot password?</Link>
-				<Link to="/register" >Do not have account?</Link>
+				<Link to="/reset" onClick={toggleRegister} >Forgot password?</Link>
+				<Link to="/register" onClick={toggleRegister} >Do not have account?</Link>
 			</div>
 		</Modal>
     )
