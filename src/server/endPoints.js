@@ -48,29 +48,29 @@ module.exports = function(app, passport, db) {
 			let code = crypto.randomBytes(60).toString('hex')
 			bcrypt.hash(code, 5, (err, hash) => {
 				if (err) throw err
-				db.query('INSERT INTO activation SET ?', {user_id: user[0].id, code: hash}, (err, res) => {
+				db.query('INSERT INTO activations SET ?', {user_id: user[0].id, code: hash}, (err, res) => {
 					if (err) throw err
 					console.log(res)
 				})
 				let message = {
 					from : process.env.DEFAULT_EMAIL,
 					to: user[0].email,
-					subject: 'Account activation',
+					subject: 'Account activations',
 					text: 'Plaintext version of the message',
-					html: `<p>To activate your account follow this <a href="http://localhost:3000/activate?code=${code}">link</a> </p>`
+					html: `<p>To activate your account follow this <a href="http://localhost:4000/api/activate?code=${code}">link</a> </p>`
 				}
 				transporter.sendMail(message)
 			})
 			
 			req.login(user, (err) => {
 				console.log(user)
-				res.send("Signed up ")
+				res.send("Signed up. Check your email for further instructions! ")
 			})
 		})(req, res, next)
 	})
 
 	app.post('/api/addquery', (req, res) => {
-		let sql = `INSERT INTO query SET ?`
+		let sql = `INSERT INTO queries SET ?`
 		db.query(sql, req.body.params, (err, result) => {
 			if (err) throw err
 			res.send({id: result.insertId})
@@ -114,7 +114,7 @@ module.exports = function(app, passport, db) {
 	})
 
 	app.get('/api/getquery/:url', (req, res) => {
-		let sql = `SELECT * FROM query WHERE url='${req.params.url}'`
+		let sql = `SELECT * FROM queries WHERE url='${req.params.url}'`
 		db.query(sql, (err, result) => {
 			if (err) throw err
 			res.send(result[0])
@@ -122,24 +122,24 @@ module.exports = function(app, passport, db) {
 	})
 	app.get('/api/getqueries', (req, res) => {
 		db.query(`
-			SELECT query.*, COUNT(query_logs.id) as number FROM query
-			INNER JOIN query_logs
-			ON query.id=query_logs.id
-			GROUP BY query.id
+			SELECT queries.*, COUNT(query_logs.id) as number FROM queries
+			LEFT JOIN query_logs
+			ON queries.id=query_logs.id
+			GROUP BY queries.id
 			ORDER BY number DESC`, (err, queries) => {
 				if (err) throw err
 				res.send(queries)
 			})
 	})
 	app.get('/api/getmyqueries', (req, res) => {
-		db.query(`select query, name, description from query where account_id=${req.session.passport.user}`, (err, queries) => {
+		db.query(`select query, name, description from queries where account_id=${req.session.passport.user}`, (err, queries) => {
 			if (err) throw err
 			res.send(queries)
 		})
 	})
 
 	app.get('/api/activate', (req, res) => {
-		db.query(`select code from activation where user_id = ${req.session.passport.user}`, (err, code) => {
+		db.query(`select code from activations where user_id = ${req.session.passport.user}`, (err, code) => {
 			if (err) throw err
 			bcrypt.compare(req.query.code, code[0][Object.keys(code[0])[0]], (err, result) => {
 				if (err) throw err
