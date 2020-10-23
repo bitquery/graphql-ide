@@ -14,12 +14,6 @@ module.exports = function(app, passport, db) {
 		res.send('ok')
 	}) 
 
-	function addQuery(value) {
-		let sql = `INSERT INTO query SET ?`
-		db.query(sql, value, (err, result) => {
-			if (err) throw err
-		})
-	}
 	const authMiddleware = (req, res, next) => {
 		if (!req.isAuthenticated()) {
 			res.status(401).send('You are not authenticated')
@@ -75,29 +69,15 @@ module.exports = function(app, passport, db) {
 	})
 
 	app.post('/api/addquery', (req, res) => {
-		addQuery(req.body.params)
-		res.send('Query successfully saved!')
+		let sql = `INSERT INTO query SET ?`
+		db.query(sql, req.body.params, (err, result) => {
+			if (err) throw err
+			res.send({id: result.insertId})
+		})
 	})
 
 	app.post('/api/addquerylog', (req, response) => {
 		let value = req.body.params
-		let id = null
-		if (!value.id) {
-			db.query(`select id from query order by id desc limit 1`, (err, res) => {
-				if (err) throw err
-				id = res[0].id
-				db.query(`INSERT INTO query_logs SET ?`, {
-					id: id,
-					account_id: value.account_id,
-					success: value.success || 0,
-					error: value.error || 0
-				}, (err, res) => {
-					if (err) throw err
-					console.log(res)
-					response.send('Query logged')
-				})
-			})
-		} else  {
 			db.query(`INSERT INTO query_logs SET ?`, {
 				id: value.id,
 				account_id: value.account_id,
@@ -108,8 +88,6 @@ module.exports = function(app, passport, db) {
 				console.log(res)
 				response.send('Query logged')
 			})
-		}
-		
 	}) 
 
 	app.get('/api/logout', (req, res) => {

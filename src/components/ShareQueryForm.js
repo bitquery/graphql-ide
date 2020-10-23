@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useToasts } from 'react-toast-notifications'
 import modalStore from '../store/modalStore'
-import queriesStore from '../store/queriesStore'
-import tabsStore from '../store/tabsStore'
+import {TabsStore, QueriesStore} from '../store/queriesStore'
 import copy from 'copy-to-clipboard'
 import { generateLink } from '../utils/common'
 
@@ -11,9 +10,9 @@ function ShareQueryForm() {
 	const [name, setName] = useState('')
 	const [queryLink, setQueryLink] = useState('')
 	const [description, setDescription] = useState('')
-	const { saveQuery, queryParams } = queriesStore
+	const { saveQuery, queryParams } = QueriesStore
 	const { toggleShareQuery } = modalStore
-	const { renameCurrentTab } = tabsStore
+	const { renameCurrentTab } = TabsStore
 
 	useEffect(() => {
 		copy(`http://localhost:3000/${queryLink}`)

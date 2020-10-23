@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { observer } from 'mobx-react-lite'
 import React, { useEffect, useState } from 'react'
-import QueriesStore, { UserStore } from '../store/queriesStore'
+import { UserStore, QueriesStore } from '../store/queriesStore'
 import QueriesComponent from './QueriesComponent'
 
 const GalleryComponent = observer(() => {

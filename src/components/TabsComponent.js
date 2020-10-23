@@ -2,13 +2,12 @@ import { observer } from 'mobx-react-lite'
 import React, { useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { getQuery } from '../api/api'
-import queriesStore from '../store/queriesStore'
-import tabsStore from '../store/tabsStore'
+import {TabsStore, QueriesStore} from '../store/queriesStore'
 
 const TabsComponent = observer(() => {
-	const { tabs, currentTab, switchTab, removeTab, addNewTab, renameCurrentTab } = tabsStore
+	const { tabs, currentTab, switchTab, removeTab, addNewTab, renameCurrentTab } = TabsStore
 	const { query } = useParams()
-	const { setCurrentQuery, setQuery, removeQuery } = queriesStore
+	const { setCurrentQuery, setQuery, removeQuery } = QueriesStore
 
 	useEffect(() => {
 		async function updateTabs() {
@@ -24,6 +23,7 @@ const TabsComponent = observer(() => {
 	const addNewTabHandler = () => {
 		addNewTab('New Tab')
 		setQuery('{}')
+		setCurrentQuery('{}')
 	}
 	const removeTabHandler = (index, event) => {
 		removeQuery(index)

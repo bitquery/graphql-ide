@@ -1,10 +1,9 @@
 import React, { useState } from 'react'
-import tabsStore from '../store/tabsStore'
-import QueriesStore from '../store/queriesStore'
+import {TabsStore, QueriesStore} from '../store/queriesStore'
 
 function QueriesComponent ({ queries }) {
 	const [hoverElementIndex, setHoverElementIndex] = useState(false)
-	const { addNewTab, renameCurrentTab } = tabsStore
+	const { addNewTab, renameCurrentTab } = TabsStore
 	const { setQuery, setCurrentQuery } = QueriesStore
 	const showDescription = (i1, i2) => i1===i2 ? true : false
 	const handleClick = (name, query, id) => {

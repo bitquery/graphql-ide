@@ -2,13 +2,12 @@ import React, { useState, useRef, useMemo, useEffect } from 'react';
 import '../App.scss';
 import GraphiQL from 'graphiql'
 import modalStore from '../store/modalStore';
-import tabsStore from '../store/tabsStore';
+import {TabsStore, QueriesStore, UserStore} from '../store/queriesStore';
 import { observer } from 'mobx-react-lite';
-import QueriesStore, { UserStore } from '../store/queriesStore'
 
 export const CustomGraphiql = observer(() => {
 	const { toggleSaveQuery, toggleShareQuery } = modalStore
-	const { tabs, currentTab } = tabsStore
+	const { tabs, currentTab } = TabsStore
 	const { toggleGallery, setCurrentQuery, 
 		setCurrentVariables, query, 
 		setQuery, updateQuery, 
@@ -25,12 +24,13 @@ export const CustomGraphiql = observer(() => {
 		editor.setValue(prettyText);
 	}
 	const handleQuery = result => {
-		//addQueryToDatabase
-		(queryParams.id === null) && saveQuery(queryParams)
 		//addQueryLog
-		let params = {...queryParams}
-		params[result] = true
-		logQuery(params)
+		console.log('queryParams ID = ', queryParams.id)
+		if (queryParams.id) {
+			let params = {...queryParams}
+			params[result] = true
+			logQuery(params)
+		}
 	}
 	const fetcher = async graphQLParams => {
 			const data = await fetch(
@@ -67,7 +67,6 @@ export const CustomGraphiql = observer(() => {
 		setCurrentQuery(query)
 		updateQuery(query, index)
 	}
-	
 
 	return (
 		tabs.map((tab, i) => (
