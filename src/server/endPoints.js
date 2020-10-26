@@ -29,12 +29,15 @@ module.exports = function(app, passport, db) {
 				return next(err)
 			}
 			if (!user) {
-				return res.status(400).send([user, "Cannot log in", info])
+				return res.status(400).send("Cannot log in")
+			} else if (!user[0].active) {
+				return res.status(400).send('Account not activated! If You do not recieve mail, can resend it in register window')
+			} else {
+				req.login(user, (err) => {
+					console.log(user)
+					res.send("Logged in")
+				}) 
 			}
-			req.login(user, (err) => {
-				console.log(user)
-				res.send("Logged in")
-			})
 		})(req, res, next)
 	})
 
@@ -42,38 +45,48 @@ module.exports = function(app, passport, db) {
 		passport.authenticate('local-signup', (err, user) => {
 			if(err) return next(err)
 			if (!user) {
-				return res.status(400).send([user, "user already exist"])
+				return res.status(400).send("user already exist")
 			}
 			console.log("you are in ............")
 			let code = crypto.randomBytes(60).toString('hex')
-			bcrypt.hash(code, 5, (err, hash) => {
+			db.query('INSERT INTO activations SET ?', {user_id: user[0].id, code: code}, (err, res) => {
 				if (err) throw err
-				db.query('INSERT INTO activations SET ?', {user_id: user[0].id, code: hash}, (err, res) => {
-					if (err) throw err
-					console.log(res)
-				})
-				let message = {
-					from : process.env.DEFAULT_EMAIL,
-					to: user[0].email,
-					subject: 'Account activations',
-					text: 'Plaintext version of the message',
-					html: `<p>To activate your account follow this <a href="http://localhost:4000/api/activate?code=${code}">link</a> </p>`
-				}
-				transporter.sendMail(message)
+				console.log(res)
 			})
-			
-			req.login(user, (err) => {
-				console.log(user)
-				res.send("Signed up. Check your email for further instructions! ")
-			})
+			let message = {
+				from : process.env.DEFAULT_EMAIL,
+				to: user[0].email,
+				subject: 'Account activations',
+				text: 'Plaintext version of the message',
+				html: `<p>To activate your account follow this <a href="http://localhost:4000/api/activate?code=${code}">link</a> </p>`
+			}
+			transporter.sendMail(message)
+			res.send("Signed up. Check your email for further instructions! ")
 		})(req, res, next)
 	})
 
 	app.post('/api/addquery', (req, res) => {
 		let sql = `INSERT INTO queries SET ?`
-		db.query(sql, req.body.params, (err, result) => {
+		db.query(`select id, url from queries where id=?`, [req.body.params.id], (err, result) => {
 			if (err) throw err
-			res.send({id: result.insertId})
+			console.log(result)
+			if (Array.isArray(result) && result.length) {
+				console.log('there is result ', result[0].id, result[0].url)
+				req.body.params.url ? 
+					result[0].url ? res.status(400).send({msg:'Query already shared!', id: result[0].id}) 
+						: db.query(`update queries set url = ?, published = ? where id = ${req.body.params.id}`, 
+							[req.body.params.url, true], (err, _) => {
+								if (err) throw err
+								res.send({msg:'Query shared!', id: result[0].id})
+							})
+					: res.status(400).send({msg:'Query already saved!', id: result[0].id})
+			} else { 
+				console.log('there is no response')
+				db.query(sql, req.body.params, (err, result) => {
+					if (err) throw err
+					res.send({msg:'Query saved!', id: result.insertId})
+				})
+			}
 		})
 	})
 
@@ -101,7 +114,6 @@ module.exports = function(app, passport, db) {
 		db.query(`select * from accounts where id = ${req.session.passport.user}`, 
 			(err, user) => {
 				if (err) throw err
-				console.log([user, req.session])
 				let userSend = [{
 					id: user[0].id,
 					email: user[0].email,
@@ -114,13 +126,20 @@ module.exports = function(app, passport, db) {
 	})
 
 	app.get('/api/getquery/:url', (req, res) => {
-		let sql = `SELECT * FROM queries WHERE url='${req.params.url}'`
-		db.query(sql, (err, result) => {
+		let sql = `SELECT * FROM queries WHERE url=?`
+		db.query(sql, [req.params.url], (err, result) => {
 			if (err) throw err
-			res.send(result[0])
+			if (!result.length) {
+				res.send('There is no such querie with same url...')
+			} else {
+				res.send(result[0])
+			}
 		})
 	})
 	app.get('/api/getqueries', (req, res) => {
+		let checkActive = req.session.active
+		req.session.active = null
+		if (checkActive) checkActive = 'Account activated!'
 		db.query(`
 			SELECT queries.*, COUNT(query_logs.id) as number FROM queries
 			LEFT JOIN query_logs
@@ -128,31 +147,29 @@ module.exports = function(app, passport, db) {
 			GROUP BY queries.id
 			ORDER BY number DESC`, (err, queries) => {
 				if (err) throw err
-				res.send(queries)
+				res.send({queries: queries, msg: checkActive})
 			})
 	})
 	app.get('/api/getmyqueries', (req, res) => {
-		db.query(`select query, name, description from queries where account_id=${req.session.passport.user}`, (err, queries) => {
+		db.query(`select * from queries where account_id=${req.session.passport.user}`, (err, queries) => {
 			if (err) throw err
 			res.send(queries)
 		})
 	})
 
 	app.get('/api/activate', (req, res) => {
-		db.query(`select code from activations where user_id = ${req.session.passport.user}`, (err, code) => {
+		db.query(`select * from activations where code = ?`, [req.query.code], (err, result) => {
 			if (err) throw err
-			bcrypt.compare(req.query.code, code[0][Object.keys(code[0])[0]], (err, result) => {
-				if (err) throw err
-				if (result) {
-					db.query(`update accounts set active = true where id = ${req.session.passport.user}`, (err, result) => {
-						if (err) throw err
-						console.log('account activated', result)
-						res.send('Account activated!')
-					})
-				} else {
-					res.send('Something went wrong...')
-				}
-			})
+			if (result.length) {
+				db.query(`update accounts set active = true where id = ?`, [result[0].user_id], (err, result) => {
+					if (err) throw err
+					console.log('account activated', result)
+					req.session.active = true
+					res.redirect(`${req.protocol}://localhost:3000`)
+				})
+			} else {
+				res.send('Something went wrong...')
+			}
 		})
 	})
 

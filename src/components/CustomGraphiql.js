@@ -1,4 +1,5 @@
-import React, { useState, useRef, useMemo, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
+import schema from '../utils/schema'
 import '../App.scss';
 import GraphiQL from 'graphiql'
 import modalStore from '../store/modalStore';
@@ -8,10 +9,8 @@ import { observer } from 'mobx-react-lite';
 export const CustomGraphiql = observer(() => {
 	const { toggleSaveQuery, toggleShareQuery } = modalStore
 	const { tabs, currentTab } = TabsStore
-	const { toggleGallery, setCurrentQuery, 
-		setCurrentVariables, query, 
-		setQuery, updateQuery, 
-		saveQuery, queryParams, logQuery } = QueriesStore
+	const { toggleGallery, setCurrentQuery, query, 
+		 updateQuery, queryParams, logQuery } = QueriesStore
 	const { user } = UserStore
 	const graphiql = useRef(null)
 	const [fetchURL, setFetchURL] = useState('https://graphql.bitquery.io')
@@ -19,53 +18,49 @@ export const CustomGraphiql = observer(() => {
 	const handleClickPrettifyButton = () => {
 		const editor = graphiql.current.getQueryEditor();
 		const currentText = editor.getValue();
-		const { parse, print, graphql } = require('graphql');
+		const { parse, print } = require('graphql');
 		const prettyText = print(parse(currentText));
 		editor.setValue(prettyText);
 	}
-	const handleQuery = result => {
+	const handleQuery = (result, error) => {
 		//addQueryLog
-		console.log('queryParams ID = ', queryParams.id)
 		if (queryParams.id) {
 			let params = {...queryParams}
-			params[result] = true
+			if (error) {
+				params[result] = error
+			} else {
+				params[result] = true
+			} 
 			logQuery(params)
 		}
 	}
 	const fetcher = async graphQLParams => {
-			const data = await fetch(
-				fetchURL,
-				{
-					method: 'POST',
-					headers: {
-						Accept: 'application/json',
-						'Content-Type': 'application/json',
-					},
-					body: JSON.stringify(graphQLParams),
-					credentials: 'same-origin',
+		const data = await fetch(
+			fetchURL,
+			{
+				method: 'POST',
+				headers: {
+					Accept: 'application/json',
+					'Content-Type': 'application/json',
 				},
-			)
-			data.clone().json().then(json => {
-				if ('data' in json) {
-					if (!('__schema' in json.data)) {
-						handleQuery('success')
-						console.log('respone', json.data)
-					}
-				} else if ('errors' in json) {
-					handleQuery('error')
-					console.log('error', json.errors)
+				body: JSON.stringify(graphQLParams),
+				credentials: 'same-origin',
+			},
+		)
+		data.clone().json().then(json => {
+			if ('data' in json) {
+				if (!('__schema' in json.data)) {
+					handleQuery('success')
 				}
-			})
-			return data.json().catch(() => data.text())
+			} else if ('errors' in json) {
+				handleQuery('error', json.errors[0].message) 
+			}
+		})
+		return data.json().catch(() => data.text())
 	}
-	useEffect(() => {
-		setCurrentQuery(localStorage.getItem('graphiql:query'))
-		setCurrentVariables(localStorage.getItem('graphiql:variables'))
-		// setQuery(localStorage.getItem('graphiql:query'))
-	}, [])
-	const editQueryHandler = (query, index) => {
-		setCurrentQuery(query)
-		updateQuery(query, index)
+	const editQueryHandler = (handleSubject, index) => {
+		setCurrentQuery(handleSubject)
+		updateQuery(handleSubject, index)
 	}
 
 	return (
@@ -79,9 +74,11 @@ export const CustomGraphiql = observer(() => {
 					style={{ height: '100vh' }}
 					query={query[i].query}
 					fetcher={fetcher}
+					schema={schema}
+					variables={query[i].variables}
 					editorTheme="dracula"
-					onEditQuery={query => editQueryHandler(query, i)}
-					onEditVariables={variables => setCurrentVariables(variables)}
+					onEditQuery={query => editQueryHandler({query}, i)}
+					onEditVariables={variables => editQueryHandler({variables}, i)}
 				>
 					<GraphiQL.Toolbar>
 						<GraphiQL.Button 

@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { useToasts } from 'react-toast-notifications'
-import modalStore from '../store/modalStore'
-import {TabsStore, QueriesStore} from '../store/queriesStore'
+import modalStore from '../../store/modalStore'
+import {TabsStore, QueriesStore} from '../../store/queriesStore'
 
 function SaveQueryForm() {
 	const { addToast } = useToasts()
@@ -11,14 +11,14 @@ function SaveQueryForm() {
 	const { toggleSaveQuery } = modalStore
 	const { renameCurrentTab } = TabsStore
 
-	const saveHandler = (e) => {
+	const saveHandler = async (e) => {
 		e.preventDefault()
 		let params = queryParams
 		if (name) {
 			params.name = name
 			if (description) params.description = description
-			saveQuery(params)
-			renameCurrentTab(name)
+			let status = await saveQuery(params)
+			if (status !== 400) renameCurrentTab(name)
 			toggleSaveQuery()
 		} else { addToast('Name is required', {appearance: 'error'}) }
 	}

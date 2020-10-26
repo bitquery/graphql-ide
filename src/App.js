@@ -6,7 +6,6 @@ import SaveQueryWindow from './components/modal/SaveQueryWindow'
 import ControlPanel from './components/ControlPanel'
 import PasswordReset from './pages/ChangePassword'
 import { BrowserRouter, Route, Switch } from 'react-router-dom'
-import RegisterAccount from './pages/RegisterAccount'
 import ResetPassword from './pages/ResetPassword'
 import GalleryComponent from './components/GalleryComponent'
 
@@ -20,13 +19,10 @@ function App() {
 					<Route path="/reset" >
 						<ResetPassword />
 					</Route>
-					<Route path="/register" >
-						<RegisterAccount />
-					</Route>
 					<Route path="/changepwd" >
 						<PasswordReset />
 					</Route>
-					<Route path={['/:query', '/']} >
+					<Route path={['/:queryurl', '/']} >
 						<ControlPanel />
 						<div className="content flex">
 							<GalleryComponent />

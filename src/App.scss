@@ -1,13 +1,15 @@
 .App {
-  text-align: center;
-  background-color: #16162c;
-  padding-top: 10px;
-  font-family: Roboto, Avenir, Helvetica, Arial, sans-serif;
-  font-size: 14px;
-  overflow: hidden;
-  p, a {
-	padding: 10px 0;
-	color: #d7d7d7;
+	display: flex;
+	flex-direction: column;
+	text-align: center;
+	background-color: #16162c;
+	padding-top: 10px;
+	font-family: Roboto, Avenir, Helvetica, Arial, sans-serif;
+	font-size: 14px;
+	overflow: hidden;
+	p, a {
+		padding: 10px 0;
+		color: #d7d7d7;
 	}
 	h2 {
 		font-size: 35px;
@@ -149,7 +151,6 @@
 	}
 }
 .graphiql__wrapper {
-	height: 100vh;
 	display: none;
 	flex: 1 1 auto;
 	&_active {
@@ -311,12 +312,56 @@
 .modal {
 	display: flex;
 	flex-direction: column;
-	a {
-		padding-top: 10px;
-		color: #d7d7d7;
-		font-size: 16px;
-		&:hover {
-			color: #fff;
+	&__form {
+		.handler {
+			position: absolute;
+			opacity: 25%;
+			transition: opacity 150ms;
+			&:hover {
+				opacity: 100%;
+			}
+			&__back {
+				width: 50px;
+				height: 50px;
+				padding: 10px;
+				left: 10px;
+				top: 50%;
+				transform: translateY(-50%);
+				background: url('./assets/images/left-arrow.svg') center no-repeat ;
+			}
+			&__close {
+				width: 25px;
+				height: 25px;
+				top: 10px;
+				right: 10px;
+				background: url('./assets/images/letter-x.svg') center no-repeat ;
+			}
+		}
+		input {
+			text-align: left;
+			width: 50%;
+			min-width: 300px;
+		}
+		h2 {
+			font-size: 25px;
+			padding: 15px 0 15px 0;
+			color: #d7d7d7;
+		}
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		&_hide {
+			display: none;
+		}
+		a {
+			cursor: pointer;
+			padding-top: 10px;
+			width: fit-content;
+			color: #d7d7d7;
+			font-size: 16px;
+			&:hover {
+				color: #fff;
+			}
 		}
 	}
 }

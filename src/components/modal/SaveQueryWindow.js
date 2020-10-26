@@ -2,8 +2,8 @@ import { observer } from 'mobx-react-lite'
 import React from 'react'
 import Modal from 'react-modal'
 import modalStore from '../../store/modalStore'
-import SaveQueryForm from '../SaveQueryForm'
-import ShareQueryForm from '../ShareQueryForm'
+import SaveQueryForm from './SaveQueryForm'
+import ShareQueryForm from './ShareQueryForm'
 
 const customStyles = {
 	overlay: {

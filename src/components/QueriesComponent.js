@@ -3,12 +3,18 @@ import {TabsStore, QueriesStore} from '../store/queriesStore'
 
 function QueriesComponent ({ queries }) {
 	const [hoverElementIndex, setHoverElementIndex] = useState(false)
-	const { addNewTab, renameCurrentTab } = TabsStore
+	const { addNewTab } = TabsStore
 	const { setQuery, setCurrentQuery } = QueriesStore
 	const showDescription = (i1, i2) => i1===i2 ? true : false
-	const handleClick = (name, query, id) => {
-		setQuery(query, id)
-		addNewTab(name)
+	const handleClick = (query) => {
+		const params = {
+			query: query.query,
+			variables: query.variables,
+			url: query.url
+		}
+		setQuery(params, query.id)
+		setCurrentQuery(params, query.id)
+		addNewTab(query.name)
 	}
 
 	return (
@@ -17,9 +23,9 @@ function QueriesComponent ({ queries }) {
 				<p  className="gallery__query__body"
 					onMouseEnter={() => setHoverElementIndex(index)}
 					onMouseLeave={() => setHoverElementIndex(-1)}
-					onClick={() => handleClick(query.name, query.query, query.id)}
+					onClick={() => handleClick(query)}
 				> 
-					{query.name} <br /> {query.query}
+					{query.name} 
 				</p>
 				{ 
 					showDescription(hoverElementIndex, index) && 

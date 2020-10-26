@@ -3,17 +3,25 @@ import React, { useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { getQuery } from '../api/api'
 import {TabsStore, QueriesStore} from '../store/queriesStore'
+import { useToasts } from 'react-toast-notifications'
+import copy from 'copy-to-clipboard'
 
 const TabsComponent = observer(() => {
 	const { tabs, currentTab, switchTab, removeTab, addNewTab, renameCurrentTab } = TabsStore
-	const { query } = useParams()
-	const { setQuery, removeQuery } = QueriesStore
+	const { queryurl } = useParams()
+	const { setQuery, removeQuery, query } = QueriesStore
+	const { addToast } = useToasts()
 
 	useEffect(() => {
 		async function updateTabs() {
-			if (query) {
-				const { data } = await getQuery(query)
-				setQuery(data.query, data.id)
+			if (queryurl) {
+				const { data } = await getQuery(queryurl)
+				const params = {
+					query: data.query,
+					variables: data.arguments,
+					url: data.url
+				}
+				setQuery(params, data.id)
 				addNewTab(data.name)
 			}
 		}
@@ -21,11 +29,21 @@ const TabsComponent = observer(() => {
 	}, [])
 	const addNewTabHandler = () => {
 		addNewTab('New Tab')
-		setQuery('{}')
+		setQuery({query: '{}', variables: '{}'})
 	}
 	const removeTabHandler = (index, event) => {
 		removeQuery(index)
 		removeTab(index, event)
+	}
+	const getQueryUrl = (index, e) => {
+		e.preventDefault()
+	 	if (query[index].url) {
+			copy(`http://${window.location.host}/${query[index].url}`)
+			addToast('Query link copied to clipboard!', {appearance: 'success'})
+		} else {
+			addToast('This query is not shared now', {appearance: 'error'})
+		}
+		
 	}
 
 	return (
@@ -36,6 +54,7 @@ const TabsComponent = observer(() => {
 						<li 
 							className={(currentTab === tab.id ? 'active' : '')} key={i}
 							onClick={() => switchTab(tab.id)}
+							onContextMenu={e => getQueryUrl(i, e)}
 						>
 							{ tab.name }
 							<span 

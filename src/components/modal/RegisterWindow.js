@@ -1,11 +1,11 @@
 import React, { useState } from 'react'
 import Modal from 'react-modal'
-import { login } from '../../api/api'
 import modalStore from '../../store/modalStore'
 import { useToasts } from 'react-toast-notifications'
 import { observer } from 'mobx-react-lite'
-import { Link } from 'react-router-dom'
 import { UserStore } from '../../store/queriesStore'
+import RegisterForm from './RegisterForm'
+import LoginForm from './LoginForm'
 
 const customStyles = {
 	overlay: {
@@ -40,40 +40,17 @@ const customStyles = {
 Modal.setAppElement('#root')
 
 const RegisterWindow = observer(() => {
-	const { getUser } = UserStore
-	const { addToast } = useToasts()
-	const { registerIsOpen, toggleRegister } = modalStore
-	const [email, setEmail] = useState('')
-	const [password, setPassword] = useState('')
-
-	const logIn = async () => {
-		if (email && password) {
-			try {
-				const { data } = await login(email, password)
-				console.log(data)
-				addToast(data, {appearance: 'success'})
-				getUser()
-				toggleRegister()
-			} catch (e) { addToast(e.response.data[2].message, {appearance: 'error'}) }
-		}
-	}
+	const { registerIsOpen, loginIsOpen, closeHandler } = modalStore
 
     return (
 		<Modal
 			isOpen={registerIsOpen}
-			onRequestClose={toggleRegister}
+			onRequestClose={closeHandler}
 			style={customStyles}
 			contentLabel="Example Modal"
 		>
-			<div className="modal modal__signup">
-				<p className="p-modal">Email</p>
-				<input type="text" className="query__save" value={email} onChange={e => setEmail(e.target.value)} />  
-				<p className="p-modal">Password</p>
-				<input type="password" className="query__save" value={password} onChange={e => setPassword(e.target.value)} />  
-				<button className="button button_filled"onClick={logIn}>Login</button>
-				<Link to="/reset" onClick={toggleRegister} >Forgot password?</Link>
-				<Link to="/register" onClick={toggleRegister} >Do not have account?</Link>
-			</div>
+			<LoginForm active={loginIsOpen} />
+			<RegisterForm active={loginIsOpen} />
 		</Modal>
     )
 })

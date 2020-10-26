@@ -1,7 +1,9 @@
 import { makeObservable, observable, action } from "mobx"
+import { login } from "../api/api"
 
 class Modal {
 	registerIsOpen = false
+	loginIsOpen = false
 	saveQueryIsOpen = false
 	shareQueryIsOpen = false
 	
@@ -10,12 +12,27 @@ class Modal {
 			registerIsOpen: observable,
 			saveQueryIsOpen: observable,
 			shareQueryIsOpen: observable,
+			loginIsOpen: observable,
+			closeHandler: action,
+			resetLoginIsOpen: action,
+			toggleLogin: action,
 			toggleRegister: action,
 			toggleSaveQuery: action,
 			toggleShareQuery: action
 		})
 	}
 
+	closeHandler = () => {
+		this.toggleRegister()
+		this.resetLoginIsOpen()
+	}
+	resetLoginIsOpen = () => {
+		this.loginIsOpen = false
+	}
+	toggleLogin = (e) => {
+		if (e) e.preventDefault()
+		this.loginIsOpen = !this.loginIsOpen
+	}
 	toggleRegister = () => {
 		this.registerIsOpen = !this.registerIsOpen
 	}

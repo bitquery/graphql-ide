@@ -27,17 +27,17 @@ class User {
 	}
 }
 
-
-
 class Queries {
 	currentVariables = ''
 	showGallery = true
 	currentQuery = {
 		query: '',
+		variables: '{}',
 		id: null
 	}
 	query = [{
 		query: '',
+		variables: '{}',
 		id: null
 	}]
 	
@@ -62,21 +62,20 @@ class Queries {
 			id: this.currentQuery.id,
 			account_id: UserStore.user && UserStore.user.id || null,
 			query: this.currentQuery.query,
-			arguments: this.currentVariables
+			arguments: this.currentQuery.variables
 		}
 	}
 
-	setQuery = (query, id) => {
-		this.query.push({
-			query: query,
-			id: id ? id : null
-		})
+	setQuery = (params, id) => {
+		this.query.push({ id: id ? id : null })
+		if (params.query) this.query[this.query.length-1].query = params.query
+		if (params.url) this.query[this.query.length-1].url = params.url
+		this.query[this.query.length-1].variables = params.variables ? params.variables : '{}'
 	}
-	updateQuery = (query, index, id) => {
-		this.query.splice(index, 1, {
-			query: query,
-			id: id ? id : null
-		})
+	updateQuery = (params, index) => {
+		if (params.query) this.query[index].query = params.query
+		if (params.variables) this.query[index].variables = params.variables
+		this.query[index].id = params.is ? params.id : null
 	}
 	removeQuery = index => {
 		this.query.length!==1 ? this.query.splice(index, 1) : this.query.splice(index, 1, {
@@ -87,9 +86,10 @@ class Queries {
 	toggleGallery = () => {
 		this.showGallery = !this.showGallery
 	}
-	setCurrentQuery = (query, id) => {
-		this.currentQuery.query = query
-		id ? this.currentQuery.id = id : this.currentQuery.id = null
+	setCurrentQuery = (params, id) => {
+		if (params.query) this.currentQuery.query = params.query
+		if (params.variables) this.currentQuery.variables = params.variables
+		this.currentQuery.id = id ? id : null
 	}
 	setCurrentVariables = variables => {
 		this.currentVariables = variables
@@ -104,7 +104,8 @@ class Queries {
 			this.setCurrentQuery(params.query, data.id)
 			console.log(data)
 		} catch (e) {
-			console.log(e)
+			console.log(e.response.status)
+			return e.response.status
 		}
 	}
 	logQuery = async params => {

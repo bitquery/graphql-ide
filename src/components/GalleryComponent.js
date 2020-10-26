@@ -3,6 +3,7 @@ import { observer } from 'mobx-react-lite'
 import React, { useEffect, useState } from 'react'
 import { UserStore, QueriesStore } from '../store/queriesStore'
 import QueriesComponent from './QueriesComponent'
+import { useToasts } from 'react-toast-notifications'
 
 const GalleryComponent = observer(() => {
 	const [allQueries, setAllQueries] = useState([])
@@ -10,17 +11,21 @@ const GalleryComponent = observer(() => {
 	const [showAllQueries, toggleQueries] = useState(true)
 	const { showGallery } = QueriesStore
 	const { user } = UserStore
+	const { addToast } = useToasts()
 
 	useEffect(() => {
 		const getQueries = async () => {
 			try {
 				const { data } = await axios.get('/api/getqueries')
-				setAllQueries(data)
+				setAllQueries(data.queries)
+				data.msg && addToast('Account activated!', {appearance: 'success'})
 			} catch (e) {
 				console.log(e)
 			}
 		}
 		getQueries()
+	}, [])
+	useEffect(() => {
 		if (user) {
 			const getMyQueries = async () => {
 				try {

@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import { useToasts } from 'react-toast-notifications'
-import modalStore from '../store/modalStore'
-import {TabsStore, QueriesStore} from '../store/queriesStore'
+import modalStore from '../../store/modalStore'
+import {TabsStore, QueriesStore} from '../../store/queriesStore'
 import copy from 'copy-to-clipboard'
-import { generateLink } from '../utils/common'
+import { generateLink } from '../../utils/common'
 
 function ShareQueryForm() {
 	const { addToast } = useToasts()
@@ -18,16 +18,19 @@ function ShareQueryForm() {
 		copy(`http://localhost:3000/${queryLink}`)
 	}, [queryLink])
 
-	const shareHandler = (e) => {
+	const shareHandler = async (e) => {
 		e.preventDefault()
 		let params = queryParams
 		if (name) {
 			params.name = name
 			if(description) params.description = description
 			params.url = generateLink()
-			setQueryLink(params.url)
-			saveQuery(params)
-			renameCurrentTab(name)
+			let status = await saveQuery(params)
+			if (status !== 400) {
+				setQueryLink(params.url)
+				renameCurrentTab(name)
+				addToast('Query shared, link copied to clipboard.', {appearance: 'success'})
+			} 
 			toggleShareQuery()
 		} else { addToast('Name is required', {appearance: 'error'}) }
 	}
