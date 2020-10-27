@@ -9,7 +9,7 @@ import copy from 'copy-to-clipboard'
 const TabsComponent = observer(() => {
 	const { tabs, currentTab, switchTab, removeTab, addNewTab } = TabsStore
 	const { queryurl } = useParams()
-	const { setQuery, removeQuery, query } = QueriesStore
+	const { setCurrentQuery ,setQuery, removeQuery, query } = QueriesStore
 	const { addToast } = useToasts()
 
 	useEffect(() => {
@@ -30,6 +30,7 @@ const TabsComponent = observer(() => {
 	const addNewTabHandler = () => {
 		addNewTab('New Tab')
 		setQuery({query: '{}', variables: '{}'})
+		setCurrentQuery({query: '{}', variables: '{}'})
 	}
 	const removeTabHandler = (index, event) => {
 		removeQuery(index)

@@ -92,21 +92,30 @@ module.exports = function(app, passport, db) {
 
 	app.post('/api/addquery', (req, res) => {
 		let sql = `INSERT INTO queries SET ?`
-		db.query(`select id, url from queries where id=?`, [req.body.params.id], (err, result) => {
+		db.query(`select id, url, account_id from queries where id=?`, [req.body.params.id], (err, result) => {
 			if (err) throw err
 			console.log(result)
 			if (Array.isArray(result) && result.length) {
-				console.log('there is result ', result[0].id, result[0].url)
-				req.body.params.url ? 
-					result[0].url ? res.status(400).send({msg:'Query already shared!', id: result[0].id}) 
-						: db.query(`update queries set url = ?, published = ? where id = ${req.body.params.id}`, 
-							[req.body.params.url, true], (err, _) => {
-								if (err) throw err
-								res.send({msg:'Query shared!', id: result[0].id})
-							})
-					: res.status(400).send({msg:'Query already saved!', id: result[0].id})
-			} else { 
-				console.log('there is no response')
+				console.log('there is result ', result[0].id, result[0].url, result[0].account_id)
+				if (result[0].account_id === req.session.passport.user) {
+					req.body.params.url ? 
+						result[0].url ? res.status(400).send({msg:'Query already shared!', id: result[0].id}) 
+							: db.query(`update queries set url = ?, published = ? where id = ?`, 
+								[req.body.params.url, true, req.body.params.id], (err, _) => {
+									if (err) throw err
+									res.send({msg:'Query shared!', id: result[0].id})
+								})
+						: res.status(400).send({msg:'Query already saved!', id: result[0].id})
+				} else {
+					let params = {...req.body.params}
+					params.id = null
+					params.published = params.url ? true : null
+					db.query(sql, params, (err, result) => {
+						if (err) throw err
+						params.url ? res.send({msg:'Query shared!', id: result.insertId}) : res.send({msg:'Query saved!', id: result.insertId})
+					})
+				}
+			} else  {
 				db.query(sql, req.body.params, (err, result) => {
 					if (err) throw err
 					res.send({msg:'Query saved!', id: result.insertId})

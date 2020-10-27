@@ -72,10 +72,10 @@ class Queries {
 		if (params.url) this.query[this.query.length-1].url = params.url
 		this.query[this.query.length-1].variables = params.variables ? params.variables : '{}'
 	}
-	updateQuery = (params, index) => {
+	updateQuery = (params, index, id) => {
 		if (params.query) this.query[index].query = params.query
 		if (params.variables) this.query[index].variables = params.variables
-		this.query[index].id = params.is ? params.id : null
+		this.query[index].id = id ? id : null
 	}
 	removeQuery = index => {
 		this.query.length!==1 ? this.query.splice(index, 1) : this.query.splice(index, 1, {
