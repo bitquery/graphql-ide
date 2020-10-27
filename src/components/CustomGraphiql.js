@@ -14,13 +14,16 @@ export const CustomGraphiql = observer(() => {
 	const { user } = UserStore
 	const graphiql = useRef(null)
 	const [fetchURL, setFetchURL] = useState('https://graphql.bitquery.io')
+	const [prettify, setPrettify] = useState(false)
 
 	const handleClickPrettifyButton = () => {
+		setPrettify(true)
 		const editor = graphiql.current.getQueryEditor();
 		const currentText = editor.getValue();
 		const { parse, print } = require('graphql');
 		const prettyText = print(parse(currentText));
 		editor.setValue(prettyText);
+		setPrettify(false)
 	}
 	const handleQuery = (result, error) => {
 		//addQueryLog
@@ -59,8 +62,10 @@ export const CustomGraphiql = observer(() => {
 		return data.json().catch(() => data.text())
 	}
 	const editQueryHandler = (handleSubject, index) => {
-		setCurrentQuery(handleSubject)
-		updateQuery(handleSubject, index)
+		if (!prettify) {
+			setCurrentQuery(handleSubject)
+			updateQuery(handleSubject, index)
+		}
 	}
 
 	return (

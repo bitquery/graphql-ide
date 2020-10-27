@@ -10,7 +10,7 @@ function ShareQueryForm() {
 	const [name, setName] = useState('')
 	const [queryLink, setQueryLink] = useState('')
 	const [description, setDescription] = useState('')
-	const { saveQuery, queryParams } = QueriesStore
+	const { saveQuery, queryParams, updateQuery } = QueriesStore
 	const { toggleShareQuery } = modalStore
 	const { renameCurrentTab } = TabsStore
 

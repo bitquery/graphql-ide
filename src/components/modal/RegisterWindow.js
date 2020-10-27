@@ -1,9 +1,7 @@
-import React, { useState } from 'react'
+import React from 'react'
 import Modal from 'react-modal'
 import modalStore from '../../store/modalStore'
-import { useToasts } from 'react-toast-notifications'
 import { observer } from 'mobx-react-lite'
-import { UserStore } from '../../store/queriesStore'
 import RegisterForm from './RegisterForm'
 import LoginForm from './LoginForm'
 

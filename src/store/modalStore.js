@@ -1,5 +1,4 @@
 import { makeObservable, observable, action } from "mobx"
-import { login } from "../api/api"
 
 class Modal {
 	registerIsOpen = false

@@ -75,6 +75,7 @@ class Queries {
 	updateQuery = (params, index, id) => {
 		if (params.query) this.query[index].query = params.query
 		if (params.variables) this.query[index].variables = params.variables
+		if (params.url) this.query[index].url = params.url
 		this.query[index].id = id ? id : null
 	}
 	removeQuery = index => {
@@ -100,8 +101,8 @@ class Queries {
 				params
 			})
 			let id = TabsStore.tabs.map(tab => tab.id).indexOf(TabsStore.currentTab)
-			this.updateQuery(params.query, id, data.id)
-			this.setCurrentQuery(params.query, data.id)
+			this.updateQuery(params, id, data.id)
+			this.setCurrentQuery(params, data.id)
 			console.log(data)
 			return data
 		} catch (e) {
@@ -152,8 +153,13 @@ class Tabs {
 		this.currentTab = tabID
 		let id = this.tabs.map(tab => tab.id).indexOf(this.currentTab)
 		let cQuery = QueriesStore.query[id] && QueriesStore.query[id].query
+		let cVariables = QueriesStore.query[id] && QueriesStore.query[id].variables
 		let cQueryID = QueriesStore.query[id] && QueriesStore.query[id].id
-		QueriesStore.setCurrentQuery( cQuery || '{}', cQueryID || null)
+		let params = {
+			query: cQuery || '{}',
+			variables: cVariables || '{}'
+		}
+		QueriesStore.setCurrentQuery( params, cQueryID || null)
 	}
 	renameCurrentTab = name => {
 		let id = this.tabs.map(tab => tab.id).indexOf(this.currentTab)

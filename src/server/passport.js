@@ -27,13 +27,13 @@ module.exports = function(passport, db) {
 				newUser[0].email = email
 				newUser[0].authenticated_by = 'local_email'
 				bcrypt.hash(password, 5, (err, hash) => {
-					if (err) throw err
+					if (err) console.log(err)
 					console.log('hash', hash)
 					newUser[0].password = hash
 					let insertQuery = "INSERT INTO accounts ( email, encrypted_credentials, authenticated_by ) values ('" + email +"','"+ hash +"', 'local_email')"
 					console.log(insertQuery)
 					db.query(insertQuery, (err,rows) => {
-						if (err) throw err
+						if (err) console.log(err)
 						console.log(rows)
 						newUser[0].id = rows.insertId
 						console.log(newUser)
@@ -49,12 +49,12 @@ module.exports = function(passport, db) {
 		passwordField: 'password'
 	}, (username, password, done) => {
 			db.query(`select * from accounts where email = '${username}'`, (err, user) => {
-				if (err) throw err
+				if (err) console.log(err)
 				if (!user.length) done(null, false, {message: 'Incorrect user name'})
 				if (user.length) {
 					console.log( password, user[0].encrypted_credentials )
 					bcrypt.compare(password, user[0].encrypted_credentials, (err, result) => {
-						if (err) throw err
+						if (err) console.log(err)
 						console.log(result)
 						return result ? done(null, user) : done(null, false, {message: 'Wrong password'})
 					})

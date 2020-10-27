@@ -8,11 +8,6 @@ function RegisterForm({ active }) {
 	const [password, setPassword] = useState('')
 	const { addToast } = useToasts()
 	const { toggleLogin, closeHandler } = modalStore
-	const style = {
-		display: 'flex',
-		flexDirection: 'column',
-		alignItems: 'center'
-	}
 	const register = async e => {
 		e.preventDefault()
 		if (password && email) {
