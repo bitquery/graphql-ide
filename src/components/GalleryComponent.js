@@ -41,14 +41,15 @@ const GalleryComponent = observer(() => {
 
 	return (
 		<div className={'gallery flex flex-col ' + (showGallery && 'active')}>
-			<div className="gallery__header flex">
+			<div className="gallery__header flex flex-col">
+				<p>Gallery</p>
 				{ user && 
 					<div className="gallery__switch">
-					<input type="checkbox" id="switch" onChange={() => toggleQueries(!showAllQueries)} />
-					<label htmlFor="switch" className="flex">
-						<span className="myqueries"></span>
-						<span className="allqueries"></span>
-					</label>
+						<input type="checkbox" id="switch" onChange={() => toggleQueries(!showAllQueries)} />
+						<label htmlFor="switch" className="flex gallery__switch__label">
+							<span className="myqueries">My queries</span>
+							<span className="allqueries">Published</span>
+						</label>
 					</div>
 				}
 			</div>

@@ -103,9 +103,10 @@ class Queries {
 			this.updateQuery(params.query, id, data.id)
 			this.setCurrentQuery(params.query, data.id)
 			console.log(data)
+			return data
 		} catch (e) {
-			console.log(e.response.status)
-			return e.response.status
+			console.log(e.response)
+			return e.response
 		}
 	}
 	logQuery = async params => {

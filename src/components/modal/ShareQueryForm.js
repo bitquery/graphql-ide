@@ -21,22 +21,25 @@ function ShareQueryForm() {
 	const shareHandler = async (e) => {
 		e.preventDefault()
 		let params = queryParams
+		let data = null
 		if (name) {
 			params.name = name
 			if(description) params.description = description
 			params.url = generateLink()
-			let status = await saveQuery(params)
-			if (status !== 400) {
+			data = await saveQuery(params)
+			if (data.status !== 400) {
 				setQueryLink(params.url)
 				renameCurrentTab(name)
-				addToast('Query shared, link copied to clipboard.', {appearance: 'success'})
-			} 
+				addToast(data.msg, {appearance: 'success'})
+			} else {
+				addToast(data.data.msg, {appearance: 'error'})
+			}
 			toggleShareQuery()
 		} else { addToast('Name is required', {appearance: 'error'}) }
 	}
 
 	return (
-		<form onSubmit={shareHandler} className="modal modal__signup reset__form" >
+		<form onSubmit={shareHandler} className="modal modal_form " >
 			<p className="p-modal">Query name (required)</p>
 			<input type="text" className="query__save"  
 				value={name} onChange={e => setName(e.target.value)}

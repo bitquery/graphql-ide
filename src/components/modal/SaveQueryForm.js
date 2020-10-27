@@ -14,17 +14,23 @@ function SaveQueryForm() {
 	const saveHandler = async (e) => {
 		e.preventDefault()
 		let params = queryParams
+		let data = null
 		if (name) {
 			params.name = name
 			if (description) params.description = description
-			let status = await saveQuery(params)
-			if (status !== 400) renameCurrentTab(name)
+			data = await saveQuery(params)
+			if (data.status !== 400) {
+				renameCurrentTab(name)
+				addToast(data.msg, {appearance: 'success'})
+			} else { 
+				addToast(data.data.msg, {appearance: 'error'})
+			}
 			toggleSaveQuery()
 		} else { addToast('Name is required', {appearance: 'error'}) }
 	}
 
 	return (
-		<form onSubmit={saveHandler} className="modal modal__signup reset__form" >
+		<form onSubmit={saveHandler} className="modal modal__signup modal_from reset__form" >
 			<p className="p-modal">Query name (required)</p>
 			<input type="text" className="query__save"  
 				value={name} onChange={e => setName(e.target.value)}

@@ -66,7 +66,6 @@
 	border-radius: 5px;
 	border: none;
 	outline: none;
-	text-align: center;
 	background: #414457;
 	color: #d7d7d7 !important;
 }
@@ -97,7 +96,7 @@
 	.gallery {
 		display: none;
 		position: relative;
-		flex: 0 0 10% ;
+		flex: 0 0 15% ;
 		overflow: auto;
 		background-color: #282a36;
 		border-right: 1px solid #353848 ;
@@ -122,29 +121,38 @@
 		}
 		&__header {
 			position: fixed;
-			width: 10%;
+			width: 15%;
 			z-index: 1;
 			background-color: #353848 ;
 			height: 54px;
 			justify-content: center;
-			align-items: center;
 			flex: 1 0 auto;
 		}
 		&.active {
 			display: flex;
 		}
 		&__switch {
+			width: 100%;
+			&__label {
+				width: 100%;
+			}
 			.myqueries, .allqueries {
-				width: 25px;
+				display: inline-flex;
+				justify-content: center;
+				color: #d7d7d7;
+  				align-items: center;
+				width: 50%;
 				height: 25px;
 				background-color: #282a36;
 			}
 			#switch {
 				&:not(:checked) + label .myqueries {
-					background-color: #414457;
+					cursor: pointer;
+					background-color: #353848;
 				}
 				&:checked + label .allqueries {
-					background-color: #414457;
+					cursor: pointer;
+					background-color: #353848;
 				}
 			}
 		}

@@ -116,9 +116,11 @@ module.exports = function(app, passport, db) {
 					})
 				}
 			} else  {
-				db.query(sql, req.body.params, (err, result) => {
+				let params = {...req.body.params}
+				params.published = params.url ? true : null
+				db.query(sql, params, (err, result) => {
 					if (err) throw err
-					res.send({msg:'Query saved!', id: result.insertId})
+					params.url ? res.send({msg:'Query shared!', id: result.insertId}) : res.send({msg:'Query saved!', id: result.insertId})
 				})
 			}
 		})
