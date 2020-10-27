@@ -22,6 +22,31 @@ module.exports = function(app, passport, db) {
 			return next()
 		}
 	}
+	const sendActivationLink = (userID, userEmail) => {
+		let code = crypto.randomBytes(60).toString('hex')
+		db.query('select * from activations where user_id=?', [userID], (err, result) => {
+			if (err) throw err
+			if (result.length) {
+				db.query('update activations set code=? where user_id=?', [code, userID], (err, _) => {
+					if (err) throw err
+				})
+			} else {
+				db.query('INSERT INTO activations SET ?', {user_id: userID, code: code}, (err, res) => {
+					if (err) throw err
+					console.log(res)
+				})
+			}
+		})
+		let message = {
+			from : process.env.DEFAULT_EMAIL,
+			to: userEmail,
+			subject: 'Account activations',
+			text: 'Plaintext version of the message',
+			html: `<p>To activate your account follow this <a href="http://localhost:4000/api/activate?code=${code}">link</a> </p>`
+		}
+		transporter.sendMail(message)
+		
+	}
 
 	app.post('/api/login', (req, res, next) => {
 		passport.authenticate('local-login', (err, user, info) => {
@@ -31,7 +56,7 @@ module.exports = function(app, passport, db) {
 			if (!user) {
 				return res.status(400).send("Cannot log in")
 			} else if (!user[0].active) {
-				return res.status(400).send('Account not activated! If You do not recieve mail, can resend it in register window')
+				return res.status(400).send('Account not activated! If You do not recieve mail, can resend it in login window')
 			} else {
 				req.login(user, (err) => {
 					console.log(user)
@@ -48,21 +73,21 @@ module.exports = function(app, passport, db) {
 				return res.status(400).send("user already exist")
 			}
 			console.log("you are in ............")
-			let code = crypto.randomBytes(60).toString('hex')
-			db.query('INSERT INTO activations SET ?', {user_id: user[0].id, code: code}, (err, res) => {
-				if (err) throw err
-				console.log(res)
-			})
-			let message = {
-				from : process.env.DEFAULT_EMAIL,
-				to: user[0].email,
-				subject: 'Account activations',
-				text: 'Plaintext version of the message',
-				html: `<p>To activate your account follow this <a href="http://localhost:4000/api/activate?code=${code}">link</a> </p>`
-			}
-			transporter.sendMail(message)
-			res.send("Signed up. Check your email for further instructions! ")
+			sendActivationLink(user[0].id, user[0].email)
+			res.send('Activation link sent. Check your email for further instructions!')
 		})(req, res, next)
+	})
+	app.post('/api/resendactivation', (req, res) => {
+		let userEmail = req.body.email
+		db.query('select id from accounts where email = ?', [req.body.email], (err, result) => {
+			if (err) throw err
+			if (result[0].id) {
+				sendActivationLink(result[0].id, userEmail)
+				res.send('Activation link sent. Check your email for further instructions!')
+			} else {
+				res.send('There is no such user with this email')
+			}
+		})
 	})
 
 	app.post('/api/addquery', (req, res) => {
@@ -144,6 +169,7 @@ module.exports = function(app, passport, db) {
 			SELECT queries.*, COUNT(query_logs.id) as number FROM queries
 			LEFT JOIN query_logs
 			ON queries.id=query_logs.id
+			WHERE published=true
 			GROUP BY queries.id
 			ORDER BY number DESC`, (err, queries) => {
 				if (err) throw err
@@ -151,9 +177,15 @@ module.exports = function(app, passport, db) {
 			})
 	})
 	app.get('/api/getmyqueries', (req, res) => {
-		db.query(`select * from queries where account_id=${req.session.passport.user}`, (err, queries) => {
-			if (err) throw err
-			res.send(queries)
+		db.query(`
+			SELECT queries.*, COUNT(query_logs.id) as number FROM queries
+			LEFT JOIN query_logs
+			ON queries.id=query_logs.id
+			WHERE queries.account_id=?
+			GROUP BY queries.id
+			ORDER BY number DESC`, [req.session.passport.user], (err, queries) => {
+				if (err) throw err
+				res.send(queries)
 		})
 	})
 

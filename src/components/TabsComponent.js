@@ -7,7 +7,7 @@ import { useToasts } from 'react-toast-notifications'
 import copy from 'copy-to-clipboard'
 
 const TabsComponent = observer(() => {
-	const { tabs, currentTab, switchTab, removeTab, addNewTab, renameCurrentTab } = TabsStore
+	const { tabs, currentTab, switchTab, removeTab, addNewTab } = TabsStore
 	const { queryurl } = useParams()
 	const { setQuery, removeQuery, query } = QueriesStore
 	const { addToast } = useToasts()
@@ -43,7 +43,6 @@ const TabsComponent = observer(() => {
 		} else {
 			addToast('This query is not shared now', {appearance: 'error'})
 		}
-		
 	}
 
 	return (

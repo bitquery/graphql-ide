@@ -9,7 +9,7 @@ function QueriesComponent ({ queries }) {
 	const handleClick = (query) => {
 		const params = {
 			query: query.query,
-			variables: query.variables,
+			variables: query.arguments,
 			url: query.url
 		}
 		setQuery(params, query.id)
