@@ -30,7 +30,7 @@ function SaveQueryForm() {
 	}
 
 	return (
-		<form onSubmit={saveHandler} className="modal modal__signup modal_from reset__form" >
+		<form onSubmit={saveHandler} className="modal modal__form " >
 			<p className="p-modal">Query name (required)</p>
 			<input type="text" className="query__save"  
 				value={name} onChange={e => setName(e.target.value)}
@@ -40,6 +40,7 @@ function SaveQueryForm() {
 				value={description} onChange={e => setDescription(e.target.value)}
 			/>  
 			<button type="submit" className="button button_filled" >Save</button>
+			<button className="handler handler__close" onClick={toggleSaveQuery} />
 		</form>
 	)
 }

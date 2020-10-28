@@ -5,12 +5,17 @@ import { observer } from 'mobx-react-lite'
 import ModalStore from '../store/modalStore'
 import { Link } from 'react-router-dom'
 import { UserStore } from '../store/queriesStore'
+import ClickOutside  from 'react-click-outside';
 
 const Profile = observer(() => {
 	const { getUser, user, setUser } = UserStore
 	const { toggleRegister } = ModalStore
 	const [showProfileMenu, setShowProfileMenu] = useState(false)
 	const toggleProfileMenu = () => user && setShowProfileMenu(prev => !prev)
+	const clickOutside = e => {
+		e.target.classList.value !== 'profile__image' && setShowProfileMenu(false)
+	}
+
 	const logOut = async () => {
 		await logout().catch(e => console.log(e))
 		setUser(null)
@@ -27,16 +32,21 @@ const Profile = observer(() => {
 	)
 	return (
 		<div className="profile flex">
-			<img src={profileImg} alt="Profile" onClick={toggleProfileMenu} />
+			<img src={profileImg} className="profile__image" alt="Profile" onClick={toggleProfileMenu} />
 			<p className="profile__email"> {user.email} </p>
-			<div
-				className={'profile__controls flex flex-col ' + (showProfileMenu && 'active')}
+			<ClickOutside
+				onClickOutside={clickOutside}
 			>
-				<button className="button button__reset">
-					<Link to="/changepwd" >Change password</Link>
-				</button>
-				<button className="button button__logout" onClick={logOut} >Logout</button>
-			</div>
+				<div
+					className={'profile__controls flex flex-col ' + (showProfileMenu && 'active')}
+					>
+					<button className="profile__button">
+						<Link to="/changepwd" >Change password</Link>
+					</button>
+					<button className="profile__button" onClick={logOut} >Logout</button>
+				</div>
+			</ClickOutside>
+			
 		</div>
 	)
 })

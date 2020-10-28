@@ -15,7 +15,6 @@
 		font-size: 35px;
 		padding: 30px 0 30px 0;
 		color: #d7d7d7;
-
 	}
 	h1 {
 		font-size: 28px;
@@ -89,6 +88,23 @@
 	&-sizer {
 		margin-left: 38px !important;
 	}
+}
+.reset__password {
+	position: relative;
+}
+.logo {
+	position: relative;
+	display: block;
+	left: 30px;
+	cursor: pointer;
+}
+.close {
+	background: url('./assets/images/letter-x.svg') center no-repeat ;
+	padding: 7px;
+	position: absolute;
+	left: 5px;
+	top: 5px;
+	cursor: pointer;
 }
 .content {
 	height: 100%;
@@ -275,16 +291,27 @@
 	justify-content: flex-end;
 	position: relative;
 	margin: 0 5px 0 0;
+	&__button {
+		background-color: #282a36;
+		color: #d7d7d7;
+		padding: 10px;
+		&:hover {
+			background-color:  #323643;
+		}
+	}
 	&__controls {
 		background-color: #16162c;
-		padding: 10px;
+		-webkit-box-shadow: 0px 4px 3px 4px rgba(0,0,0,0.46); 
+		box-shadow: 0px 4px 3px 4px rgba(0,0,0,0.46);
+		border-top: none;
+		width: 150px;
 		z-index: 3;
 		position: absolute;
 		display: none;
 		top: 35px;
 		right: 0;
 		&.active {
-			display: block;
+			display: flex;
 		}
 	}
 	img {
@@ -303,7 +330,7 @@
 	border-radius: 10px;
 	outline: none;
 	&:hover {
-		background-color: #ae9669;
+		background-color: #6977ae;
 	}
 	&_filled {
 		background-color: #353848;

@@ -1,13 +1,15 @@
 import React, { useState } from 'react'
 import axios from 'axios'
-import { Route, Switch, useRouteMatch } from 'react-router-dom'
+import { Route, Switch, useHistory, useRouteMatch } from 'react-router-dom'
 import { useToasts } from 'react-toast-notifications'
 import ResetPasswordForm from '../components/ResetPasswordForm'
+import logo from '../assets/images/bitquery_logo.png'
 
 function ResetPassword() {
 	const [email, setEmail] = useState('')
 	let match = useRouteMatch()
 	const { addToast } = useToasts()
+	let history = useHistory()
 	const style = {
 		display: 'flex',
 		flexDirection: 'column',
@@ -28,11 +30,14 @@ function ResetPassword() {
 		<div className="reset">
 			<Switch>
 				<Route path={`${match.path}/:token`} >
+					<img className="logo" src={logo} alt="Logo" onClick={() => history.push('/')} />
 					<ResetPasswordForm />
 				</Route>
 				<Route path={`${match.path}`} >
+					<img className="logo" src={logo} alt="Logo" onClick={() => history.push('/')} />
 					<form style={style} onSubmit={sendPasswordResetLink} className="reset__form" >
-						<h2>Enter your email</h2>
+						<h2>Forgot password</h2>
+						<p>Enter your email below and reset password instruction will be sent </p>
 						<p className="p-modal">Email</p>
 						<input type="text" className="query__save" value={email} onChange={e => setEmail(e.target.value)} />  
 						<button className="button button_filled" type="submit">GO</button>

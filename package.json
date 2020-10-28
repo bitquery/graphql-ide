@@ -28,6 +28,7 @@
     "passport": "^0.4.1",
     "passport-local": "^1.0.0",
     "react": "^16.14.0",
+    "react-click-outside": "github:tj/react-click-outside",
     "react-dom": "^16.14.0",
     "react-modal": "^3.11.2",
     "react-router-dom": "^5.2.0",

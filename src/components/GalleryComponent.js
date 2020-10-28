@@ -9,7 +9,7 @@ const GalleryComponent = observer(() => {
 	const [allQueries, setAllQueries] = useState([])
 	const [myQueries, setMyQueries] = useState([])
 	const [showAllQueries, toggleQueries] = useState(true)
-	const { showGallery } = QueriesStore
+	const { showGallery, toggleGallery } = QueriesStore
 	const { user } = UserStore
 	const { addToast } = useToasts()
 
@@ -42,6 +42,7 @@ const GalleryComponent = observer(() => {
 	return (
 		<div className={'gallery flex flex-col ' + (showGallery && 'active')}>
 			<div className="gallery__header flex flex-col">
+				<span className="close" onClick={toggleGallery} /> 
 				<p>Gallery</p>
 				{ user && 
 					<div className="gallery__switch">

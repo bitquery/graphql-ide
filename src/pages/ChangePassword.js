@@ -3,6 +3,7 @@ import React from 'react'
 import { useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import { useToasts } from 'react-toast-notifications'
+import logo from '../assets/images/bitquery_logo.png'
 
 function ChangePassword() {
 	const style = {
@@ -41,15 +42,16 @@ function ChangePassword() {
 	}
 	
 	return (
-		<div className="reset">
+		<div className="reset__password">
+			<img className="logo" src={logo} alt="Logo" onClick={() => history.push('/')} />
 			<form style={style} onSubmit={changePwd} className="reset__form" >
-				<h2>Reset Password</h2>
+				<h2>Here you can change password</h2>
 				<p className="p-modal">Old Password</p>
-				<input type="text" className="query__save" value={oldPwd} onChange={e => setOldPwd(e.target.value)} />  
+				<input type="password" className="query__save" value={oldPwd} onChange={e => setOldPwd(e.target.value)} />  
 				<p className="p-modal">New Password</p>
-				<input type="text" className="query__save" value={newPwd} onChange={e => setNewPwd(e.target.value)} />  
+				<input type="password" className="query__save" value={newPwd} onChange={e => setNewPwd(e.target.value)} />  
 				<p className="p-modal">Confirm Password</p>
-				<input type="text" className="query__save" value={confirmNewPwd} onChange={e => setConfirmNewPwd(e.target.value)} />  
+				<input type="password" className="query__save" value={confirmNewPwd} onChange={e => setConfirmNewPwd(e.target.value)} />  
 				<button className="button button_filled" type="submit">Apply</button>
 			</form>
 		</div>

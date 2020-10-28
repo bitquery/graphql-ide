@@ -32,15 +32,16 @@ function ResetPasswordForm() {
 	}
 	return (
 		<form style={style} onSubmit={resetPassword} className="reset__form" >
+			<h1>Confirm new password</h1>
 			<p className="p-modal">New password</p>
-			<input type="text" className="query__save" 
+			<input type="password" className="query__save" 
 				value={password} onChange={e => setPassword(e.target.value)} 
 			/>  
 			<p className="p-modal">Confirm password</p>
-			<input type="text" className="query__save" 
+			<input type="password" className="query__save" 
 				value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} 
 			/>  
-			<button className="button button_filled" type="submit">GO</button>
+			<button className="button button_filled" type="submit">Change password</button>
 		</form>
 	)
 }
