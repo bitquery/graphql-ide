@@ -1,9 +1,10 @@
-let mysql = require('mysql');
-let dbconfig = require('./databaseConfig');
+require('dotenv').config()
+let mysql = require('mysql')
+let dbconfig = require('./databaseConfig')
 
-let connection = mysql.createConnection(dbconfig.connection);
+let connection = mysql.createConnection(dbconfig.connection)
 
-connection.query('CREATE DATABASE ' + dbconfig.database);
+connection.query('CREATE DATABASE ' + dbconfig.database)
 
 connection.query(`
 	CREATE TABLE ${dbconfig.database}.${dbconfig.queries_table} (
@@ -11,17 +12,16 @@ connection.query(`
 		account_id INT(10) not null,
 		query LONGTEXT not null,
 		arguments LONGTEXT not null,
-		url VARCHAR(128),
-		name VARCHAR(50),
+		url VARCHAR(200),
+		name VARCHAR(200),
 		description LONGTEXT,
-		share VARCHAR(64),
 		published BOOLEAN,
 		created_at TIMESTAMP not null default CURRENT_TIMESTAMP
 )`)
 connection.query(`
 	create table ${dbconfig.database}.${dbconfig.users_table} (
 		id INT(10) not null auto_increment primary key,
-		email VARCHAR(50) not null,
+		email VARCHAR(200) not null,
 		authenticated_by VARCHAR(20),
 		encrypted_credentials VARCHAR(100),
 		active BOOLEAN default false,
@@ -34,7 +34,7 @@ connection.query(`
 		id INT(10) not null,
 		account_id INT(10),
 		success BOOLEAN not null DEFAULT 0,
-		error BOOLEAN not null DEFAULT 0,
+		error LONGTEXT,
 		called_at TIMESTAMP not null default CURRENT_TIMESTAMP
 	)
 `)
@@ -47,4 +47,4 @@ connection.query(`
 
 console.log('Success: Database Created!')
 
-connection.end();
+connection.end()

@@ -1,7 +1,6 @@
 const transporter = require('./mailer')
 const crypto = require('crypto')
 const bcrypt = require('bcrypt')
-const { queries } = require('@testing-library/react')
 
 module.exports = function(app, passport, db) {
 
