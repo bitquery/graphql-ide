@@ -6,7 +6,7 @@ module.exports = function(passport, db) {
 		done(null, user[0].id)
 	})
 	passport.deserializeUser(async (id, done) => {
-		db.query(`select * from accounts where id = ${id}`, (err, user) => {
+		db.query(`select * from accounts where id = ?`, [id], (err, user) => {
 			done(null, user)
 		})
 	})
@@ -15,7 +15,7 @@ module.exports = function(passport, db) {
 		passwordField : 'password',
 	},
 	function(email, password, done) {
-		db.query("select * from accounts where email = '"+email+"'", (err,rows) => {
+		db.query("select * from accounts where email = ?", [email], (err,rows) => {
 			console.log(rows)
 			console.log("above row object, email already exist")
 			if (err)
@@ -48,7 +48,7 @@ module.exports = function(passport, db) {
 		usernameField: 'email',
 		passwordField: 'password'
 	}, (username, password, done) => {
-			db.query(`select * from accounts where email = '${username}'`, (err, user) => {
+			db.query(`select * from accounts where email = ?`, [username], (err, user) => {
 				if (err) console.log(err)
 				if (!user.length) done(null, false, {message: 'Incorrect user name'})
 				if (user.length) {

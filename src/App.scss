@@ -229,12 +229,12 @@
 			background: url('./assets/images/letter-x.svg') center no-repeat ;
 			margin-left: 15px;
 			padding-left: 12px;
-			opacity: 0%;
+			opacity: 0;
 		}
 		&__add {
 			background: url('./assets/images/plus.svg') center no-repeat ;
 			padding: 7px;
-			opacity: 50%;
+			opacity: 0.5;
 		}
 	}
 	ul {
@@ -254,7 +254,7 @@
 				background-color:#353848;
 				.tab {
 					&__close {
-						opacity: 50%;
+						opacity: 0.5;
 					}
 				}
 			}
@@ -355,10 +355,10 @@
 		}
 		.handler {
 			position: absolute;
-			opacity: 25%;
+			opacity: 0.25;
 			transition: opacity 150ms;
 			&:hover {
-				opacity: 100%;
+				opacity: 1;
 			}
 			&__back {
 				width: 50px;

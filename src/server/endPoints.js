@@ -5,10 +5,12 @@ const bcrypt = require('bcrypt')
 module.exports = function(app, passport, db) {
 
 	app.get('/api/check', (req, res) => {
+		console.log(req.protocol, req.get('Host'))
 		db.query('SELECT * from accounts where id = asdsa', (err, result) => {
 			if (err) console.log(err)
 		})
-		res.send('ok')
+		console.log(req.protocol, req.get('Host'))
+		
 	}) 
 
 	const authMiddleware = (req, res, next) => {
@@ -18,7 +20,7 @@ module.exports = function(app, passport, db) {
 			return next()
 		}
 	}
-	const sendActivationLink = (userID, userEmail) => {
+	const sendActivationLink = (userID, userEmail, req) => {
 		let code = crypto.randomBytes(60).toString('hex')
 		db.query('select * from activations where user_id=?', [userID], (err, result) => {
 			if (err) console.log(err)
@@ -38,7 +40,7 @@ module.exports = function(app, passport, db) {
 			to: userEmail,
 			subject: 'Account activations',
 			text: 'Plaintext version of the message',
-			html: `<p>To activate your account follow this <a href="http://localhost:4000/api/activate?code=${code}">link</a> </p>`
+			html: `<p>To activate your account follow this <a href="${req.protocol}://${req.get('Host')}/api/activate?code=${code}">link</a> </p>`
 		}
 		transporter.sendMail(message)
 	}
@@ -68,7 +70,7 @@ module.exports = function(app, passport, db) {
 				return res.status(400).send("user already exist")
 			}
 			console.log("you are in ............")
-			sendActivationLink(user[0].id, user[0].email)
+			sendActivationLink(user[0].id, user[0].email, req)
 			res.send('Activation link sent. Check your email for further instructions!')
 		})(req, res, next)
 	})
@@ -77,7 +79,7 @@ module.exports = function(app, passport, db) {
 		db.query('select id from accounts where email = ?', [req.body.email], (err, result) => {
 			if (err) console.log(err)
 			if (result[0].id) {
-				sendActivationLink(result[0].id, userEmail)
+				sendActivationLink(result[0].id, userEmail, req)
 				res.send('Activation link sent. Check your email for further instructions!')
 			} else {
 				res.send('There is no such user with this email')
@@ -209,7 +211,9 @@ module.exports = function(app, passport, db) {
 					if (err) console.log(err)
 					console.log('account activated', result)
 					req.session.active = true
-					res.redirect(`${req.protocol}://localhost:3000`)
+					process.env.NODE_ENV==='production'
+						? res.redirect(`${req.protocol}://${req.get('Host')}`)
+						: res.redirect(`http://localhost:3000`)
 				})
 			} else {
 				res.send('Something went wrong...')
@@ -228,7 +232,7 @@ module.exports = function(app, passport, db) {
 					subject: 'Account password reset',
 					text: 'You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n' +
 						'Please click on the following link, or paste this into your browser to complete the process:\n\n' +
-						'http://' + req.headers.host + '/reset/' + token + '\n\n' +
+						req.protocol + '://' + req.get('Host') + '/api/reset/' + token + '\n\n' +
 						'If you did not request this, please ignore this email and your password will remain unchanged.\n',
 				}
 				transporter.sendMail(message)
@@ -239,11 +243,13 @@ module.exports = function(app, passport, db) {
 		})
 	})
 
-	app.get('/reset/:token', (req, res) => {
+	app.get('/api/reset/:token', (req, res) => {
 		db.query(`select id from accounts where reset_token = ?`, [req.params.token], (err, result) => {
 			if (err) console.log(err)
 			if (result.length) {
-				res.redirect(`http://localhost:3000/reset/${req.params.token}`)
+				process.env.NODE_ENV==='production'
+					? res.redirect(`${req.protocol}://${req.get('Host')}/reset/${req.params.token}`)
+					: res.redirect(`http://localhost:3000/reset/${req.params.token}`)
 			} else {
 				res.send('Something went wrong')
 			}

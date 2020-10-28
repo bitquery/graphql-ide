@@ -37,8 +37,9 @@
   },
   "scripts": {
     "createdb": "node ./src/server/createDatabase.js",
-    "server": "nodemon ./src/server/server.js",
-    "dev": "run-p start server",
+    "devserver": "nodemon ./src/server/server.js",
+    "server": "node ./src/server/server.js",
+    "dev": "run-p start devserver",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",

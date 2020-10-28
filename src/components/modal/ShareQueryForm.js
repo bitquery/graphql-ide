@@ -15,7 +15,7 @@ function ShareQueryForm() {
 	const { renameCurrentTab } = TabsStore
 
 	useEffect(() => {
-		copy(`http://localhost:3000/${queryLink}`)
+		copy(`${window.location.protocol}//${window.location.host}/${queryLink}`)
 	}, [queryLink])
 
 	const shareHandler = async (e) => {
@@ -49,7 +49,8 @@ function ShareQueryForm() {
 				value={description} onChange={e => setDescription(e.target.value)}
 			/>  
 			<button type="submit" className="button button_filled" >Get Query Link</button>
-			<button className="handler handler__close" onClick={toggleShareQuery} />
+			{/* <button className="handler handler__close" onClick={toggleShareQuery} /> */}
+			<button className="handler handler__close" onClick={() => console.log(window.location.protocol, window.location.host)} />
 		</form>
 	)
 }
