@@ -33,13 +33,13 @@ Open [http://localhost:4000](http://localhost:4000) to view it in the browser.
 
 ### environment variables
 
-SMTP_HOST=
-SMTP_PORT=
-SMTP_USER=
-SMTP_PASS=
-DEFAULT_EMAIL=
-DB_HOST=
-DB_USER=
-DB_PASSWORD=
-DB_PORT=
+SMTP_HOST=<br />
+SMTP_PORT=<br />
+SMTP_USER=<br />
+SMTP_PASS=<br />
+DEFAULT_EMAIL=<br />
+DB_HOST=<br />
+DB_USER=<br />
+DB_PASSWORD=<br />
+DB_PORT=<br />
 NODE_ENV= production || development
