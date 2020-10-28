@@ -5,6 +5,7 @@ import { useToasts } from 'react-toast-notifications'
 import { UserStore } from '../../store/queriesStore'
 import modalStore from '../../store/modalStore'
 import axios from 'axios'
+import { validEmail } from '../../utils/common'
 
 function LoginForm({ active }) {
 	const [email, setEmail] = useState('')
@@ -15,7 +16,7 @@ function LoginForm({ active }) {
 	const { addToast } = useToasts()
 	const logIn = async e => {
 		e.preventDefault()
-		if (email && password) {
+		if (validEmail(email) && password) {
 			try {
 				const { data } = await login(email, password)
 				console.log(data)

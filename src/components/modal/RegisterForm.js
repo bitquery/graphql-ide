@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { signUp } from '../../api/api'
 import { useToasts } from 'react-toast-notifications'
 import modalStore from '../../store/modalStore'
+import { validEmail } from '../../utils/common'
 
 function RegisterForm({ active }) {
 	const [email, setEmail] = useState('')
@@ -10,7 +11,7 @@ function RegisterForm({ active }) {
 	const { toggleLogin, closeHandler } = modalStore
 	const register = async e => {
 		e.preventDefault()
-		if (password && email) {
+		if (password && validEmail(email)) {
 			try {
 				const { data } = await signUp(email, password)
 				addToast(data, {appearance: 'success'})

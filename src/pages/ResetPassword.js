@@ -4,6 +4,7 @@ import { Route, Switch, useHistory, useRouteMatch } from 'react-router-dom'
 import { useToasts } from 'react-toast-notifications'
 import ResetPasswordForm from '../components/ResetPasswordForm'
 import logo from '../assets/images/bitquery_logo.png'
+import { validEmail } from '../utils/common'
 
 function ResetPassword() {
 	const [email, setEmail] = useState('')
@@ -17,11 +18,13 @@ function ResetPassword() {
 	}
 	const sendPasswordResetLink = async e => {
 		e.preventDefault()
-		try {
-			const { data } = await axios.post('/api/forgot', { email })
-			addToast(data, { appearance: 'success' })
-		} catch (e) {
-			addToast(e.response.data, { appearance: 'error' })
+		if (validEmail(email)) {
+			try {
+				const { data } = await axios.post('/api/forgot', { email })
+				addToast(data, { appearance: 'success' })
+			} catch (e) {
+				addToast(e.response.data, { appearance: 'error' })
+			}
 		}
 	}
 
