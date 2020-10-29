@@ -1,24 +1,57 @@
-import React, { useState, useRef } from 'react';
-import schema from '../utils/schema'
+import React, { useState, useRef, useEffect } from 'react';
 import '../App.scss';
 import GraphiQL from 'graphiql'
 import modalStore from '../store/modalStore';
-import {TabsStore, QueriesStore, UserStore} from '../store/queriesStore';
-import { observer } from 'mobx-react-lite';
+import { TabsStore, QueriesStore, UserStore } from '../store/queriesStore';
 import copy from 'copy-to-clipboard'
 import { useToasts } from 'react-toast-notifications'
+import { getIntrospectionQuery, buildClientSchema } from 'graphql';
+import { observer } from 'mobx-react-lite'
+import useDebounce from '../utils/useDebounce'
 
 export const CustomGraphiql = observer(() => {
 	const { toggleSaveQuery, toggleShareQuery } = modalStore
 	const { tabs, currentTab } = TabsStore
+	const { user }  = UserStore
 	const { toggleGallery, setCurrentQuery, query, 
 		 updateQuery, queryParams, logQuery } = QueriesStore
-	const { user } = UserStore
 	const { addToast } = useToasts()
 	const graphiql = useRef(null)
-	const [fetchURL, setFetchURL] = useState('https://graphql.bitquery.io')
+	const [fetchURL, setFetchURL] = useState({[currentTab]:process.env.REACT_APP_ENDPOINT_URL})
+	const debouncedURL = useDebounce(fetchURL[currentTab], 500)
 	const [prettify, setPrettify] = useState(false)
+	const [schema, setSchema] = useState(null)
 
+	const fetcherFunction = (graphQLParams) => {
+		return fetch(
+			fetchURL[currentTab],
+			{
+				method: 'POST',
+				headers: {
+					Accept: 'application/json',
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify(graphQLParams),
+				credentials: 'same-origin',
+			},
+		)
+	}
+	useEffect(() => {
+		if (currentTab in fetchURL) {
+			for (let key in fetchURL) {
+				if (tabs.map(tab => tab.id).indexOf(+key)===-1) {
+					const {[key]: deletedKey, ...actual} = fetchURL
+					setFetchURL(actual)
+					return
+				}
+			}
+		} else {
+			setFetchURL({...fetchURL, [currentTab]: process.env.REACT_APP_ENDPOINT_URL})
+		}
+	}, [tabs.length])
+	const handleInputURLChange = e => {
+		setFetchURL({...fetchURL, [currentTab]: e.target.value})
+	}
 	const handleCopy = () => {
 		const editor = graphiql.current.getQueryEditor()
 		const query = editor && editor.getValue()
@@ -54,18 +87,7 @@ export const CustomGraphiql = observer(() => {
 		}
 	}
 	const fetcher = async graphQLParams => {
-		const data = await fetch(
-			fetchURL,
-			{
-				method: 'POST',
-				headers: {
-					Accept: 'application/json',
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify(graphQLParams),
-				credentials: 'same-origin',
-			},
-		)
+		const data = await fetcherFunction(graphQLParams)
 		data.clone().json().then(json => {
 			if ('data' in json) {
 				if (!('__schema' in json.data)) {
@@ -83,6 +105,27 @@ export const CustomGraphiql = observer(() => {
 			updateQuery(handleSubject, index)
 		}
 	}
+	const fetchSchema = () => {
+		let introspectionQuery = getIntrospectionQuery()
+		let staticName = 'IntrospectionQuery'
+		let introspectionQueryName = staticName
+		let graphQLParams = {
+			query: introspectionQuery,
+			operationName: introspectionQueryName,
+		}
+		fetchURL[currentTab].length > 9 && 
+		fetcherFunction(graphQLParams)
+		.then(data => data.json())	
+		.then(result => {
+			if (typeof result !== 'string' && 'data' in result) {
+				let schema = buildClientSchema(result.data)
+				setSchema(schema)
+			}
+		}).catch(e => {})
+	}
+	useEffect(() => {
+		fetchSchema()
+	}, [debouncedURL])
 
 	return (
 		tabs.map((tab, i) => (
@@ -127,7 +170,7 @@ export const CustomGraphiql = observer(() => {
 							label="Share"
 							title="Share Query"
 						/>
-						<input className="endpointURL" type="text" value={fetchURL} onChange={(e) => setFetchURL(e.target.value)} />
+						<input className="endpointURL" type="text" value={fetchURL[currentTab]||''} onChange={handleInputURLChange} />
 					</GraphiQL.Toolbar>
 				</GraphiQL>
 			</div>

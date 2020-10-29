@@ -49,8 +49,7 @@ function ShareQueryForm() {
 				value={description} onChange={e => setDescription(e.target.value)}
 			/>  
 			<button type="submit" className="button button_filled" >Get Query Link</button>
-			{/* <button className="handler handler__close" onClick={toggleShareQuery} /> */}
-			<button className="handler handler__close" onClick={() => console.log(window.location.protocol, window.location.host)} />
+			<button className="handler handler__close" onClick={toggleShareQuery} />
 		</form>
 	)
 }
