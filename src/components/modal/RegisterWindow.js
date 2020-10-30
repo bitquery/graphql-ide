@@ -35,7 +35,7 @@ const customStyles = {
 		outline: 0,
 	}
 }
-Modal.setAppElement('#root')
+Modal.setAppElement('#graphql_ide')
 
 const RegisterWindow = observer(() => {
 	const { registerIsOpen, loginIsOpen, closeHandler } = modalStore

@@ -7,14 +7,15 @@ import 'graphiql/graphiql.css'
 import { ToastProvider } from 'react-toast-notifications'
 import axios from 'axios'
 if (process.env.NODE_ENV==='production') {
-	axios.defaults.baseURL = process.env.REACT_APP_BACKEND_URL
+	let url = document.getElementById('graphql_ide').getAttribute('baseurl')
+	axios.defaults.baseURL = url
 }
 
 ReactDOM.render(
 	<ToastProvider autoDismiss={true} >
 		<App/>
 	</ToastProvider>,
-	document.getElementById('root')
+	document.getElementById('graphql_ide')
 );
 
 // If you want your app to work offline and load faster, you can change
