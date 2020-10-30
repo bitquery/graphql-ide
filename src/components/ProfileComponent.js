@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import profileImg from '../assets/images/user.svg'
 import { logout } from '../api/api'
 import { observer } from 'mobx-react-lite'
 import ModalStore from '../store/modalStore'
@@ -32,7 +31,7 @@ const Profile = observer(() => {
 	)
 	return (
 		<div className="profile flex">
-			<img src={profileImg} className="profile__image" alt="Profile" onClick={toggleProfileMenu} />
+			<img src='https://cdn.jsdelivr.net/gh/Spendil/qqq@1.0/media/user.f49489c9.svg' className="profile__image" alt="Profile" onClick={toggleProfileMenu} />
 			<p className="profile__email"> {user.email} </p>
 			<ClickOutside
 				onClickOutside={clickOutside}

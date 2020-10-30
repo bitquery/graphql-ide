@@ -99,7 +99,7 @@
 	cursor: pointer;
 }
 .close {
-	background: url('./assets/images/letter-x.svg') center no-repeat ;
+	background: url('https://cdn.jsdelivr.net/gh/Spendil/qqq@1.0/media/letter-x.36fcfb55.svg') center no-repeat ;
 	padding: 7px;
 	position: absolute;
 	left: 5px;
@@ -227,13 +227,13 @@
 	}
 	.tab {
 		&__close{
-			background: url('./assets/images/letter-x.svg') center no-repeat ;
+			background: url('https://cdn.jsdelivr.net/gh/Spendil/qqq@1.0/media/letter-x.36fcfb55.svg') center no-repeat ;
 			margin-left: 15px;
 			padding-left: 12px;
 			opacity: 0;
 		}
 		&__add {
-			background: url('./assets/images/plus.svg') center no-repeat ;
+			background: url('https://cdn.jsdelivr.net/gh/Spendil/qqq@1.0/media/plus.4c4f9f42.svg') center no-repeat ;
 			padding: 7px;
 			opacity: 0.5;
 		}
@@ -368,14 +368,14 @@
 				left: 10px;
 				top: 50%;
 				transform: translateY(-50%);
-				background: url('./assets/images/left-arrow.svg') center no-repeat ;
+				background: url('https://cdn.jsdelivr.net/gh/Spendil/qqq@1.0/media/left-arrow.b5fe2c88.svg') center no-repeat ;
 			}
 			&__close {
 				width: 25px;
 				height: 25px;
 				top: 10px;
 				right: 10px;
-				background: url('./assets/images/letter-x.svg') center no-repeat ;
+				background: url('https://cdn.jsdelivr.net/gh/Spendil/qqq@1.0/media/letter-x.36fcfb55.svg') center no-repeat ;
 			}
 		}
 		input {
