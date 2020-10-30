@@ -43,3 +43,17 @@ DB_USER=<br />
 DB_PASSWORD=<br />
 DB_PORT=<br />
 NODE_ENV= production || development
+
+## HTML
+
+<head>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.23.0/theme/dracula.css" />
+  <link href="https://cdn.jsdelivr.net/gh/bitquery/graphql-ide@1.1/build/static/css/2.b5f4ab2d.chunk.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/gh/bitquery/graphql-ide@1.1/build/static/css/main.c7a534ff.chunk.css" rel="stylesheet">
+</head>
+<body>
+  <div id="graphql_ide" baseurl="backend_url_here"></div>
+  <script src="https://cdn.jsdelivr.net/gh/bitquery/graphql-ide@1.1/build/static/js/runtime-main.28ba42de.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/bitquery/graphql-ide@1.1/build/static/js/2.b59bbcfd.chunk.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/bitquery/graphql-ide@1.1/build/static/js/main.10ef20f1.chunk.js"></script>  
+</body>
