@@ -30,6 +30,7 @@ class User {
 class Queries {
 	currentVariables = ''
 	showGallery = true
+	queryJustSaved = false
 	currentQuery = {
 		query: '',
 		variables: '{}',
@@ -44,6 +45,7 @@ class Queries {
 	constructor() {
 		makeObservable(this, {
 			currentVariables: observable,
+			queryJustSaved: observable,
 			currentQuery: observable,
 			showGallery: observable,
 			query: observable,
@@ -104,6 +106,7 @@ class Queries {
 			this.updateQuery(params, id, data.id)
 			this.setCurrentQuery(params, data.id)
 			console.log(data)
+			this.queryJustSaved = !this.queryJustSaved
 			return data
 		} catch (e) {
 			console.log(e.response)

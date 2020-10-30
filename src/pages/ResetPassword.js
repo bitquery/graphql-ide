@@ -33,11 +33,9 @@ function ResetPassword() {
 		<div className="reset">
 			<Switch>
 				<Route path={`${match.path}/:token`} >
-					<img className="logo" src={logo} alt="Logo" onClick={() => history.push('/')} />
 					<ResetPasswordForm />
 				</Route>
 				<Route path={`${match.path}`} >
-					<img className="logo" src={logo} alt="Logo" onClick={() => history.push('/')} />
 					<form style={style} onSubmit={sendPasswordResetLink} className="reset__form" >
 						<h2>Forgot password</h2>
 						<p>Enter your email below and reset password instruction will be sent </p>

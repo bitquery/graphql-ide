@@ -5,7 +5,10 @@ import App from './App'
 import * as serviceWorker from './serviceWorker'
 import 'graphiql/graphiql.css'
 import { ToastProvider } from 'react-toast-notifications'
-
+import axios from 'axios'
+if (process.env.NODE_ENV==='production') {
+	axios.defaults.baseURL = process.env.REACT_APP_BACKEND_URL
+}
 
 ReactDOM.render(
 	<ToastProvider autoDismiss={true} >

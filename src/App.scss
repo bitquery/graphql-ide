@@ -1,7 +1,7 @@
 .App {
 	display: flex;
 	flex-direction: column;
-	text-align: center;
+	// text-align: center;
 	background-color: #16162c;
 	padding-top: 10px;
 	font-family: Roboto, Avenir, Helvetica, Arial, sans-serif;
@@ -136,6 +136,7 @@
 			}
 		}
 		&__header {
+			text-align: center;
 			position: fixed;
 			width: 15%;
 			z-index: 1;

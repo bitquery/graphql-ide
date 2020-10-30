@@ -43,7 +43,6 @@ function ChangePassword() {
 	
 	return (
 		<div className="reset__password">
-			<img className="logo" src={logo} alt="Logo" onClick={() => history.push('/')} />
 			<form style={style} onSubmit={changePwd} className="reset__form" >
 				<h2>Here you can change password</h2>
 				<p className="p-modal">Old Password</p>

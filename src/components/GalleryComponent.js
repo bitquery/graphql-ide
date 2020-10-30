@@ -9,7 +9,7 @@ const GalleryComponent = observer(() => {
 	const [allQueries, setAllQueries] = useState([])
 	const [myQueries, setMyQueries] = useState([])
 	const [showAllQueries, toggleQueries] = useState(true)
-	const { showGallery, toggleGallery } = QueriesStore
+	const { showGallery, toggleGallery, queryJustSaved } = QueriesStore
 	const { user } = UserStore
 	const { addToast } = useToasts()
 
@@ -24,7 +24,7 @@ const GalleryComponent = observer(() => {
 			}
 		}
 		getQueries()
-	}, [])
+	}, [queryJustSaved])
 	useEffect(() => {
 		if (user) {
 			const getMyQueries = async () => {
@@ -37,7 +37,7 @@ const GalleryComponent = observer(() => {
 			}
 			getMyQueries()
 		}
-	}, [user])
+	}, [user, queryJustSaved])
 
 	return (
 		<div className={'gallery flex flex-col ' + (showGallery && 'active')}>
