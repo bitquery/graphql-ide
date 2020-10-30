@@ -1,0 +1,26 @@
+{
+  "files": {
+    "main.css": "/static/css/main.c7a534ff.chunk.css",
+    "main.js": "/static/js/main.0216c58d.chunk.js",
+    "main.js.map": "/static/js/main.0216c58d.chunk.js.map",
+    "runtime-main.js": "/static/js/runtime-main.28ba42de.js",
+    "runtime-main.js.map": "/static/js/runtime-main.28ba42de.js.map",
+    "static/css/2.b5f4ab2d.chunk.css": "/static/css/2.b5f4ab2d.chunk.css",
+    "static/js/2.b59bbcfd.chunk.js": "/static/js/2.b59bbcfd.chunk.js",
+    "static/js/2.b59bbcfd.chunk.js.map": "/static/js/2.b59bbcfd.chunk.js.map",
+    "index.html": "/index.html",
+    "precache-manifest.0fc93ea92d0c026094f5309098ee5d71.js": "/precache-manifest.0fc93ea92d0c026094f5309098ee5d71.js",
+    "service-worker.js": "/service-worker.js",
+    "static/css/2.b5f4ab2d.chunk.css.map": "/static/css/2.b5f4ab2d.chunk.css.map",
+    "static/css/main.c7a534ff.chunk.css.map": "/static/css/main.c7a534ff.chunk.css.map",
+    "static/js/2.b59bbcfd.chunk.js.LICENSE.txt": "/static/js/2.b59bbcfd.chunk.js.LICENSE.txt",
+    "static/media/bitquery_logo.png": "/static/media/bitquery_logo.b137d64f.png"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.28ba42de.js",
+    "static/css/2.b5f4ab2d.chunk.css",
+    "static/js/2.b59bbcfd.chunk.js",
+    "static/css/main.c7a534ff.chunk.css",
+    "static/js/main.0216c58d.chunk.js"
+  ]
+}
