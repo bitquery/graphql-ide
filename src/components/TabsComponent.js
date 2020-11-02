@@ -1,6 +1,6 @@
 import { observer } from 'mobx-react-lite'
 import React, { useEffect } from 'react'
-import { useParams } from 'react-router-dom'
+import { useRouteMatch } from 'react-router-dom'
 import { getQuery } from '../api/api'
 import {TabsStore, QueriesStore} from '../store/queriesStore'
 import { useToasts } from 'react-toast-notifications'
@@ -8,21 +8,23 @@ import copy from 'copy-to-clipboard'
 
 const TabsComponent = observer(() => {
 	const { tabs, currentTab, switchTab, removeTab, addNewTab } = TabsStore
-	const { queryurl } = useParams()
+	const match = useRouteMatch('/graphqlide/:queryurl')
 	const { setCurrentQuery ,setQuery, removeQuery, query } = QueriesStore
 	const { addToast } = useToasts()
 
 	useEffect(() => {
 		async function updateTabs() {
-			if (queryurl) {
-				const { data } = await getQuery(queryurl)
-				const params = {
-					query: data.query,
-					variables: data.arguments,
-					url: data.url
-				}
-				setQuery(params, data.id)
-				addNewTab(data.name)
+			if (match) {
+				const { data } = await getQuery(match.params.queryurl)
+				if (typeof data === 'object') {
+					const params = {
+						query: data.query,
+						variables: data.arguments,
+						url: data.url
+					}
+					setQuery(params, data.id)
+					addNewTab(data.name)
+				} 
 			}
 		}
 		updateTabs()
@@ -39,7 +41,7 @@ const TabsComponent = observer(() => {
 	const getQueryUrl = (index, e) => {
 		e.preventDefault()
 	 	if (query[index].url) {
-			copy(`http://${window.location.host}/${query[index].url}`)
+			copy(`${window.location.protocol}://${window.location.host}/graphqlide/${query[index].url}`)
 			addToast('Query link copied to clipboard!', {appearance: 'success'})
 		} else {
 			addToast('This query is not shared now', {appearance: 'error'})

@@ -1,15 +1,18 @@
 .App {
 	display: flex;
 	flex-direction: column;
-	// text-align: center;
 	background-color: #16162c;
 	padding-top: 10px;
 	font-family: Roboto, Avenir, Helvetica, Arial, sans-serif;
 	font-size: 14px;
 	overflow: hidden;
+	label {
+		margin-bottom: 0;
+	}
 	p, a {
 		padding: 10px 0;
 		color: #d7d7d7;
+		margin-bottom: 0;
 	}
 	h2 {
 		font-size: 35px;
@@ -138,7 +141,7 @@
 			text-align: center;
 			z-index: 1;
 			background-color: #353848 ;
-			height: 54px;
+			height: 48px;
 			justify-content: center;
 		}
 		&.active {
