@@ -24,6 +24,7 @@ module.exports = function(app, passport, db) {
 		let code = crypto.randomBytes(60).toString('hex')
 		db.query('select * from activations where user_id=?', [userID], (err, result) => {
 			if (err) console.log(err)
+			console.log('result', result)
 			if (result.length) {
 				db.query('update activations set code=? where user_id=?', [code, userID], (err, _) => {
 					if (err) console.log(err)
@@ -40,7 +41,7 @@ module.exports = function(app, passport, db) {
 			to: userEmail,
 			subject: 'Account activations',
 			text: 'Plaintext version of the message',
-			html: `<p>To activate your account follow this <a href="${process.env.BACKEND_URL}/api/activate?code=${code}">link</a> </p>`
+			html: `<p>To activate your account follow this <a href="${req.protocol}://${req.get('Host')}/api/activate?code=${code}">link</a> </p>`
 		}
 		transporter.sendMail(message)
 	}
@@ -212,7 +213,7 @@ module.exports = function(app, passport, db) {
 					console.log('account activated', result)
 					req.session.active = true
 					process.env.NODE_ENV==='production'
-						? res.redirect(`${req.protocol}://${req.get('Host')}${process.env.IDE_URL}`)
+						? res.redirect(`${process.env.IDE_URL}`)
 						: res.redirect(`http://localhost:3000`)
 				})
 			} else {
@@ -232,7 +233,7 @@ module.exports = function(app, passport, db) {
 					subject: 'Account password reset',
 					text: 'You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n' +
 						'Please click on the following link, or paste this into your browser to complete the process:\n\n' +
-						process.env.BACKEND_URL + '/api/reset/' + token + '\n\n' +
+						req.protocol + '://' + req.get('Host') + '/api/reset/' + token + '\n\n' +
 						'If you did not request this, please ignore this email and your password will remain unchanged.\n',
 				}
 				transporter.sendMail(message)
@@ -248,7 +249,7 @@ module.exports = function(app, passport, db) {
 			if (err) console.log(err)
 			if (result.length) {
 				process.env.NODE_ENV==='production'
-					? res.redirect(`${req.protocol}://${req.get('Host')}${process.env.IDE_URL}/reset/${req.params.token}`)
+					? res.redirect(`${process.env.IDE_URL}/reset/${req.params.token}`)
 					: res.redirect(`http://localhost:3000/reset/${req.params.token}`)
 			} else {
 				res.send('Something went wrong')

@@ -4,7 +4,11 @@ const path = require('path')
 const cors = require('cors')
 const mysql = require('mysql')
 const dbconfig = require('./databaseConfig')
-const db = mysql.createConnection(dbconfig.connection)
+const db = mysql.createPool({
+  ...dbconfig.connection,
+  'connectionLimit': 10,
+  'database': dbconfig.database
+})
 const app = express()
 const cookieSession = require('cookie-session')
 const bodyParser = require('body-parser')
@@ -19,8 +23,6 @@ app.use(cookieSession({
   }))
 app.use(passport.initialize());
 app.use(passport.session());
-
-db.query(`USE ${dbconfig.database}`)
 
 require('./passport')(passport, db)
 require('./endPoints')(app, passport, db)
