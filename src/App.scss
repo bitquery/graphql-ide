@@ -113,15 +113,14 @@
 		display: none;
 		position: relative;
 		flex: 0 0 15% ;
-		overflow: auto;
 		background-color: #282a36;
 		border-right: 1px solid #353848 ;
-		&::-webkit-scrollbar {
-			display: none;
-		}
 		&__queries {
+			overflow: auto;
 			text-align: left;
-			padding-top: 54px;
+			&::-webkit-scrollbar {
+				display: none;
+			}
 		}
 		&__query {
 			position: relative;
@@ -137,13 +136,10 @@
 		}
 		&__header {
 			text-align: center;
-			position: fixed;
-			width: 15%;
 			z-index: 1;
 			background-color: #353848 ;
 			height: 54px;
 			justify-content: center;
-			flex: 1 0 auto;
 		}
 		&.active {
 			display: flex;
