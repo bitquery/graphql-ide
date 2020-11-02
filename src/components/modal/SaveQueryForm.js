@@ -30,7 +30,7 @@ function SaveQueryForm() {
 	}
 
 	return (
-		<form onSubmit={saveHandler} className="modal modal__form " >
+		<form onSubmit={saveHandler} className="modal__form " >
 			<p className="p-modal">Query name (required)</p>
 			<input type="text" className="query__save"  
 				value={name} onChange={e => setName(e.target.value)}
