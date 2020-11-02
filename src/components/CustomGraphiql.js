@@ -11,7 +11,7 @@ import useDebounce from '../utils/useDebounce'
 
 export const CustomGraphiql = observer(() => {
 	const { toggleSaveQuery, toggleShareQuery } = modalStore
-	const { tabs, currentTab } = TabsStore
+	const { tabs, currentTab, id } = TabsStore
 	const { user }  = UserStore
 	const { toggleGallery, setCurrentQuery, query, 
 		 updateQuery, queryParams, logQuery } = QueriesStore
@@ -48,7 +48,7 @@ export const CustomGraphiql = observer(() => {
 		} else {
 			setFetchURL({...fetchURL, [currentTab]: process.env.REACT_APP_ENDPOINT_URL})
 		}
-	}, [tabs.length])
+	}, [tabs.length, id])
 	const handleInputURLChange = e => {
 		setFetchURL({...fetchURL, [currentTab]: e.target.value})
 	}
