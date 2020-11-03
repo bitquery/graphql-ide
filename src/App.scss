@@ -1,9 +1,9 @@
 .App {
+	font-family: Roboto, Avenir, Helvetica, Arial, sans-serif;
 	display: flex;
 	flex-direction: column;
-	background-color: #16162c;
+	background-color: #57626b;
 	padding-top: 10px;
-	font-family: Roboto, Avenir, Helvetica, Arial, sans-serif;
 	font-size: 14px;
 	overflow: hidden;
 	label {
@@ -11,17 +11,17 @@
 	}
 	p, a {
 		padding: 10px 0;
-		color: #d7d7d7;
+		color: #555;
 		margin-bottom: 0;
 	}
 	h2 {
 		font-size: 35px;
 		padding: 30px 0 30px 0;
-		color: #d7d7d7;
+		color: #555;
 	}
 	h1 {
 		font-size: 28px;
-		color: #d7d7d7;
+		color: #555;
 	}
 }
 
@@ -68,8 +68,6 @@
 	border-radius: 5px;
 	border: none;
 	outline: none;
-	background: #414457;
-	color: #d7d7d7 !important;
 }
 .p-modal {
 	padding: 10px 0;
@@ -79,17 +77,6 @@
 	display: flex;
 	&-col {
 		flex-direction: column;
-	}
-}
-.CodeMirror{
-	&-cursor {
-		border-color: #d7d7d7 !important;
-	}
-	&-line {
-		text-align: left;
-	}
-	&-sizer {
-		margin-left: 38px !important;
 	}
 }
 .reset__password {
@@ -102,7 +89,7 @@
 	cursor: pointer;
 }
 .close {
-	background: url('https://cdn.jsdelivr.net/gh/Spendil/qqq@1.0/media/letter-x.36fcfb55.svg') center no-repeat ;
+	background: url('https://cdn.jsdelivr.net/gh/Spendil/qqq@1.1/media/letter-x.36fcfb55.svg') center no-repeat ;
 	padding: 6px;
 	opacity: 0.5;
 	position: absolute;
@@ -121,8 +108,8 @@
 		display: none;
 		position: relative;
 		flex: 0 0 15% ;
-		background-color: #282a36;
-		border-right: 1px solid #353848 ;
+		background-color: #f0f0f0;
+		border-right: 1px solid #d8d8d8 ;
 		&__queries {
 			overflow: auto;
 			text-align: left;
@@ -134,19 +121,22 @@
 			position: relative;
 			word-break: break-all;
 			font-size: 12px;
-			border-bottom: 1px solid #a9a9a9;
-			padding: 10px 5px;
+			padding: 0 0 0 5px;
 			cursor: pointer;
-			color: #a9a9a9;
+			color: #555;
+			p {
+				padding: 3.5px 0;
+			}
 			&:hover {
-				color: #d7d7d7;
+				color: #555;
+				background-color: #333;
 			}
 		}
 		&__header {
 			text-align: center;
 			z-index: 1;
-			background-color: #353848 ;
-			height: 48px;
+			background-color: #d5d5d5 ;
+			min-height: 54px;
 			justify-content: center;
 		}
 		&.active {
@@ -160,20 +150,20 @@
 			.myqueries, .allqueries {
 				display: inline-flex;
 				justify-content: center;
-				color: #d7d7d7;
+				color: #555;
   				align-items: center;
 				width: 50%;
 				height: 25px;
-				background-color: #282a36;
+				background-color: #f0f0f0;
 			}
 			#switch {
 				&:not(:checked) + label .myqueries {
 					cursor: pointer;
-					background-color: #353848;
+					background-color: #888585;
 				}
 				&:checked + label .allqueries {
 					cursor: pointer;
-					background-color: #353848;
+					background-color: #888585;
 				}
 			}
 		}
@@ -201,24 +191,11 @@
 	&_active {
 		display: block;
 	}
-	.toolbar-button, .docExplorerShow, .execute-button {
-		background: #282a36 !important;
-		box-shadow: none !important;
-		color: #bababa !important;
-		fill: #bababa !important;
+	.doc-explorer-title-bar{
+		height: auto !important;
 	}
 	.topBar {
 		height: 54px !important;
-		background: #353848 !important;
-		color: #d7d7d7;
-		border-bottom: none !important;
-	}
-	.secondary-editor-title {
-		background: #353848 !important;
-		border: none !important;
-	}
-	.resultWrap {
-		border-color: #353848 !important;
 	}
 	.editorWrap {
 		overflow-y: hidden;
@@ -231,13 +208,13 @@
 	}
 	.tab {
 		&__close{
-			background: url('https://cdn.jsdelivr.net/gh/Spendil/qqq@1.0/media/letter-x.36fcfb55.svg') center no-repeat ;
+			background: url('https://cdn.jsdelivr.net/gh/Spendil/qqq@1.1/media/letter-x.36fcfb55.svg') center no-repeat ;
 			margin-left: 15px;
 			padding-left: 12px;
 			opacity: 0;
 		}
 		&__add {
-			background: url('https://cdn.jsdelivr.net/gh/Spendil/qqq@1.0/media/plus.4c4f9f42.svg') center no-repeat ;
+			background: url('https://cdn.jsdelivr.net/gh/Spendil/qqq@1.1/media/plus.4c4f9f42.svg') center no-repeat ;
 			padding: 7px;
 			opacity: 0.5;
 		}
@@ -253,10 +230,10 @@
 			display: block;
 			cursor: pointer;
 			margin: 0 7px;
-			color: #c2c2c2;
-			background-color: #282a36;
+			color: #555;
+			background-color: #b6b5b5;
 			&:hover, &.active {
-				background-color:#353848;
+				background-color:#f0f0f0;
 				.tab {
 					&__close {
 						opacity: 0.5;
@@ -264,8 +241,7 @@
 				}
 			}
 			&.active {
-				color: #fff;
-				// padding-right: 10px;
+				color: #555;
 			}
 			.close-tab {
 				padding-left: 10px;
@@ -296,16 +272,22 @@
 	justify-content: flex-end;
 	position: relative;
 	margin: 0 5px 0 0;
+	&__email {
+		color: #d7d7d7 !important;
+	}
 	&__button {
-		background-color: #282a36;
+		background-color: #555;
 		color: #d7d7d7;
+		a {
+			color: #d7d7d7;
+		}
 		padding: 10px;
 		&:hover {
-			background-color:  #323643;
+			background-color:  #828282;
 		}
 	}
 	&__controls {
-		background-color: #16162c;
+		background-color: #555;
 		-webkit-box-shadow: 0px 4px 3px 4px rgba(0,0,0,0.46); 
 		box-shadow: 0px 4px 3px 4px rgba(0,0,0,0.46);
 		border-top: none;
@@ -372,14 +354,14 @@
 				left: 10px;
 				top: 50%;
 				transform: translateY(-50%);
-				background: url('https://cdn.jsdelivr.net/gh/Spendil/qqq@1.0/media/left-arrow.b5fe2c88.svg') center no-repeat ;
+				background: url('https://cdn.jsdelivr.net/gh/Spendil/qqq@1.1/media/left-arrow.b5fe2c88.svg') center no-repeat ;
 			}
 			&__close {
 				width: 12px;
 				height: 12px;
 				top: 10px;
 				right: 10px;
-				background: url('https://cdn.jsdelivr.net/gh/Spendil/qqq@1.0/media/letter-x.36fcfb55.svg') center no-repeat ;
+				background: url('https://cdn.jsdelivr.net/gh/Spendil/qqq@1.1/media/letter-x.36fcfb55.svg') center no-repeat ;
 			}
 		}
 		input, textarea {
