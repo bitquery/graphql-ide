@@ -15,7 +15,7 @@ function ShareQueryForm() {
 	const { renameCurrentTab } = TabsStore
 
 	useEffect(() => {
-		copy(`${window.location.protocol}//${window.location.host}/${queryLink}`)
+		copy(`${window.location.protocol}://${window.location.host}/graphqlide/${queryLink}`)
 	}, [queryLink])
 
 	const shareHandler = async (e) => {

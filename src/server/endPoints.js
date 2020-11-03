@@ -20,6 +20,16 @@ module.exports = function(app, passport, db) {
 			return next()
 		}
 	}
+	const handleAddQuery = (req, res, db, sql) => {
+		let params = {...req.body.params}
+		params.id = null
+		params.published = params.url ? true : null
+		db.query(sql, params, (err, result) => {
+			if (err) console.log(err)
+			let msg = params.url ? 'Query shared!' : 'Query saved!'
+			res.send({msg, id: result.insertId})
+		})
+	}
 	const sendActivationLink = (userID, userEmail, req) => {
 		let code = crypto.randomBytes(60).toString('hex')
 		db.query('select * from activations where user_id=?', [userID], (err, result) => {
@@ -98,28 +108,13 @@ module.exports = function(app, passport, db) {
 				if (result[0].account_id === req.session.passport.user) {
 					req.body.params.url ? 
 						result[0].url ? res.status(400).send({msg:'Query already shared!', id: result[0].id}) 
-							: db.query(`update queries set url = ?, published = ? where id = ?`, 
-								[req.body.params.url, true, req.body.params.id], (err, _) => {
-									if (err) console.log(err)
-									res.send({msg:'Query shared!', id: result[0].id})
-								})
+							: handleAddQuery(req, res, db, sql)
 						: res.status(400).send({msg:'Query already saved!', id: result[0].id})
 				} else {
-					let params = {...req.body.params}
-					params.id = null
-					params.published = params.url ? true : null
-					db.query(sql, params, (err, result) => {
-						if (err) console.log(err)
-						params.url ? res.send({msg:'Query shared!', id: result.insertId}) : res.send({msg:'Query saved!', id: result.insertId})
-					})
+					handleAddQuery(req, res, db, sql)
 				}
 			} else  {
-				let params = {...req.body.params}
-				params.published = params.url ? true : null
-				db.query(sql, params, (err, result) => {
-					if (err) console.log(err)
-					params.url ? res.send({msg:'Query shared!', id: result.insertId}) : res.send({msg:'Query saved!', id: result.insertId})
-				})
+				handleAddQuery(req, res, db, sql)
 			}
 		})
 	})
