@@ -45,9 +45,9 @@ function ShareQueryForm() {
 				value={name} onChange={e => setName(e.target.value)}
 			/>  
 			<p className="p-modal">Description (optional)</p>
-			<input type="text" className="query__save" 
-				value={description} onChange={e => setDescription(e.target.value)}
-			/>  
+			<textarea className="query__save" rows="4"
+				value={description} onChange={e => setDescription(e.target.value)} 
+			/>
 			<button type="submit" className="button button_filled" >Get Query Link</button>
 			<button className="handler handler__close" onClick={toggleShareQuery} />
 		</form>

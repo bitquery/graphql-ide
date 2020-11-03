@@ -382,10 +382,11 @@
 				background: url('https://cdn.jsdelivr.net/gh/Spendil/qqq@1.0/media/letter-x.36fcfb55.svg') center no-repeat ;
 			}
 		}
-		input {
+		input, textarea {
 			text-align: left;
 			width: 50%;
 			min-width: 300px;
+			resize: none;
 		}
 		h2 {
 			font-size: 25px;
