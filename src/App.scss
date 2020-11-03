@@ -126,9 +126,12 @@
 			color: #555;
 			p {
 				padding: 3.5px 0;
+				&:hover {
+					color: #d7d7d7;
+				}
 			}
 			&:hover {
-				color: #555;
+				color: #d7d7d7;
 				background-color: #333;
 			}
 		}

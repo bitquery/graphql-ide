@@ -3,18 +3,23 @@ import {TabsStore, QueriesStore} from '../store/queriesStore'
 
 function QueriesComponent ({ queries }) {
 	const [hoverElementIndex, setHoverElementIndex] = useState(false)
-	const { addNewTab } = TabsStore
-	const { setQuery, setCurrentQuery } = QueriesStore
+	const { addNewTab, switchTab, tabs } = TabsStore
+	const { setQuery, setCurrentQuery, query } = QueriesStore
 	const showDescription = (i1, i2) => i1===i2 ? true : false
-	const handleClick = (query) => {
-		const params = {
-			query: query.query,
-			variables: query.arguments,
-			url: query.url
+	const handleClick = (queryFromGallery) => {
+		if (query.map(query => query.id).indexOf(queryFromGallery.id) === -1) {
+			const params = {
+				query: queryFromGallery.query,
+				variables: queryFromGallery.arguments,
+				url: queryFromGallery.url
+			}
+			setQuery(params, queryFromGallery.id)
+			setCurrentQuery(params, queryFromGallery.id)
+			addNewTab(queryFromGallery.name)
+		} else {
+			let tabID = query.map(query => query.id).indexOf(queryFromGallery.id)
+			switchTab(tabID)
 		}
-		setQuery(params, query.id)
-		setCurrentQuery(params, query.id)
-		addNewTab(query.name)
 	}
 
 	return (
