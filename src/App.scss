@@ -1,8 +1,6 @@
 .App {
-	font-family: Roboto, Avenir, Helvetica, Arial, sans-serif;
 	display: flex;
 	flex-direction: column;
-	background-color: #57626b;
 	padding-top: 10px;
 	font-size: 14px;
 	overflow: hidden;
@@ -71,7 +69,7 @@
 }
 .p-modal {
 	padding: 10px 0;
-	color: #d7d7d7;
+	color: #555;
 }
 .flex {
 	display: flex;
@@ -108,7 +106,7 @@
 		display: none;
 		position: relative;
 		flex: 0 0 15% ;
-		background-color: #f0f0f0;
+		background-color: #d1d1d1;
 		border-right: 1px solid #d8d8d8 ;
 		&__queries {
 			overflow: auto;
@@ -127,12 +125,13 @@
 			p {
 				padding: 3.5px 0;
 				&:hover {
-					color: #d7d7d7;
+					color: #555;
 				}
 			}
 			&:hover {
-				color: #d7d7d7;
-				background-color: #333;
+				color: #555;
+				background-color: #fff;
+				padding: 5px 5px;
 			}
 		}
 		&__header {
@@ -162,11 +161,11 @@
 			#switch {
 				&:not(:checked) + label .myqueries {
 					cursor: pointer;
-					background-color: #888585;
+					background-color: #d1d1d1;
 				}
 				&:checked + label .allqueries {
 					cursor: pointer;
-					background-color: #888585;
+					background-color: #d1d1d1;
 				}
 			}
 		}
@@ -276,7 +275,7 @@
 	position: relative;
 	margin: 0 5px 0 0;
 	&__email {
-		color: #d7d7d7 !important;
+		color: #1e385a !important;
 	}
 	&__button {
 		background-color: #555;
@@ -313,17 +312,17 @@
 .button {
 	cursor: pointer;
 	width: 150px;
-	background-color:#16162c;
-	color: #d7d7d7;
+	background: none;
+	color: #555;
 	padding: 8px;
 	margin: 0 5px 0 0;
 	border-radius: 10px;
 	outline: none;
 	&:hover {
-		background-color: #6977ae;
+		background-color: #d5d5d5;
 	}
 	&_filled {
-		background-color: #353848;
+		background-color: #d1d1d1;
 		border: 1px solid #c27a7a38;
 		margin: 35px auto 0;
 	}
@@ -376,7 +375,7 @@
 		h2 {
 			font-size: 25px;
 			padding: 15px 0 15px 0;
-			color: #d7d7d7;
+			color: #555;
 		}
 		display: flex;
 		flex-direction: column;
@@ -388,7 +387,7 @@
 			cursor: pointer;
 			padding-top: 10px;
 			width: fit-content;
-			color: #d7d7d7;
+			color: #555;
 			font-size: 16px;
 			&:hover {
 				color: #fff;

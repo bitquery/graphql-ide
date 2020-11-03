@@ -58,9 +58,9 @@ const GalleryComponent = observer(() => {
 				{
 					user ?
 						showAllQueries 
-							? <QueriesComponent queries={allQueries} />
-							: <QueriesComponent queries={myQueries} />
-					: <QueriesComponent queries={allQueries} />
+							? <QueriesComponent queries={{queries:allQueries}} />
+							: <QueriesComponent queries={{queries:myQueries}} />
+					: <QueriesComponent queries={{queries:allQueries}} />
 				}
 			</ul>
 		</div>

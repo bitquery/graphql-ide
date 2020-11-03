@@ -18,12 +18,12 @@ function QueriesComponent ({ queries }) {
 			addNewTab(queryFromGallery.name)
 		} else {
 			let tabID = query.map(query => query.id).indexOf(queryFromGallery.id)
-			switchTab(tabID)
+			switchTab(tabs[tabID].id)
 		}
 	}
 
 	return (
-		queries.map((query, index) => (
+		queries.queries.map((query, index) => (
 			<li className="gallery__query" key={index} > 
 				<p  className="gallery__query__body"
 					onMouseEnter={() => setHoverElementIndex(index)}

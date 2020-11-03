@@ -28,7 +28,7 @@ const customStyles = {
 		maxHeight: '450px',
 		minWidth: '450px',
 		width: '40%',
-		backgroundColor: '#353848',
+		backgroundColor: '#d1d1d1',
 		backgroundClip: 'padding-box',
 		border: '1px solid rgba(0, 0, 0, 0.2)',
 		borderRadius: '0.3rem',
