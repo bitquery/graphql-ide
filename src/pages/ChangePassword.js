@@ -1,7 +1,7 @@
 import axios from 'axios'
 import React from 'react'
 import { useState } from 'react'
-import { useHistory } from 'react-router-dom'
+import { useHistory, useRouteMatch } from 'react-router-dom'
 import { useToasts } from 'react-toast-notifications'
 import logo from '../assets/images/bitquery_logo.png'
 
@@ -16,6 +16,7 @@ function ChangePassword() {
 	const [newPwd, setNewPwd] = useState('')
 	const [confirmNewPwd, setConfirmNewPwd] = useState('')
 	let history = useHistory()
+	const { url } = useRouteMatch()
 	
 	const changePwd = async (e) => {
 		e.preventDefault()
@@ -27,7 +28,7 @@ function ChangePassword() {
 				})
 				console.log(data)
 				setTimeout(() => {
-					history.push('/')
+					history.push(`${url}`)
 				}, 3000)
 				addToast(data, { appearance: 'success' })
 				addToast('Redirect in 3 seconds...', { appearance: 'success' })

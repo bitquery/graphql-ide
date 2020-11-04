@@ -178,7 +178,7 @@ class Tabs {
 	}
 	removeTab = (index, event) => {
 		event.stopPropagation()
-		this.tabs.splice(index, 1)
+		this.tabs.length !==1 && this.tabs.splice(index, 1)
 		this.tabs.length === 0 
 			? this.addNewTab('New Tab') 
 			: this.switchTab(this.tabs[this.tabs.length-1].id)

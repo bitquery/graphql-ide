@@ -2,11 +2,12 @@ import React, { useEffect, useState } from 'react'
 import { logout } from '../api/api'
 import { observer } from 'mobx-react-lite'
 import ModalStore from '../store/modalStore'
-import { Link } from 'react-router-dom'
+import { Link, useRouteMatch } from 'react-router-dom'
 import { UserStore } from '../store/queriesStore'
 import ClickOutside  from 'react-click-outside';
 
 const Profile = observer(() => {
+	const { url } = useRouteMatch()
 	const { getUser, user, setUser } = UserStore
 	const { toggleRegister } = ModalStore
 	const [showProfileMenu, setShowProfileMenu] = useState(false)

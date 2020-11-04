@@ -67,6 +67,12 @@
 	border: none;
 	outline: none;
 }
+.shared-link {
+	background: url('https://cdn.jsdelivr.net/gh/Spendil/qqq@1.2/media/link.svg') center no-repeat;
+	padding: 7px;
+	margin-right: 1px;
+	opacity: 0;
+}
 .p-modal {
 	padding: 10px 0;
 	color: #555;
@@ -116,6 +122,15 @@
 			}
 		}
 		&__query {
+			&__wrapper {
+				justify-content: space-between;
+				&:hover {
+					.shared-link {
+						opacity: 1;
+						cursor: pointer;
+					}
+				}
+			}
 			position: relative;
 			word-break: break-all;
 			font-size: 12px;
@@ -213,7 +228,7 @@
 			background: url('https://cdn.jsdelivr.net/gh/Spendil/qqq@1.1/media/letter-x.36fcfb55.svg') center no-repeat ;
 			margin-left: 15px;
 			padding-left: 12px;
-			opacity: 0;
+			// opacity: 0;
 		}
 		&__add {
 			background: url('https://cdn.jsdelivr.net/gh/Spendil/qqq@1.1/media/plus.4c4f9f42.svg') center no-repeat ;
@@ -221,7 +236,28 @@
 			opacity: 0.5;
 		}
 	}
-	ul {
+	.nav {
+		&-link {
+			&:not(.active) {
+				color: #007bff;
+			}
+			padding: .5rem 1rem;
+			&:hover {
+				.tab__close {
+					opacity: .75;
+				}
+			}
+			& .tab__close {
+				opacity: 0;
+			}
+			&.active {
+				.tab__close {
+					opacity: .75;
+				}
+			}
+		}
+	}
+	/* ul {
 		display: flex;
 		list-style: none;
 		margin-bottom: 0;
@@ -250,7 +286,7 @@
 			}
 			
 		}
-	}
+	} */
 }
 .controlpanel {
 	display: flex;

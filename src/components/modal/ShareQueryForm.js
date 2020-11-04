@@ -4,9 +4,12 @@ import modalStore from '../../store/modalStore'
 import {TabsStore, QueriesStore} from '../../store/queriesStore'
 import copy from 'copy-to-clipboard'
 import { generateLink } from '../../utils/common'
+import { useHistory, useRouteMatch } from 'react-router-dom'
 
 function ShareQueryForm() {
 	const { addToast } = useToasts()
+	const history = useHistory()
+	const { url } = useRouteMatch()
 	const [name, setName] = useState('')
 	const [queryLink, setQueryLink] = useState('')
 	const [description, setDescription] = useState('')
@@ -15,7 +18,7 @@ function ShareQueryForm() {
 	const { renameCurrentTab } = TabsStore
 
 	useEffect(() => {
-		copy(`${window.location.protocol}://${window.location.host}/graphqlide/${queryLink}`)
+		copy(`${window.location.protocol}://${window.location.host}${url}/${queryLink}`)
 	}, [queryLink])
 
 	const shareHandler = async (e) => {
@@ -30,6 +33,7 @@ function ShareQueryForm() {
 			if (data.status !== 400) {
 				setQueryLink(params.url)
 				renameCurrentTab(name)
+				history.push(`${url}/${params.url}`)
 				addToast(data.msg, {appearance: 'success'})
 			} else {
 				addToast(data.data.msg, {appearance: 'error'})

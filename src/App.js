@@ -13,8 +13,7 @@ function App() {
 	return (
 		<div className="App">
 			<BrowserRouter>
-				<RegisterWindow />
-				<SaveQueryWindow />
+				
 				<Switch>
 					<Route path="/reset" >
 						<ResetPassword />
@@ -23,6 +22,8 @@ function App() {
 						<PasswordReset />
 					</Route>
 					<Route path={['/:queryurl', '/']} >
+						<RegisterWindow />
+						<SaveQueryWindow />
 						<ControlPanel />
 						<div className="content flex">
 							<GalleryComponent />

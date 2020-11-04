@@ -3,7 +3,6 @@ import axios from 'axios'
 import { Route, Switch, useHistory, useRouteMatch } from 'react-router-dom'
 import { useToasts } from 'react-toast-notifications'
 import ResetPasswordForm from '../components/ResetPasswordForm'
-import logo from '../assets/images/bitquery_logo.png'
 import { validEmail } from '../utils/common'
 
 function ResetPassword() {
