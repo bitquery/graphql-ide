@@ -29,20 +29,23 @@ function QueriesComponent ({ queries }) {
 
 	return (
 		queries.queries.map((query, index) => (
-			<li className="gallery__query" key={index} > 
+			<li className="list-group-item" key={index} > 
 				<div className="gallery__query__wrapper flex">
-					<p  className="gallery__query__body"
+					<a  className="text-default"
 						onMouseEnter={() => setHoverElementIndex(index)}
 						onMouseLeave={() => setHoverElementIndex(-1)}
 						onClick={() => handleClick(query)}
 					> 
 						{query.name} 
-					</p>
+					</a>
 					{
 						query.url &&
-						<span className="shared-link" 
+						<button type="button" class="btn btn-sm btn-outline-primary"
 							onClick={()=>copy(`${window.location.protocol}://${window.location.host}${url}/${query.url}`)}
-						/>
+						>
+							Get link
+							<span className="shared-link"></span>
+						</button>
 					}
 				</div>
 				{ 

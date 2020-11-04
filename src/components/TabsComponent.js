@@ -10,7 +10,7 @@ const TabsComponent = observer(() => {
 	const history = useHistory()
 	const { url } = useRouteMatch()
 	const { tabs, currentTab, switchTab, removeTab, addNewTab } = TabsStore
-	const match = useRouteMatch('/graphqlide/:queryurl')
+	const match = useRouteMatch(`${url}/:queryurl`)
 	const { setCurrentQuery ,setQuery, removeQuery, query } = QueriesStore
 	const { addToast } = useToasts()
 
