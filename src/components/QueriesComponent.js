@@ -2,10 +2,12 @@ import React, { useState } from 'react'
 import { useHistory, useRouteMatch } from 'react-router-dom'
 import {TabsStore, QueriesStore} from '../store/queriesStore'
 import copy from 'copy-to-clipboard'
+import { useToasts } from 'react-toast-notifications'
 
 function QueriesComponent ({ queries }) {
 	const { url } = useRouteMatch()
 	const history = useHistory()
+	const { addToast } = useToasts()
 	const [hoverElementIndex, setHoverElementIndex] = useState(false)
 	const { addNewTab, switchTab, tabs } = TabsStore
 	const { setQuery, setCurrentQuery, query } = QueriesStore
@@ -26,6 +28,10 @@ function QueriesComponent ({ queries }) {
 			switchTab(tabs[tabID].id)
 		}
 	}
+	const handleCopy = (queryurl) => {
+		copy(`${window.location.protocol}://${window.location.host}${url}/${queryurl}`)
+		addToast('Link copied to clipboard', {appearance: 'success'})
+	}
 
 	return (
 		queries.queries.map((query, index) => (
@@ -41,7 +47,7 @@ function QueriesComponent ({ queries }) {
 					{
 						query.url &&
 						<button type="button" class="btn btn-sm btn-outline-primary"
-							onClick={()=>copy(`${window.location.protocol}://${window.location.host}${url}/${query.url}`)}
+							onClick={()=>handleCopy(query.url)}
 						>
 							Get link
 							<span className="shared-link"></span>

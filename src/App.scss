@@ -1,61 +1,6 @@
 .App {
-	display: flex;
-	flex-direction: column;
-	padding-top: 10px;
-	font-size: 14px;
-	overflow: hidden;
-	label {
-		margin-bottom: 0;
-	}
-	p, a {
-		padding: 10px 0;
-		color: #555;
-		margin-bottom: 0;
-	}
-	h2 {
-		font-size: 35px;
-		padding: 30px 0 30px 0;
-		color: #555;
-	}
-	h1 {
-		font-size: 28px;
-		color: #555;
-	}
-}
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
-
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+	height: 100vh;
+    overflow: hidden;
 }
 #switch {
 	display: none;
@@ -114,6 +59,20 @@
 		flex: 0 0 15% ;
 		background-color: #d1d1d1;
 		border-right: 1px solid #d8d8d8 ;
+		.list-group {
+			overflow: auto;
+			&::-webkit-scrollbar {
+				display: none;
+			}
+		}
+		li {
+			&:hover {
+				button {
+					opacity: 1;
+					cursor: pointer;
+				}
+			}
+		}
 		&__queries {
 			overflow: auto;
 			text-align: left;
@@ -124,11 +83,8 @@
 		&__query {
 			&__wrapper {
 				justify-content: space-between;
-				&:hover {
-					.shared-link {
-						opacity: 1;
-						cursor: pointer;
-					}
+				button {
+					opacity: 0;
 				}
 			}
 			position: relative;
@@ -150,15 +106,9 @@
 			}
 		}
 		&__header {
-			p {
-				padding: 0;
-			}
-			&__header {
-			}
 			text-align: center;
 			z-index: 1;
 			background-color: #d5d5d5 ;
-			min-height: 54px;
 			justify-content: center;
 		}
 		&.active {
