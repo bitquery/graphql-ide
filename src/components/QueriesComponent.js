@@ -35,18 +35,19 @@ function QueriesComponent ({ queries }) {
 
 	return (
 		queries.queries.map((query, index) => (
-			<li className="list-group-item" key={index} > 
+			<li className="list-group-item" key={index}
+				onMouseEnter={() => setHoverElementIndex(index)}
+				onMouseLeave={() => setHoverElementIndex(-1)}
+			> 
 				<div className="gallery__query__wrapper flex">
 					<a  className="text-default"
-						onMouseEnter={() => setHoverElementIndex(index)}
-						onMouseLeave={() => setHoverElementIndex(-1)}
 						onClick={() => handleClick(query)}
 					> 
 						{query.name} 
 					</a>
 					{
 						query.url &&
-						<button type="button" class="btn btn-sm btn-outline-primary"
+						<button type="button" className="btn btn-sm btn-outline-primary"
 							onClick={()=>handleCopy(query.url)}
 						>
 							Get link

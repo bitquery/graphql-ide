@@ -156,11 +156,6 @@ export const CustomGraphiql = observer(() => {
 							title="Prettify Query (Shift-Ctrl-P)"
 						/>
 						<GraphiQL.Button 
-							onClick={toggleGallery}
-							label="Gallery"
-							title="Gallery Toggle"
-						/>
-						<GraphiQL.Button 
 							onClick={()=>handleSaveQuery(toggleSaveQuery)}
 							label="Save"
 							title="Save Query"

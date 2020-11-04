@@ -50,14 +50,20 @@
 		opacity: 1;
 	}
 }
+.open {
+	color: #555;
+	padding-left: 5px;
+	opacity: 0.5;
+	cursor: pointer;
+}
 .content {
 	height: 100%;
 	overflow: hidden;
 	.gallery {
-		display: none;
+		max-width: 22px;
+		transition: width 500ms;
 		position: relative;
 		flex: 0 0 15% ;
-		background-color: #d1d1d1;
 		border-right: 1px solid #d8d8d8 ;
 		.list-group {
 			overflow: auto;
@@ -86,6 +92,9 @@
 				button {
 					opacity: 0;
 				}
+				a {
+					cursor: pointer;
+				}
 			}
 			position: relative;
 			word-break: break-all;
@@ -106,13 +115,17 @@
 			}
 		}
 		&__header {
+			display: none;
 			text-align: center;
+			align-items: center;
 			z-index: 1;
-			background-color: #d5d5d5 ;
 			justify-content: center;
 		}
 		&.active {
-			display: flex;
+			max-width: none;
+			.gallery__header {
+				display: flex;
+			}
 		}
 		&__switch {
 			width: 100%;
@@ -193,10 +206,6 @@
 	}
 	.nav {
 		&-link {
-			&:not(.active) {
-				color: #007bff;
-			}
-			padding: .5rem 1rem;
 			&:hover {
 				.tab__close {
 					opacity: .75;
@@ -212,36 +221,6 @@
 			}
 		}
 	}
-	/* ul {
-		display: flex;
-		list-style: none;
-		margin-bottom: 0;
-		li:not(.tabs__add) {
-			padding: 10px 10px 10px 20px;
-		}
-		li {
-			display: block;
-			cursor: pointer;
-			margin: 0 7px;
-			color: #555;
-			background-color: #b6b5b5;
-			&:hover, &.active {
-				background-color:#f0f0f0;
-				.tab {
-					&__close {
-						opacity: 0.5;
-					}
-				}
-			}
-			&.active {
-				color: #555;
-			}
-			.close-tab {
-				padding-left: 10px;
-			}
-			
-		}
-	} */
 }
 .controlpanel {
 	display: flex;
@@ -265,9 +244,6 @@
 	justify-content: flex-end;
 	position: relative;
 	margin: 0 5px 0 0;
-	&__email {
-		color: #1e385a !important;
-	}
 	&__button {
 		background-color: #555;
 		color: #d7d7d7;
@@ -293,6 +269,11 @@
 		&.active {
 			display: flex;
 		}
+	}
+	&__image {
+		font-size: 30px;
+		margin: 0 5px;
+		cursor: pointer;
 	}
 	img {
 		padding: 0 10px;

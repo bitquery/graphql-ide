@@ -41,15 +41,15 @@ const GalleryComponent = observer(() => {
 
 	return (
 		<div className={'gallery flex flex-col ' + (showGallery && 'active')}>
+			{!showGallery &&<i className="open fas fa-chevron-right" onClick={toggleGallery} />}
 			<div className="gallery__header flex flex-col">
 				<span className="close" onClick={toggleGallery} /> 
-				<p className='gallery__header__header'>Queries</p>
 				{ user && 
-					<ul class="nav nav-tabs">
+					<ul className="nav nav-tabs">
 						<li className="nav-item" onClick={() => toggleQueries(!showAllQueries)} >
 							<a className={"nav-link " + (!showAllQueries && 'active')} href="#">Private</a>
 						</li>
-						<li class="nav-item" onClick={() => toggleQueries(!showAllQueries)}>
+						<li className="nav-item" onClick={() => toggleQueries(!showAllQueries)}>
 							<a className={"nav-link " + (showAllQueries && 'active')} href="#">Shared</a>
 						</li>
 					</ul>

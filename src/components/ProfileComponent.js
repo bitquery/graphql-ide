@@ -26,13 +26,11 @@ const Profile = observer(() => {
 	}, [])
 
 	if (!user) return (
-		<button className="button button__signin"
-			onClick={toggleRegister}
-		> Login </button>
+		<i class="profile__image far fa-user-circle" onClick={toggleRegister} />
 	)
 	return (
 		<div className="profile flex">
-			<img src='https://cdn.jsdelivr.net/gh/Spendil/qqq@1.1/media/user.f49489c9.svg' className="profile__image" alt="Profile" onClick={toggleProfileMenu} />
+			<i class="profile__image far fa-user-circle" onClick={toggleProfileMenu} />
 			<p className="profile__email"> {user.email} </p>
 			<ClickOutside
 				onClickOutside={clickOutside}
