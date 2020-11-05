@@ -62,16 +62,12 @@ const TabsComponent = observer(() => {
 				{
 					tabs.map((tab, i) => (
 						<li 
-							// className={(currentTab === tab.id ? 'active' : '')} key={i}
 							className="nav-item" key={i}
 							onClick={() => switchTabHandler(tab.id)}
 							onContextMenu={e => getQueryUrl(i, e)}
 						>
 							<a href="#" className={'nav-link '+(currentTab === tab.id ? 'active' : '')} key={i}>{ tab.name }
-							<span 
-								className="tab__close"
-								onClick={(e) => removeTabHandler(i, e)}
-							/> 
+							<i class="tab__close fas fa-times" onClick={(e) => removeTabHandler(i, e)} />
 							</a>
 							
 						</li>
@@ -80,7 +76,7 @@ const TabsComponent = observer(() => {
 				<li 
 					className="nav nav-tabs"
 					onClick={addNewTabHandler}
-				><a href="" className="nav-link active"><span className="tab__add" /></a></li>
+				><a href="" className="nav-link active"><i class="tab__add fas fa-plus"/></a></li>
 			</ul>
 		</div>
 	)

@@ -45,7 +45,7 @@ function LoginForm({ active }) {
 			<p className="p-modal">Password</p>
 			<input type="password" className="query__save" value={password} onChange={e => setPassword(e.target.value)} />  
 			<button className="button button_filled"onClick={logIn}>Login</button>
-			<button className="handler handler__close" onClick={closeHandler} />
+			<i className="handler handler__close fas fa-times" onClick={closeHandler} />
 			{resend &&<a onClick={resendActivationLink}>Check Your email or resend activation link</a>}
 			<div className="flex modal__form__options">
 				<Link to="/reset" onClick={toggleRegister} >Forgot password?</Link>

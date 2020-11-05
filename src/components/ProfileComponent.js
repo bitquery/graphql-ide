@@ -26,25 +26,22 @@ const Profile = observer(() => {
 	}, [])
 
 	if (!user) return (
-		<i class="profile__image far fa-user-circle" onClick={toggleRegister} />
+		<i className="profile__image far fa-user-circle" onClick={toggleRegister} />
 	)
 	return (
-		<div className="profile flex">
-			<i class="profile__image far fa-user-circle" onClick={toggleProfileMenu} />
+		<div className="dropdown flex profile__menu">
 			<p className="profile__email"> {user.email} </p>
-			<ClickOutside
-				onClickOutside={clickOutside}
-			>
-				<div
-					className={'profile__controls flex flex-col ' + (showProfileMenu && 'active')}
-					>
-					<button className="profile__button">
-						<Link to="/changepwd" >Change password</Link>
-					</button>
-					<button className="profile__button" onClick={logOut} >Logout</button>
-				</div>
-			</ClickOutside>
-			
+			<i className="profile__image far fa-user-circle" 
+				id="dropdownMenuButton" 
+				data-toggle="dropdown" 
+				aria-haspopup="true" 
+				aria-expanded="false" 
+				onClick={toggleProfileMenu} 
+			/>
+			<div className="dropdown-menu" aria-labelledby="dropdownMenuButton">
+				<Link className="dropdown-item" to="/changepwd" >Change password</Link>
+				<a className="dropdown-item" href="#" onClick={logOut}>Logout</a>
+			</div>
 		</div>
 	)
 })

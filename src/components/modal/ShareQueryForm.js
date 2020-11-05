@@ -53,7 +53,8 @@ function ShareQueryForm() {
 				value={description} onChange={e => setDescription(e.target.value)} 
 			/>
 			<button type="submit" className="button button_filled" >Get Query Link</button>
-			<button className="handler handler__close" onClick={toggleShareQuery} />
+			<i className="handler handler__close fas fa-times" onClick={toggleShareQuery} />
+
 		</form>
 	)
 }

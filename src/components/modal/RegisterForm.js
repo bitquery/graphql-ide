@@ -28,8 +28,8 @@ function RegisterForm({ active }) {
 			<p className="p-modal">Password</p>
 			<input type="password" className="query__save" value={password} onChange={e => setPassword(e.target.value)} />  
 			<button className="button button_filled" onClick={register}>Sign Up</button>
-			<button className="handler handler__back" onClick={toggleLogin} />
-			<button className="handler handler__close" onClick={closeHandler} />
+			<i className="handler handler__back fas fa-chevron-left" onClick={toggleLogin} />
+			<i className="handler handler__close fas fa-times" onClick={closeHandler} />
 		</form>
 	)
 }

@@ -40,7 +40,7 @@ function SaveQueryForm() {
 				value={description} onChange={e => setDescription(e.target.value)} 
 			/>
 			<button type="submit" className="button button_filled" >Save</button>
-			<button className="handler handler__close" onClick={toggleSaveQuery} />
+			<i className="handler handler__close fas fa-times" onClick={toggleSaveQuery}></i>
 		</form>
 	)
 }
