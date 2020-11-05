@@ -7,7 +7,7 @@ import { UserStore } from '../store/queriesStore'
 import ClickOutside  from 'react-click-outside';
 
 const Profile = observer(() => {
-	const { url } = useRouteMatch()
+	const { url, path } = useRouteMatch()
 	const { getUser, user, setUser } = UserStore
 	const { toggleRegister } = ModalStore
 	const [showProfileMenu, setShowProfileMenu] = useState(false)
@@ -39,7 +39,7 @@ const Profile = observer(() => {
 				onClick={toggleProfileMenu} 
 			/>
 			<div className="dropdown-menu" aria-labelledby="dropdownMenuButton">
-				<Link className="dropdown-item" to="/changepwd" >Change password</Link>
+				<Link className="dropdown-item" to={`${url}/changepwd`} >Change password</Link>
 				<a className="dropdown-item" href="#" onClick={logOut}>Logout</a>
 			</div>
 		</div>

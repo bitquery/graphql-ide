@@ -1,19 +1,18 @@
 import React, { useState } from 'react'
-import { useHistory, useRouteMatch } from 'react-router-dom'
+import { Link, useRouteMatch } from 'react-router-dom'
 import {TabsStore, QueriesStore} from '../store/queriesStore'
 import copy from 'copy-to-clipboard'
 import { useToasts } from 'react-toast-notifications'
+import { observer } from 'mobx-react-lite'
 
-function QueriesComponent ({ queries }) {
+const QueriesComponent = observer(({ queries }) => {
 	const { url } = useRouteMatch()
-	const history = useHistory()
 	const { addToast } = useToasts()
 	const [hoverElementIndex, setHoverElementIndex] = useState(false)
 	const { addNewTab, switchTab, tabs } = TabsStore
-	const { setQuery, setCurrentQuery, query } = QueriesStore
+	const { setQuery, setCurrentQuery, query, currentQuery } = QueriesStore
 	const showDescription = (i1, i2) => i1===i2 ? true : false
 	const handleClick = (queryFromGallery) => {
-		history.push(`${url}/${queryFromGallery.url}`)
 		if (query.map(query => query.id).indexOf(queryFromGallery.id) === -1) {
 			const params = {
 				query: queryFromGallery.query,
@@ -28,6 +27,9 @@ function QueriesComponent ({ queries }) {
 			switchTab(tabs[tabID].id)
 		}
 	}
+	const queryIsOpen = (queryFromGallery) => 
+		queryFromGallery.id === currentQuery.id ? true : false		
+	
 	const handleCopy = (queryurl) => {
 		copy(`${window.location.protocol}://${window.location.host}${url}/${queryurl}`)
 		addToast('Link copied to clipboard', {appearance: 'success'})
@@ -40,11 +42,7 @@ function QueriesComponent ({ queries }) {
 				onMouseLeave={() => setHoverElementIndex(-1)}
 			> 
 				<div className="gallery__query__wrapper flex">
-					<a  className="text-default"
-						onClick={() => handleClick(query)}
-					> 
-						{query.name} 
-					</a>
+					<Link to={`${url}/${query.url}`} onClick={() => handleClick(query)}> {query.name} </Link>
 					{
 						query.url &&
 						<button type="button" className="btn btn-sm btn-outline-primary"
@@ -56,7 +54,7 @@ function QueriesComponent ({ queries }) {
 					}
 				</div>
 				{ 
-					showDescription(hoverElementIndex, index) && 
+					(showDescription(hoverElementIndex, index) || queryIsOpen(query)) && 
 						<label className="gallery__query__description" > 
 							{query.description} 
 						</label>
@@ -64,6 +62,6 @@ function QueriesComponent ({ queries }) {
 			</li>
 		))
 	)
-}
+})
 
 export default QueriesComponent

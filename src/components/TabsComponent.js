@@ -66,17 +66,17 @@ const TabsComponent = observer(() => {
 							onClick={() => switchTabHandler(tab.id)}
 							onContextMenu={e => getQueryUrl(i, e)}
 						>
-							<a href="#" className={'nav-link '+(currentTab === tab.id ? 'active' : '')} key={i}>{ tab.name }
-							<i class="tab__close fas fa-times" onClick={(e) => removeTabHandler(i, e)} />
+							<a href="#" className={'nav-link '+(currentTab === tab.id && 'active')} key={i}>{ tab.name }
+							<i className="tab__close fas fa-times" onClick={(e) => removeTabHandler(i, e)} />
 							</a>
 							
 						</li>
 					))
 				}
 				<li 
-					className="nav nav-tabs"
+					className="nav-item"
 					onClick={addNewTabHandler}
-				><a href="" className="nav-link active"><i class="tab__add fas fa-plus"/></a></li>
+				><a href="" className="nav-link"><i className="tab__add fas fa-plus"/></a></li>
 			</ul>
 		</div>
 	)
