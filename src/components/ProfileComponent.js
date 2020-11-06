@@ -1,32 +1,34 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import { logout } from '../api/api'
 import { observer } from 'mobx-react-lite'
 import ModalStore from '../store/modalStore'
-import { Link, useRouteMatch } from 'react-router-dom'
 import { UserStore } from '../store/queriesStore'
-import ClickOutside  from 'react-click-outside';
 
 const Profile = observer(() => {
-	const { url, path } = useRouteMatch()
 	const { getUser, user, setUser } = UserStore
-	const { toggleRegister } = ModalStore
-	const [showProfileMenu, setShowProfileMenu] = useState(false)
-	const toggleProfileMenu = () => user && setShowProfileMenu(prev => !prev)
-	const clickOutside = e => {
-		e.target.classList.value !== 'profile__image' && setShowProfileMenu(false)
-	}
+	const { toggleModal, toggleLogin, toggleChangePassword } = ModalStore
 
+	const clickHandler = () => {
+		toggleModal()
+		toggleLogin()
+	}
+	const changePasswordHadler = () => {
+		toggleModal()
+		toggleChangePassword()
+	}
 	const logOut = async () => {
 		await logout().catch(e => console.log(e))
 		setUser(null)
-		setShowProfileMenu(prev => !prev)
 	}
 	useEffect(() => {
 		getUser()
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 
 	if (!user) return (
-		<i className="profile__image far fa-user-circle" onClick={toggleRegister} />
+		<div className="dropdown flex profile__menu">
+			<i className="profile__image far fa-user-circle" onClick={clickHandler} />
+		</div>
 	)
 	return (
 		<div className="dropdown flex profile__menu">
@@ -36,11 +38,10 @@ const Profile = observer(() => {
 				data-toggle="dropdown" 
 				aria-haspopup="true" 
 				aria-expanded="false" 
-				onClick={toggleProfileMenu} 
 			/>
 			<div className="dropdown-menu" aria-labelledby="dropdownMenuButton">
-				<Link className="dropdown-item" to={`${url}/changepwd`} >Change password</Link>
-				<a className="dropdown-item" href="#" onClick={logOut}>Logout</a>
+				<a className="dropdown-item" href="# " onClick={changePasswordHadler} >Change password</a>
+				<a className="dropdown-item" href="# " onClick={logOut}>Logout</a>
 			</div>
 		</div>
 	)

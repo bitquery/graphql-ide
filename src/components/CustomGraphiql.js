@@ -10,10 +10,10 @@ import { observer } from 'mobx-react-lite'
 import useDebounce from '../utils/useDebounce'
 
 export const CustomGraphiql = observer(() => {
-	const { toggleSaveQuery, toggleShareQuery } = modalStore
+	const { toggleSaveQuery, toggleShareQuery, toggleModal } = modalStore
 	const { tabs, currentTab, id } = TabsStore
 	const { user }  = UserStore
-	const { toggleGallery, setCurrentQuery, query, 
+	const { setCurrentQuery, query, 
 		 updateQuery, queryParams, logQuery } = QueriesStore
 	const { addToast } = useToasts()
 	const graphiql = useRef(null)
@@ -48,6 +48,7 @@ export const CustomGraphiql = observer(() => {
 		} else {
 			setFetchURL({...fetchURL, [currentTab]: process.env.REACT_APP_ENDPOINT_URL})
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [tabs.length, id])
 	const handleInputURLChange = e => {
 		setFetchURL({...fetchURL, [currentTab]: e.target.value})
@@ -82,6 +83,7 @@ export const CustomGraphiql = observer(() => {
 	const handleSaveQuery = func => {
 		if (user) {
 			func()
+			toggleModal()
 		} else {
 			addToast('Login required to save or share queries', {appearance: 'error'})
 		}
@@ -105,26 +107,28 @@ export const CustomGraphiql = observer(() => {
 			updateQuery(handleSubject, index)
 		}
 	}
-	const fetchSchema = () => {
-		let introspectionQuery = getIntrospectionQuery()
-		let staticName = 'IntrospectionQuery'
-		let introspectionQueryName = staticName
-		let graphQLParams = {
-			query: introspectionQuery,
-			operationName: introspectionQueryName,
-		}
-		fetchURL[currentTab].length > 9 && 
-		fetcherFunction(graphQLParams)
-		.then(data => data.json())	
-		.then(result => {
-			if (typeof result !== 'string' && 'data' in result) {
-				let schema = buildClientSchema(result.data)
-				setSchema(schema)
-			}
-		}).catch(e => {})
-	}
+	
 	useEffect(() => {
+		const fetchSchema = () => {
+			let introspectionQuery = getIntrospectionQuery()
+			let staticName = 'IntrospectionQuery'
+			let introspectionQueryName = staticName
+			let graphQLParams = {
+				query: introspectionQuery,
+				operationName: introspectionQueryName,
+			}
+			fetchURL[currentTab].length > 9 && 
+			fetcherFunction(graphQLParams)
+			.then(data => data.json())	
+			.then(result => {
+				if (typeof result !== 'string' && 'data' in result) {
+					let schema = buildClientSchema(result.data)
+					setSchema(schema)
+				}
+			}).catch(e => {})
+		}
 		fetchSchema()
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [debouncedURL])
 
 	return (

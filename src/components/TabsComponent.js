@@ -19,17 +19,20 @@ const TabsComponent = observer(() => {
 			if (match) {
 				const { data } = await getQuery(match.params.queryurl)
 				if (typeof data === 'object') {
-					const params = {
-						query: data.query,
-						variables: data.arguments,
-						url: data.url
+					if (query.map(query=>query.id).indexOf(data.id) === -1) {
+						const params = {
+							query: data.query,
+							variables: data.arguments,
+							url: data.url
+						}
+						setQuery(params, data.id)
+						addNewTab(data.name)
 					}
-					setQuery(params, data.id)
-					addNewTab(data.name)
 				} 
 			}
 		}
 		updateTabs()
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 	const switchTabHandler = (tabid) => {
 		switchTab(tabid)
@@ -66,7 +69,7 @@ const TabsComponent = observer(() => {
 							onClick={() => switchTabHandler(tab.id)}
 							onContextMenu={e => getQueryUrl(i, e)}
 						>
-							<a href="#" className={'nav-link '+(currentTab === tab.id && 'active')} key={i}>{ tab.name }
+							<a href="# " className={'nav-link '+(currentTab === tab.id && 'active')} key={i}>{ tab.name }
 							<i className="tab__close fas fa-times" onClick={(e) => removeTabHandler(i, e)} />
 							</a>
 							
@@ -76,7 +79,7 @@ const TabsComponent = observer(() => {
 				<li 
 					className="nav-item"
 					onClick={addNewTabHandler}
-				><a href="" className="nav-link"><i className="tab__add fas fa-plus"/></a></li>
+				><a href="# " className="nav-link"><i className="tab__add fas fa-plus"/></a></li>
 			</ul>
 		</div>
 	)

@@ -5,28 +5,31 @@ class Modal {
 	loginIsOpen = false
 	saveQueryIsOpen = false
 	shareQueryIsOpen = false
+	changePasswordIsOpen = false
+	forgotPasswordIsOpen = false
+	modalIsOpen = false
 	
 	constructor() {
 		makeObservable(this, {
+			modalIsOpen: observable,
 			registerIsOpen: observable,
 			saveQueryIsOpen: observable,
 			shareQueryIsOpen: observable,
+			changePasswordIsOpen: observable,
+			forgotPasswordIsOpen: observable,
 			loginIsOpen: observable,
-			closeHandler: action,
-			resetLoginIsOpen: action,
+			toggleModal: action,
 			toggleLogin: action,
 			toggleRegister: action,
 			toggleSaveQuery: action,
-			toggleShareQuery: action
+			toggleShareQuery: action,
+			toggleForgotPassword: action,
+			toggleChangePassword: action
 		})
 	}
 
-	closeHandler = () => {
-		this.toggleRegister()
-		this.resetLoginIsOpen()
-	}
-	resetLoginIsOpen = () => {
-		this.loginIsOpen = false
+	toggleModal = () => {
+		this.modalIsOpen = !this.modalIsOpen
 	}
 	toggleLogin = (e) => {
 		if (e) e.preventDefault()
@@ -40,6 +43,12 @@ class Modal {
 	}
 	toggleShareQuery = () => {
 		this.shareQueryIsOpen = !this.shareQueryIsOpen
+	}
+	toggleForgotPassword = () => {
+		this.forgotPasswordIsOpen = !this.forgotPasswordIsOpen
+	}
+	toggleChangePassword = () => {
+		this.changePasswordIsOpen = !this.changePasswordIsOpen
 	}
 }
 

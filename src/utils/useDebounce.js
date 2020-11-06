@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 
 export default (value, timeout) => {
     const [state, setState] = useState(value);

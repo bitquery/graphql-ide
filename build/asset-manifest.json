@@ -4,11 +4,10 @@
     "main.js": "/static/js/main.js",
     "main.js.map": "/static/js/main.js.map",
     "index.html": "/index.html",
-    "precache-manifest.38a1fc39f9fced48173c5c88bd9929a1.js": "/precache-manifest.38a1fc39f9fced48173c5c88bd9929a1.js",
+    "precache-manifest.bd538f05af207eba8d9d09b01df67b7c.js": "/precache-manifest.bd538f05af207eba8d9d09b01df67b7c.js",
     "service-worker.js": "/service-worker.js",
     "static/css/main.css.map": "/static/css/main.css.map",
-    "static/js/main.js.LICENSE.txt": "/static/js/main.js.LICENSE.txt",
-    "static/media/bitquery_logo.png": "/static/media/bitquery_logo.b137d64f.png"
+    "static/js/main.js.LICENSE.txt": "/static/js/main.js.LICENSE.txt"
   },
   "entrypoints": [
     "static/css/main.css",

@@ -1,23 +1,19 @@
 import axios from 'axios'
 import React from 'react'
 import { useState } from 'react'
-import { useHistory, useRouteMatch } from 'react-router-dom'
 import { useToasts } from 'react-toast-notifications'
-import logo from '../assets/images/bitquery_logo.png'
+import modalStore from '../../store/modalStore'
 
-function ChangePassword() {
-	const style = {
-		display: 'flex',
-		flexDirection: 'column',
-		alignItems: 'center'
-	}
+function ChangePassword({active}) {
+	const { toggleChangePassword, toggleModal } = modalStore
 	const { addToast } = useToasts()
 	const [oldPwd, setOldPwd] = useState('')
 	const [newPwd, setNewPwd] = useState('')
 	const [confirmNewPwd, setConfirmNewPwd] = useState('')
-	let history = useHistory()
-	const { url } = useRouteMatch()
-	
+	const closeHandler = () => {
+		toggleChangePassword()
+		toggleModal()
+	}
 	const changePwd = async (e) => {
 		e.preventDefault()
 		if (newPwd === confirmNewPwd && oldPwd && newPwd) {
@@ -26,12 +22,9 @@ function ChangePassword() {
 					oldPwd,
 					newPwd
 				})
-				console.log(data)
-				setTimeout(() => {
-					history.push(`${url}`)
-				}, 3000)
+				toggleModal()
+				toggleChangePassword()
 				addToast(data, { appearance: 'success' })
-				addToast('Redirect in 3 seconds...', { appearance: 'success' })
 			} catch (error) {
 				addToast(error.response.data, { appearance: 'error' })
 			}
@@ -44,7 +37,7 @@ function ChangePassword() {
 	
 	return (
 		<div className="reset__password">
-			<form style={style} onSubmit={changePwd} className="reset__form" >
+			<form onSubmit={changePwd} className={'modal__form '+(!active && 'modal__form_hide')} >
 				<h2>Here you can change password</h2>
 				<p className="p-modal">Old Password</p>
 				<input type="password" className="query__save" value={oldPwd} onChange={e => setOldPwd(e.target.value)} />  
@@ -52,6 +45,7 @@ function ChangePassword() {
 				<input type="password" className="query__save" value={newPwd} onChange={e => setNewPwd(e.target.value)} />  
 				<p className="p-modal">Confirm Password</p>
 				<input type="password" className="query__save" value={confirmNewPwd} onChange={e => setConfirmNewPwd(e.target.value)} />  
+				<i className="handler handler__close fas fa-times" onClick={closeHandler} />
 				<button className="button button_filled" type="submit">Apply</button>
 			</form>
 		</div>

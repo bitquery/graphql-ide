@@ -3,14 +3,17 @@ import { useToasts } from 'react-toast-notifications'
 import modalStore from '../../store/modalStore'
 import {TabsStore, QueriesStore} from '../../store/queriesStore'
 
-function SaveQueryForm() {
+function SaveQueryForm({active}) {
 	const { addToast } = useToasts()
 	const [name, setName] = useState('')
 	const [description, setDescription] = useState('')
 	const { saveQuery, queryParams } = QueriesStore
-	const { toggleSaveQuery } = modalStore
+	const { toggleSaveQuery, toggleModal } = modalStore
 	const { renameCurrentTab } = TabsStore
-
+	const closeHandler = () => {
+		toggleModal()
+		toggleSaveQuery()		
+	}
 	const saveHandler = async (e) => {
 		e.preventDefault()
 		let params = queryParams
@@ -25,12 +28,13 @@ function SaveQueryForm() {
 			} else { 
 				addToast(data.data.msg, {appearance: 'error'})
 			}
+			toggleModal()
 			toggleSaveQuery()
 		} else { addToast('Name is required', {appearance: 'error'}) }
 	}
 
 	return (
-		<form onSubmit={saveHandler} className="modal__form " >
+		<form onSubmit={saveHandler} className={'modal__form '+(!active && 'modal__form_hide')} >
 			<p className="p-modal">Query name (required)</p>
 			<input type="text" className="query__save"  
 				value={name} onChange={e => setName(e.target.value)}
@@ -40,7 +44,7 @@ function SaveQueryForm() {
 				value={description} onChange={e => setDescription(e.target.value)} 
 			/>
 			<button type="submit" className="button button_filled" >Save</button>
-			<i className="handler handler__close fas fa-times" onClick={toggleSaveQuery}></i>
+			<i className="handler handler__close fas fa-times" onClick={closeHandler}></i>
 		</form>
 	)
 }

@@ -8,14 +8,23 @@ function RegisterForm({ active }) {
 	const [email, setEmail] = useState('')
 	const [password, setPassword] = useState('')
 	const { addToast } = useToasts()
-	const { toggleLogin, closeHandler } = modalStore
+	const { toggleLogin, toggleModal, toggleRegister } = modalStore
+	const closeHandler = () => {
+		toggleModal()
+		toggleRegister()		
+	}
+	const backHandler = () => {
+		toggleRegister()
+		toggleLogin()		
+	}
 	const register = async e => {
 		e.preventDefault()
 		if (password && validEmail(email)) {
 			try {
 				const { data } = await signUp(email, password)
 				addToast(data, {appearance: 'success'})
-				closeHandler()
+				toggleRegister()
+				toggleModal()
 			} catch (e) {
 				addToast(e.response.data, {appearance: 'error'})
 			}
@@ -28,7 +37,7 @@ function RegisterForm({ active }) {
 			<p className="p-modal">Password</p>
 			<input type="password" className="query__save" value={password} onChange={e => setPassword(e.target.value)} />  
 			<button className="button button_filled" onClick={register}>Sign Up</button>
-			<i className="handler handler__back fas fa-chevron-left" onClick={toggleLogin} />
+			<i className="handler handler__back fas fa-chevron-left" onClick={backHandler} />
 			<i className="handler handler__close fas fa-times" onClick={closeHandler} />
 		</form>
 	)

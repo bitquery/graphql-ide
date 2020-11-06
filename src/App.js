@@ -1,29 +1,22 @@
 import React from 'react'
 import './App.scss'
 import { CustomGraphiql } from './components/CustomGraphiql'
-import RegisterWindow from './components/modal/RegisterWindow'
-import SaveQueryWindow from './components/modal/SaveQueryWindow'
+import ModalWindow from './components/modal/ModalWindow'
 import ControlPanel from './components/ControlPanel'
-import PasswordReset from './pages/ChangePassword'
-import { BrowserRouter, Route, Switch } from 'react-router-dom'
+import { Route, Switch, useRouteMatch } from 'react-router-dom'
 import ResetPassword from './pages/ResetPassword'
 import GalleryComponent from './components/GalleryComponent'
 
 function App() {
+	const { path } = useRouteMatch()
 	return (
 		<div className="App">
-			<BrowserRouter>
-				
 				<Switch>
-					<Route path="/reset" >
+					<Route path={`${path}/reset`} >
 						<ResetPassword />
 					</Route>
-					<Route path="/changepwd" >
-						<PasswordReset />
-					</Route>
 					<Route path={['/:queryurl', '/']} >
-						<RegisterWindow />
-						<SaveQueryWindow />
+						<ModalWindow />
 						<ControlPanel />
 						<div className="content flex">
 							<GalleryComponent />
@@ -31,7 +24,6 @@ function App() {
 						</div>
 					</Route>
 				</Switch>
-			</BrowserRouter>
 		</div>
 	)
 }

@@ -1,11 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.scss'
 import App from './App'
 import * as serviceWorker from './serviceWorker'
 import 'graphiql/graphiql.css'
 import { ToastProvider } from 'react-toast-notifications'
 import axios from 'axios'
+import { BrowserRouter, Route } from 'react-router-dom';
 if (process.env.NODE_ENV==='production') {
 	let url = document.getElementById('graphql_ide').getAttribute('baseurl')
 	axios.defaults.baseURL = url
@@ -13,7 +13,11 @@ if (process.env.NODE_ENV==='production') {
 
 ReactDOM.render(
 	<ToastProvider autoDismiss={true} >
-		<App/>
+		<BrowserRouter>
+			<Route path={`${process.env.REACT_APP_IDE_URL}`}>
+				<App/>
+			</Route>
+		</BrowserRouter>
 	</ToastProvider>,
 	document.getElementById('graphql_ide')
 );

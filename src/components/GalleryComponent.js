@@ -24,6 +24,7 @@ const GalleryComponent = observer(() => {
 			}
 		}
 		getQueries()
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [queryJustSaved])
 	useEffect(() => {
 		if (user) {
@@ -47,10 +48,10 @@ const GalleryComponent = observer(() => {
 				{ user && 
 					<ul className="nav nav-tabs">
 						<li className="nav-item" onClick={() => toggleQueries(!showAllQueries)} >
-							<a className={"nav-link " + (!showAllQueries && 'active')} href="#">Private</a>
+							<a className={"nav-link " + (!showAllQueries && 'active')} href="# ">Private</a>
 						</li>
 						<li className="nav-item" onClick={() => toggleQueries(!showAllQueries)}>
-							<a className={"nav-link " + (showAllQueries && 'active')} href="#">Shared</a>
+							<a className={"nav-link " + (showAllQueries && 'active')} href="# ">Shared</a>
 						</li>
 					</ul>
 				}
