@@ -41,9 +41,9 @@ const TabsComponent = observer(() => {
 	}
 	const addNewTabHandler = (e) => {
 		e.preventDefault()
-		addNewTab('New Tab')
-		setQuery({query: '{}', variables: '{}'})
-		setCurrentQuery({query: '{}', variables: '{}'})
+		addNewTab('New Query')
+		setQuery({query: '', variables: '{}'})
+		setCurrentQuery({query: '', variables: '{}'})
 	}
 	const removeTabHandler = (index, event) => {
 		removeQuery(index)

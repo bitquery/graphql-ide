@@ -141,6 +141,7 @@ export const CustomGraphiql = observer(() => {
 					ref={graphiql}
 					style={{ height: '100vh' }}
 					query={query[i].query}
+					defaultQuery={''}
 					fetcher={fetcher}
 					schema={schema}
 					variables={query[i].variables}

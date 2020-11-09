@@ -42,9 +42,10 @@ const GalleryComponent = observer(() => {
 
 	return (
 		<div className={'gallery flex flex-col ' + (showGallery && 'active')}>
-			{!showGallery &&<i className="open fas fa-chevron-right" onClick={toggleGallery} />}
+			{!showGallery &&<i className="open fas fa-angle-double-right" onClick={toggleGallery} />}
 			<div className="gallery__header flex flex-col">
-				<i className="gallery__close fas fa-times" onClick={toggleGallery} />
+				{!user && <p className="gallery__header__title">Queries</p>}
+				<i className="gallery__close fas fa-angle-double-left" onClick={toggleGallery} />
 				{ user && 
 					<ul className="nav nav-tabs">
 						<li className="nav-item" onClick={() => toggleQueries(!showAllQueries)} >

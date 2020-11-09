@@ -1,5 +1,7 @@
 .App {
 	height: 100vh;
+	display: flex;
+	flex-direction: column;
     overflow: hidden;
 }
 #switch {
@@ -61,6 +63,7 @@
 	height: 100%;
 	overflow: hidden;
 	.gallery {
+		min-width: 0;
 		max-width: 22px;
 		transition: width 500ms;
 		position: relative;
@@ -141,8 +144,12 @@
 					width: 100%;
 				}
 			}
+			&__title {
+				margin-top: 11px;
+			}
 		}
 		&.active {
+			min-width: 220px;
 			max-width: none;
 			.gallery__header {
 				display: flex;
@@ -277,6 +284,9 @@
 		margin: auto 5px;
 		cursor: pointer;
 		opacity: 0.5;
+		&#dropdownMenuButton{
+			opacity: 1;
+		}
 	}
 	img {
 		padding: 0 10px;

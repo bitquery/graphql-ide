@@ -26,8 +26,9 @@ const Profile = observer(() => {
 	}, [])
 
 	if (!user) return (
-		<div className="dropdown flex profile__menu">
-			<i className="profile__image far fa-user-circle" onClick={clickHandler} />
+		<div className="flex profile__menu" onClick={clickHandler}>
+			<a className="profile__email" href="# ">Login</a>
+			<i className="profile__image far fa-user-circle" />
 		</div>
 	)
 	return (

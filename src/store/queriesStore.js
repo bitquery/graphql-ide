@@ -82,7 +82,7 @@ class Queries {
 	}
 	removeQuery = index => {
 		this.query.length!==1 ? this.query.splice(index, 1) : this.query.splice(index, 1, {
-			query: '{}',
+			query: '',
 			id: null
 		})
 	}
@@ -130,7 +130,7 @@ class Tabs {
 	id = 0
 	tabs = [
 		{
-			name: 'New Tab',
+			name: 'New Query',
 			id: this.id
 		}
 	]
@@ -159,7 +159,7 @@ class Tabs {
 		let cVariables = QueriesStore.query[id] && QueriesStore.query[id].variables
 		let cQueryID = QueriesStore.query[id] && QueriesStore.query[id].id
 		let params = {
-			query: cQuery || '{}',
+			query: cQuery || '',
 			variables: cVariables || '{}'
 		}
 		QueriesStore.setCurrentQuery( params, cQueryID || null)
@@ -180,7 +180,7 @@ class Tabs {
 		event.stopPropagation()
 		this.tabs.length !==1 && this.tabs.splice(index, 1)
 		this.tabs.length === 0 
-			? this.addNewTab('New Tab') 
+			? this.addNewTab('New Query') 
 			: this.switchTab(this.tabs[this.tabs.length-1].id)
 	}
 
