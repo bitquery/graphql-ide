@@ -1,8 +1,14 @@
+@font-face {
+	font-family: 'Nunito';
+	src: url('./assets/fonts/Nunito-Regular.ttf') format('truetype');
+	font-weight: normal;
+}
 .App {
 	height: 100vh;
 	display: flex;
 	flex-direction: column;
-    overflow: hidden;
+	overflow: hidden;
+	font-family: 'Nunito', sans-serif;
 }
 #switch {
 	display: none;
@@ -191,6 +197,7 @@
 	}
 }
 .tabs {
+	padding: 10px 0 0 10px;
 	flex: 1 1 auto;
 	&__add {
 		padding: 10px 10px 0;
