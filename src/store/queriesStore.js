@@ -70,7 +70,7 @@ class Queries {
 
 	setQuery = (params, id) => {
 		this.query.push({ id: id ? id : null })
-		if (params.query) this.query[this.query.length-1].query = params.query
+		if (typeof params.query === 'string') this.query[this.query.length-1].query = params.query
 		if (params.url) this.query[this.query.length-1].url = params.url
 		this.query[this.query.length-1].variables = params.variables ? params.variables : '{}'
 	}

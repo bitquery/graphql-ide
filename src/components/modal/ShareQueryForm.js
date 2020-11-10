@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { useToasts } from 'react-toast-notifications'
 import modalStore from '../../store/modalStore'
 import {TabsStore, QueriesStore} from '../../store/queriesStore'
@@ -17,10 +17,6 @@ function ShareQueryForm({active}) {
 	const { toggleShareQuery, toggleModal } = modalStore
 	const { renameCurrentTab } = TabsStore
 
-	useEffect(() => {
-		copy(`${window.location.protocol}://${window.location.host}${url}/${queryLink}`)
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [queryLink])
 	const closeHandler = () => {
 		toggleModal()
 		toggleShareQuery()		
@@ -37,6 +33,7 @@ function ShareQueryForm({active}) {
 			if (data.status !== 400) {
 				setQueryLink(params.url)
 				renameCurrentTab(name)
+				copy(`${window.location.protocol}://${window.location.host}${url}/${queryLink}`)
 				history.push(`${url}/${params.url}`)
 				addToast(data.msg, {appearance: 'success'})
 			} else {
