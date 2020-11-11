@@ -13,7 +13,7 @@ export const CustomGraphiql = observer(() => {
 	const { toggleSaveQuery, toggleShareQuery, toggleModal } = modalStore
 	const { tabs, currentTab, id } = TabsStore
 	const { user }  = UserStore
-	const { setCurrentQuery, query, 
+	const { setCurrentQuery, query, saveQuery,
 		 updateQuery, queryParams, logQuery } = QueriesStore
 	const { addToast } = useToasts()
 	const graphiql = useRef(null)
@@ -69,6 +69,12 @@ export const CustomGraphiql = observer(() => {
 		setPrettify(false)
 	}
 	const handleQuery = (result, error) => {
+		if (user && result==='success') {
+			let params = {...queryParams}
+			params.name = 'New query'
+			params.executed = true
+			saveQuery(params)
+		}
 		//addQueryLog
 		if (queryParams.id) {
 			let params = {...queryParams}

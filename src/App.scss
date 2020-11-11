@@ -88,14 +88,6 @@
 				display: none;
 			}
 		}
-		li {
-			&:hover {
-				button {
-					opacity: 1;
-					cursor: pointer;
-				}
-			}
-		}
 		&__queries {
 			overflow: auto;
 			text-align: left;
@@ -104,6 +96,16 @@
 			}
 		}
 		&__query {
+			&__controls {
+			}
+			&__control {
+				&:not(&:last-child) {
+					margin-right: 0.5em;
+				}
+				i {
+					font-size: inherit;
+				}
+			}
 			&__wrapper {
 				justify-content: space-between;
 				button {
@@ -196,6 +198,11 @@
 		padding: 10px 10px 0;
 	}
 	.tab {
+		&__edit {
+			display: none;
+			margin-left: 5px;
+			
+		}
 		&__close{
 			margin-left: 15px;
 			padding-left: 12px;
@@ -217,6 +224,13 @@
 			&.active {
 				.tab__close {
 					opacity: .75;
+				}
+			}
+		}
+		&-item {
+			&:hover {
+				.tab__edit_active {
+					display: inline-block;
 				}
 			}
 		}

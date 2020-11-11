@@ -73,12 +73,15 @@ class Queries {
 		if (typeof params.query === 'string') this.query[this.query.length-1].query = params.query
 		if (params.url) this.query[this.query.length-1].url = params.url
 		this.query[this.query.length-1].variables = params.variables ? params.variables : '{}'
+		this.query[this.query.length-1].name = params.name
+		TabsStore.addNewTab(params.name)
 	}
 	updateQuery = (params, index, id) => {
 		if (params.query) this.query[index].query = params.query
 		if (params.variables) this.query[index].variables = params.variables
 		if (params.url) this.query[index].url = params.url
-		this.query[index].id = id ? id : null
+		this.query[index].id = id ? id : this.query[index].id
+		this.query[index].saved = false
 	}
 	removeQuery = index => {
 		this.query.length!==1 ? this.query.splice(index, 1) : this.query.splice(index, 1, {
@@ -90,9 +93,11 @@ class Queries {
 		this.showGallery = !this.showGallery
 	}
 	setCurrentQuery = (params, id) => {
-		if (params.query) this.currentQuery.query = params.query
-		if (params.variables) this.currentQuery.variables = params.variables
-		this.currentQuery.id = id ? id : null
+		if (params.query || typeof params.query==='string') 
+			this.currentQuery.query = params.query
+		if (params.variables || typeof params.query==='string') 
+			this.currentQuery.variables = params.variables
+		this.currentQuery.id = (id || id===null) ? id : this.currentQuery.id
 	}
 	setCurrentVariables = variables => {
 		this.currentVariables = variables
@@ -107,6 +112,7 @@ class Queries {
 			this.setCurrentQuery(params, data.id)
 			console.log(data)
 			this.queryJustSaved = !this.queryJustSaved
+			this.query[id].saved = true
 			return data
 		} catch (e) {
 			console.log(e.response)
@@ -123,7 +129,6 @@ class Queries {
 			console.log(e)
 		}
 	}
-
 }
 
 class Tabs {
@@ -167,6 +172,7 @@ class Tabs {
 	renameCurrentTab = name => {
 		let id = this.tabs.map(tab => tab.id).indexOf(this.currentTab)
 		this.tabs[id].name = name
+		!QueriesStore.query[id].id && QueriesStore.saveQuery({...QueriesStore.queryParams, name})
 	}
 	addNewTab = name => {
 		this.incID()

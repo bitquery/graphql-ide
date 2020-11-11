@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react-lite'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useHistory, useRouteMatch } from 'react-router-dom'
 import { getQuery } from '../api/api'
 import {TabsStore, QueriesStore} from '../store/queriesStore'
@@ -9,10 +9,12 @@ import copy from 'copy-to-clipboard'
 const TabsComponent = observer(() => {
 	const history = useHistory()
 	const { url } = useRouteMatch()
-	const { tabs, currentTab, switchTab, removeTab, addNewTab } = TabsStore
+	const { tabs, currentTab, switchTab, removeTab, renameCurrentTab } = TabsStore
 	const match = useRouteMatch(`${url}/:queryurl`)
-	const { setCurrentQuery ,setQuery, removeQuery, query } = QueriesStore
+	const { setQuery, removeQuery, query } = QueriesStore
 	const { addToast } = useToasts()
+	const [editTabName, setEditTabName] = useState(false)
+	const [queryName, setQueryName] = useState('')
 
 	useEffect(() => {
 		async function updateTabs() {
@@ -23,10 +25,10 @@ const TabsComponent = observer(() => {
 						const params = {
 							query: data.query,
 							variables: data.arguments,
-							url: data.url
+							url: data.url,
+							name: data.name
 						}
 						setQuery(params, data.id)
-						addNewTab(data.name)
 					}
 				} 
 			}
@@ -38,16 +40,16 @@ const TabsComponent = observer(() => {
 		switchTab(tabid)
 		let id = tabs.map(tab => tab.id).indexOf(tabid)
 		query[id].url ? history.push(`${url}/${query[id].url}`) : history.push(`${url}`)
+		setQueryName('')
 	}
 	const addNewTabHandler = (e) => {
 		e.preventDefault()
-		addNewTab('New Query')
-		setQuery({query: '', variables: '{}'})
-		setCurrentQuery({query: '', variables: '{}'})
+		setQuery({query: '', variables: '{}', name: 'New Query'})
 	}
 	const removeTabHandler = (index, event) => {
 		removeQuery(index)
 		removeTab(index, event)
+		setEditTabName(false)
 	}
 	const getQueryUrl = (index, e) => {
 		e.preventDefault()
@@ -57,6 +59,10 @@ const TabsComponent = observer(() => {
 		} else {
 			addToast('This query is not shared now', {appearance: 'error'})
 		}
+	}
+	const renameQueryHandler = () => {
+		setEditTabName((prev)=>!prev)
+		if (editTabName && queryName.length) renameCurrentTab(queryName)
 	}
 
 	return (
@@ -69,10 +75,19 @@ const TabsComponent = observer(() => {
 							onClick={() => switchTabHandler(tab.id)}
 							onContextMenu={e => getQueryUrl(i, e)}
 						>
-							<a href="# " className={'nav-link '+(currentTab === tab.id && 'active')} key={i}>{ tab.name }
-							<i className="tab__close fas fa-times" onClick={(e) => removeTabHandler(i, e)} />
+							<a href="# " className={'nav-link '+(currentTab === tab.id && 'active')} key={i}>
+								{ (editTabName && currentTab === tab.id) 
+									? <input type="text" value={queryName} onChange={e=>setQueryName(e.target.value)} /> : 
+										((('saved' in query[i]) && query[i].saved)
+										|| !('saved' in query[i])
+										|| !query[i].id
+										|| query[i].name===tab.name) 
+											? tab.name : `*${tab.name}` }
+								<i className={'tab__edit fas fa-pencil-alt '+(currentTab === tab.id && 'tab__edit_active')}
+									onClick={renameQueryHandler}
+								/>
+								<i className="tab__close fas fa-times" onClick={(e) => removeTabHandler(i, e)} />
 							</a>
-							
 						</li>
 					))
 				}

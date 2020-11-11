@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Link, useRouteMatch } from 'react-router-dom'
-import {TabsStore, QueriesStore} from '../store/queriesStore'
+import {TabsStore, QueriesStore, UserStore} from '../store/queriesStore'
 import copy from 'copy-to-clipboard'
 import { useToasts } from 'react-toast-notifications'
 import { observer } from 'mobx-react-lite'
@@ -9,19 +9,19 @@ const QueriesComponent = observer(({ queries }) => {
 	const { url } = useRouteMatch()
 	const { addToast } = useToasts()
 	const [hoverElementIndex, setHoverElementIndex] = useState(false)
-	const { addNewTab, switchTab, tabs } = TabsStore
-	const { setQuery, setCurrentQuery, query, currentQuery } = QueriesStore
+	const { switchTab, tabs } = TabsStore
+	const { user } = UserStore
+	const { setQuery, query, currentQuery } = QueriesStore
 	const showDescription = (i1, i2) => i1===i2 ? true : false
 	const handleClick = (queryFromGallery) => {
 		if (query.map(query => query.id).indexOf(queryFromGallery.id) === -1) {
 			const params = {
 				query: queryFromGallery.query,
 				variables: queryFromGallery.arguments,
-				url: queryFromGallery.url
+				url: queryFromGallery.url,
+				name: queryFromGallery.name
 			}
 			setQuery(params, queryFromGallery.id)
-			setCurrentQuery(params, queryFromGallery.id)
-			addNewTab(queryFromGallery.name)
 		} else {
 			let tabID = query.map(query => query.id).indexOf(queryFromGallery.id)
 			switchTab(tabs[tabID].id)
@@ -43,21 +43,35 @@ const QueriesComponent = observer(({ queries }) => {
 			> 
 				<div className="gallery__query__wrapper flex">
 					<Link to={`${url}/${query.url}`} onClick={() => handleClick(query)}> {query.name} </Link>
-					{
-						query.url &&
-						<button type="button" className="btn btn-sm btn-outline-primary"
-							onClick={()=>handleCopy(query.url)}
-						>
-							Get link
-							<span className="shared-link"></span>
-						</button>
-					}
 				</div>
 				{ 
 					(showDescription(hoverElementIndex, index) || queryIsOpen(query)) && 
+						<>
 						<label className="gallery__query__description" > 
 							{query.description} 
 						</label>
+						<div className="gallery__query__controls">
+							<button type="button" 
+								className="gallery__query__control btn btn-sm btn-outline-primary" 
+								onClick={()=>handleCopy(query.url)}
+								disabled={!query.url && true}
+							>
+								<i className="fas fa-link" />
+							</button>
+							<button type="button" className="gallery__query__control btn btn-sm btn-outline-primary" >
+								<i className="far fa-save" />
+							</button>
+							<button type="button" className="gallery__query__control btn btn-sm btn-outline-primary" >
+								<i className="fas fa-code-branch" />
+							</button>
+							<button type="button" 
+								className="gallery__query__control btn btn-sm btn-outline-primary"
+								disabled={query.account_id!==user.id && true}
+							>
+								<i className="fas fa-pencil-alt" />
+							</button>
+						</div>
+						</>
 				}
 			</li>
 		))
