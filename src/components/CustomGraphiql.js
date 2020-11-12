@@ -92,8 +92,8 @@ export const CustomGraphiql = observer(() => {
 			if (query.id === null) {
 				toggleEditDialog()
 				toggleModal()
-			} else {
-				//saveQuery
+			} else if (!query.saved) {
+				saveQuery(queryParams)
 			}
 		} else {
 			addToast('Login required to save or share queries', {appearance: 'error'})
@@ -114,7 +114,6 @@ export const CustomGraphiql = observer(() => {
 	}
 	const editQueryHandler = (handleSubject, index) => {
 		if (!prettify) {
-			setCurrentQuery(handleSubject)
 			updateQuery(handleSubject, index)
 		}
 	}

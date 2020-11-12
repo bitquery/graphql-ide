@@ -17,7 +17,8 @@ const QueriesComponent = observer(({ queries }) => {
 				query: queryFromGallery.query,
 				variables: queryFromGallery.arguments,
 				url: queryFromGallery.url,
-				name: queryFromGallery.name
+				name: queryFromGallery.name,
+				description: queryFromGallery.description && queryFromGallery.description
 			}
 			setQuery(params, queryFromGallery.id)
 		} else {

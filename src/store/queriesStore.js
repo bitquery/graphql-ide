@@ -64,7 +64,9 @@ class Queries {
 			id: this.currentQuery.id,
 			account_id: UserStore.user && UserStore.user.id || null,
 			query: this.currentQuery.query,
-			arguments: this.currentQuery.variables
+			arguments: this.currentQuery.variables,
+			name: this.currentQuery.name && this.currentQuery.name,
+			description: this.currentQuery.description && this.currentQuery.description
 		}
 	}
 
@@ -74,14 +76,22 @@ class Queries {
 		if (params.url) this.query[this.query.length-1].url = params.url
 		this.query[this.query.length-1].variables = params.variables ? params.variables : '{}'
 		this.query[this.query.length-1].name = params.name
+		if (params.description) this.query[this.query.length-1].description = params.description
+		if (this.query[this.query.length-1].id) this.query[this.query.length-1].saved = true  
 		TabsStore.addNewTab(params.name)
 	}
 	updateQuery = (params, index, id) => {
 		if (params.query) this.query[index].query = params.query
 		if (params.variables) this.query[index].variables = params.variables
 		if (params.url) this.query[index].url = params.url
+		if (params.name) {
+			this.query[index].name = params.name || this.query[index].name
+			TabsStore.renameCurrentTab(params.name)
+		}
+		if (params.description) this.query[index].description = params.description || this.query[index].description
 		this.query[index].id = id ? id : this.query[index].id
 		this.query[index].saved = false
+		this.setCurrentQuery(index)
 	}
 	removeQuery = index => {
 		this.query.length!==1 ? this.query.splice(index, 1) : this.query.splice(index, 1, {
@@ -92,12 +102,8 @@ class Queries {
 	toggleGallery = () => {
 		this.showGallery = !this.showGallery
 	}
-	setCurrentQuery = (params, id) => {
-		if (params.query || typeof params.query==='string') 
-			this.currentQuery.query = params.query
-		if (params.variables || typeof params.query==='string') 
-			this.currentQuery.variables = params.variables
-		this.currentQuery.id = (id || id===null) ? id : this.currentQuery.id
+	setCurrentQuery = (id) => {
+		this.currentQuery = {...this.query[id]}
 	}
 	setCurrentVariables = variables => {
 		this.currentVariables = variables
@@ -109,10 +115,10 @@ class Queries {
 			})
 			let id = TabsStore.tabs.map(tab => tab.id).indexOf(TabsStore.currentTab)
 			this.updateQuery(params, id, data.id)
-			this.setCurrentQuery(params, data.id)
 			console.log(data)
 			this.queryJustSaved = !this.queryJustSaved
 			this.query[id].saved = true
+			this.setCurrentQuery(id)
 			return data
 		} catch (e) {
 			console.log(e.response)
@@ -160,19 +166,11 @@ class Tabs {
 	switchTab = tabID => {
 		this.currentTab = tabID
 		let id = this.tabs.map(tab => tab.id).indexOf(this.currentTab)
-		let cQuery = QueriesStore.query[id] && QueriesStore.query[id].query
-		let cVariables = QueriesStore.query[id] && QueriesStore.query[id].variables
-		let cQueryID = QueriesStore.query[id] && QueriesStore.query[id].id
-		let params = {
-			query: cQuery || '',
-			variables: cVariables || '{}'
-		}
-		QueriesStore.setCurrentQuery( params, cQueryID || null)
+		QueriesStore.setCurrentQuery(id)
 	}
 	renameCurrentTab = name => {
 		let id = this.tabs.map(tab => tab.id).indexOf(this.currentTab)
 		this.tabs[id].name = name
-		!QueriesStore.query[id].id && QueriesStore.saveQuery({...QueriesStore.queryParams, name})
 	}
 	addNewTab = name => {
 		this.incID()
@@ -189,7 +187,6 @@ class Tabs {
 			? this.addNewTab('New Query') 
 			: this.switchTab(this.tabs[this.tabs.length-1].id)
 	}
-
 }
 
 export let TabsStore = new Tabs()

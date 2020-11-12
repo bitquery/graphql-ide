@@ -1,14 +1,19 @@
 import React from 'react'
 import { useState } from 'react'
+import { useRouteMatch } from 'react-router-dom'
 import { useToasts } from 'react-toast-notifications'
 import modalStore from '../../store/modalStore'
 import { QueriesStore, TabsStore } from '../../store/queriesStore'
+import { generateLink } from '../../utils/common'
+import copy from 'copy-to-clipboard'
 
 function EditDialog({active}) {
 	const { addToast } = useToasts()
+	const { url } = useRouteMatch()
 	const [name, setName] = useState('')
 	const [description, setDescription] = useState('')
 	const [shared, setShared] = useState(false)
+	const [queryUrl, setQueryUrl] = useState('')
 	const { saveQuery, queryParams } = QueriesStore
 	const { toggleEditDialog, toggleModal } = modalStore
 	const { renameCurrentTab } = TabsStore
@@ -22,7 +27,12 @@ function EditDialog({active}) {
 		let data = null
 		if (name) {
 			params.name = name
+			if (shared) {
+				params.url = generateLink()
+				setQueryUrl(params.url)
+			}
 			if (description) params.description = description
+			console.log(params)
 			data = await saveQuery(params)
 			if (data.status !== 400) {
 				renameCurrentTab(name)
@@ -70,15 +80,15 @@ function EditDialog({active}) {
 					</div>
 				</div>
 				<div className="input-group mb-3">
-					<input type="text" className="form-control" placeholder="Query link" aria-label="Query link" aria-describedby="basic-addon2"/>
+					<input type="text" className="form-control" value={queryUrl && `${window.location.protocol}://${window.location.host}${url}/${queryUrl}`} readOnly placeholder="Query link" aria-label="Query link" aria-describedby="basic-addon2"/>
 					<div className="input-group-append">
-						<button className="btn btn-outline-secondary" type="button"><i className="fas fa-link" /></button>
+						<button className="btn btn-outline-secondary" type="button" onClick={()=>copy(`${window.location.protocol}://${window.location.host}${url}/${queryUrl}`)}><i className="fas fa-link" /></button>
 					</div>
 				</div>
 				<div className="buttons flex" style={{'justifyContent': 'space-evenly', 'width': '100%'}}>
 					<button type="button" className="btn btn-secondary btn-sm" onClick={closeHandler}>Cancel</button>
-					<button type="button" className="btn btn-primary btn-sm">Save</button>
-					<button type="button" className="btn btn-outline-danger btn-sm">Delete</button>
+					<button type="button" className="btn btn-primary btn-sm" onClick={saveHandler}>Save</button>
+					<button type="button" className="btn btn-outline-danger btn-sm" >Delete</button>
 				</div>	
 			</div>
 		</div>
