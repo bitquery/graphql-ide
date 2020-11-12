@@ -10,7 +10,8 @@ import { observer } from 'mobx-react-lite'
 import useDebounce from '../utils/useDebounce'
 
 export const CustomGraphiql = observer(() => {
-	const { toggleSaveQuery, toggleShareQuery, toggleModal } = modalStore
+	const { toggleSaveQuery, toggleShareQuery, toggleModal,
+		toggleEditDialog } = modalStore
 	const { tabs, currentTab, id } = TabsStore
 	const { user }  = UserStore
 	const { setCurrentQuery, query, saveQuery,
@@ -86,10 +87,14 @@ export const CustomGraphiql = observer(() => {
 			logQuery(params)
 		}
 	}
-	const handleSaveQuery = func => {
+	const saveHandle = (query) => {
 		if (user) {
-			func()
-			toggleModal()
+			if (query.id === null) {
+				toggleEditDialog()
+				toggleModal()
+			} else {
+				//saveQuery
+			}
 		} else {
 			addToast('Login required to save or share queries', {appearance: 'error'})
 		}
@@ -167,14 +172,9 @@ export const CustomGraphiql = observer(() => {
 							title="Prettify Query (Shift-Ctrl-P)"
 						/>
 						<GraphiQL.Button 
-							onClick={()=>handleSaveQuery(toggleSaveQuery)}
+							onClick={()=>saveHandle(query[i])}
 							label="Save"
 							title="Save Query"
-						/>
-						<GraphiQL.Button 
-							onClick={()=>handleSaveQuery(toggleShareQuery)}
-							label="Share"
-							title="Share Query"
 						/>
 						<input className="endpointURL" type="text" value={fetchURL[currentTab]||''} onChange={handleInputURLChange} />
 					</GraphiQL.Toolbar>
