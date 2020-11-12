@@ -1,23 +1,24 @@
 import { makeObservable, observable, action } from "mobx"
 
 class Modal {
-	registerIsOpen = false
+	modalIsOpen = false
 	loginIsOpen = false
+	registerIsOpen = false
 	saveQueryIsOpen = false
 	shareQueryIsOpen = false
-	changePasswordIsOpen = false
+	editDialogIsOpen = false
 	forgotPasswordIsOpen = false
-	modalIsOpen = false
+	changePasswordIsOpen = false
 	
 	constructor() {
 		makeObservable(this, {
 			modalIsOpen: observable,
+			loginIsOpen: observable,
 			registerIsOpen: observable,
 			saveQueryIsOpen: observable,
 			shareQueryIsOpen: observable,
 			changePasswordIsOpen: observable,
 			forgotPasswordIsOpen: observable,
-			loginIsOpen: observable,
 			toggleModal: action,
 			toggleLogin: action,
 			toggleRegister: action,
@@ -43,6 +44,9 @@ class Modal {
 	}
 	toggleShareQuery = () => {
 		this.shareQueryIsOpen = !this.shareQueryIsOpen
+	}
+	toggleEditDialog = () => {
+		this.editDialogIsOpen = !this.editDialogIsOpen
 	}
 	toggleForgotPassword = () => {
 		this.forgotPasswordIsOpen = !this.forgotPasswordIsOpen

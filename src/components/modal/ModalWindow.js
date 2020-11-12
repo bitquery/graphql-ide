@@ -8,6 +8,7 @@ import SaveQueryFrom from './SaveQueryForm'
 import ShareQueryFrom from './ShareQueryForm'
 import ForgotPasswordForm from './ForgotPasswordForm'
 import ChangePasswordForm from './ChangePasswordForm'
+import EditDialog from './EditDialog'
 
 const customStyles = {
 	overlay: {
@@ -45,10 +46,10 @@ Modal.setAppElement('#graphql_ide')
 const ModalWindow = observer(() => {
 	const { 
 		registerIsOpen, loginIsOpen, modalIsOpen,
-		saveQueryIsOpen, shareQueryIsOpen,
+		saveQueryIsOpen, shareQueryIsOpen, editDialogIsOpen,
 		forgotPasswordIsOpen, changePasswordIsOpen,
 		toggleModal, toggleLogin, toggleRegister, 
-		toggleSaveQuery, toggleShareQuery,
+		toggleSaveQuery, toggleShareQuery, toggleEditDialog,
 		toggleForgotPassword, toggleChangePassword 
 	} = modalStore
 	
@@ -57,6 +58,7 @@ const ModalWindow = observer(() => {
 		loginIsOpen && toggleLogin()
 		registerIsOpen && toggleRegister()
 		saveQueryIsOpen && toggleSaveQuery()
+		editDialogIsOpen && toggleEditDialog()
 		shareQueryIsOpen && toggleShareQuery()
 		forgotPasswordIsOpen && toggleForgotPassword()
 		changePasswordIsOpen && toggleChangePassword()
@@ -69,6 +71,7 @@ const ModalWindow = observer(() => {
 			contentLabel="Example Modal"
 		>
 			<LoginForm active={loginIsOpen} />
+			<EditDialog active={editDialogIsOpen} />
 			<RegisterForm active={registerIsOpen} />
 			<SaveQueryFrom  active={saveQueryIsOpen} />
 			<ShareQueryFrom active={shareQueryIsOpen} />
