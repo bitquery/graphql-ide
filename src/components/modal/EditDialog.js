@@ -6,11 +6,12 @@ import modalStore from '../../store/modalStore'
 import { QueriesStore, TabsStore } from '../../store/queriesStore'
 import { generateLink } from '../../utils/common'
 import copy from 'copy-to-clipboard'
+import { deleteQuery } from '../../api/api'
 
 function EditDialog({active}) {
 	const { addToast } = useToasts()
 	const { url } = useRouteMatch()
-	const { saveQuery, queryParams, currentQuery } = QueriesStore
+	const { saveQuery, queryParams, currentQuery, saveToggle } = QueriesStore
 	const [name, setName] = useState(currentQuery.name)
 	const [description, setDescription] = useState(currentQuery.description)
 	const [shared, setShared] = useState(!!currentQuery.url)
@@ -45,6 +46,11 @@ function EditDialog({active}) {
 				addToast(data.data.msg, {appearance: 'error'})
 			}
 		} else { addToast('Name is required', {appearance: 'error'}) }
+	}
+	const deleteHandler = async () => {
+		const data = await deleteQuery(currentQuery.id)
+		saveToggle()
+		addToast(data.data, {appearance: 'success'})
 	}
 
 	return (
@@ -84,15 +90,24 @@ function EditDialog({active}) {
 					</div>
 				</div>
 				{shared && <div className="input-group mb-3">
-					<input type="text" className="form-control query-link" value={queryUrl && (`${window.location.protocol}://${window.location.host}${url}/${queryUrl}`)||''} readOnly placeholder="Query link" aria-label="Query link" aria-describedby="basic-addon2"/>
+					<input type="text" className="form-control query-link" 
+						value={queryUrl && (`${window.location.protocol}://${window.location.host}${url}/${queryUrl}`)||''} 
+						readOnly 
+						placeholder="Query link" aria-label="Query link" aria-describedby="basic-addon2"
+					/>
 					<div className="input-group-append">
-						<button className="btn btn-outline-secondary" type="button" onClick={()=>copy(`${window.location.protocol}://${window.location.host}${url}/${queryUrl}`)}><i className="fas fa-link" /></button>
+						<button className="btn btn-outline-secondary" 
+							type="button" 
+							onClick={()=>copy(`${window.location.protocol}://${window.location.host}${url}/${queryUrl}`)}
+						>
+								<i className="fas fa-link" />
+						</button>
 					</div>
 				</div>}
 				<div className="buttons flex" style={{'justifyContent': 'space-evenly', 'width': '100%'}}>
 					<button type="button" className="btn btn-secondary btn-sm" onClick={closeHandler}>Cancel</button>
 					<button type="button" className="btn btn-primary btn-sm" onClick={saveHandler}>Save</button>
-					<button type="button" className="btn btn-outline-danger btn-sm" >Delete</button>
+					<button type="button" className="btn btn-outline-danger btn-sm" onClick={deleteHandler} >Delete</button>
 				</div>	
 			</div>
 		</div>

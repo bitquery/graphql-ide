@@ -55,6 +55,7 @@ class Queries {
 			toggleGallery: action,
 			updateQuery: action,
 			removeQuery: action,
+			saveToggle: action,
 			saveQuery: action,
 			setQuery: action
 		})
@@ -108,6 +109,9 @@ class Queries {
 	}
 	setCurrentVariables = variables => {
 		this.currentVariables = variables
+	}
+	saveToggle = () => {
+		this.queryJustSaved = !this.queryJustSaved
 	}
 	saveQuery = async params => {
 		try {

@@ -130,6 +130,13 @@ module.exports = function(app, passport, db) {
 		})
 	})
 
+	app.post('/api/deletequery', (req, res) => {
+		db.query(`UPDATE queries SET deleted=? where id=?`, [true, req.body.id], (err, _) => {
+			if (err) console.log(err)
+			res.send('Query deleted')
+		})
+	})
+
 	app.post('/api/addquerylog', (req, response) => {
 		let value = req.body.params
 			db.query(`INSERT INTO query_logs SET ?`, {
@@ -191,6 +198,7 @@ module.exports = function(app, passport, db) {
 			LEFT JOIN query_logs
 			ON queries.id=query_logs.id
 			WHERE published=true
+			AND queries.deleted=false
 			GROUP BY queries.id
 			ORDER BY number DESC`, (err, queries) => {
 				if (err) console.log(err)
@@ -203,6 +211,7 @@ module.exports = function(app, passport, db) {
 			LEFT JOIN query_logs
 			ON queries.id=query_logs.id
 			WHERE queries.account_id=?
+			AND queries.deleted=false
 			GROUP BY queries.id
 			ORDER BY number DESC`, [req.session.passport.user], (err, queries) => {
 				if (err) console.log(err)
