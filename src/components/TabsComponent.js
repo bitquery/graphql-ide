@@ -26,7 +26,8 @@ const TabsComponent = observer(() => {
 							query: data.query,
 							variables: data.arguments,
 							url: data.url,
-							name: data.name
+							name: data.name,
+							description: data.description
 						}
 						setQuery(params, data.id)
 					}

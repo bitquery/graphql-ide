@@ -10,11 +10,11 @@ import copy from 'copy-to-clipboard'
 function EditDialog({active}) {
 	const { addToast } = useToasts()
 	const { url } = useRouteMatch()
-	const [name, setName] = useState('')
-	const [description, setDescription] = useState('')
-	const [shared, setShared] = useState(false)
-	const [queryUrl, setQueryUrl] = useState('')
-	const { saveQuery, queryParams } = QueriesStore
+	const { saveQuery, queryParams, currentQuery } = QueriesStore
+	const [name, setName] = useState(currentQuery.name)
+	const [description, setDescription] = useState(currentQuery.description)
+	const [shared, setShared] = useState(!!currentQuery.url)
+	const [queryUrl, setQueryUrl] = useState(currentQuery.url)
 	const { toggleEditDialog, toggleModal } = modalStore
 	const { renameCurrentTab } = TabsStore
 	const closeHandler = () => {
@@ -28,11 +28,15 @@ function EditDialog({active}) {
 		if (name) {
 			params.name = name
 			if (shared) {
-				params.url = generateLink()
+				if (!params.url) {
+					params.url = generateLink()
+				}
 				setQueryUrl(params.url)
+			} else {
+				params.url = null
+				setQueryUrl('')
 			}
 			if (description) params.description = description
-			console.log(params)
 			data = await saveQuery(params)
 			if (data.status !== 400) {
 				renameCurrentTab(name)
@@ -79,12 +83,12 @@ function EditDialog({active}) {
 						</div>
 					</div>
 				</div>
-				<div className="input-group mb-3">
-					<input type="text" className="form-control" value={queryUrl && `${window.location.protocol}://${window.location.host}${url}/${queryUrl}`} readOnly placeholder="Query link" aria-label="Query link" aria-describedby="basic-addon2"/>
+				{shared && <div className="input-group mb-3">
+					<input type="text" className="form-control query-link" value={queryUrl && (`${window.location.protocol}://${window.location.host}${url}/${queryUrl}`)||''} readOnly placeholder="Query link" aria-label="Query link" aria-describedby="basic-addon2"/>
 					<div className="input-group-append">
 						<button className="btn btn-outline-secondary" type="button" onClick={()=>copy(`${window.location.protocol}://${window.location.host}${url}/${queryUrl}`)}><i className="fas fa-link" /></button>
 					</div>
-				</div>
+				</div>}
 				<div className="buttons flex" style={{'justifyContent': 'space-evenly', 'width': '100%'}}>
 					<button type="button" className="btn btn-secondary btn-sm" onClick={closeHandler}>Cancel</button>
 					<button type="button" className="btn btn-primary btn-sm" onClick={saveHandler}>Save</button>

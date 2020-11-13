@@ -66,7 +66,8 @@ class Queries {
 			query: this.currentQuery.query,
 			arguments: this.currentQuery.variables,
 			name: this.currentQuery.name && this.currentQuery.name,
-			description: this.currentQuery.description && this.currentQuery.description
+			description: this.currentQuery.description && this.currentQuery.description,
+			url: this.currentQuery.url && this.currentQuery.url
 		}
 	}
 
@@ -83,7 +84,7 @@ class Queries {
 	updateQuery = (params, index, id) => {
 		if (params.query) this.query[index].query = params.query
 		if (params.variables) this.query[index].variables = params.variables
-		if (params.url) this.query[index].url = params.url
+		if (params.url || params.url===null) this.query[index].url = params.url
 		if (params.name) {
 			this.query[index].name = params.name || this.query[index].name
 			TabsStore.renameCurrentTab(params.name)
