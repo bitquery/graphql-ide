@@ -9,10 +9,14 @@ import { observer } from 'mobx-react-lite'
 const QueriesControls = observer(({query, isSaved}) => {
 	const { addToast } = useToasts()
 	const { url } = useRouteMatch()
-	const { saveQuery, queryParams } = QueriesStore
+	const { saveQuery, queryParams, setQuery } = QueriesStore
 	const { toggleModal, toggleEditDialog } = modalStore
 	const { user } = UserStore
 
+	const handleFork = (query, e) => {
+		setQuery({...query, name: `Copy of ${query.name}`})
+		e.stopPropagation()
+	}
 	const handleCopy = (queryurl) => {
 		copy(`${window.location.protocol}://${window.location.host}${url}/${queryurl}`)
 		addToast('Link copied to clipboard', {appearance: 'success'})
@@ -46,7 +50,10 @@ const QueriesControls = observer(({query, isSaved}) => {
 			>
 				<i className="far fa-save" />
 			</button>
-			<button type="button" className="gallery__query__control btn btn-sm btn-outline-primary" >
+			<button type="button" 
+				className="gallery__query__control btn btn-sm btn-outline-primary"
+				onClick={e=>handleFork(query, e)} 
+			>
 				<i className="fas fa-code-branch" />
 			</button>
 			<button type="button" 
