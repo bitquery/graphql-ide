@@ -27,25 +27,36 @@ const QueriesComponent = observer(({ queries }) => {
 		}
 	}
 	const queryIsOpen = (queryFromGallery) => 
-		queryFromGallery.id === currentQuery.id ? true : false		
+		queryFromGallery.id === currentQuery.id ? true : false	
+	const isSaved = baseQuery => {
+		// (('saved' in query[i]) && query[i].saved) || !('saved' in query[i])
+		for (let i =0; i<query.length; i++) {
+			if (!((('saved' in query[i]) && query[i].saved) || !('saved' in query[i]))) {
+				if (baseQuery.id === query[i].id) return false
+			}
+		}
+		return true
+	}	
 	
 	return (
-		queries.queries.map((query, index) => (
+		queries.queries.map((baseQuery, index) => (
 			<li className="list-group-item" key={index}
 				onMouseEnter={() => setHoverElementIndex(index)}
 				onMouseLeave={() => setHoverElementIndex(-1)}
-				onClick={()=>{history.push(`${url}/${query.url}`);handleClick(query)}}
+				onClick={()=>{history.push(`${url}/${baseQuery.url}`);handleClick(baseQuery)}}
 			> 
 				<div className="gallery__query__wrapper flex">
-					<Link to={`${url}/${query.url}`} onClick={() => handleClick(query)}> {query.name} </Link>
+					<Link to={`${url}/${baseQuery.url}`} onClick={() => handleClick(baseQuery)}> 
+						{isSaved(baseQuery) ? baseQuery.name : `*${baseQuery.name}`}
+					</Link>
 				</div>
 				{ 
-					(showDescription(hoverElementIndex, index) || queryIsOpen(query)) && 
+					(showDescription(hoverElementIndex, index) || queryIsOpen(baseQuery)) && 
 						<>
 							<label className="gallery__query__description" > 
-								{query.description} 
+								{baseQuery.description} 
 							</label>
-							<QueriesControls query={query} />
+							<QueriesControls query={baseQuery} />
 						</>
 				}
 			</li>
