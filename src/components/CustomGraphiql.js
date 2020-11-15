@@ -10,12 +10,10 @@ import { observer } from 'mobx-react-lite'
 import useDebounce from '../utils/useDebounce'
 
 export const CustomGraphiql = observer(() => {
-	const { toggleSaveQuery, toggleShareQuery, toggleModal,
-		toggleEditDialog } = modalStore
+	const { toggleModal, toggleEditDialog } = modalStore
 	const { tabs, currentTab, id } = TabsStore
 	const { user }  = UserStore
-	const { setCurrentQuery, query, saveQuery,
-		 updateQuery, queryParams, logQuery } = QueriesStore
+	const { query, saveQuery, updateQuery, queryParams, logQuery } = QueriesStore
 	const { addToast } = useToasts()
 	const graphiql = useRef(null)
 	const [fetchURL, setFetchURL] = useState({[currentTab]:process.env.REACT_APP_ENDPOINT_URL})

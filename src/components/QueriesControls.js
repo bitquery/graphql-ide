@@ -5,6 +5,7 @@ import modalStore from '../store/modalStore'
 import { QueriesStore, UserStore } from '../store/queriesStore'
 import { useRouteMatch } from 'react-router-dom'
 import { observer } from 'mobx-react-lite'
+import ReactTooltip from 'react-tooltip'
 
 const QueriesControls = observer(({query, isSaved}) => {
 	const { addToast } = useToasts()
@@ -36,33 +37,48 @@ const QueriesControls = observer(({query, isSaved}) => {
 
 	return (
 		<div className="gallery__query__controls">
-			<button type="button" 
-				className="gallery__query__control btn btn-sm btn-outline-primary" 
-				onClick={()=>handleCopy(query.url)}
-				disabled={!query.url && true}
+			<ReactTooltip place="top"/>
+			<span data-tip={query.url ? 'Get query link' : 'Query is private'}>
+				<button type="button" 
+					className="gallery__query__control btn btn-sm btn-outline-primary" 
+					onClick={()=>handleCopy(query.url)}
+					disabled={!query.url && true}
+				>
+					<i className="fas fa-link" />
+				</button>
+			</span>
+			<span data-tip={!user ? 'You must login or register to save query' 
+				: isSaved ? 'Query does not modified yet' : 'Save query'}
 			>
-				<i className="fas fa-link" />
-			</button>
-			<button type="button" 
-				className="gallery__query__control btn btn-sm btn-outline-primary" 
-				onClick={()=>handleSave(query)}
-				disabled={isSaved ? true : false}
+				<button type="button" 
+					className="gallery__query__control btn btn-sm btn-outline-primary" 
+					onClick={()=>handleSave(query)}
+					disabled={isSaved ? true : false}
+				>
+					<i className="far fa-save" />
+				</button>
+			</span>
+			<span data-tip={!user ? 'You must login or register to fork query' : 'Fork query'}>
+				<button type="button" 
+					className="gallery__query__control btn btn-sm btn-outline-primary"
+					onClick={e=>handleFork(query, e)} 
+					disabled={user ? false : true}
+				>
+					<i className="fas fa-code-branch" />
+				</button>
+			</span>
+			<span data-tip={(user && query.account_id!==user.id) ? 'Query does not belongs to you' 
+				: !user ? 'You must login or register to interact with query' 
+				: 'Edit query attributes and sharing'}
 			>
-				<i className="far fa-save" />
-			</button>
-			<button type="button" 
-				className="gallery__query__control btn btn-sm btn-outline-primary"
-				onClick={e=>handleFork(query, e)} 
-			>
-				<i className="fas fa-code-branch" />
-			</button>
-			<button type="button" 
-				className="gallery__query__control btn btn-sm btn-outline-primary"
-				onClick={()=>{toggleModal();toggleEditDialog()}}
-				disabled={(user && query.account_id!==user.id)||(!user) && true}
-			>
-				<i className="fas fa-pencil-alt" />
-			</button>
+				<button type="button" 
+					className="gallery__query__control btn btn-sm btn-outline-primary"
+					onClick={()=>{toggleModal();toggleEditDialog()}}
+					disabled={(user && query.account_id!==user.id)||(!user) && true}
+				>
+					<i className="fas fa-pencil-alt" />
+				</button>
+			</span>
 		</div>
 	)
 })
