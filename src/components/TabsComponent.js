@@ -11,7 +11,7 @@ const TabsComponent = observer(() => {
 	const { url } = useRouteMatch()
 	const { tabs, currentTab, switchTab, removeTab } = TabsStore
 	const match = useRouteMatch(`${url}/:queryurl`)
-	const { setQuery, removeQuery, query, updateQuery } = QueriesStore
+	const { setQuery, removeQuery, query, saveQuery, queryParams } = QueriesStore
 	const { addToast } = useToasts()
 	const [editTabName, setEditTabName] = useState(false)
 	const [queryName, setQueryName] = useState('')
@@ -57,7 +57,7 @@ const TabsComponent = observer(() => {
 	const renameQueryHandler = (i) => {
 		setEditTabName((prev)=>!prev)
 		if (editTabName && queryName.length) {
-			updateQuery({name: queryName}, i)
+			saveQuery({...queryParams, name: queryName})
 		}
 	}
 
