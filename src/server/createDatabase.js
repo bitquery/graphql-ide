@@ -15,6 +15,7 @@ connection.query(`
 		url VARCHAR(200),
 		name VARCHAR(200),
 		description LONGTEXT,
+		deleted BOOLEAN not null default FALSE,
 		published BOOLEAN,
 		created_at TIMESTAMP not null default CURRENT_TIMESTAMP
 )`)
