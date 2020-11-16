@@ -22,14 +22,7 @@ const TabsComponent = observer(() => {
 				const { data } = await getQuery(match.params.queryurl)
 				if (typeof data === 'object') {
 					if (query.map(query=>query.id).indexOf(data.id) === -1) {
-						const params = {
-							query: data.query,
-							variables: data.arguments,
-							url: data.url,
-							name: data.name,
-							description: data.description
-						}
-						setQuery(params, data.id)
+						setQuery(data, data.id)
 					}
 				} 
 			}

@@ -79,7 +79,8 @@ class Queries {
 		this.query[this.query.length-1].variables = params.variables ? params.variables : '{}'
 		this.query[this.query.length-1].name = params.name
 		if (params.description) this.query[this.query.length-1].description = params.description
-		if (this.query[this.query.length-1].id) this.query[this.query.length-1].saved = true  
+		if ('saved' in params) {this.query[this.query.length-1].saved = params.saved}
+		else if (this.query[this.query.length-1].id) {this.query[this.query.length-1].saved = true}  
 		TabsStore.addNewTab(params.name)
 	}
 	updateQuery = (params, index, id) => {

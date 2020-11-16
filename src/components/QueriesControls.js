@@ -15,7 +15,7 @@ const QueriesControls = observer(({query, isSaved}) => {
 	const { user } = UserStore
 
 	const handleFork = (query, e) => {
-		setQuery({...query, name: `Copy of ${query.name}`})
+		setQuery({...query, name: `Copy of ${query.name}`, saved: false})
 		e.stopPropagation()
 	}
 	const handleCopy = (queryurl) => {
