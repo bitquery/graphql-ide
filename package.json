@@ -13,6 +13,8 @@
     "cookie-session": "^1.4.0",
     "copy-to-clipboard": "^3.3.1",
     "cors": "^2.8.5",
+    "db-migrate": "^0.11.11",
+    "db-migrate-mysql": "^2.1.1",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "graphiql": "^1.0.5",
@@ -39,6 +41,7 @@
   },
   "scripts": {
     "createdb": "node ./src/server/createDatabase.js",
+    "migrate": "node node_modules/db-migrate/bin/db-migrate up",
     "devserver": "nodemon ./src/server/server.js",
     "server": "node ./src/server/server.js",
     "dev": "run-p start devserver",

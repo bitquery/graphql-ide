@@ -1,0 +1,11 @@
+{
+	"dev": {
+	  "host": { "ENV" : "DB_HOST" },
+	  "user": { "ENV" : "DB_USER" },
+	  "password" : { "ENV" : "DB_PASSWORD" },
+	  "database": "bitquery",
+	  "port": { "ENV" : "DB_PORT" },
+	  "driver": "mysql",
+	  "multipleStatements": true
+	}
+  }
