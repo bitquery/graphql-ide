@@ -207,13 +207,13 @@ module.exports = function(app, passport, db) {
 	})
 	app.get('/api/getmyqueries', (req, res) => {
 		db.query(`
-			SELECT queries.*, COUNT(query_logs.id) as number FROM queries
+			SELECT queries.* FROM queries
 			LEFT JOIN query_logs
 			ON queries.id=query_logs.id
 			WHERE queries.account_id=?
 			AND queries.deleted=false
 			GROUP BY queries.id
-			ORDER BY number DESC`, [req.session.passport.user], (err, queries) => {
+			ORDER BY query_logs.called_at DESC`, [req.session.passport.user], (err, queries) => {
 				if (err) console.log(err)
 				res.send(queries)
 		})
