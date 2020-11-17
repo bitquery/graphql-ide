@@ -25,6 +25,7 @@ function App() {
 		return () => {
 			window.removeEventListener('beforeunload', handleUnload)
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 	return (
 		<div className="App">

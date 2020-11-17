@@ -48,7 +48,7 @@ const QueriesControls = observer(({query, isSaved}) => {
 				</button>
 			</span>
 			<span data-tip={!user ? 'You must login or register to save query' 
-				: isSaved ? 'Query does not modified yet' : 'Save query'}
+				: isSaved ? 'Query is not modified yet' : 'Save query'}
 			>
 				<button type="button" 
 					className="gallery__query__control btn btn-sm btn-outline-primary" 

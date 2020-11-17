@@ -195,11 +195,23 @@
 	&__add {
 		padding: 10px 10px 0;
 	}
+	&__edit {
+		border: none;
+		border-bottom: 1px solid #d7d7d7;
+		outline: none;
+		height: 100%;
+		& + i {
+			opacity: .75;
+			transition: opacity 100ms;
+			&:hover{
+				opacity: 1;
+			}
+		}
+	}
 	.tab {
 		&__edit {
 			display: none;
 			margin-left: 5px;
-			
 		}
 		&__close{
 			margin-left: 15px;
@@ -211,6 +223,9 @@
 	}
 	.nav {
 		&-link {
+			.cursor-edit {
+				cursor: url('./assets/images/pencil-alt-solid.svg') 0 20, auto;
+			}
 			&:hover {
 				.tab__close {
 					opacity: .75;

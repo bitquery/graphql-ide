@@ -19,6 +19,7 @@ const QueriesComponent = observer(({ queries }) => {
 			switchTab(tabs[tabID].id)
 		}
 	}
+	const queryUrl = queryUrl => queryUrl ? `${url}/${queryUrl}` : `${url}`
 	const queryIsOpen = (queryFromGallery) => 
 		queryFromGallery.id === currentQuery.id ? true : false	
 	const isSaved = baseQuery => {
@@ -35,10 +36,10 @@ const QueriesComponent = observer(({ queries }) => {
 			<li className="list-group-item" key={index}
 				onMouseEnter={() => setHoverElementIndex(index)}
 				onMouseLeave={() => setHoverElementIndex(-1)}
-				onClick={()=>{history.push(`${url}/${baseQuery.url}`);handleClick(baseQuery)}}
+				onClick={()=>{history.push(queryUrl(baseQuery.url));handleClick(baseQuery)}}
 			> 
 				<div className="gallery__query__wrapper flex">
-					<Link to={`${url}/${baseQuery.url}`} onClick={() => handleClick(baseQuery)}> 
+					<Link to={queryUrl(baseQuery.url)} onClick={() => handleClick(baseQuery)}> 
 						{isSaved(baseQuery) ? baseQuery.name : `*${baseQuery.name}`}
 					</Link>
 				</div>

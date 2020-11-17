@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><!-- Generator: Gravit.io -->
+<svg xmlns="http://www.w3.org/2000/svg"
+	xmlns:xlink="http://www.w3.org/1999/xlink" style="isolation:isolate" viewBox="0 0 20 20" width="20px" height="20px">
+	<defs>
+		<clipPath id="_clipPath_m92ZBKkRJo0Cn852vT2MV6Bu2ZcU3KE6">
+			<rect width="20" height="20"/>
+		</clipPath>
+	</defs>
+	<g clip-path="url(#_clipPath_m92ZBKkRJo0Cn852vT2MV6Bu2ZcU3KE6)">
+		<path d=" M 19.449 5.551 L 17.648 7.352 C 17.465 7.535 17.168 7.535 16.984 7.352 L 12.648 3.016 C 12.465 2.832 12.465 2.535 12.648 2.352 L 14.449 0.551 C 15.18 -0.18 16.367 -0.18 17.102 0.551 L 19.449 2.898 C 20.184 3.629 20.184 4.816 19.449 5.551 Z  M 11.102 3.898 L 0.844 14.156 L 0.016 18.902 C -0.098 19.543 0.461 20.098 1.102 19.988 L 5.848 19.156 L 16.105 8.898 C 16.289 8.715 16.289 8.418 16.105 8.234 L 11.77 3.898 C 11.582 3.715 11.285 3.715 11.102 3.898 L 11.102 3.898 Z  M 4.848 13.277 C 4.633 13.063 4.633 12.719 4.848 12.504 L 10.863 6.488 C 11.078 6.273 11.422 6.273 11.637 6.488 C 11.852 6.703 11.852 7.047 11.637 7.262 L 5.621 13.277 C 5.406 13.492 5.063 13.492 4.848 13.277 L 4.848 13.277 Z  M 3.438 16.563 L 5.313 16.563 L 5.313 17.98 L 2.793 18.422 L 1.578 17.207 L 2.02 14.688 L 3.438 14.688 L 3.438 16.563 Z " fill="rgb(0,0,0)" vector-effect="non-scaling-stroke" stroke-width="0.039" stroke="rgb(0,0,0)" stroke-linejoin="miter" stroke-linecap="butt" stroke-miterlimit="4"/>
+	</g>
+</svg>

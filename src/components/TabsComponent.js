@@ -3,18 +3,16 @@ import React, { useEffect, useState } from 'react'
 import { useHistory, useRouteMatch } from 'react-router-dom'
 import { getQuery } from '../api/api'
 import {TabsStore, QueriesStore} from '../store/queriesStore'
-import { useToasts } from 'react-toast-notifications'
-import copy from 'copy-to-clipboard'
+import handleState from '../utils/handleState'
 
 const TabsComponent = observer(() => {
 	const history = useHistory()
 	const { url } = useRouteMatch()
 	const { tabs, currentTab, switchTab, removeTab } = TabsStore
 	const match = useRouteMatch(`${url}/:queryurl`)
-	const { setQuery, removeQuery, query, saveQuery, queryParams } = QueriesStore
-	const { addToast } = useToasts()
+	const { setQuery, removeQuery, query, updateQuery } = QueriesStore
 	const [editTabName, setEditTabName] = useState(false)
-	const [queryName, setQueryName] = useState('')
+	const [queryName, setQueryName] = useState({})
 
 	useEffect(() => {
 		async function updateTabs() {
@@ -23,6 +21,7 @@ const TabsComponent = observer(() => {
 				if (typeof data === 'object') {
 					if (query.map(query=>query.id).indexOf(data.id) === -1) {
 						setQuery(data, data.id)
+						setQueryName({[currentTab]: data.name})
 					}
 				} 
 			}
@@ -30,11 +29,17 @@ const TabsComponent = observer(() => {
 		updateTabs()
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
+	useEffect(() => {
+		setEditTabName(false)
+		setQueryName(handleState({...queryName}) || {[currentTab]: 'New Query'})
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [tabs.length])
+	const handleEdit = e => setQueryName({...queryName, [currentTab]: e.target.value})
 	const switchTabHandler = (tabid) => {
 		switchTab(tabid)
 		let id = tabs.map(tab => tab.id).indexOf(tabid)
 		query[id].url ? history.push(`${url}/${query[id].url}`) : history.push(`${url}`)
-		setQueryName('')
+		setEditTabName(false)
 	}
 	const addNewTabHandler = (e) => {
 		e.preventDefault()
@@ -43,21 +48,11 @@ const TabsComponent = observer(() => {
 	const removeTabHandler = (index, event) => {
 		removeQuery(index)
 		removeTab(index, event)
-		setEditTabName(false)
 	}
-	const getQueryUrl = (index, e) => {
-		e.preventDefault()
-	 	if (query[index].url) {
-			copy(`${window.location.protocol}://${window.location.host}${url}/${query[index].url}`)
-			addToast('Query link copied to clipboard!', {appearance: 'success'})
-		} else {
-			addToast('This query is not shared now', {appearance: 'error'})
-		}
-	}
-	const renameQueryHandler = (i) => {
+	const renameQueryHandler = (tabID, i) => {
 		setEditTabName((prev)=>!prev)
-		if (editTabName && queryName.length) {
-			saveQuery({...queryParams, name: queryName})
+		if (editTabName && queryName[tabID] && queryName[tabID].length) {
+			queryName[tabID]!==query[i].name && updateQuery({name: queryName[tabID]}, i)
 		}
 	}
 
@@ -68,17 +63,26 @@ const TabsComponent = observer(() => {
 					tabs.map((tab, i) => (
 						<li 
 							className="nav-item" key={i}
-							onClick={() => switchTabHandler(tab.id)}
-							onContextMenu={e => getQueryUrl(i, e)}
+							onClick={() => currentTab !== tab.id && switchTabHandler(tab.id)}
 						>
 							<a href="# " className={'nav-link '+(currentTab === tab.id && 'active')} key={i}>
-								{ (editTabName && currentTab === tab.id) 
-									? <input type="text" value={queryName} onChange={e=>setQueryName(e.target.value)} /> 
-										: (('saved' in query[i]) && query[i].saved) || !('saved' in query[i])
-											? tab.name : `*${tab.name}` }
-								<i className={'tab__edit fas fa-pencil-alt '+(currentTab === tab.id && 'tab__edit_active')}
-									onClick={()=>renameQueryHandler(i)}
-								/>
+								{
+								(editTabName && currentTab === tab.id) 
+									? 	<>
+											<input type="text" 
+												value={queryName ? queryName[currentTab] : 'New Query'} 
+												className="tabs__edit"
+												onChange={handleEdit}
+											/>
+											<i className="fas fa-check" onClick={()=>renameQueryHandler(currentTab, i)}/>
+										</>
+									: 	<span className={currentTab === tab.id ? 'cursor-edit' : undefined}
+											onClick={()=>currentTab === tab.id && renameQueryHandler(currentTab, i)}
+										>
+											{(('saved' in query[i]) && query[i].saved) || !('saved' in query[i]) 
+											? tab.name : `*${tab.name}`}
+										</span>
+								}
 								<i className="tab__close fas fa-times" onClick={(e) => removeTabHandler(i, e)} />
 							</a>
 						</li>
