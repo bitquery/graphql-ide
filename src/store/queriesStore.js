@@ -101,6 +101,7 @@ class Queries {
 			query: '',
 			id: null
 		})
+		TabsStore.removeTab(index)
 	}
 	toggleGallery = () => {
 		this.showGallery = !this.showGallery
@@ -186,8 +187,7 @@ class Tabs {
 		})
 		this.switchTab(this.id)
 	}
-	removeTab = (index, event) => {
-		event.stopPropagation()
+	removeTab = (index) => {
 		this.tabs.length !==1 && this.tabs.splice(index, 1)
 		this.tabs.length === 0 
 			? this.addNewTab('New Query') 

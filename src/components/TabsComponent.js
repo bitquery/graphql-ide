@@ -41,13 +41,12 @@ const TabsComponent = observer(() => {
 		query[id].url ? history.push(`${url}/${query[id].url}`) : history.push(`${url}`)
 		setEditTabName(false)
 	}
-	const addNewTabHandler = (e) => {
-		e.preventDefault()
+	const addNewTabHandler = () => {
 		setQuery({query: '', variables: '{}', name: 'New Query'})
 	}
 	const removeTabHandler = (index, event) => {
+		event.stopPropagation()
 		removeQuery(index)
-		removeTab(index, event)
 	}
 	const renameQueryHandler = (tabID, i) => {
 		setEditTabName((prev)=>!prev)
