@@ -37,7 +37,13 @@ const QueriesControls = observer(({query, isSaved}) => {
 
 	return (
 		<div className="gallery__query__controls">
-			<ReactTooltip place="top"/>
+			<ReactTooltip 
+				place="top"
+				border={false}
+				borderColor="#fff"
+				backgroundColor="#5f5f5f"
+				arrowColor="transparent"
+			/>
 			<span data-tip={query.url ? 'Get query link' : 'Query is private'}>
 				<button type="button" 
 					className="gallery__query__control btn btn-sm btn-outline-primary" 

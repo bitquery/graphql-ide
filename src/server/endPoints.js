@@ -100,34 +100,37 @@ module.exports = function(app, passport, db) {
 	})
 
 	app.post('/api/addquery', (req, res) => {
-		let sql = `INSERT INTO queries SET ?`
-		db.query(`select * from queries where id=?`, [req.body.params.id], (err, result) => {
-			if (err) console.log(err)
-			if (Array.isArray(result) && result.length) {
-				console.log('there is result ', result[0].id, result[0].url, result[0].account_id)
-				if (result[0].account_id === req.session.passport.user) {
-					if (!req.body.params.executed) {
-						let params = {
-							name: req.body.params.name && req.body.params.name,
-							description: req.body.params.description && req.body.params.description,
-							arguments: req.body.params.arguments && req.body.params.arguments,
-							query: req.body.params.query && req.body.params.query,
-							url: req.body.params.url ? req.body.params.url : null
+		if (req.session.passport.user) {
+			let sql = `INSERT INTO queries SET ?`
+			db.query(`select * from queries where id=?`, [req.body.params.id], (err, result) => {
+				if (err) console.log(err)
+				if (Array.isArray(result) && result.length) {
+					console.log('there is result ', result[0].id, result[0].url, result[0].account_id)
+					if (result[0].account_id === req.session.passport.user) {
+						if (!req.body.params.executed) {
+							let params = {
+								name: req.body.params.name && req.body.params.name,
+								description: req.body.params.description && req.body.params.description,
+								arguments: req.body.params.arguments && req.body.params.arguments,
+								query: req.body.params.query && req.body.params.query,
+								url: req.body.params.url ? req.body.params.url : null, 
+								updated_at: new Date()
+							}
+							params.published = params.url ? true : null
+							db.query(`UPDATE queries SET ? where id=${result[0].id}`, params, (err, _) => {
+								if (err) console.log(err)
+								let msg = 'Query updated!'
+								res.send({msg, id: result[0].id})
+							})
 						}
-						params.published = params.url ? true : null
-						db.query(`UPDATE queries SET ? where id=${result[0].id}`, params, (err, _) => {
-							if (err) console.log(err)
-							let msg = 'Query updated!'
-							res.send({msg, id: result[0].id})
-						})
+					} else {
+						handleAddQuery(req, res, db, sql)
 					}
-				} else {
+				} else  {
 					handleAddQuery(req, res, db, sql)
 				}
-			} else  {
-				handleAddQuery(req, res, db, sql)
-			}
-		})
+			})
+		}
 	})
 
 	app.post('/api/deletequery', (req, res) => {
@@ -207,13 +210,10 @@ module.exports = function(app, passport, db) {
 	})
 	app.get('/api/getmyqueries', (req, res) => {
 		db.query(`
-			SELECT queries.* FROM queries
-			LEFT JOIN query_logs
-			ON queries.id=query_logs.id
-			WHERE queries.account_id=?
-			AND queries.deleted=false
-			GROUP BY queries.id
-			ORDER BY query_logs.called_at DESC`, [req.session.passport.user], (err, queries) => {
+			SELECT * FROM queries 
+			WHERE account_id=?
+			AND deleted=false
+			ORDER BY updated_at DESC`, [req.session.passport.user], (err, queries) => {
 				if (err) console.log(err)
 				res.send(queries)
 		})
