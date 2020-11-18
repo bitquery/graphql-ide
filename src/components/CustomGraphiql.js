@@ -68,12 +68,6 @@ export const CustomGraphiql = observer(() => {
 		setPrettify(false)
 	}
 	const handleQuery = (result, error) => {
-		if (user && result==='success') {
-			let params = {...queryParams}
-			params.name = 'New query'
-			params.executed = true
-			saveQuery(params)
-		}
 		//addQueryLog
 		if (queryParams.id) {
 			let params = {...queryParams}
@@ -112,7 +106,11 @@ export const CustomGraphiql = observer(() => {
 	}
 	const editQueryHandler = (handleSubject, index) => {
 		if (!prettify) {
-			updateQuery(handleSubject, index)
+			if (query[index].account_id === user.id ) {
+				updateQuery(handleSubject, index)
+			} else {
+				updateQuery({...handleSubject, url: null}, index, null)
+			}
 		}
 	}
 	

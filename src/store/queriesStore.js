@@ -78,6 +78,7 @@ class Queries {
 		if (params.url) this.query[this.query.length-1].url = params.url
 		this.query[this.query.length-1].variables = params.variables ? params.variables : '{}'
 		this.query[this.query.length-1].name = params.name
+		this.query[this.query.length-1].account_id = params.account_id
 		if (params.description) this.query[this.query.length-1].description = params.description
 		if ('saved' in params) {this.query[this.query.length-1].saved = params.saved}
 		else if (this.query[this.query.length-1].id) {this.query[this.query.length-1].saved = true}  
@@ -86,13 +87,14 @@ class Queries {
 	updateQuery = (params, index, id) => {
 		if (params.query) this.query[index].query = params.query
 		if (params.variables) this.query[index].variables = params.variables
+		if (params.account_id) this.query[index].account_id = params.account_id
 		if (params.url || params.url===null) this.query[index].url = params.url
 		if (params.name) {
 			this.query[index].name = params.name || this.query[index].name
 			TabsStore.renameCurrentTab(params.name)
 		}
 		if (params.description) this.query[index].description = params.description || this.query[index].description
-		this.query[index].id = id ? id : this.query[index].id
+		this.query[index].id = id || id===null ? id : this.query[index].id
 		this.query[index].saved = false
 		this.setCurrentQuery(index)
 	}
