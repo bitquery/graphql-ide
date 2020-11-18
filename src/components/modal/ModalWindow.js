@@ -5,7 +5,6 @@ import { observer } from 'mobx-react-lite'
 import RegisterForm from './RegisterForm'
 import LoginForm from './LoginForm'
 import SaveQueryFrom from './SaveQueryForm'
-import ShareQueryFrom from './ShareQueryForm'
 import ForgotPasswordForm from './ForgotPasswordForm'
 import ChangePasswordForm from './ChangePasswordForm'
 import EditDialog from './EditDialog'
@@ -46,10 +45,10 @@ Modal.setAppElement('#graphql_ide')
 const ModalWindow = observer(() => {
 	const { 
 		registerIsOpen, loginIsOpen, modalIsOpen,
-		saveQueryIsOpen, shareQueryIsOpen, editDialogIsOpen,
+		saveQueryIsOpen, editDialogIsOpen,
 		forgotPasswordIsOpen, changePasswordIsOpen,
 		toggleModal, toggleLogin, toggleRegister, 
-		toggleSaveQuery, toggleShareQuery, toggleEditDialog,
+		toggleSaveQuery, toggleEditDialog,
 		toggleForgotPassword, toggleChangePassword 
 	} = modalStore
 	
@@ -59,7 +58,7 @@ const ModalWindow = observer(() => {
 		registerIsOpen && toggleRegister()
 		saveQueryIsOpen && toggleSaveQuery()
 		editDialogIsOpen && toggleEditDialog()
-		shareQueryIsOpen && toggleShareQuery()
+		
 		forgotPasswordIsOpen && toggleForgotPassword()
 		changePasswordIsOpen && toggleChangePassword()
 	}
@@ -74,7 +73,6 @@ const ModalWindow = observer(() => {
 			<EditDialog active={editDialogIsOpen} />
 			<RegisterForm active={registerIsOpen} />
 			<SaveQueryFrom  active={saveQueryIsOpen} />
-			<ShareQueryFrom active={shareQueryIsOpen} />
 			<ChangePasswordForm active={changePasswordIsOpen} />
 			<ForgotPasswordForm active={forgotPasswordIsOpen} />
 		</Modal>

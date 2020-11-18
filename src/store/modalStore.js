@@ -7,6 +7,7 @@ class Modal {
 	saveQueryIsOpen = false
 	shareQueryIsOpen = false
 	editDialogIsOpen = false
+	confirmationIsOpen = false
 	forgotPasswordIsOpen = false
 	changePasswordIsOpen = false
 	
@@ -17,6 +18,7 @@ class Modal {
 			registerIsOpen: observable,
 			saveQueryIsOpen: observable,
 			shareQueryIsOpen: observable,
+			confirmationIsOpen: observable,
 			changePasswordIsOpen: observable,
 			forgotPasswordIsOpen: observable,
 			toggleModal: action,
@@ -24,6 +26,7 @@ class Modal {
 			toggleRegister: action,
 			toggleSaveQuery: action,
 			toggleShareQuery: action,
+			toggleConfirmation: action,
 			toggleForgotPassword: action,
 			toggleChangePassword: action
 		})
@@ -47,6 +50,9 @@ class Modal {
 	}
 	toggleEditDialog = () => {
 		this.editDialogIsOpen = !this.editDialogIsOpen
+	}
+	toggleConfirmation = () => {
+		this.confirmationIsOpen = !this.confirmationIsOpen
 	}
 	toggleForgotPassword = () => {
 		this.forgotPasswordIsOpen = !this.forgotPasswordIsOpen
