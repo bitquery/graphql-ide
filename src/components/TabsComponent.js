@@ -1,9 +1,11 @@
 import { observer } from 'mobx-react-lite'
 import React, { useEffect, useState } from 'react'
+import { useCallback } from 'react'
 import { useHistory, useRouteMatch } from 'react-router-dom'
 import { getQuery } from '../api/api'
 import {TabsStore, QueriesStore} from '../store/queriesStore'
 import handleState from '../utils/handleState'
+import useEventListener from '../utils/useEventListener'
 
 const TabsComponent = observer(() => {
 	const history = useHistory()
@@ -29,6 +31,14 @@ const TabsComponent = observer(() => {
 		updateTabs()
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
+	const editTabNameHandler = useCallback(({key}) => {
+		if (key==='Enter'||key==='Escape') {
+			setEditTabName(prev=>prev?!prev:prev)
+			let id = tabs.map(tab=>tab.id).indexOf(currentTab)
+			updateQuery({name: queryName[currentTab]}, id)
+		}
+	}, [setEditTabName, currentTab, queryName])
+	useEventListener('keyup', editTabNameHandler)	
 	useEffect(() => {
 		setEditTabName(false)
 		setQueryName(handleState({...queryName}) || {[currentTab]: 'New Query'})
