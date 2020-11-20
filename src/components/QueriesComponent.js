@@ -13,7 +13,7 @@ const QueriesComponent = observer(({ queries }) => {
 	const showDescription = (i1, i2) => i1===i2 ? true : false
 	const handleClick = (queryFromGallery) => {
 		if (query.map(query => query.id).indexOf(queryFromGallery.id) === -1) {
-			setQuery(queryFromGallery, queryFromGallery.id)
+			setQuery({...queryFromGallery, variables: queryFromGallery.arguments}, queryFromGallery.id)
 		} else {
 			let tabID = query.map(query => query.id).indexOf(queryFromGallery.id)
 			switchTab(tabs[tabID].id)

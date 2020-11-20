@@ -20,7 +20,7 @@ const TabsComponent = observer(() => {
 				const { data } = await getQuery(match.params.queryurl)
 				if (typeof data === 'object') {
 					if (query.map(query=>query.id).indexOf(data.id) === -1) {
-						setQuery(data, data.id)
+						setQuery({...data, variables: data.arguments}, data.id)
 						setQueryName({[currentTab]: data.name})
 					}
 				} 
@@ -48,10 +48,10 @@ const TabsComponent = observer(() => {
 		event.stopPropagation()
 		removeQuery(index)
 	}
-	const renameQueryHandler = (tabID, i) => {
+	const renameQueryHandler = i => {
 		setEditTabName((prev)=>!prev)
-		if (editTabName && queryName[tabID] && queryName[tabID].length) {
-			queryName[tabID]!==query[i].name && updateQuery({name: queryName[tabID]}, i)
+		if (editTabName && queryName[currentTab] && queryName[currentTab].length) {
+			queryName[currentTab]!==query[i].name && updateQuery({name: queryName[currentTab]}, i)
 		}
 	}
 
