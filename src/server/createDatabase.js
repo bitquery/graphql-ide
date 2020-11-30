@@ -14,6 +14,7 @@ connection.query(`
 		arguments LONGTEXT not null,
 		url VARCHAR(200),
 		name VARCHAR(200),
+		endpoint_url VARCHAR(200) not null,
 		description LONGTEXT,
 		deleted BOOLEAN not null default FALSE,
 		published BOOLEAN,

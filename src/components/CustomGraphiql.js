@@ -11,19 +11,18 @@ import useDebounce from '../utils/useDebounce'
 
 export const CustomGraphiql = observer(() => {
 	const { toggleModal, toggleEditDialog } = modalStore
-	const { tabs, currentTab, id } = TabsStore
+	const { tabs, currentTab, index } = TabsStore
 	const { user }  = UserStore
 	const { query, saveQuery, updateQuery, queryParams, logQuery } = QueriesStore
 	const { addToast } = useToasts()
 	const graphiql = useRef(null)
-	const [fetchURL, setFetchURL] = useState({[currentTab]:process.env.REACT_APP_ENDPOINT_URL})
-	const debouncedURL = useDebounce(fetchURL[currentTab], 500)
+	const debouncedURL = useDebounce(query[index].endpoint_url, 500)
 	const [prettify, setPrettify] = useState(false)
 	const [schema, setSchema] = useState(null)
 
 	const fetcherFunction = (graphQLParams) => {
 		return fetch(
-			fetchURL[currentTab],
+			query[index].endpoint_url,
 			{
 				method: 'POST',
 				headers: {
@@ -35,22 +34,8 @@ export const CustomGraphiql = observer(() => {
 			},
 		)
 	}
-	useEffect(() => {
-		if (currentTab in fetchURL) {
-			for (let key in fetchURL) {
-				if (tabs.map(tab => tab.id).indexOf(+key)===-1) {
-					const {[key]: deletedKey, ...actual} = fetchURL
-					setFetchURL(actual)
-					return
-				}
-			}
-		} else {
-			setFetchURL({...fetchURL, [currentTab]: process.env.REACT_APP_ENDPOINT_URL})
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [tabs.length, id])
-	const handleInputURLChange = e => {
-		setFetchURL({...fetchURL, [currentTab]: e.target.value})
+	const handleInputURLChange = (i,e) => {
+		updateQuery({endpoint_url: e.target.value}, i)
 	}
 	const handleCopy = () => {
 		const editor = graphiql.current.getQueryEditor()
@@ -123,7 +108,7 @@ export const CustomGraphiql = observer(() => {
 				query: introspectionQuery,
 				operationName: introspectionQueryName,
 			}
-			fetchURL[currentTab].length > 9 && 
+			query[index].endpoint_url.length > 9 && 
 			fetcherFunction(graphQLParams)
 			.then(data => data.json())	
 			.then(result => {
@@ -171,7 +156,7 @@ export const CustomGraphiql = observer(() => {
 							label="Save"
 							title="Save Query"
 						/>
-						<input className="endpointURL" type="text" value={fetchURL[currentTab]||''} onChange={handleInputURLChange} />
+						<input className="endpointURL" type="text" value={query[i].endpoint_url} onChange={e=>handleInputURLChange(i, e)} />
 					</GraphiQL.Toolbar>
 				</GraphiQL>
 			</div>

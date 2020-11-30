@@ -34,11 +34,13 @@ class Queries {
 	currentQuery = {
 		query: '',
 		variables: '{}',
+		endpoint_url: 'https://graphql.bitquery.io',
 		id: null
 	}
 	query = [{
 		query: '',
 		variables: '{}',
+		endpoint_url: 'https://graphql.bitquery.io',
 		id: null
 	}]
 	
@@ -68,7 +70,8 @@ class Queries {
 			arguments: this.currentQuery.variables,
 			name: this.currentQuery.name && this.currentQuery.name,
 			description: this.currentQuery.description && this.currentQuery.description,
-			url: this.currentQuery.url && this.currentQuery.url
+			url: this.currentQuery.url && this.currentQuery.url,
+			endpoint_url: this.currentQuery.endpoint_url && this.currentQuery.endpoint_url
 		}
 	}
 
@@ -79,6 +82,7 @@ class Queries {
 		this.query[this.query.length-1].variables = params.variables ? params.variables : '{}'
 		this.query[this.query.length-1].name = params.name
 		this.query[this.query.length-1].account_id = params.account_id
+		this.query[this.query.length-1].endpoint_url = params.endpoint_url
 		if (params.description) this.query[this.query.length-1].description = params.description
 		if ('saved' in params) {this.query[this.query.length-1].saved = params.saved}
 		else if (this.query[this.query.length-1].id) {this.query[this.query.length-1].saved = true}  
@@ -88,6 +92,7 @@ class Queries {
 		if (params.query) this.query[index].query = params.query
 		if (params.variables) this.query[index].variables = params.variables
 		if (params.account_id) this.query[index].account_id = params.account_id
+		if (params.endpoint_url) this.query[index].endpoint_url = params.endpoint_url
 		if (params.url || params.url===null) this.query[index].url = params.url
 		if (params.name) {
 			this.query[index].name = params.name || this.query[index].name
@@ -161,6 +166,7 @@ class Tabs {
 			tabs: observable,
 			id: observable,
 			currentTab: observable,
+			index: computed,
 			switchTab: action,
 			incID: action,
 			removeTab: action,
@@ -169,6 +175,9 @@ class Tabs {
 		})
 	}
 
+	get index() {
+		return this.tabs.map(tab=>tab.id).indexOf(this.currentTab)
+	}
 	incID = () => {
 		this.id = this.id + 1
 	}

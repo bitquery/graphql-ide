@@ -10,9 +10,9 @@ import useEventListener from '../utils/useEventListener'
 const TabsComponent = observer(() => {
 	const history = useHistory()
 	const { url } = useRouteMatch()
-	const { tabs, currentTab, switchTab, removeTab } = TabsStore
+	const { tabs, currentTab, switchTab, index } = TabsStore
 	const match = useRouteMatch(`${url}/:queryurl`)
-	const { setQuery, removeQuery, query, updateQuery } = QueriesStore
+	const { setQuery, removeQuery, query, updateQuery, currentQuery } = QueriesStore
 	const [editTabName, setEditTabName] = useState(false)
 	const [queryName, setQueryName] = useState({})
 
@@ -32,10 +32,12 @@ const TabsComponent = observer(() => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 	const editTabNameHandler = useCallback(({key}) => {
-		if (key==='Enter'||key==='Escape') {
+		if (key==='Enter') {
 			setEditTabName(prev=>prev?!prev:prev)
-			let id = tabs.map(tab=>tab.id).indexOf(currentTab)
-			updateQuery({name: queryName[currentTab]}, id)
+			updateIfNeeded()
+		} else if (key==='Escape') {
+			setEditTabName(prev=>prev?!prev:prev)
+			setQueryName({[currentTab]: tabs[index].name})
 		}
 	}, [setEditTabName, currentTab, queryName])
 	useEventListener('keyup', editTabNameHandler)	
@@ -52,17 +54,20 @@ const TabsComponent = observer(() => {
 		setEditTabName(false)
 	}
 	const addNewTabHandler = () => {
-		setQuery({query: '', variables: '{}', name: 'New Query'})
+		setQuery({query: '', variables: '{}', name: 'New Query', endpoint_url: currentQuery.endpoint_url})
 	}
 	const removeTabHandler = (index, event) => {
 		event.stopPropagation()
 		removeQuery(index)
 	}
-	const renameQueryHandler = i => {
-		setEditTabName((prev)=>!prev)
+	const updateIfNeeded = () => {
 		if (editTabName && queryName[currentTab] && queryName[currentTab].length) {
-			queryName[currentTab]!==query[i].name && updateQuery({name: queryName[currentTab]}, i)
+			queryName[currentTab]!==query[index].name && updateQuery({name: queryName[currentTab]}, index)
 		}
+	}
+	const renameQueryHandler = () => {
+		setEditTabName((prev)=>!prev)
+		updateIfNeeded()
 	}
 
 	return (
@@ -83,7 +88,7 @@ const TabsComponent = observer(() => {
 												className="tabs__edit"
 												onChange={handleEdit}
 											/>
-											<i className="fas fa-check" onClick={()=>renameQueryHandler(currentTab, i)}/>
+											<i className="fas fa-check" onClick={renameQueryHandler}/>
 										</>
 									: 	<span className={currentTab === tab.id ? 'cursor-edit' : undefined}
 											onClick={()=>currentTab === tab.id && renameQueryHandler(currentTab, i)}

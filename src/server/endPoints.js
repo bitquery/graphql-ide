@@ -113,7 +113,8 @@ module.exports = function(app, passport, db) {
 								description: req.body.params.description && req.body.params.description,
 								arguments: req.body.params.arguments && req.body.params.arguments,
 								query: req.body.params.query && req.body.params.query,
-								url: req.body.params.url ? req.body.params.url : null, 
+								url: req.body.params.url ? req.body.params.url : null,
+								endpoint_url: req.body.params.endpoint_url,
 								updated_at: new Date()
 							}
 							params.published = params.url ? true : null
