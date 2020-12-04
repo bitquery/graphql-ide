@@ -14,12 +14,6 @@
 	border: none;
 	outline: none;
 }
-.shared-link {
-	background: url('https://cdn.jsdelivr.net/gh/Spendil/qqq@1.3/media/link.svg') right no-repeat;
-	background-size: 10px 10px;
-	margin-right: 1px;
-	padding: 0 7px;
-}
 .p-modal {
 	padding: 10px 0;
 	color: #555;
@@ -224,7 +218,7 @@
 	.nav {
 		&-link {
 			.cursor-edit {
-				cursor: url('https://cdn.jsdelivr.net/gh/Spendil/qqq@1.7/media/pencil-alt-solid.svg') 0 20, auto;
+				cursor: url('https://cdn.jsdelivr.net/gh/bitquery/graphql-ide@1.1.19/src/assets/images/pencil-alt-solid.svg') 0 20, auto;
 			}
 			&:hover {
 				.tab__close {

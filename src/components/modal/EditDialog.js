@@ -56,7 +56,7 @@ function EditDialog({active}) {
 			data = await saveQuery(params)
 			if (data.status !== 400) {
 				renameCurrentTab(name)
-				addToast(data.msg, {appearance: 'success'})
+				data.msg && addToast(data.msg, {appearance: 'success'})
 				closeHandler()
 			} else { 
 				addToast(data.data.msg, {appearance: 'error'})

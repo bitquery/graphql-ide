@@ -26,9 +26,13 @@ module.exports = function(app, passport, db) {
 		params.id = null
 		params.published = params.url ? true : null
 		db.query(sql, params, (err, result) => {
-			if (err) console.log(err)
-			let msg = params.url ? 'Query shared!' : 'Query saved!'
-			res.send({msg, id: result.insertId})
+			if (err) {
+				console.log(err)
+				res.send({err})
+			} else {
+				let msg = params.url ? 'Query shared!' : 'Query saved!'
+				result && res.send({msg, id: result.insertId})
+			}
 		})
 	}
 	const sendActivationLink = (userID, userEmail, req) => {

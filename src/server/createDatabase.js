@@ -4,7 +4,7 @@ let dbconfig = require('./databaseConfig')
 
 let connection = mysql.createConnection(dbconfig.connection)
 
-connection.query('CREATE DATABASE ' + dbconfig.database)
+connection.query('CREATE DATABASE ' + dbconfig.database + 'character set UTF8mb4 collate utf8mb4_bin')
 
 connection.query(`
 	CREATE TABLE ${dbconfig.database}.${dbconfig.queries_table} (
