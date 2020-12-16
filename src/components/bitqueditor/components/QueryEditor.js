@@ -8,6 +8,8 @@ const AUTO_COMPLETE_AFTER_KEY = /^[a-zA-Z0-9_@(]$/;
 export default class QueryEditor extends Component {
 	editor = null
 	_node = null
+	cachedValue = ''
+	ignoreChangeEvent = false
 
 	constructor(props) {
 		super(props)
@@ -18,6 +20,7 @@ export default class QueryEditor extends Component {
 			mouseDown: false
 		}
 		this.onRelease = this.onRelease.bind(this)
+		this.cachedValue = props.value || ''
 	}
 	
 	onDrag = (e) => {
@@ -42,7 +45,7 @@ export default class QueryEditor extends Component {
 	}
 	onKeyUp = (cm, event) => {
 		if (AUTO_COMPLETE_AFTER_KEY.test(event.key) && this.editor) {
-		  this.editor.execCommand('autocomplete');
+			this.editor.execCommand('autocomplete');
 		}
 	}
 	_onEdit = () => {
@@ -110,13 +113,41 @@ export default class QueryEditor extends Component {
 		}
 	}
 
+	componentDidUpdate(prevProps) {
+		const CodeMirror = require('codemirror');
+		const cursor = this.editor.getCursor();
+		const cursorIndex = this.editor.indexFromPos(cursor);
+
+		this.ignoreChangeEvent = true;
+		if (this.props.schema !== prevProps.schema && this.editor) {
+			this.editor.options.lint.schema = this.props.schema;
+			this.editor.options.hintOptions.schema = this.props.schema;
+			this.editor.options.info.schema = this.props.schema;
+			this.editor.options.jump.schema = this.props.schema;
+			CodeMirror.signal(this.editor, 'change', this.editor);
+		}
+		if (
+			this.props.value !== prevProps.value &&
+			this.props.value !== this.cachedValue &&
+			this.editor
+		) {
+			this.cachedValue = this.props.value;
+			this.editor.operation(() => {
+				const cursor = this.editor.getCursor()
+				this.editor.setValue(this.props.value)
+				this.editor.setCursor(cursor)
+			})
+		}
+		this.ignoreChangeEvent = false;
+	  }
+
 	componentWillUnmount() {
 		if (this.editor) {
-			this.editor.off('keyup', this.onKeyUp);
+			this.editor.off('keyup', this.onKeyUp)
 			this.editor.off('change', this._onEdit)
-			window.removeEventListener("mousemove", this.onDrag);
-			document.body.removeEventListener("mouseup", this.onRelease);
-			this.editor = null;
+			window.removeEventListener("mousemove", this.onDrag)
+			document.body.removeEventListener("mouseup", this.onRelease)
+			this.editor = null
 		}
 	}
 

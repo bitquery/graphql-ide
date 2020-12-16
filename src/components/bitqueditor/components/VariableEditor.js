@@ -8,13 +8,15 @@ const AUTO_COMPLETE_AFTER_KEY = /^[a-zA-Z0-9_@(]$/;
 export default class QueryEditor extends Component {
 	editor = null
 	_node = null
+	cachedValue = ''
+	ignoreChangeEvent = false
 
 	constructor(props) {
 		super(props)
-		this.hz = false
 		this.state = {
 			mouseDown : false
 		}
+		this.cachedValue = props.value || ''
 	}
 
 	onKeyUp = (cm, event) => {
@@ -76,11 +78,31 @@ export default class QueryEditor extends Component {
 		}
 	}
 
-	componentDidUpdate() {
-		this.hz = true
-		this.editor.options.hintOptions.variableToType = this.props.variableToType
-		this.hz = false
-	}
+	componentDidUpdate(prevProps) {
+		this.CodeMirror = require('codemirror');
+		if (!this.editor) {
+		  return;
+		}
+		this.ignoreChangeEvent = true;
+		if (this.props.variableToType !== prevProps.variableToType) {
+		  this.editor.options.lint.variableToType = this.props.variableToType;
+		  this.editor.options.hintOptions.variableToType = this.props.variableToType;
+		  this.CodeMirror.signal(this.editor, 'change', this.editor);
+		}
+		if (
+		  this.props.value !== prevProps.value &&
+		  this.props.value !== this.cachedValue
+		) {
+			this.cachedValue = this.props.value
+			this.editor.operation(() => {
+				const cursor = this.editor.getCursor()
+				console.log(cursor)
+				this.editor.setValue(this.props.value)
+				this.editor.setCursor(cursor)
+			})
+		}
+		this.ignoreChangeEvent = false;
+	  }
 
 	componentWillUnmount() {
 		if (this.editor) {

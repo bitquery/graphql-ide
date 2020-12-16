@@ -8,7 +8,7 @@ function GraphqlEditor({
 	variables,
 	variableToType,
 	onEditQuery,
-	onEditVariable
+	onEditVariables
 }) {
 	return (
 		<div className="editor__wrapper" >
@@ -18,7 +18,7 @@ function GraphqlEditor({
 				value={query} 
 			/>
 			<VariableEditor
-				onEdit={onEditVariable}
+				onEdit={onEditVariables}
 				variableToType={variableToType}
 				value={variables}
 			/>
