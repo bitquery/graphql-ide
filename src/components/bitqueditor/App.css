@@ -1,0 +1,172 @@
+.bitqueditor {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+.Appb {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  margin: 0 0 -11px 0;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+.widget {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0 0 20px 0;
+  min-height: 240px;
+}
+.widget-display{
+  display: flex;
+  flex: 1 1 50%;
+  width: 100%;
+  overflow: auto;
+}
+.widget-editor {
+  display: flex;
+  flex-flow: column wrap;
+  overflow: auto;
+  width: 100%;
+  padding: 10px 10px 0;
+}
+.widget-option {
+  margin-right: 20px;
+}
+.widget .widget-option {
+  align-self: center;
+}
+.widget .widget-editor .widget-option {
+  align-self: flex-start;
+}
+
+.workspace__wrapper {
+  display: flex;
+  flex: 1 1 50%;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  border-right: 1px solid #ced4da;
+}
+
+.editor__wrapper {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.query-editor{
+  display: flex;
+}
+.variable-editor {
+  display: flex;  
+  flex: 1 1;
+}
+.variable-editor>.CodeMirror {
+  height: auto !important;
+}
+.handle {
+  flex: 0 0 auto;
+}
+.CodeMirror {
+  height: 100%;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 100%;
+}
+.handle {
+  background: #f7f7f7;
+  width: 100%;
+  height: 40px;
+  user-select: none;
+  cursor: row-resize;
+  border-top: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+}
+
+.handle:before {
+  content: '\2261'; /* https://en.wikipedia.org/wiki/Triple_bar */
+  color: #999;
+  position: absolute;
+  left: 25%;
+}
+
+.handle:hover {
+  background: #f0f0f0;
+}
+
+.handle:hover:before {
+  color: #000;
+}
+
+.execute-button {
+  position: absolute;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  line-height: 12px;
+  font-size: 12px;
+  z-index: 6;
+  top:50%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #c7c7c7;
+  border: none;
+  outline: none !important;
+}
+.execute-button:active {
+  -webkit-box-shadow: rgb(0, 0, 0) 4px 4px 15px 0px inset, 5px 5px 15px 5px rgba(0,0,0,0); 
+  box-shadow: rgb(0, 0, 0) 4px 4px 15px 0px inset, 5px 5px 15px 5px rgba(0,0,0,0);
+}
+
+.execute-button:hover {
+  cursor: pointer;
+}
+
+div.CodeMirror span.CodeMirror-matchingbracket {
+  color: #555 !important
+}
+
+.bitqueditor__toolbar {
+  align-items: center;
+  border-bottom: 1px solid #d0d0d0;
+  cursor: default;
+  display: flex;
+  flex-direction: row;
+  min-height: 54px;
+  padding: 7px 14px 6px;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}

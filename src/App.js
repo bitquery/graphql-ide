@@ -8,6 +8,7 @@ import ResetPassword from './pages/ResetPassword'
 import GalleryComponent from './components/GalleryComponent'
 import { useEffect } from 'react'
 import { QueriesStore } from './store/queriesStore'
+import GraphqlExplorer from './components/GraphqlExplorer'
 
 function App() {
 	const { path } = useRouteMatch()
@@ -38,7 +39,8 @@ function App() {
 						<ControlPanel />
 						<div className="content flex">
 							<GalleryComponent />
-							<CustomGraphiql />
+							<GraphqlExplorer />
+							{/* <CustomGraphiql /> */}
 						</div>
 					</Route>
 				</Switch>
