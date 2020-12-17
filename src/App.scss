@@ -155,7 +155,8 @@
 	display: none;
 	flex: 1 1 auto;
 	&_active {
-		display: block;
+		display: flex;
+		flex-direction: column;
 	}
 }
 .graphiql-container {

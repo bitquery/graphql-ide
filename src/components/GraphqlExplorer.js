@@ -30,7 +30,7 @@ export const GraphqlExplorer = observer(() => {
 	//----------------------------------------------------
 	const [widgetType, setWidgetType] = useState('')
 	const [_variableToType, _setVariableToType] = useState(null)
-	const [queryTypes, setQueryTypes] = useState({})
+	const [queryTypes, setQueryTypes] = useState({[currentTab]: {}})
 	const [dataSource, setDataSource] = useState({[currentTab]: {}})
 	const getQueryTypes = (query) => {
 		const typeInfo = new TypeInfo(schema)
@@ -171,6 +171,7 @@ export const GraphqlExplorer = observer(() => {
 						<GraphqlEditor 
 							schema={schema}
 							query={toJS(query[i].query)}
+							number={i}
 							variables={toJS(query[i].variables)}
 							variableToType={_variableToType}
 							onEditQuery={query => editQueryHandler({query}, i)}
@@ -185,11 +186,10 @@ export const GraphqlExplorer = observer(() => {
 						<WidgetComponent.editor 
 							model={queryTypes[currentTab]} 
 							setConfig={setConfig} 
-							widgetType={widgetType}
 						/>
 					</div>
 					<button className="execute-button" onClick={getResult} >Get result</button>
-					<WidgetComponent.renderer dataSource={dataSource[currentTab]} config={query[index].config} el={currentTab === tab.id ? `asd${currentTab}` : ''} />
+					<WidgetComponent.renderer dataSource={dataSource[currentTab]} config={toJS(query[index].config)} el={currentTab === tab.id ? `asd${currentTab}` : ''} />
 				</div>
 			</div>
 		))

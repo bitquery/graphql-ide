@@ -10,6 +10,8 @@ export default class QueryEditor extends Component {
 	_node = null
 	cachedValue = ''
 	ignoreChangeEvent = false
+	wrapperHeight = null
+	number = 0
 
 	constructor(props) {
 		super(props)
@@ -21,13 +23,15 @@ export default class QueryEditor extends Component {
 		}
 		this.onRelease = this.onRelease.bind(this)
 		this.cachedValue = props.value || ''
+		this.number = props.number
 	}
 	
 	onDrag = (e) => {
 		if (this.editor && this.state.mouseDown) {
-			const editorWrapper = document.getElementsByClassName('editor__wrapper')[0]
+			const editorWrapper = document.getElementsByClassName('editor__wrapper')[this.number]
+			if (this.wrapperHeight === null) this.wrapperHeight = height_of(editorWrapper)
 			const newSize = this.state.start_h + e.y - this.state.start_y
-			if (newSize <= height_of(editorWrapper)-40) {
+			if (newSize <= this.wrapperHeight-67) {
 				this.editor.setSize(null, (this.state.start_h + e.y - this.state.start_y) + "px")
 			}
 		}

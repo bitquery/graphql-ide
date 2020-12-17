@@ -10,7 +10,8 @@ const GraphqlEditor = observer(({
 	variables,
 	variableToType,
 	onEditQuery,
-	onEditVariables
+	onEditVariables,
+	number
 }) => {
 	const queryEditor = useRef(null)
 	const variablesEditor = useRef(null)
@@ -22,6 +23,7 @@ const GraphqlEditor = observer(({
 	return (
 		<div className="editor__wrapper" >
 			<QueryEditor 
+				number={number}
 				ref={queryEditor}
 				onEdit={onEditQuery}
 				schema={schema} 
