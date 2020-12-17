@@ -17,6 +17,7 @@ import { parse as parseGql } from 'graphql/language'
 import WidgetSelect from './bitqueditor/components/WidgetSelect'
 import JsonPlugin from './bitqueditor/components/JsonWidget'
 import ToolbarComponent from './bitqueditor/components/ToolbarComponent'
+import { useStateAdaptation } from '../utils/useStateAdaptation'
 
 export const GraphqlExplorer = observer(() => {
 	const { toggleModal, toggleEditDialog } = modalStore
@@ -28,7 +29,6 @@ export const GraphqlExplorer = observer(() => {
 	const [schema, setSchema] = useState(null)
 	//----------------------------------------------------
 	const [widgetType, setWidgetType] = useState('')
-	// const [config, setConfig] = useState({})
 	const [_variableToType, _setVariableToType] = useState(null)
 	const [queryTypes, setQueryTypes] = useState({})
 	const [dataSource, setDataSource] = useState({[currentTab]: {}})
@@ -86,31 +86,8 @@ export const GraphqlExplorer = observer(() => {
 		} catch (e) {}
 		return typesMap
 	}
-	useEffect(() => {
-		if (currentTab in queryTypes) {
-			for (let key in queryTypes) {
-				if (tabs.map(tab => tab.id).indexOf(+key)===-1) {
-					const {[key]: deletedKey, ...actual} = queryTypes
-					setQueryTypes(actual)
-					return
-				}
-			}
-		} else {
-			setQueryTypes({...queryTypes, [currentTab]: {}})
-		}
-		if (currentTab in dataSource) {
-			for (let key in dataSource) {
-				if (tabs.map(tab => tab.id).indexOf(+key)===-1) {
-					const {[key]: deletedKey, ...actual} = dataSource
-					setDataSource(actual)
-					return
-				}
-			}
-		} else {
-			setDataSource({...dataSource, [currentTab]: {}})
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [tabs.length, id])
+	useStateAdaptation(queryTypes, setQueryTypes, tabs, currentTab, [tabs.length, id])
+	useStateAdaptation(dataSource, setDataSource, tabs, currentTab, [tabs.length, id])
 	const getResult = async () => {
 		const data = await fetcher({query: query[index].query, variables: query[index].variables})
 		data.json().then(json => {

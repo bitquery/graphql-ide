@@ -204,10 +204,12 @@ class Tabs {
 		this.switchTab(this.id)
 	}
 	removeTab = (index) => {
-		this.tabs.length !==1 && this.tabs.splice(index, 1)
+		this.tabs.length !==1 ? this.tabs.splice(index, 1) : console.log('xvatit')
 		this.tabs.length === 0 
 			? this.addNewTab('New Query') 
-			: this.switchTab(this.tabs[this.tabs.length-1].id)
+			: this.tabs.length === index 
+				? this.switchTab(this.tabs[index-1].id) 
+				: this.switchTab(this.tabs[index].id)
 	}
 }
 
