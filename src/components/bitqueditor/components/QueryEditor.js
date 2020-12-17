@@ -49,9 +49,14 @@ export default class QueryEditor extends Component {
 		}
 	}
 	_onEdit = () => {
-		const value = this.editor.getValue()
-		return this.props.onEdit(value)
+		if (!this.ignoreChangeEvent && this.editor) {
+			this.cachedValue = this.editor.getValue()
+			if (this.props.onEdit) {
+				return this.props.onEdit(this.cachedValue)
+			}
+		}
 	}
+	getEditor = () => this.editor
 
 	componentDidMount() {
 		const CodeMirror = require('codemirror');
@@ -115,8 +120,6 @@ export default class QueryEditor extends Component {
 
 	componentDidUpdate(prevProps) {
 		const CodeMirror = require('codemirror');
-		const cursor = this.editor.getCursor();
-		const cursorIndex = this.editor.indexFromPos(cursor);
 
 		this.ignoreChangeEvent = true;
 		if (this.props.schema !== prevProps.schema && this.editor) {
