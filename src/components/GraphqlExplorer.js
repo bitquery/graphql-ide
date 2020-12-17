@@ -2,12 +2,13 @@ import React, { useState, useRef, useEffect } from 'react';
 import '../App.scss';
 import modalStore from '../store/modalStore';
 import { TabsStore, QueriesStore, UserStore } from '../store/queriesStore';
-import copy from 'copy-to-clipboard'
 import { useToasts } from 'react-toast-notifications'
 import { observer } from 'mobx-react-lite'
+import { toJS } from 'mobx'
 import useDebounce from '../utils/useDebounce'
-import { vegaPlugins } from 'vega-widgets'
-import './bitqueditor/App.css'
+// import { vegaPlugins } from 'vega-widgets'
+import { vegaPlugins } from './bitqueditor/components/plugins/vegaPlugin'
+import './bitqueditor/App.scss'
 import getQueryFacts from '../utils/getQueryFacts'
 import GraphqlEditor from './bitqueditor/components/GraphqlEditor'
 import { getIntrospectionQuery, buildClientSchema, TypeInfo, visitWithTypeInfo } from 'graphql'
@@ -17,22 +18,20 @@ import WidgetSelect from './bitqueditor/components/WidgetSelect'
 import JsonPlugin from './bitqueditor/components/JsonWidget'
 import ToolbarComponent from './bitqueditor/components/ToolbarComponent'
 
-const GraphqlExplorer = observer(() => {
+export const GraphqlExplorer = observer(() => {
 	const { toggleModal, toggleEditDialog } = modalStore
-	const { tabs, currentTab, index } = TabsStore
+	const { tabs, currentTab, index, id } = TabsStore
 	const { user }  = UserStore
-	const { query, saveQuery, updateQuery, queryParams, logQuery } = QueriesStore
+	const { query, updateQuery } = QueriesStore
 	const { addToast } = useToasts()
-	const graphiql = useRef(null)
-	const debouncedURL = useDebounce(query[index].endpoint_url, 500)
 	const [prettify, setPrettify] = useState(false)
 	const [schema, setSchema] = useState(null)
 	//----------------------------------------------------
 	const [widgetType, setWidgetType] = useState('')
-	const [config, setConfig] = useState({})
+	// const [config, setConfig] = useState({})
 	const [_variableToType, _setVariableToType] = useState(null)
-	const [queryTypes, setQueryTypes] = useState(null)
-	const [dataSource, setDataSource] = useState({})
+	const [queryTypes, setQueryTypes] = useState({})
+	const [dataSource, setDataSource] = useState({[currentTab]: {}})
 	const getQueryTypes = (query) => {
 		const typeInfo = new TypeInfo(schema)
 		var typesMap = {}
@@ -87,36 +86,62 @@ const GraphqlExplorer = observer(() => {
 		} catch (e) {}
 		return typesMap
 	}
+	useEffect(() => {
+		if (currentTab in queryTypes) {
+			for (let key in queryTypes) {
+				if (tabs.map(tab => tab.id).indexOf(+key)===-1) {
+					const {[key]: deletedKey, ...actual} = queryTypes
+					setQueryTypes(actual)
+					return
+				}
+			}
+		} else {
+			setQueryTypes({...queryTypes, [currentTab]: {}})
+		}
+		if (currentTab in dataSource) {
+			for (let key in dataSource) {
+				if (tabs.map(tab => tab.id).indexOf(+key)===-1) {
+					const {[key]: deletedKey, ...actual} = dataSource
+					setDataSource(actual)
+					return
+				}
+			}
+		} else {
+			setDataSource({...dataSource, [currentTab]: {}})
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [tabs.length, id])
 	const getResult = async () => {
 		const data = await fetcher({query: query[index].query, variables: query[index].variables})
 		data.json().then(json => {
-			('data' in json) ? setDataSource({
+			('data' in json) ? setDataSource({...dataSource, [currentTab]: {
 				execute: getResult,
 				data: json.data,
-				query: query[index].query, 
-				variables: query[index].variables
-			}) : console.log(JSON.stringify(json.errors, null, 2))
+				query: toJS(query[index].query), 
+				variables: toJS(query[index].variables)
+			}}) : console.log(JSON.stringify(json.errors, null, 2))
 		})
-		let queryTypes = getQueryTypes(query)
-		setQueryTypes(queryTypes)
+		let queryType = getQueryTypes(query[index].query)
+		setQueryTypes({...queryTypes, [currentTab]: queryType})
 	}
 	const editQueryHandler = (handleSubject, index) => {
-		if (!prettify) {
 			if ('query' in handleSubject) {
-				const facts = getQueryFacts(schema, query)
+				const facts = getQueryFacts(schema, handleSubject.query)
 				if (facts) {
 					const { variableToType } = facts
 					_setVariableToType(variableToType)
 				}
-				let queryTypes = getQueryTypes(query)
-				setQueryTypes(queryTypes)
+				let queryType = getQueryTypes(handleSubject.query)
+				setQueryTypes({...queryTypes, [currentTab]: queryType})
 			}
 			if (query[index].account_id === user.id ) {
 				updateQuery(handleSubject, index)
 			} else {
 				updateQuery({...handleSubject, url: null}, index, null)
 			}
-		}
+	}
+	const setConfig = (config) => {
+		updateQuery({config}, index)
 	}
 	const fetcher = (graphQLParams) => {
 		return fetch(
@@ -168,30 +193,28 @@ const GraphqlExplorer = observer(() => {
 					<div className="workspace__wrapper">
 						<GraphqlEditor 
 							schema={schema}
-							query={query[i].query}
-							variables={query[i].variables}
+							query={toJS(query[i].query)}
+							variables={toJS(query[i].variables)}
 							variableToType={_variableToType}
 							onEditQuery={query => editQueryHandler({query}, i)}
 							onEditVariables={variables => editQueryHandler({variables}, i)}
 						/>
 						<WidgetSelect 
 							plugins={plugins} 
-							model={queryTypes} 
+							model={queryTypes[currentTab]} 
 							value={widgetType} 
 							setValue={setWidgetType} 
 						/>
 						<WidgetComponent.editor 
-							model={queryTypes} 
+							model={queryTypes[currentTab]} 
 							setConfig={setConfig} 
 							widgetType={widgetType}
 						/>
 					</div>
 					<button className="execute-button" onClick={getResult} >Get result</button>
-					<WidgetComponent.renderer dataSource={dataSource} config={config} />
+					<WidgetComponent.renderer dataSource={dataSource[currentTab]} config={query[index].config} el={currentTab === tab.id ? `asd${currentTab}` : ''} />
 				</div>
 			</div>
 		))
 	)
 })
-
-export default GraphqlExplorer

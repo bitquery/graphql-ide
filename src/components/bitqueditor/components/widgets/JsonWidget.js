@@ -1,16 +1,15 @@
 import React from 'react'
 import { v4 } from 'uuid'
 
-function JsonWidget({el, dataSource}) {
-	if (!dataSource) return (<div></div>)
+function JsonWidget({dataSource}) {
 	return (
-		<div className="widget-display" id={el}>
+		<div className="widget-display">
 			<pre style={{
 				'alignSelf': 'flex-start',
 				'width': '100%'
 				}}
 			>
-				{dataSource && JSON.stringify(dataSource.data, null, 2)}
+				{JSON.stringify(dataSource.data, null, 2)}
 			</pre>
 		</div>
 	)
@@ -18,7 +17,7 @@ function JsonWidget({el, dataSource}) {
 
 class JsonPlugin {
 	constructor() {
-		this.id = 'json.widget'
+		this.id = v4()
 		this.name = 'JSON'
 		this.editor = () => (<div className="widget"/>)
 		this.renderer = JsonWidget

@@ -6,9 +6,6 @@ function ToolbarComponent() {
 			<input 
 				className="endpointURL"
 				type="text" 
-				// value={query[i].endpoint_url} 
-				value={'query[i].endpoint_url'} 
-				// onChange={e=>handleInputURLChange(i, e)} 
 			/>
 		</div>
 	)

@@ -6,7 +6,6 @@ function WidgetSelect({value, model, setValue, plugins}) {
 		setSupportedCharts([])
 		if (model) {
 			let typesList = Object.keys(model).map(node => model[node])
-			console.log(typesList)
 			plugins.forEach(plugin => {
 				plugin.supportsModel(typesList) && setSupportedCharts(old => [...old, plugin.name])
 			})

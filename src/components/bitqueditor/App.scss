@@ -5,6 +5,9 @@
   flex-direction: column;
   position: relative;
 }
+[contenteditable="true"] {
+  user-select: text;
+}
 .Appb {
   height: 100%;
   width: 100%;
@@ -169,4 +172,9 @@ div.CodeMirror span.CodeMirror-matchingbracket {
   -webkit-user-select: none;
   -ms-user-select: none;
   user-select: none;
+}
+.over-wrapper {
+  position: relative;
+  display: flex;
+  flex: 1 1 100%;
 }
