@@ -3,7 +3,6 @@ import WidgetOptions from '../WidgetOptions'
 
 function BarWidgetEditor({model, setConfig}) {
 	const xFunc = node => {if (typeof model[node] === 'string') {
-		console.log(model)
 		return model[node].includes('String')||model[node].includes('Int')||model[node].includes('Float')
 	}}
 	const yFunc = node =>   {if (typeof model[node] === 'string') {
@@ -26,7 +25,7 @@ function BarWidgetEditor({model, setConfig}) {
 			}
 			setConfig(cfg)
 		}
-	}, [JSON.stringify(model), xAxis, yAxis, displayedData])
+	}, [xAxis, yAxis, displayedData])
 	
 	return (
 		<div className="widget">
