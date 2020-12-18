@@ -54,6 +54,7 @@ class Queries {
 			showGallery: observable,
 			query: observable,
 			queryParams: computed,
+			queryNumber: computed,
 			setCurrentVariables: action,
 			setCurrentQuery: action,
 			toggleGallery: action,
@@ -63,6 +64,9 @@ class Queries {
 			saveQuery: action,
 			setQuery: action
 		})
+	}
+	get queryNumber() {
+		return this.query.map(q=>q.id).indexOf(this.currentQuery.id)
 	}
 	get queryParams() {
 		return {

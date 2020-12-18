@@ -58,7 +58,7 @@ const TabsComponent = observer(() => {
 	}
 	const removeTabHandler = (index, event) => {
 		event.stopPropagation()
-		removeQuery(index)
+		tabs.length > 1 && removeQuery(index)
 	}
 	const updateIfNeeded = () => {
 		if (editTabName && queryName[currentTab] && queryName[currentTab].length) {
@@ -97,7 +97,7 @@ const TabsComponent = observer(() => {
 											? tab.name : `*${tab.name}`}
 										</span>
 								}
-								<i className="tab__close fas fa-times" onClick={(e) => removeTabHandler(i, e)} />
+								<i className="tab__close fas fa-times" onClick={e=>removeTabHandler(i, e)} />
 							</a>
 						</li>
 					))

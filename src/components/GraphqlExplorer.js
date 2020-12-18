@@ -20,11 +20,9 @@ import ToolbarComponent from './bitqueditor/components/ToolbarComponent'
 import { useStateAdaptation } from '../utils/useStateAdaptation'
 
 export const GraphqlExplorer = observer(() => {
-	const { toggleModal, toggleEditDialog } = modalStore
 	const { tabs, currentTab, index, id } = TabsStore
 	const { user }  = UserStore
 	const { query, updateQuery } = QueriesStore
-	const { addToast } = useToasts()
 	const [prettify, setPrettify] = useState(false)
 	const [schema, setSchema] = useState(null)
 	//----------------------------------------------------
@@ -32,6 +30,7 @@ export const GraphqlExplorer = observer(() => {
 	const [_variableToType, _setVariableToType] = useState(null)
 	const [queryTypes, setQueryTypes] = useState({[currentTab]: {}})
 	const [dataSource, setDataSource] = useState({[currentTab]: {}})
+	const debouncedURL = useDebounce(query[index].endpoint_url, 500)
 	const getQueryTypes = (query) => {
 		const typeInfo = new TypeInfo(schema)
 		var typesMap = {}
@@ -154,7 +153,7 @@ export const GraphqlExplorer = observer(() => {
 		}
 		fetchSchema()
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [])
+	}, [debouncedURL])
 	const plugins = [JsonPlugin, ...vegaPlugins]
 	let indexx = plugins.map(plugin => plugin.id).indexOf(widgetType)
 	const WidgetComponent = indexx>=0 ? plugins[indexx] : plugins[0]

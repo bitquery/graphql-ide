@@ -179,3 +179,52 @@ div.CodeMirror span.CodeMirror-matchingbracket {
   flex: 1 1 100%;
   height: 100%;
 }
+.topBarWrap {
+  display: flex;
+}
+.topBar {
+  align-items: center;
+  border-bottom: 1px solid #d0d0d0;
+  cursor: default;
+  display: flex;
+  flex-direction: row;
+  flex: 1 1;
+  height: 54px;
+  overflow-y: visible;
+  padding: 7px 14px 6px;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  &__logo {
+    height: 40px;
+    margin: 0 20px 0 0;
+    &__img {
+      height: 100%;
+    }
+  }
+  &__button {
+    background: linear-gradient(#f9f9f9,#ececec);
+    border: 0;
+    border-radius: 3px;
+    box-shadow: inset 0 0 0 1px rgba(0,0,0,.2), 0 1px 0 hsla(0,0%,100%,.7), inset 0 1px #fff;
+    color: #555;
+    cursor: pointer;
+    display: inline-block;
+    margin: 0 5px;
+    padding: 3px 11px 5px;
+    text-decoration: none;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 150px;
+    &:disabled {
+      opacity: 0.5;
+      cursor: default;
+    }
+  }
+  .endpointURL {
+    border: none;
+    outline: none;
+    font-size: 14px;
+    flex: 1 1 auto
+  }
+}
