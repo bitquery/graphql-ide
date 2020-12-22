@@ -1,6 +1,5 @@
 import React from 'react'
 import './App.scss'
-import { CustomGraphiql } from './components/CustomGraphiql'
 import ModalWindow from './components/modal/ModalWindow'
 import ControlPanel from './components/ControlPanel'
 import { Route, Switch, useRouteMatch } from 'react-router-dom'
@@ -22,10 +21,10 @@ function App() {
 				}
 			}
 		}
-		/* window.addEventListener('beforeunload', handleUnload)
+		window.addEventListener('beforeunload', handleUnload)
 		return () => {
 			window.removeEventListener('beforeunload', handleUnload)
-		} */
+		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 	return (
@@ -40,7 +39,6 @@ function App() {
 						<div className="content flex">
 							<GalleryComponent />
 							<GraphqlExplorer />
-							{/* <CustomGraphiql /> */}
 						</div>
 					</Route>
 				</Switch>

@@ -1,7 +1,5 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../App.scss';
-import modalStore from '../store/modalStore';
-import { useToasts } from 'react-toast-notifications'
 import { observer } from 'mobx-react-lite'
 import { toJS } from 'mobx'
 import useDebounce from '../utils/useDebounce'
@@ -14,12 +12,11 @@ import { getIntrospectionQuery, buildClientSchema, TypeInfo, visitWithTypeInfo }
 import { visit } from 'graphql/language/visitor'
 import { parse as parseGql } from 'graphql/language'
 import WidgetSelect from './bitqueditor/components/WidgetSelect'
-import JsonPlugin from './bitqueditor/components/JsonWidget'
+import JsonPlugin from './bitqueditor/components/widgets/JsonWidget'
 import ToolbarComponent from './bitqueditor/components/ToolbarComponent'
-import { useStateAdaptation } from '../utils/useStateAdaptation'
 import { TabsStore, QueriesStore, UserStore } from '../store/queriesStore';
 
-const Gqlexpl = observer(({number}) => {
+const EditorInstance = observer(({number}) => {
 	const { tabs, currentTab, index, id } = TabsStore
 	const { user }  = UserStore
 	const { query, updateQuery, showGallery } = QueriesStore
@@ -29,7 +26,7 @@ const Gqlexpl = observer(({number}) => {
 	const [widgetType, setWidgetType] = useState('')
 	const [_variableToType, _setVariableToType] = useState(null)
 	const [queryTypes, setQueryTypes] = useState({})
-	const [dataSource, setDataSource] = useState({[currentTab]: {}})
+	const [dataSource, setDataSource] = useState({})
 	const debouncedURL = useDebounce(query[index].endpoint_url, 500)
 	const getQueryTypes = (query) => {
 		const typeInfo = new TypeInfo(schema)
@@ -87,12 +84,12 @@ const Gqlexpl = observer(({number}) => {
 	const getResult = async () => {
 		const data = await fetcher({query: query[index].query, variables: query[index].variables})
 		data.json().then(json => {
-			('data' in json) ? setDataSource({...dataSource, [currentTab]: {
+			('data' in json) ? setDataSource({
 				execute: getResult,
 				data: json.data,
 				query: toJS(query[index].query), 
 				variables: toJS(query[index].variables)
-			}}) : console.log(JSON.stringify(json.errors, null, 2))
+			}) : console.log(JSON.stringify(json.errors, null, 2))
 		})
 		let queryType = getQueryTypes(query[index].query)
 		setQueryTypes(queryType)
@@ -194,7 +191,7 @@ const Gqlexpl = observer(({number}) => {
 				</div>
 				<button className="execute-button" onClick={getResult} >Get result</button>
 				<WidgetComponent.renderer 
-					dataSource={dataSource[currentTab]} 
+					dataSource={dataSource} 
 					config={toJS(query[index].config)} 
 					el={currentTab === tabs[number].id ? `asd${currentTab}` : ''} 
 				/>
@@ -203,4 +200,4 @@ const Gqlexpl = observer(({number}) => {
 	)
 })
 
-export default Gqlexpl
+export default EditorInstance
