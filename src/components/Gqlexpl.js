@@ -22,7 +22,7 @@ import { TabsStore, QueriesStore, UserStore } from '../store/queriesStore';
 const Gqlexpl = observer(({number}) => {
 	const { tabs, currentTab, index, id } = TabsStore
 	const { user }  = UserStore
-	const { query, updateQuery } = QueriesStore
+	const { query, updateQuery, showGallery } = QueriesStore
 	const [prettify, setPrettify] = useState(false)
 	const [schema, setSchema] = useState(null)
 	//----------------------------------------------------
@@ -163,7 +163,10 @@ const Gqlexpl = observer(({number}) => {
 	const WidgetComponent = indexx>=0 ? plugins[indexx] : plugins[0]
 	return (
 		<div 
-			className={'graphiql__wrapper ' + (currentTab === tabs[number].id ? 'graphiql__wrapper_active' : '')}
+			className={'graphiql__wrapper ' + 
+				(currentTab === tabs[number].id ? 'graphiql__wrapper_active' : '')
+				+ (!showGallery ? ' graphiql__wrapper_wide' : '')
+			}
 			key={number}
 		>
 			<ToolbarComponent />

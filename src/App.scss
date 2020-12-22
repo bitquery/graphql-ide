@@ -55,13 +55,12 @@
 }
 .content {
 	height: 100%;
+	width: 100vw;
 	overflow: hidden;
 	.gallery {
-		min-width: 0;
-		max-width: 22px;
 		transition: width 500ms;
 		position: relative;
-		flex: 0 0 15% ;
+		max-width: 22px;
 		&__close {
 			opacity: 0.5;
 			position: absolute;
@@ -143,6 +142,7 @@
 			}
 		}
 		&.active {
+			flex-basis: 15%;
 			min-width: 220px;
 			max-width: none;
 			.gallery__header {
@@ -154,9 +154,13 @@
 .graphiql__wrapper {
 	display: none;
 	flex: 1 1 auto;
+	max-width: calc(100% - 220px);
 	&_active {
 		display: flex;
 		flex-direction: column;
+	}
+	&_wide {
+		max-width: calc(100% - 22px);
 	}
 }
 .graphiql-container {

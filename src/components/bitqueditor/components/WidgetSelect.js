@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import "react-loader-spinner/dist/loader/css/react-spinner-loader.css"
-import Loader from "react-loader-spinner"
 
 function WidgetSelect({value, model, setValue, plugins}) {
 	const [supportedCharts, setSupportedCharts] = useState([])
@@ -15,12 +14,7 @@ function WidgetSelect({value, model, setValue, plugins}) {
 	}, [JSON.stringify(model), value])
 	if (!Object.keys(model).length) return (
 		<div className="custom-select">
-			<Loader
-				type="Oval"
-				color="#3d77b6"
-				height={25}
-				width={25}
-			/>
+			loading..
 		</div>
 	)
 	return (

@@ -51,6 +51,7 @@
   display: flex;
   flex: 1 1 50%;
   width: 100%;
+  height: 100%;
   overflow: auto;
 }
 .widget-editor {
@@ -176,8 +177,8 @@ div.CodeMirror span.CodeMirror-matchingbracket {
 .over-wrapper {
   position: relative;
   display: flex;
-  flex: 1 1 100%;
-  height: 100%;
+  // flex: 1 1 100%;
+  height: calc(100% - 54px);
 }
 .topBarWrap {
   display: flex;
