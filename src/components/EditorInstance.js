@@ -3,8 +3,7 @@ import '../App.scss';
 import { observer } from 'mobx-react-lite'
 import { toJS } from 'mobx'
 import useDebounce from '../utils/useDebounce'
-// import { vegaPlugins } from 'vega-widgets'
-import { vegaPlugins } from './bitqueditor/components/plugins/vegaPlugin'
+import { vegaPlugins } from 'vega-widgets'
 import './bitqueditor/App.scss'
 import getQueryFacts from '../utils/getQueryFacts'
 import GraphqlEditor from './bitqueditor/components/GraphqlEditor'
@@ -12,7 +11,7 @@ import { getIntrospectionQuery, buildClientSchema, TypeInfo, visitWithTypeInfo }
 import { visit } from 'graphql/language/visitor'
 import { parse as parseGql } from 'graphql/language'
 import WidgetSelect from './bitqueditor/components/WidgetSelect'
-import JsonPlugin from './bitqueditor/components/widgets/JsonWidget'
+import JsonPlugin from './bitqueditor/components/JsonWidget'
 import ToolbarComponent from './bitqueditor/components/ToolbarComponent'
 import { TabsStore, QueriesStore, UserStore } from '../store/queriesStore';
 
