@@ -117,7 +117,7 @@ const EditorInstance = observer(({number}) => {
 	}, [index, schema])
 	const setConfig = (config) => {
 		console.log(index)
-		config && updateQuery({config}, index)
+		config && updateQuery({config, widget_id: widgetType}, index)
 	}
 	const fetcher = (graphQLParams) => {
 		return fetch(

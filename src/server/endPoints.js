@@ -23,16 +23,30 @@ module.exports = function(app, passport, db) {
 	const handleAddQuery = (req, res, db, sql) => {
 		let params = {...req.body.params}
 		delete params.executed
+		delete params.config
+		delete params.widget_id
 		params.id = null
 		params.published = params.url ? true : null
 		db.query(sql, params, (err, result) => {
 			if (err) {
 				console.log(err)
 				res.send({err})
-			} else {
-				let msg = params.url ? 'Query shared!' : 'Query saved!'
-				result && res.send({msg, id: result.insertId})
 			}
+			
+			let insertId = result.insertId
+			db.query('INSERT INTO widgets SET ?', {
+				query_id: insertId,
+				widget_id : req.body.params.widget_id,
+				config: JSON.stringify(req.body.params.config)
+			}, (err, result) => {
+				if (err) {
+					console.log(err)
+					res.send({err})
+				} else {
+					let msg = params.url ? 'Query shared!' : 'Query saved!'
+					result && res.send({msg, id: insertId})
+				}
+			})
 		})
 	}
 	const sendActivationLink = (userID, userEmail, req) => {
@@ -125,7 +139,14 @@ module.exports = function(app, passport, db) {
 							db.query(`UPDATE queries SET ? where id=${result[0].id}`, params, (err, _) => {
 								if (err) console.log(err)
 								let msg = 'Query updated!'
-								res.send({msg, id: result[0].id})
+								let insertID = result[0].id
+								db.query(`UPDATE widgets SET ? where query_id = ${insertID}`, {
+									widget_id: req.body.params.widget_id,
+									config: JSON.stringify(req.body.params.config)
+								}, (err) => {
+									if (err) console.log(err)
+									res.send({msg, id: insertID})
+								})
 							})
 						}
 					} else {
