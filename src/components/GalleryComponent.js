@@ -4,8 +4,9 @@ import React, { useEffect, useState } from 'react'
 import { UserStore, QueriesStore } from '../store/queriesStore'
 import QueriesComponent from './QueriesComponent'
 import { useToasts } from 'react-toast-notifications'
+import { autorun } from 'mobx'
 
-const GalleryComponent = observer(() => {
+const GalleryComponent = observer(function GalleryComponent() {
 	const [allQueries, setAllQueries] = useState([])
 	const [myQueries, setMyQueries] = useState([])
 	const [showAllQueries, toggleQueries] = useState(true)
@@ -17,7 +18,9 @@ const GalleryComponent = observer(() => {
 		const getQueries = async () => {
 			try {
 				const { data } = await axios.get('/api/getqueries')
-				setAllQueries(data.queries)
+				if (data.queries.length !== allQueries.length) {
+					setAllQueries({queries: data.queries})
+				}
 				data.msg && addToast('Account activated!', {appearance: 'success'})
 			} catch (e) {
 				console.log(e)
@@ -31,13 +34,16 @@ const GalleryComponent = observer(() => {
 			const getMyQueries = async () => {
 				try {
 					const { data } = await axios.get('/api/getmyqueries')
-					setMyQueries(data)
+					if (data.length !== myQueries.length) {
+						setMyQueries({queries: data})
+					}
 				} catch (e) {
 					console.log(e)
 				}
 			}
 			getMyQueries()
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [user, queryJustSaved])
 
 	return (
@@ -61,9 +67,9 @@ const GalleryComponent = observer(() => {
 				{
 					user ?
 						showAllQueries 
-							? <QueriesComponent queries={{queries:allQueries}} />
-							: <QueriesComponent queries={{queries:myQueries}} />
-					: <QueriesComponent queries={{queries:allQueries}} />
+							? <QueriesComponent queries={allQueries} />
+							: <QueriesComponent queries={myQueries} />
+					: <QueriesComponent queries={allQueries} />
 				}
 			</ul>
 		</div>

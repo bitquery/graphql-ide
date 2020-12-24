@@ -4,7 +4,7 @@ import { TabsStore, QueriesStore } from '../store/queriesStore'
 import { observer } from 'mobx-react-lite'
 import QueriesControls from './QueriesControls'
 
-const QueriesComponent = observer(({ queries }) => {
+const QueriesComponent = observer(function QueriesComponent({ queries }) {
 	const { url } = useRouteMatch()
 	let history = useHistory()
 	const [hoverElementIndex, setHoverElementIndex] = useState(false)
@@ -32,7 +32,7 @@ const QueriesComponent = observer(({ queries }) => {
 	}	
 	
 	return (
-		queries.queries.map((baseQuery, index) => (
+		('queries'in queries) && queries.queries.map((baseQuery, index) => (
 			<li className="list-group-item" key={index}
 				onMouseEnter={() => setHoverElementIndex(index)}
 				onMouseLeave={() => setHoverElementIndex(-1)}

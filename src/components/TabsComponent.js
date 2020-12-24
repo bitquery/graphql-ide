@@ -54,7 +54,7 @@ const TabsComponent = observer(() => {
 		setEditTabName(false)
 	}
 	const addNewTabHandler = () => {
-		setQuery({query: '', variables: '{}', name: 'New Query', endpoint_url: currentQuery.endpoint_url})
+		setQuery({query: '', variables: '{}', name: 'New Query', endpoint_url: currentQuery.endpoint_url, config: '{}'})
 	}
 	const removeTabHandler = (index, event) => {
 		event.stopPropagation()
