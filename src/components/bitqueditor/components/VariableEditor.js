@@ -1,11 +1,11 @@
-import React, { Component } from 'react'
+import React, { Component, PureComponent } from 'react'
 import 'codemirror/lib/codemirror.css'
 import 'graphiql/graphiql.min.css'
 import { height_of } from '../../../utils/common'
 
 const AUTO_COMPLETE_AFTER_KEY = /^[a-zA-Z0-9_@(]$/;
 
-export default class QueryEditor extends Component {
+export default class VariableEditor extends Component {
 	editor = null
 	_node = null
 	cachedValue = ''
@@ -28,7 +28,7 @@ export default class QueryEditor extends Component {
 		if (!this.ignoreChangeEvent && this.editor) {
 			this.cachedValue = this.editor.getValue()
 			if (this.props.onEdit) {
-				return this.props.onEdit(this.cachedValue)
+				return this.props.onEdit({variable: this.cachedValue})
 			}
 		}
 	}

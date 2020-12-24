@@ -108,7 +108,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 					setQueryTypes(queryType)
 				}
 			}
-			if (query[index].account_id === user.id ) {
+			if (user && query[index].account_id === user.id ) {
 				updateQuery(handleSubject, index)
 			} else {
 				updateQuery({...handleSubject, url: null}, index, null)

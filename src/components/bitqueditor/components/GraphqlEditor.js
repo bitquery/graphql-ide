@@ -4,7 +4,7 @@ import QueryEditor from './QueryEditor'
 import VariableEditor from './VariableEditor'
 import { TabsStore } from '../../../store/queriesStore';
 
-const GraphqlEditor = observer(({
+const GraphqlEditor = observer(function GraphqlEditor({
 	schema,
 	query,
 	variables,
@@ -12,7 +12,7 @@ const GraphqlEditor = observer(({
 	onEditQuery,
 	onEditVariables,
 	number
-}) => {
+}) {
 	const queryEditor = useRef(null)
 	const variablesEditor = useRef(null)
 	const { currentTab } = TabsStore
