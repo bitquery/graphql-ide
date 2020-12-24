@@ -1,11 +1,11 @@
-import React, { Component, PureComponent } from 'react'
+import React, { Component } from 'react'
 import 'codemirror/lib/codemirror.css'
 import 'graphiql/graphiql.min.css'
 import { height_of } from '../../../utils/common'
 
 const AUTO_COMPLETE_AFTER_KEY = /^[a-zA-Z0-9_@(]$/;
 
-export default class QueryEditor extends PureComponent {
+export default class QueryEditor extends Component {
 	editor = null
 	_node = null
 	cachedValue = ''

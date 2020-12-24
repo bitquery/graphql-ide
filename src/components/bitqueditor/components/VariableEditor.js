@@ -1,4 +1,4 @@
-import React, { Component, PureComponent } from 'react'
+import React, { Component } from 'react'
 import 'codemirror/lib/codemirror.css'
 import 'graphiql/graphiql.min.css'
 import { height_of } from '../../../utils/common'
@@ -28,7 +28,7 @@ export default class VariableEditor extends Component {
 		if (!this.ignoreChangeEvent && this.editor) {
 			this.cachedValue = this.editor.getValue()
 			if (this.props.onEdit) {
-				return this.props.onEdit({variable: this.cachedValue})
+				return this.props.onEdit({variables: this.cachedValue})
 			}
 		}
 	}
