@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import '../App.scss';
 import { observer } from 'mobx-react-lite'
 import { toJS } from 'mobx'
@@ -15,16 +15,14 @@ import JsonPlugin from './bitqueditor/components/JsonWidget'
 import ToolbarComponent from './bitqueditor/components/ToolbarComponent'
 import { TabsStore, QueriesStore, UserStore } from '../store/queriesStore';
 
-const EditorInstance = observer(({number}) => {
+const EditorInstance = observer(function EditorInstance({number})  {
 	const { tabs, currentTab, index, id } = TabsStore
 	const { user }  = UserStore
-	const { query, updateQuery, showGallery } = QueriesStore
-	const [prettify, setPrettify] = useState(false)
+	const { query, updateQuery, showGallery, currentQuery } = QueriesStore
 	const [schema, setSchema] = useState(null)
-	//----------------------------------------------------
 	const [widgetType, setWidgetType] = useState('')
 	const [_variableToType, _setVariableToType] = useState(null)
-	const [queryTypes, setQueryTypes] = useState({})
+	const [queryTypes, setQueryTypes] = useState('')
 	const [dataSource, setDataSource] = useState({})
 	const debouncedURL = useDebounce(query[index].endpoint_url, 500)
 	const getQueryTypes = (query) => {
@@ -91,30 +89,37 @@ const EditorInstance = observer(({number}) => {
 			}) : console.log(JSON.stringify(json.errors, null, 2))
 		})
 		let queryType = getQueryTypes(query[index].query)
-		setQueryTypes(queryType)
+		if (JSON.stringify(queryType) !== JSON.stringify(queryTypes)) {
+			setQueryTypes(queryType)
+		}
 	}
-	const editQueryHandler = (handleSubject, index) => {
+	const editQueryHandler = useCallback(handleSubject => {
 			if ('query' in handleSubject) {
 				const facts = getQueryFacts(schema, handleSubject.query)
 				if (facts) {
 					const { variableToType } = facts
-					_setVariableToType(variableToType)
+					if ((JSON.stringify(variableToType) !== JSON.stringify(_variableToType)) 
+						&& _variableToType!==null) {
+						_setVariableToType(variableToType)
+					}
 				}
 				let queryType = getQueryTypes(handleSubject.query)
-				setQueryTypes(queryType)
+				if (JSON.stringify(queryType) !== JSON.stringify(queryTypes)) {
+					setQueryTypes(queryType)
+				}
 			}
 			if (query[index].account_id === user.id ) {
 				updateQuery(handleSubject, index)
 			} else {
 				updateQuery({...handleSubject, url: null}, index, null)
 			}
-	}
+	}, [user, schema, queryTypes])
 	useEffect(() => {
 		if (number === index && schema) {
 			let queryType = getQueryTypes(query[index].query)
 			setQueryTypes(queryType)
 		}
-	}, [index, schema])
+	}, [schema])
 	const setConfig = (config) => {
 		console.log(index)
 		config && updateQuery({config, widget_id: widgetType}, index)
@@ -134,29 +139,33 @@ const EditorInstance = observer(({number}) => {
 		)
 	}
 	useEffect(() => {
-		const fetchSchema = () => {
-			let introspectionQuery = getIntrospectionQuery()
-			let staticName = 'IntrospectionQuery'
-			let introspectionQueryName = staticName
-			let graphQLParams = {
-				query: introspectionQuery,
-				operationName: introspectionQueryName,
-			}
-			fetcher(graphQLParams)
-			.then(data => data.json())	
-			.then(result => {
-				if (typeof result !== 'string' && 'data' in result) {
-					let schema = buildClientSchema(result.data)
-					setSchema(schema)
+		if (number === index) {
+			const fetchSchema = () => {
+				let introspectionQuery = getIntrospectionQuery()
+				let staticName = 'IntrospectionQuery'
+				let introspectionQueryName = staticName
+				let graphQLParams = {
+					query: introspectionQuery,
+					operationName: introspectionQueryName,
 				}
-			}).catch(e => {})
+				fetcher(graphQLParams)
+				.then(data => data.json())	
+				.then(result => {
+					if (typeof result !== 'string' && 'data' in result) {
+						let schema = buildClientSchema(result.data)
+						setSchema(schema)
+					}
+				}).catch(e => {})
+			}
+			fetchSchema() 
 		}
-		fetchSchema()
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [debouncedURL])
-	const plugins = [JsonPlugin, ...vegaPlugins]
-	let indexx = plugins.map(plugin => plugin.id).indexOf(widgetType)
+	const plugins = useMemo(()=> [JsonPlugin, ...vegaPlugins], [])
+	let indexx = plugins.map(plugin => plugin.id).indexOf(currentQuery.widget_id)
+	console.log(indexx)
 	const WidgetComponent = indexx>=0 ? plugins[indexx] : plugins[0]
+
 	return (
 		<div 
 			className={'graphiql__wrapper ' + 
@@ -170,21 +179,22 @@ const EditorInstance = observer(({number}) => {
 				<div className="workspace__wrapper">
 					<GraphqlEditor 
 						schema={schema}
-						query={toJS(query[number].query)}
+						query={query[number].query}
 						number={number}
-						variables={toJS(query[number].variables)}
+						variables={query[number].variables}
 						variableToType={_variableToType}
-						onEditQuery={query => editQueryHandler({query}, number)}
-						onEditVariables={variables => editQueryHandler({variables}, number)}
+						onEditQuery={editQueryHandler}
+						onEditVariables={editQueryHandler}
 					/>
 					<WidgetSelect 
 						plugins={plugins} 
 						model={queryTypes} 
-						value={widgetType} 
+						value={currentQuery.widget_id} 
 						setValue={setWidgetType} 
 					/>
 					<WidgetComponent.editor 
-						model={queryTypes} 
+						model={queryTypes}
+						config={toJS(currentQuery.config)}
 						setConfig={setConfig} 
 					/>
 				</div>
