@@ -88,6 +88,9 @@ class Queries {
 		if (this.query[this.query.length-1].id && !('saved' in params)) 
 			{this.query[this.query.length-1].saved = true}
 		this.query[this.query.length-1] = {...this.query[this.query.length-1], ...params}
+		if (this.query[this.query.length-1].config && typeof this.query[this.query.length-1].config === 'string') {
+			this.query[this.query.length-1].config = JSON.parse(this.query[this.query.length-1].config)
+		}
 		TabsStore.addNewTab(params.name)
 	}
 	updateQuery = (params, index, id) => {

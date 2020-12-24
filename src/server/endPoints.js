@@ -206,7 +206,18 @@ module.exports = function(app, passport, db) {
 				
 			})
 	})
-
+	const getQueryConfig = (query, res) => {
+		let sql = 'SELECT * FROM widgets WHERE query_id = ?'
+		db.query(sql, [query.id], (err, result) => {
+			if (err) console.log(err)
+			if (result.length) {
+				let response = {...query, widget_id: result[0].widget_id, config: result[0].config}
+				res.send(response)
+			} else {
+				res.send(query)
+			}
+		})
+	}
 	app.get('/api/getquery/:url', (req, res) => {
 		let sql = `SELECT * FROM queries WHERE url=?`
 		db.query(sql, [req.params.url], (err, result) => {
@@ -214,7 +225,8 @@ module.exports = function(app, passport, db) {
 			if (!result.length) {
 				res.send('There is no such querie with same url...')
 			} else {
-				res.send(result[0])
+				let query = result[0]
+				getQueryConfig(query, res)
 			}
 		})
 	})
