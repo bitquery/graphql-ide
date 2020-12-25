@@ -206,27 +206,18 @@ module.exports = function(app, passport, db) {
 				
 			})
 	})
-	const getQueryConfig = (query, res) => {
-		let sql = 'SELECT * FROM widgets WHERE query_id = ?'
-		db.query(sql, [query.id], (err, result) => {
-			if (err) console.log(err)
-			if (result.length) {
-				let response = {...query, widget_id: result[0].widget_id, config: result[0].config}
-				res.send(response)
-			} else {
-				res.send(query)
-			}
-		})
-	}
 	app.get('/api/getquery/:url', (req, res) => {
-		let sql = `SELECT * FROM queries WHERE url=?`
+		let sql = `
+			SELECT queries.*, widgets.widget_id, widgets.config FROM queries
+			LEFT JOIN widgets 
+			ON widgets.query_id=queries.id
+			WHERE queries.url=?`
 		db.query(sql, [req.params.url], (err, result) => {
 			if (err) console.log(err)
 			if (!result.length) {
 				res.send('There is no such querie with same url...')
 			} else {
-				let query = result[0]
-				getQueryConfig(query, res)
+				res.send(result[0])
 			}
 		})
 	})
@@ -235,12 +226,15 @@ module.exports = function(app, passport, db) {
 		req.session.active = null
 		if (checkActive) checkActive = 'Account activated!'
 		db.query(`
-			SELECT queries.*, COUNT(query_logs.id) as number FROM queries
+			SELECT queries.*, COUNT(query_logs.id) as number,
+			widgets.widget_id, widgets.config FROM queries
 			LEFT JOIN query_logs
 			ON queries.id=query_logs.id
+			LEFT JOIN widgets
+			ON widgets.query_id=queries.id
 			WHERE published=true
 			AND queries.deleted=false
-			GROUP BY queries.id
+			GROUP BY queries.id  
 			ORDER BY number DESC`, (err, queries) => {
 				if (err) console.log(err)
 				res.send({queries: queries, msg: checkActive})
@@ -248,7 +242,9 @@ module.exports = function(app, passport, db) {
 	})
 	app.get('/api/getmyqueries', (req, res) => {
 		db.query(`
-			SELECT * FROM queries 
+			SELECT queries.*, widgets.widget_id, widgets.config FROM queries
+			LEFT JOIN widgets
+			ON widgets.query_id=queries.id
 			WHERE account_id=?
 			AND deleted=false
 			ORDER BY updated_at DESC`, [req.session.passport.user], (err, queries) => {

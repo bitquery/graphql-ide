@@ -189,7 +189,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 					<WidgetSelect 
 						plugins={plugins} 
 						model={queryTypes} 
-						value={currentQuery.widget_id} 
+						value={currentQuery.widget_id || ''} 
 						setValue={setWidgetType} 
 					/>
 					<WidgetComponent.editor 
