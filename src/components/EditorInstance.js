@@ -81,12 +81,14 @@ const EditorInstance = observer(function EditorInstance({number})  {
 	const getResult = async () => {
 		const data = await fetcher({query: query[index].query, variables: query[index].variables})
 		data.json().then(json => {
-			('data' in json) ? setDataSource({
+			setDataSource({
 				execute: getResult,
-				data: json.data,
+				data: ('data' in json) ? json.data : null,
+				error: ('errors' in json) ? json.errors : null,
 				query: toJS(query[index].query), 
 				variables: toJS(query[index].variables)
-			}) : console.log(JSON.stringify(json.errors, null, 2))
+			})
+			if (!('data' in json)) updateQuery({widget_id: 'json.widget'}, index)
 		})
 		let queryType = getQueryTypes(query[index].query)
 		if (JSON.stringify(queryType) !== JSON.stringify(queryTypes)) {
