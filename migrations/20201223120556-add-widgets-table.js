@@ -18,6 +18,7 @@ exports.up = function(db) {
   return db.createTable('widgets', {
     columns: {
       id: { type: 'int', primaryKey: true, autoIncrement: true },
+      displayed_data: { type: 'string', length: 200 },
       query_id: {type: 'int', notNull: true, foreignKey: {
       name: 'query_id',
       table: 'queries',
