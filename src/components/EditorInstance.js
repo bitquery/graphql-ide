@@ -13,7 +13,8 @@ import { parse as parseGql } from 'graphql/language'
 import WidgetSelect from './bitqueditor/components/WidgetSelect'
 import JsonPlugin from './bitqueditor/components/JsonWidget'
 import ToolbarComponent from './bitqueditor/components/ToolbarComponent'
-import { TabsStore, QueriesStore, UserStore } from '../store/queriesStore';
+import { TabsStore, QueriesStore, UserStore } from '../store/queriesStore'
+import DisplayedData from './bitqueditor/components/DisplayedData'
 
 const EditorInstance = observer(function EditorInstance({number})  {
 	const { tabs, currentTab, index, id } = TabsStore
@@ -27,11 +28,10 @@ const EditorInstance = observer(function EditorInstance({number})  {
 	const debouncedURL = useDebounce(query[index].endpoint_url, 500)
 	const getQueryTypes = (query) => {
 		const typeInfo = new TypeInfo(schema)
-		var typesMap = {}
+		let typesMap = {}
 		const queryNodes = []
 		let depth = 0
-		var indent = "";
-		var visitor = {
+		let visitor = {
 			enter(node ) {
 				typeInfo.enter(node)
 				let name = ''
@@ -57,18 +57,12 @@ const EditorInstance = observer(function EditorInstance({number})  {
 						}
 					}
 					typesMap[queryNodes[queryNodes.length-1]] = typeInfo.getType().toString()
-					indent = indent + "  ";
 					depth++
 				}
 			},
 			leave(node) {
-				let name = ''
-				if (node.name) {
-					if (node.name.value) name = node.name.value
-				}
 				if (node.kind === 'Field') {
 					depth--
-					indent = indent.substring(0, indent.length - 2);
 				}
 				typeInfo.leave(node)
 			}
@@ -166,7 +160,6 @@ const EditorInstance = observer(function EditorInstance({number})  {
 	}, [debouncedURL])
 	const plugins = useMemo(()=> [JsonPlugin, ...vegaPlugins], [])
 	let indexx = plugins.map(plugin => plugin.id).indexOf(currentQuery.widget_id)
-	console.log(indexx)
 	const WidgetComponent = indexx>=0 ? plugins[indexx] : plugins[0]
 
 	return (
@@ -189,21 +182,42 @@ const EditorInstance = observer(function EditorInstance({number})  {
 						onEditQuery={editQueryHandler}
 						onEditVariables={editQueryHandler}
 					/>
-					<WidgetSelect 
-						plugins={plugins} 
-						model={queryTypes} 
-						value={currentQuery.widget_id || ''} 
-						setValue={setWidgetType} 
-					/>
-					<WidgetComponent.editor 
+					<nav className="navbar navbar-expand-lg navbar-light bg-light">
+						<a className="navbar-brand" href="# ">Display</a>
+						<div className="collapse navbar-collapse" id="navbarSupportedContent">
+							<ul className="navbar-nav mr-auto">
+								<DisplayedData 
+									model={queryTypes}
+									value={currentQuery.displayed_data || ''}
+								/>
+								
+							</ul>
+						</div>
+						<a className="navbar-brand" href="# ">Using</a>
+						<div className="collapse navbar-collapse" id="navbarSupportedContent">
+							<ul className="navbar-nav mr-auto">
+								<WidgetSelect 
+									name={WidgetComponent.name}
+									plugins={plugins} 
+									model={queryTypes} 
+									value={currentQuery.widget_id || ''} 
+									setValue={setWidgetType} 
+								/>
+							</ul>
+						</div>
+						
+					</nav>
+					{currentQuery.displayed_data ? <WidgetComponent.editor 
 						model={queryTypes}
+						displayedData={toJS(currentQuery.displayed_data)}
 						config={toJS(currentQuery.config)}
 						setConfig={setConfig} 
-					/>
+					/> : <div className="widget" /> }
 				</div>
 				<button className="execute-button" onClick={getResult} >Get result</button>
 				<WidgetComponent.renderer 
 					dataSource={dataSource} 
+					displayedData={toJS(currentQuery.displayed_data)}
 					config={toJS(query[index].config)} 
 					el={currentTab === tabs[number].id ? `asd${currentTab}` : ''} 
 				/>

@@ -37,6 +37,7 @@ module.exports = function(app, passport, db) {
 		delete params.executed
 		delete params.config
 		delete params.widget_id
+		delete params.displayed_data
 		params.id = null
 		params.published = params.url ? true : null
 		db.query(sql, params, (err, result) => {
@@ -45,6 +46,7 @@ module.exports = function(app, passport, db) {
 				res.send({err})
 			}
 			let newParam = {
+				displayed_data: req.body.params.displayed_data,
 				query_id: result.insertId,
 				widget_id : req.body.params.widget_id,
 				config: JSON.stringify(req.body.params.config)
@@ -67,6 +69,7 @@ module.exports = function(app, passport, db) {
 			db.query(`UPDATE queries SET ? where id=${req.body.params.id}`, params, (err, _) => {
 				if (err) console.log(err)
 				let newParam = {
+					displayed_data: req.body.params.displayed_data,
 					query_id: req.body.params.id,
 					widget_id: req.body.params.widget_id,
 					config: JSON.stringify(req.body.params.config)
@@ -203,7 +206,7 @@ module.exports = function(app, passport, db) {
 	})
 	app.get('/api/getquery/:url', (req, res) => {
 		let sql = `
-			SELECT queries.*, widgets.widget_id, widgets.config FROM queries
+			SELECT queries.*, widgets.widget_id, widgets.config, widgets.displayed_data FROM queries
 			LEFT JOIN widgets 
 			ON widgets.query_id=queries.id
 			ORDER BY widgets.id DESC LIMIT 1`
@@ -222,7 +225,7 @@ module.exports = function(app, passport, db) {
 		if (checkActive) checkActive = 'Account activated!'
 		db.query(`
 			SELECT queries.*, COUNT(query_logs.id) as number,
-			widgets.widget_id, widgets.config FROM queries
+			widgets.widget_id, widgets.config, widgets.displayed_data FROM queries
 			LEFT JOIN query_logs
 			ON queries.id=query_logs.id
 			LEFT JOIN widgets
@@ -237,7 +240,7 @@ module.exports = function(app, passport, db) {
 	})
 	app.get('/api/getmyqueries', (req, res) => {
 		db.query(`
-			SELECT queries.*, widgets.widget_id, widgets.config FROM queries
+			SELECT queries.*, widgets.widget_id, widgets.config, widgets.displayed_data FROM queries
 			LEFT JOIN widgets
 			ON widgets.query_id=queries.id
 			WHERE account_id=?

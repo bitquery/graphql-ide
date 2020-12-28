@@ -4,8 +4,8 @@ import "react-loader-spinner/dist/loader/css/react-spinner-loader.css"
 import { QueriesStore, TabsStore } from '../../../store/queriesStore'
 
 
-const WidgetSelect = observer(function WidgetSelect({value, model, setValue, plugins}) {
-	const { updateQuery } = QueriesStore
+const WidgetSelect = observer(function WidgetSelect({value, model, setValue, plugins, name}) {
+	const { updateQuery, currentQuery } = QueriesStore
 	const { index } = TabsStore
 	const [supportedCharts, setSupportedCharts] = useState([])
 	useEffect(() => {
@@ -20,15 +20,31 @@ const WidgetSelect = observer(function WidgetSelect({value, model, setValue, plu
 			})
 		}
 	}, [JSON.stringify(model)])
-	if (!Object.keys(model).length && !value) return (
-		<div className="custom-select">
-			loading..
-		</div>
-	)
+
 	return (
-			<select className="custom-select" value={value} onChange={e=>updateQuery({widget_id: e.target.value}, index)}>
-				{ supportedCharts.map((chart, i)=><option key={i} value={plugins[i] && plugins[i].id}>{chart}</option>) }
-			</select>
+			
+			<li className="nav-item dropdown">
+				<a 	className="nav-link dropdown-toggle" 
+					id="navbarDropdown" 
+					role="button" 
+					data-toggle="dropdown" 
+					aria-haspopup="true" 
+					aria-expanded="false"
+				>
+					{currentQuery.widget_id ? name : 'Widgets'}
+				</a>
+				<div className="dropdown-menu" aria-labelledby="navbarDropdown">
+					{ supportedCharts.map((chart, i)=>
+						<a className="dropdown-item" 
+							onClick={()=>updateQuery({widget_id: plugins[i] && plugins[i].id}, index)}
+							href="# " 
+							key={i} 
+						>
+							{chart}
+						</a >) 
+					}
+				</div>
+			</li>
 	)
 })
 

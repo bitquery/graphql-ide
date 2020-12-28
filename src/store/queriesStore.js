@@ -76,6 +76,7 @@ class Queries {
 			arguments: this.currentQuery.variables,
 			config: this.currentQuery.config,
 			widget_id: this.currentQuery.widget_id,
+			displayed_data: this.currentQuery.displayed_data,
 			name: this.currentQuery.name && this.currentQuery.name,
 			description: this.currentQuery.description && this.currentQuery.description,
 			url: this.currentQuery.url && this.currentQuery.url,
@@ -98,6 +99,7 @@ class Queries {
 		if (params.variables) this.query[index].variables = params.variables
 		if (params.config) this.query[index].config = params.config
 		if (params.widget_id) this.query[index].widget_id = params.widget_id
+		if (params.displayed_data) this.query[index].displayed_data = params.displayed_data
 		if (params.account_id) this.query[index].account_id = params.account_id
 		if (params.endpoint_url) this.query[index].endpoint_url = params.endpoint_url
 		if (params.url || params.url===null) this.query[index].url = params.url
