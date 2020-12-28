@@ -20,7 +20,19 @@ module.exports = function(app, passport, db) {
 			return next()
 		}
 	}
-	const handleAddQuery = (req, res, db, sql) => {
+	const addWidgetConfig = (res, db, params) => {
+		db.query('INSERT INTO widgets SET ?', params, (err, result) => {
+			if (err) {
+				console.log(err)
+				res.send({err})
+			} else {
+				let msg = params.url ? 'Query shared!' : 'Query saved!'
+				result && res.send({msg, id: params.query_id})
+			}
+		})
+	}
+	const handleAddQuery = (req, res, db) => {
+		let sql = `INSERT INTO queries SET ?`
 		let params = {...req.body.params}
 		delete params.executed
 		delete params.config
@@ -32,22 +44,36 @@ module.exports = function(app, passport, db) {
 				console.log(err)
 				res.send({err})
 			}
-			
-			let insertId = result.insertId
-			db.query('INSERT INTO widgets SET ?', {
-				query_id: insertId,
+			let newParam = {
+				query_id: result.insertId,
 				widget_id : req.body.params.widget_id,
 				config: JSON.stringify(req.body.params.config)
-			}, (err, result) => {
-				if (err) {
-					console.log(err)
-					res.send({err})
-				} else {
-					let msg = params.url ? 'Query shared!' : 'Query saved!'
-					result && res.send({msg, id: insertId})
-				}
-			})
+			}
+			addWidgetConfig(res, db, newParam)
 		})
+	}
+	const handleUpdateQuery = (req, res, db) => {
+		if (!req.body.params.executed) {
+			let params = {
+				name: req.body.params.name && req.body.params.name,
+				description: req.body.params.description && req.body.params.description,
+				arguments: req.body.params.arguments && req.body.params.arguments,
+				query: req.body.params.query && req.body.params.query,
+				url: req.body.params.url ? req.body.params.url : null,
+				endpoint_url: req.body.params.endpoint_url,
+				updated_at: new Date()
+			}
+			params.published = params.url ? true : null
+			db.query(`UPDATE queries SET ? where id=${req.body.params.id}`, params, (err, _) => {
+				if (err) console.log(err)
+				let newParam = {
+					query_id: req.body.params.id,
+					widget_id: req.body.params.widget_id,
+					config: JSON.stringify(req.body.params.config)
+				}
+				addWidgetConfig(res, db, newParam)
+			})
+		}
 	}
 	const sendActivationLink = (userID, userEmail, req) => {
 		let code = crypto.randomBytes(60).toString('hex')
@@ -119,43 +145,12 @@ module.exports = function(app, passport, db) {
 
 	app.post('/api/addquery', (req, res) => {
 		if (req.session.passport.user) {
-			let sql = `INSERT INTO queries SET ?`
-			db.query(`select * from queries where id=?`, [req.body.params.id], (err, result) => {
-				if (err) console.log(err)
-				if (Array.isArray(result) && result.length) {
-					console.log('there is result ', result[0].id, result[0].url, result[0].account_id)
-					if (result[0].account_id === req.session.passport.user) {
-						if (!req.body.params.executed) {
-							let params = {
-								name: req.body.params.name && req.body.params.name,
-								description: req.body.params.description && req.body.params.description,
-								arguments: req.body.params.arguments && req.body.params.arguments,
-								query: req.body.params.query && req.body.params.query,
-								url: req.body.params.url ? req.body.params.url : null,
-								endpoint_url: req.body.params.endpoint_url,
-								updated_at: new Date()
-							}
-							params.published = params.url ? true : null
-							db.query(`UPDATE queries SET ? where id=${result[0].id}`, params, (err, _) => {
-								if (err) console.log(err)
-								let msg = 'Query updated!'
-								let insertID = result[0].id
-								db.query(`UPDATE widgets SET ? where query_id = ${insertID}`, {
-									widget_id: req.body.params.widget_id,
-									config: JSON.stringify(req.body.params.config)
-								}, (err) => {
-									if (err) console.log(err)
-									res.send({msg, id: insertID})
-								})
-							})
-						}
-					} else {
-						handleAddQuery(req, res, db, sql)
-					}
-				} else  {
-					handleAddQuery(req, res, db, sql)
-				}
-			})
+			let query = req.body.params
+			if (!query.id || query.account_id !== req.session.passport.user) {
+				handleAddQuery(req, res, db)
+			} else {
+				handleUpdateQuery(req, res, db)
+			}
 		}
 	})
 
@@ -211,7 +206,7 @@ module.exports = function(app, passport, db) {
 			SELECT queries.*, widgets.widget_id, widgets.config FROM queries
 			LEFT JOIN widgets 
 			ON widgets.query_id=queries.id
-			WHERE queries.url=?`
+			ORDER BY widgets.id DESC LIMIT 1`
 		db.query(sql, [req.params.url], (err, result) => {
 			if (err) console.log(err)
 			if (!result.length) {
@@ -247,6 +242,7 @@ module.exports = function(app, passport, db) {
 			ON widgets.query_id=queries.id
 			WHERE account_id=?
 			AND deleted=false
+			GROUP BY queries.id
 			ORDER BY updated_at DESC`, [req.session.passport.user], (err, queries) => {
 				if (err) console.log(err)
 				res.send(queries)

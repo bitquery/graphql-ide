@@ -123,8 +123,9 @@ const EditorInstance = observer(function EditorInstance({number})  {
 		}
 	}, [schema])
 	const setConfig = (config) => {
-		console.log(index)
-		config && updateQuery({config, widget_id: widgetType}, index)
+		if (JSON.stringify(currentQuery.config) !== JSON.stringify(config)) {
+			updateQuery({config, widget_id: widgetType}, index)
+		}
 	}
 	const fetcher = (graphQLParams) => {
 		return fetch(
