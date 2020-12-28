@@ -170,7 +170,7 @@ export default class QueryEditor extends Component {
 				/>
 				<div className="handle"
 					onMouseDown={this.onMouseDown}
-				/>
+				>Query Variables</div>
 			</>
 		)
 	}
