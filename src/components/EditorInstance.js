@@ -117,8 +117,10 @@ const EditorInstance = observer(function EditorInstance({number})  {
 		}
 	}, [schema])
 	const setConfig = (config) => {
-		if (JSON.stringify(currentQuery.config) !== JSON.stringify(config)) {
-			updateQuery({config, widget_id: widgetType}, index)
+		if (number === index) {
+			if (JSON.stringify(currentQuery.config) !== JSON.stringify(config)) {
+				updateQuery({config, widget_id: widgetType}, index)
+			}
 		}
 	}
 	const fetcher = (graphQLParams) => {
@@ -214,7 +216,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 						setConfig={setConfig} 
 					/> : <div className="widget" /> }
 				</div>
-				<button className="execute-button" onClick={getResult} >Get result</button>
+				<button className="execute-button" onClick={getResult} ></button>
 				<WidgetComponent.renderer 
 					dataSource={dataSource} 
 					displayedData={toJS(currentQuery.displayed_data)}

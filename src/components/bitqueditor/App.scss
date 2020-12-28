@@ -120,6 +120,11 @@
   border-top: 1px solid #ddd;
   border-bottom: 1px solid #ddd;
   font-size: 12px;
+  font-feature-settings: "c2sc";
+  font-variant: small-caps;
+  font-weight: 700;
+  letter-spacing: 1px;
+  line-height: 14px;
   padding-left: 10px;
 }
 
@@ -150,9 +155,12 @@
   top:50%;
   left: 50%;
   transform: translateX(-50%);
-  background-color: #c7c7c7;
+  // background-color: #c7c7c7;
   border: none;
   outline: none !important;
+  background: #c7c7c7 url('../../assets/images/play.svg') no-repeat center;
+  background-size: 25px 25px;
+  background-position-x: 60%;
 }
 .execute-button:active {
   -webkit-box-shadow: rgb(0, 0, 0) 4px 4px 15px 0px inset, 5px 5px 15px 5px rgba(0,0,0,0); 
