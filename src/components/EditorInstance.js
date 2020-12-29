@@ -10,11 +10,10 @@ import GraphqlEditor from './bitqueditor/components/GraphqlEditor'
 import { getIntrospectionQuery, buildClientSchema, TypeInfo, visitWithTypeInfo } from 'graphql'
 import { visit } from 'graphql/language/visitor'
 import { parse as parseGql } from 'graphql/language'
-import WidgetSelect from './bitqueditor/components/WidgetSelect'
 import JsonPlugin from './bitqueditor/components/JsonWidget'
 import ToolbarComponent from './bitqueditor/components/ToolbarComponent'
 import { TabsStore, QueriesStore, UserStore } from '../store/queriesStore'
-import DisplayedData from './bitqueditor/components/DisplayedData'
+import WidgetEditorControls from './WidgetEditorControls'
 
 const EditorInstance = observer(function EditorInstance({number})  {
 	const { tabs, currentTab, index, id } = TabsStore
@@ -184,35 +183,16 @@ const EditorInstance = observer(function EditorInstance({number})  {
 						onEditQuery={editQueryHandler}
 						onEditVariables={editQueryHandler}
 					/>
-					<nav className="navbar navbar-expand-lg navbar-light bg-light">
-						<a className="navbar-brand" href="# ">Display</a>
-						<div className="collapse navbar-collapse" id="navbarSupportedContent">
-							<ul className="navbar-nav mr-auto">
-								<DisplayedData 
-									model={queryTypes}
-									value={currentQuery.displayed_data || ''}
-								/>
-								
-							</ul>
-						</div>
-						<a className="navbar-brand" href="# ">Using</a>
-						<div className="collapse navbar-collapse" id="navbarSupportedContent">
-							<ul className="navbar-nav mr-auto">
-								<WidgetSelect 
-									name={WidgetComponent.name}
-									plugins={plugins} 
-									model={queryTypes} 
-									value={currentQuery.widget_id || ''} 
-									setValue={setWidgetType} 
-								/>
-							</ul>
-						</div>
-						
-					</nav>
+					<WidgetEditorControls 
+						model={queryTypes}
+						name={WidgetComponent.name}
+						setValue={setWidgetType}
+						plugins={plugins}
+					/>
 					{currentQuery.displayed_data ? <WidgetComponent.editor 
 						model={queryTypes}
-						displayedData={toJS(currentQuery.displayed_data)}
-						config={toJS(currentQuery.config)}
+						displayedData={toJS(query[index].displayed_data)}
+						config={toJS(query[index].config)}
 						setConfig={setConfig} 
 					/> : <div className="widget" /> }
 				</div>
