@@ -4,13 +4,13 @@ import "react-loader-spinner/dist/loader/css/react-spinner-loader.css"
 import { QueriesStore, TabsStore } from '../../../store/queriesStore'
 
 
-const WidgetSelect = observer(function WidgetSelect({value, model, setValue, plugins, name}) {
+const WidgetSelect = observer(function WidgetSelect({model, plugins, name}) {
 	const { updateQuery, currentQuery } = QueriesStore
 	const { index } = TabsStore
 	const [supportedCharts, setSupportedCharts] = useState([])
 	useEffect(() => {
-		if (value && !supportedCharts.length) {
-			let inx = plugins.map(pl => pl.id).indexOf(value)
+		if (currentQuery.widget_id && !supportedCharts.length) {
+			let inx = plugins.map(pl => pl.id).indexOf(currentQuery.widget_id)
 			inx>=0 && setSupportedCharts([plugins[inx].name])
 		} else if (supportedCharts.length) { setSupportedCharts([]) }
 		if (Object.keys(model).length) {

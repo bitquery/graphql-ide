@@ -1,12 +1,10 @@
 import React from 'react'
 import WidgetSelect from './bitqueditor/components/WidgetSelect'
 import DisplayedData from './bitqueditor/components/DisplayedData'
-import { QueriesStore } from '../store/queriesStore'
 import { observer } from 'mobx-react-lite'
 
 const WidgetEditorControls = observer(
-	function WidgetEditorControls({model, name, setValue, plugins}) {
-	const { currentQuery } = QueriesStore
+	function WidgetEditorControls({model, name, plugins, setDataSource, dataSource}) {
 	return (
 		<nav className="navbar navbar-expand-lg navbar-light bg-light">
 			<a className="navbar-brand" href="# ">Display</a>
@@ -14,7 +12,8 @@ const WidgetEditorControls = observer(
 				<ul className="navbar-nav mr-auto">
 					<DisplayedData 
 						model={model}
-						value={currentQuery.displayed_data || ''}
+						dataSource={dataSource}
+						setDataSource={setDataSource}
 					/>
 					
 				</ul>
@@ -26,8 +25,6 @@ const WidgetEditorControls = observer(
 						name={name}
 						plugins={plugins} 
 						model={model} 
-						value={currentQuery.widget_id || ''} 
-						setValue={setValue} 
 					/>
 				</ul>
 			</div>

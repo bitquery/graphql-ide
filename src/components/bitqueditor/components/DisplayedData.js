@@ -1,11 +1,19 @@
 import { observer } from 'mobx-react-lite'
 import React from 'react'
 import { QueriesStore, TabsStore } from '../../../store/queriesStore'
+import { getValueFrom } from '../../../utils/common'
 
-const DisplayedData = observer(function DisplayedData({model, value}) {
+const DisplayedData = observer(function DisplayedData({model, dataSource, setDataSource}) {
 	const { updateQuery, currentQuery } = QueriesStore
 	const { index } = TabsStore
 	const dataFunc = node => (model[node][0]==='[' && node.slice(-2, -1)!=='0') 
+	const onChangeHandle = value => {
+		updateQuery({displayed_data: value}, index)
+		dataSource.data
+			&& setDataSource(prev => {
+				return {...prev, values: getValueFrom(prev.data, value)}
+			})
+	}
 
 	return (
 		<li className="nav-item dropdown">
@@ -24,18 +32,18 @@ const DisplayedData = observer(function DisplayedData({model, value}) {
 						? 	<a className="dropdown-item"
 							href="# " 
 							key={i} 
-							onClick={()=>updateQuery({displayed_data: node}, index)}
+							onClick={()=>onChangeHandle(node)}
 							>
 								{node}
 							</a>
 						: 	null
-					) : value 
+					) : currentQuery.displayed_data 
 						? 	<a 
 							className="dropdown-item" 
 							href="# " 
-							onClick={()=>updateQuery({displayed_data: value}, index)}
+							onClick={()=>onChangeHandle(currentQuery.displayed_data)}
 							>
-								{value.split('.').slice(-1)}
+								{currentQuery.displayed_data.split('.').slice(-1)}
 							</a>
 						: 	null
 					}

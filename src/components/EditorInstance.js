@@ -24,7 +24,17 @@ const EditorInstance = observer(function EditorInstance({number})  {
 	const [_variableToType, _setVariableToType] = useState(null)
 	const [queryTypes, setQueryTypes] = useState('')
 	const [dataSource, setDataSource] = useState({})
+	const [dataModel, setDataModel] = useState('')
 	const debouncedURL = useDebounce(query[index].endpoint_url, 500)
+	useEffect(() => {
+		dataModel && setDataModel('')
+		if (queryTypes && currentQuery.displayed_data) {
+			for (let node in queryTypes) {
+				node.includes(currentQuery.displayed_data) &&
+					setDataModel(prev => {return {...prev, [node]: queryTypes[node]}})
+			}
+		}
+	}, [queryTypes, currentQuery.displayed_data])
 	const getQueryTypes = (query) => {
 		const typeInfo = new TypeInfo(schema)
 		let typesMap = {}
@@ -77,6 +87,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 			setDataSource({
 				execute: getResult,
 				data: ('data' in json) ? json.data : null,
+				values: ('data' in json) ? (currentQuery.displayed_data) ? getValueFrom(json.data, currentQuery.displayed_data) : json.data : null,
 				error: ('errors' in json) ? json.errors : null,
 				query: toJS(query[index].query), 
 				variables: toJS(query[index].variables)
@@ -185,12 +196,14 @@ const EditorInstance = observer(function EditorInstance({number})  {
 					/>
 					<WidgetEditorControls 
 						model={queryTypes}
+						dataSource={dataSource}
+						setDataSource={setDataSource}
 						name={WidgetComponent.name}
 						setValue={setWidgetType}
 						plugins={plugins}
 					/>
 					{currentQuery.displayed_data ? <WidgetComponent.editor 
-						model={queryTypes}
+						model={dataModel}
 						displayedData={toJS(query[index].displayed_data)}
 						config={toJS(query[index].config)}
 						setConfig={setConfig} 
