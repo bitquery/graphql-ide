@@ -30,3 +30,12 @@ export const getValueFrom = (o, s) => {
     }
     return o;
 }
+export const getLeft = (initialElem) => {
+	let pt = 0;
+	let elem = initialElem;
+	while (elem.offsetParent) {
+	  pt += elem.offsetLeft;
+	  elem = elem.offsetParent;
+	}
+	return pt;
+}

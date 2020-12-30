@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import '../App.scss';
 import { observer } from 'mobx-react-lite'
 import { toJS } from 'mobx'
@@ -14,6 +14,7 @@ import JsonPlugin from './bitqueditor/components/JsonWidget'
 import ToolbarComponent from './bitqueditor/components/ToolbarComponent'
 import { TabsStore, QueriesStore, UserStore } from '../store/queriesStore'
 import WidgetEditorControls from './WidgetEditorControls'
+import { getValueFrom, getLeft } from '../utils/common'
 
 const EditorInstance = observer(function EditorInstance({number})  {
 	const { tabs, currentTab, index, id } = TabsStore
@@ -26,6 +27,9 @@ const EditorInstance = observer(function EditorInstance({number})  {
 	const [dataSource, setDataSource] = useState({})
 	const [dataModel, setDataModel] = useState('')
 	const debouncedURL = useDebounce(query[index].endpoint_url, 500)
+	const workspace = useRef(null)
+	const overwrap = useRef(null)
+	const executeButton = useRef(null)
 	useEffect(() => {
 		dataModel && setDataModel('')
 		if (queryTypes && currentQuery.displayed_data) {
@@ -35,6 +39,29 @@ const EditorInstance = observer(function EditorInstance({number})  {
 			}
 		}
 	}, [queryTypes, currentQuery.displayed_data])
+	const handleResizer = e => {
+		if (e.target.className.indexOf('sizeChanger') !== 0) {
+			return
+		}
+		e.preventDefault()
+		const onMouseUp = () => {
+			overwrap.current.removeEventListener('mousemove', onMouseMove)
+			overwrap.current.removeEventListener('mouseup', onMouseUp)
+		}
+		const onMouseMove = e => {
+			if (e.buttons === 0) {
+				return onMouseUp()
+			}
+			const leftSize = e.clientX - getLeft(overwrap.current) 
+			const rightSize = overwrap.current.clientWidth - leftSize
+			let flex = leftSize / rightSize
+			workspace.current.setAttribute('style', `flex: ${flex} 1 0%;`)
+			let execButt = workspace.current.offsetWidth / overwrap.current.offsetWidth
+			executeButton.current.setAttribute('style', `left: calc(${execButt*100}% - 25px);`)
+		}
+		overwrap.current.addEventListener('mousemove', onMouseMove);
+    	overwrap.current.addEventListener('mouseup', onMouseUp);
+	}
 	const getQueryTypes = (query) => {
 		const typeInfo = new TypeInfo(schema)
 		let typesMap = {}
@@ -183,8 +210,9 @@ const EditorInstance = observer(function EditorInstance({number})  {
 			key={number}
 		>
 			<ToolbarComponent />
-			<div className="over-wrapper">
-				<div className="workspace__wrapper">
+			<div className="over-wrapper" onMouseDown={handleResizer} ref={overwrap}>
+				<button className="execute-button" ref={executeButton} onClick={getResult} ></button>
+				<div className="workspace__wrapper" ref={workspace}>
 					<GraphqlEditor 
 						schema={schema}
 						query={query[number].query}
@@ -209,13 +237,15 @@ const EditorInstance = observer(function EditorInstance({number})  {
 						setConfig={setConfig} 
 					/> : <div className="widget" /> }
 				</div>
-				<button className="execute-button" onClick={getResult} ></button>
-				<WidgetComponent.renderer 
-					dataSource={dataSource} 
-					displayedData={toJS(currentQuery.displayed_data)}
-					config={toJS(query[index].config)} 
-					el={currentTab === tabs[number].id ? `asd${currentTab}` : ''} 
-				/>
+				<div className="widget-display">
+					<div className="sizeChanger"/>
+					<WidgetComponent.renderer 
+						dataSource={dataSource} 
+						displayedData={toJS(currentQuery.displayed_data)}
+						config={toJS(query[index].config)} 
+						el={currentTab === tabs[number].id ? `asd${currentTab}` : ''} 
+					/>
+				</div>
 			</div>
 		</div>
 	)
