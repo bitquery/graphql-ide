@@ -9,6 +9,12 @@ import { useEffect } from 'react'
 import { QueriesStore } from './store/queriesStore'
 import { GraphqlExplorer } from './components/GraphqlExplorer'
 
+if (process.env.NODE_ENV === 'development') {
+	require('@welldone-software/why-did-you-render')(React, {
+	  trackAllPureComponents: true,
+	});
+  }
+
 function App() {
 	const { path } = useRouteMatch()
 	const { query } = QueriesStore
