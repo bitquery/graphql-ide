@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react'
-import { v4 } from 'uuid'
 
 function JsonWidget({el, dataSource}) {
 	const [data, setData] = useState('')
@@ -38,8 +37,8 @@ class JsonPlugin {
 		this.editor = () => (<div className="widget"/>)
 		this.renderer = JsonWidget
 	}
-	supportsModel() {
-		return true
+	supportsModel(model) {
+		return model.includes('.')
 	}
 }
 
