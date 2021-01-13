@@ -209,6 +209,7 @@ module.exports = function(app, passport, db) {
 			SELECT queries.*, widgets.widget_id, widgets.config, widgets.displayed_data FROM queries
 			LEFT JOIN widgets 
 			ON widgets.query_id=queries.id
+			WHERE queries.url=?
 			ORDER BY widgets.id DESC LIMIT 1`
 		db.query(sql, [req.params.url], (err, result) => {
 			if (err) console.log(err)
