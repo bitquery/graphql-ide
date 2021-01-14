@@ -1,14 +1,14 @@
 {
   "files": {
-    "main.css": "/static/css/main.css",
-    "main.js": "/static/js/main.js",
-    "main.js.map": "/static/js/main.js.map",
-    "index.html": "/index.html",
-    "precache-manifest.32a017d75c5bec796b9bbdd22e75f773.js": "/precache-manifest.32a017d75c5bec796b9bbdd22e75f773.js",
-    "service-worker.js": "/service-worker.js",
-    "static/css/main.css.map": "/static/css/main.css.map",
-    "static/js/main.js.LICENSE.txt": "/static/js/main.js.LICENSE.txt",
-    "static/media/App.scss": "/static/media/play.35cf9adf.svg"
+    "main.css": "https://graphql.bitquery.io/test/static/css/main.css",
+    "main.js": "https://graphql.bitquery.io/test/static/js/main.js",
+    "main.js.map": "https://graphql.bitquery.io/test/static/js/main.js.map",
+    "index.html": "https://graphql.bitquery.io/test/index.html",
+    "precache-manifest.230265499bf19874ff23086cf218564b.js": "https://graphql.bitquery.io/test/precache-manifest.230265499bf19874ff23086cf218564b.js",
+    "service-worker.js": "https://graphql.bitquery.io/test/service-worker.js",
+    "static/css/main.css.map": "https://graphql.bitquery.io/test/static/css/main.css.map",
+    "static/js/main.js.LICENSE.txt": "https://graphql.bitquery.io/test/static/js/main.js.LICENSE.txt",
+    "static/media/App.scss": "https://graphql.bitquery.io/test/static/media/play.35cf9adf.svg"
   },
   "entrypoints": [
     "static/css/main.css",
