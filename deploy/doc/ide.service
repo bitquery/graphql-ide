@@ -1,0 +1,14 @@
+[Unit]
+Description=GraphQL IDE
+Requires=network.target
+
+[Service]
+User=spn
+PIDFile=/var/run/ide.pid
+WorkingDirectory=/home/spn/xxx/current
+ExecStart=/home/spn/.nvm/versions/node/v14.15.4/bin/npm run server
+Restart=always
+RestartSec=20
+
+[Install]
+WantedBy=multi-user.target
