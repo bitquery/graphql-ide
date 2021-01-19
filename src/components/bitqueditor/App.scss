@@ -82,6 +82,10 @@
   width: 100%;
   overflow: hidden;
   border-right: 1px solid #ced4da;
+  .dropdown-menu.show {
+    max-height: 200px;
+    overflow: auto;
+  }
 }
 
 .editor__wrapper {

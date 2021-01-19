@@ -12,11 +12,10 @@ const WidgetEditorControls = observer(
 		let insert = null
 		Object.keys(model).forEach((node, i) => {
 			plugins.forEach(plugin => { 
-				insert = plugin.supportsModel(model[node]) ?  true : false
+				insert = plugin.supportsModel({[node]: model[node]}) ? true : false
 				info.length > i ? info[i].push(insert) : info.push([insert])
 			})
 		})
-		if (info.length) info[0][0] = true
 		setDataWidgets(info)
 		console.log(info)
 	}, [JSON.stringify(model)])

@@ -38,7 +38,9 @@ class JsonPlugin {
 		this.renderer = JsonWidget
 	}
 	supportsModel(model) {
-		return model.includes('.')
+		for (let key in model) {
+			return !key.includes('.')
+		}
 	}
 }
 

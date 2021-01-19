@@ -3,7 +3,7 @@ import '../App.scss';
 import { observer } from 'mobx-react-lite'
 import { toJS } from 'mobx'
 import useDebounce from '../utils/useDebounce'
-import { vegaPlugins } from 'vega-widgets'
+import { vegaPlugins } from '../vega-widgets/index'
 import './bitqueditor/App.scss'
 import getQueryFacts from '../utils/getQueryFacts'
 import GraphqlEditor from './bitqueditor/components/GraphqlEditor'
@@ -70,10 +70,6 @@ const EditorInstance = observer(function EditorInstance({number})  {
 		let visitor = {
 			enter(node ) {
 				typeInfo.enter(node)
-				let name = ''
-				if (node.name) {
-					if (node.name.value) name = node.name.value
-				}
 				if(node.kind === "Field") {
 					if (node.alias) {
 						queryNodes.push(node.alias.value)
@@ -92,13 +88,16 @@ const EditorInstance = observer(function EditorInstance({number})  {
 							queryNodes[queryNodes.length-1] = `${queryNodes[queryNodes.length-1]}[0]`
 						}
 					}
-					typesMap[queryNodes[queryNodes.length-1]] = typeInfo.getType().toString()
 					depth++
+					return {...node, typeInfo: typeInfo.getType()}
 				}
 			},
 			leave(node) {
 				if (node.kind === 'Field') {
+					let arr = queryNodes.filter(node=> node.split('.').length === depth)
+					let index = queryNodes.indexOf(arr[arr.length-1])
 					depth--
+					typesMap[queryNodes[index]] = node
 				}
 				typeInfo.leave(node)
 			}
