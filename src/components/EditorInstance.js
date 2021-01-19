@@ -3,7 +3,7 @@ import '../App.scss';
 import { observer } from 'mobx-react-lite'
 import { toJS } from 'mobx'
 import useDebounce from '../utils/useDebounce'
-import { vegaPlugins } from '../vega-widgets/index'
+import { vegaPlugins } from 'vega-widgets'
 import './bitqueditor/App.scss'
 import getQueryFacts from '../utils/getQueryFacts'
 import GraphqlEditor from './bitqueditor/components/GraphqlEditor'
