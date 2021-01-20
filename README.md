@@ -102,6 +102,65 @@ IDE_URL=<URL of frontent app>
 BACKEND_URL=<URL of backend app>
 ```
 
+To automate deploy create `shipitfile.js` :
+```javascript
+module.exports = shipit => {
+	require('shipit-deploy')(shipit);
+	require('shipit-shared')(shipit)
+
+	shipit.initConfig({
+		default: {
+			workspace: '/home/USERNAME/WORKSPACE_FOLDER',
+			deployTo: '/home/USERNAME/FOLDER_TO_DEPLOY',
+			repositoryUrl: 'https://git-provider.tld/YOUR_GIT_USERNAME/YOUR_GIT_REPO_NAME.git',
+			keepReleases: 3,
+			key: 'PATH_TO_KEY(if needed)',
+			branch: 'BRANCH_NAME',
+			shared: {
+				overwrite: true,
+				dirs: ['node_modules']
+			},
+			shallowClone: true
+		},
+		production: {
+			servers: 'USERNAME@YOUR_APP_SERVER_IP'
+		}
+	});
+	const path = require('path')
+	const envPath = path.join(
+		shipit.config.deployTo+'/current',
+		'.env'
+	)
+	shipit.on('updated', () => {
+		shipit.start('npm-install')
+	})
+	shipit.on('published', () => {
+		shipit.start('setup-env')
+	})
+	shipit.on('deployed', () => {
+		shipit.start('run-server')
+	})
+	shipit.blTask('run-server', async () => {
+		await shipit.remote(`cd ${shipit.releasePath} && sudo service ide restart`)
+	})
+	shipit.blTask('npm-install', async () => {
+		await shipit.remote(`cd ${shipit.releasePath} && npm install --production`)
+	})
+	shipit.blTask('setup-env', async () => {
+		await shipit.copyToRemote('.env.production', envPath)
+	})
+};
+```
+1. Setup `.env.production`  
+	If app is not hosted at the server root, specify the `homepage` in `package.json`, f.e.
+	```json
+	"homepage": "http://mywebsite.com/relativepath",
+	```
+	or add `PUBLIC_URL` variable to `.env.production`  
+2. Make production build `npm run buildns`  
+3. Update your repository  
+4. Run `npx shipit production deploy`  
+
 ### Database setup
 
 You will need to install mysql database server.
