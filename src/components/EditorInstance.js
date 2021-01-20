@@ -4,7 +4,9 @@ import { observer } from 'mobx-react-lite'
 import { toJS } from 'mobx'
 import useDebounce from '../utils/useDebounce'
 import { vegaPlugins } from 'vega-widgets'
+import { graphPlugins } from '@bitquery/ide-graph'
 import './bitqueditor/App.scss'
+import '@bitquery/ide-graph/dist/graphs.min.css'
 import getQueryFacts from '../utils/getQueryFacts'
 import GraphqlEditor from './bitqueditor/components/GraphqlEditor'
 import { getIntrospectionQuery, buildClientSchema, TypeInfo, visitWithTypeInfo } from 'graphql'
@@ -196,7 +198,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [debouncedURL])
-	const plugins = useMemo(()=> [JsonPlugin, ...vegaPlugins], [])
+	const plugins = useMemo(()=> [JsonPlugin, ...vegaPlugins, ...graphPlugins], [])
 	let indexx = plugins.map(plugin => plugin.id).indexOf(currentQuery.widget_id)
 	const WidgetComponent = indexx>=0 ? plugins[indexx] : plugins[0]
 
