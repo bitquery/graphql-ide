@@ -1,18 +1,18 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "34de0b789e3889b6dd4002a3177b9f5d",
+    "revision": "5f67c9ed2b2dd9c766b3a6c8faa9e63e",
     "url": "https://graphql.bitquery.io/test/index.html"
   },
   {
-    "revision": "4f684a0b293b7194385d",
+    "revision": "0002a919f59bc4632c5f",
     "url": "https://graphql.bitquery.io/test/static/css/main.css"
   },
   {
-    "revision": "4f684a0b293b7194385d",
+    "revision": "0002a919f59bc4632c5f",
     "url": "https://graphql.bitquery.io/test/static/js/main.js"
   },
   {
-    "revision": "b91ede3f6554395a3b5da6648c6c0df1",
+    "revision": "986bd99582bab2345198fa88620fe445",
     "url": "https://graphql.bitquery.io/test/static/js/main.js.LICENSE.txt"
   },
   {

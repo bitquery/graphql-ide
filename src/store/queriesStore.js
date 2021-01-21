@@ -124,6 +124,7 @@ class Queries {
 	}
 	setCurrentQuery = (id) => {
 		this.currentQuery = {...this.query[id]}
+		document.title = this.currentQuery.name || 'New Query'
 	}
 	setCurrentVariables = variables => {
 		this.currentVariables = variables
