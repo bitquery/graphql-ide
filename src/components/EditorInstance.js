@@ -17,6 +17,9 @@ import ToolbarComponent from './bitqueditor/components/ToolbarComponent'
 import { TabsStore, QueriesStore, UserStore } from '../store/queriesStore'
 import WidgetEditorControls from './WidgetEditorControls'
 import { getValueFrom, getLeft } from '../utils/common'
+import "react-loader-spinner/dist/loader/css/react-spinner-loader.css"
+import Loader from "react-loader-spinner"
+import play from '../assets/images/play.svg'
 
 const EditorInstance = observer(function EditorInstance({number})  {
 	const { tabs, currentTab, index, id } = TabsStore
@@ -24,6 +27,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 	const { query, updateQuery, showGallery, currentQuery } = QueriesStore
 	const [schema, setSchema] = useState(null)
 	const [_variableToType, _setVariableToType] = useState(null)
+	const [loading, setLoading] = useState(false)
 	const [queryTypes, setQueryTypes] = useState('')
 	const [dataSource, setDataSource] = useState({})
 	const [dataModel, setDataModel] = useState('')
@@ -109,6 +113,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 		return typesMap
 	}
 	const getResult = async () => {
+		setLoading(true)
 		const data = await fetcher({query: query[index].query, variables: query[index].variables})
 		data.json().then(json => {
 			setDataSource({
@@ -125,6 +130,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 		if (JSON.stringify(queryType) !== JSON.stringify(queryTypes)) {
 			setQueryTypes(queryType)
 		}
+		setLoading(false)
 	}
 	const editQueryHandler = useCallback(handleSubject => {
 			if ('query' in handleSubject) {
@@ -177,6 +183,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 	useEffect(() => {
 		if (number === index) {
 			const fetchSchema = () => {
+				setLoading(true)
 				let introspectionQuery = getIntrospectionQuery()
 				let staticName = 'IntrospectionQuery'
 				let introspectionQueryName = staticName
@@ -191,6 +198,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 						let schema = buildClientSchema(result.data)
 						setSchema(schema)
 					}
+					setLoading(false)
 				}).catch(e => {})
 			}
 			fetchSchema() 
@@ -211,7 +219,16 @@ const EditorInstance = observer(function EditorInstance({number})  {
 		>
 			<ToolbarComponent />
 			<div className="over-wrapper" onMouseDown={handleResizer} ref={overwrap}>
-				<button className="execute-button" ref={executeButton} onClick={getResult} ></button>
+				<button className="execute-button" ref={executeButton} onClick={getResult} >
+					{loading 
+						?	<Loader
+								type="Oval"
+								color="#3d77b6"
+								height={25}
+								width={25}
+							/> 
+						: 	<img src={play} />}
+				</button>
 				<div className="workspace__wrapper" ref={workspace}>
 					<GraphqlEditor 
 						schema={schema}

@@ -166,9 +166,16 @@
   left: calc(50% - 25px);
   border: none;
   outline: none !important;
-  background: #c7c7c7 url('../../assets/images/play.svg') no-repeat center;
+  background: #c7c7c7;
   background-size: 25px 25px;
   background-position-x: 60%;
+  img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 80%;
+    transform: translateX(4px);
+  }
 }
 .execute-button:active {
   -webkit-box-shadow: rgb(0, 0, 0) 4px 4px 15px 0px inset, 5px 5px 15px 5px rgba(0,0,0,0); 
