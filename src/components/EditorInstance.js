@@ -45,8 +45,8 @@ const EditorInstance = observer(function EditorInstance({number})  {
 		}
 	}, [queryTypes, currentQuery.displayed_data])
 	const handleResizer = e => {
-		if (e.target.className.indexOf('sizeChanger') !== 0) {
-			return
+		if (e.target && e.target.className && typeof e.target.className.indexOf === 'function') { 
+			if (e.target.className.indexOf('sizeChanger') !== 0) return 
 		}
 		e.preventDefault()
 		const onMouseUp = () => {
@@ -219,7 +219,11 @@ const EditorInstance = observer(function EditorInstance({number})  {
 		>
 			<ToolbarComponent />
 			<div className="over-wrapper" onMouseDown={handleResizer} ref={overwrap}>
-				<button className="execute-button" ref={executeButton} onClick={getResult} >
+				<button className="execute-button" 
+					disabled={loading} 
+					ref={executeButton} 
+					onClick={getResult}
+				>
 					{loading 
 						?	<Loader
 								type="Oval"

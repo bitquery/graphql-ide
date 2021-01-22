@@ -177,7 +177,7 @@
     transform: translateX(4px);
   }
 }
-.execute-button:active {
+.execute-button:active:not(:disabled) {
   -webkit-box-shadow: rgb(0, 0, 0) 4px 4px 15px 0px inset, 5px 5px 15px 5px rgba(0,0,0,0); 
   box-shadow: rgb(0, 0, 0) 4px 4px 15px 0px inset, 5px 5px 15px 5px rgba(0,0,0,0);
 }
