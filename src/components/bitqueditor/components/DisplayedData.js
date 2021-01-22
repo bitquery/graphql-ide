@@ -1,10 +1,12 @@
 import { observer } from 'mobx-react-lite'
 import React, { useEffect } from 'react'
+import { colorSignalConfig } from 'vega-lite/build/src/config'
 import { QueriesStore, TabsStore } from '../../../store/queriesStore'
 import { getValueFrom } from '../../../utils/common'
+import { useFirstUpdate } from '../../../utils/useFirstUpdate'
 
-const DisplayedData = observer(function DisplayedData({model, dataWidgets, setDataIndexInModel, dataSource, setDataSource}) {
-	const { updateQuery, currentQuery } = QueriesStore
+const DisplayedData = observer(function DisplayedData({model, dataWidgets, setDataIndexInModel, dataSource, setDataSource, number}) {
+	const { updateQuery, currentQuery, defaultWidget } = QueriesStore
 	const { index } = TabsStore
 	const onChangeHandle = (value, i) => {
 		updateQuery({displayed_data: value}, index)
@@ -14,9 +16,25 @@ const DisplayedData = observer(function DisplayedData({model, dataWidgets, setDa
 			})
 	}
 	useEffect(() => {
-		let dataIndex = Object.keys(model).indexOf(currentQuery.displayed_data)
-		dataIndex !== -1 && setDataIndexInModel(dataIndex)
+		if (number === index) {
+			let dataIndex = Object.keys(model).indexOf(currentQuery.displayed_data)
+			dataIndex !== -1 && setDataIndexInModel(dataIndex)
+		}
 	}, [currentQuery.displayed_data, JSON.stringify(model)])
+	useEffect(() => {
+		if (!currentQuery.displayed_data && Object.keys(model).length && number===index) {
+			updateQuery({
+				displayed_data: Object.keys(model)[Object.keys(model).length-1],
+				widget_id: defaultWidget
+			}, index)
+		}
+	}, [JSON.stringify(model)])
+	useFirstUpdate(() => {
+		if (!Object.keys(model).length && currentQuery.displayed_data && number===index) {
+			updateQuery({widget_id: '', displayed_data: ''}, index)
+		}
+	}, [JSON.stringify(model)])
+
 	return (
 		<li className="nav-item dropdown">
 			<a 	className="nav-link dropdown-toggle" 
@@ -26,27 +44,28 @@ const DisplayedData = observer(function DisplayedData({model, dataWidgets, setDa
 				aria-haspopup="true" 
 				aria-expanded="false"
 			>
-				{currentQuery.displayed_data ? currentQuery.displayed_data : 'Displayed Data'}
+				{currentQuery.displayed_data ? currentQuery.displayed_data 
+					: 'Displayed Data'
+				}
 			</a>
 			<div className="dropdown-menu" aria-labelledby="navbarDropdown">
 				{dataWidgets && dataWidgets.length 
 					? 	dataWidgets.map((node, i) => 
 							node.some(widget => widget)
-						? 	<a className="dropdown-item"
-							href="# " 
-							key={i} 
-							onClick={()=>onChangeHandle(Object.keys(model)[i], i)}
+						? 	<a  className="dropdown-item"
+								href="# " 
+								key={i} 
+								onClick={()=>onChangeHandle(Object.keys(model)[i], i)}
 							>
 								{Object.keys(model)[i]}
 							</a>
 						: 	null
 					) : currentQuery.displayed_data 
-						? 	<a 
-							className="dropdown-item" 
-							href="# " 
-							onClick={()=>onChangeHandle(currentQuery.displayed_data)}
+						? 	<a  className="dropdown-item" 
+								href="# " 
+								onClick={()=>onChangeHandle(currentQuery.displayed_data)}
 							>
-								{currentQuery.displayed_data.split('.').slice(-1)}
+								{currentQuery.displayed_data}
 							</a>
 						: 	null
 					}

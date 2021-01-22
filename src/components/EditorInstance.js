@@ -23,7 +23,6 @@ const EditorInstance = observer(function EditorInstance({number})  {
 	const { user }  = UserStore
 	const { query, updateQuery, showGallery, currentQuery } = QueriesStore
 	const [schema, setSchema] = useState(null)
-	const [widgetType, setWidgetType] = useState('')
 	const [_variableToType, _setVariableToType] = useState(null)
 	const [queryTypes, setQueryTypes] = useState('')
 	const [dataSource, setDataSource] = useState({})
@@ -157,7 +156,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 	const setConfig = (config) => {
 		if (number === index) {
 			if (JSON.stringify(currentQuery.config) !== JSON.stringify(config)) {
-				updateQuery({config, widget_id: widgetType}, index)
+				updateQuery({config}, index)
 			}
 		}
 	}
@@ -228,8 +227,8 @@ const EditorInstance = observer(function EditorInstance({number})  {
 						dataSource={dataSource}
 						setDataSource={setDataSource}
 						name={WidgetComponent.name}
-						setValue={setWidgetType}
 						plugins={plugins}
+						number={number}
 					/>
 					{currentQuery.displayed_data ? <WidgetComponent.editor 
 						model={dataModel}

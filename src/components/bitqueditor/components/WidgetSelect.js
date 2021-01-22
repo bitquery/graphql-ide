@@ -19,7 +19,8 @@ const WidgetSelect = observer(function WidgetSelect({dataWidgets, dataIndexInMod
 					{currentQuery.widget_id ? name : 'Widgets'}
 				</a>
 				<div className="dropdown-menu" aria-labelledby="navbarDropdown">
-					{ dataWidgets && dataWidgets.length && (dataIndexInModel || dataIndexInModel===0)
+					{ dataWidgets && dataWidgets.length && 
+					(dataIndexInModel || dataIndexInModel===0) && dataWidgets[dataIndexInModel]
 						? dataWidgets[dataIndexInModel].map((widget, i) => widget
 							?	<a className="dropdown-item" 
 									onClick={()=>updateQuery({widget_id: plugins[i] && plugins[i].id}, index)}

@@ -4,7 +4,7 @@ import DisplayedData from './bitqueditor/components/DisplayedData'
 import { observer } from 'mobx-react-lite'
 
 const WidgetEditorControls = observer(
-	function WidgetEditorControls({model, name, plugins, setDataSource, dataSource}) {
+	function WidgetEditorControls({model, name, plugins, setDataSource, dataSource, number}) {
 	const [dataWidgets, setDataWidgets] = useState() 
 	const [dataIndexInModel, setDataIndexInModel] = useState(0)
 	useEffect(() => {
@@ -26,6 +26,7 @@ const WidgetEditorControls = observer(
 				<ul className="navbar-nav mr-auto">
 					<DisplayedData 
 						model={model}
+						number={number}
 						dataWidgets={dataWidgets}
 						setDataIndexInModel={setDataIndexInModel}
 						plugins={plugins}

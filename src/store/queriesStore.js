@@ -28,6 +28,7 @@ class User {
 }
 
 class Queries {
+	defaultWidget = 'json.widget'
 	currentVariables = ''
 	showGallery = true
 	queryJustSaved = false
@@ -38,13 +39,7 @@ class Queries {
 		endpoint_url: 'https://graphql.bitquery.io',
 		id: null
 	}
-	query = [{
-		query: '',
-		variables: '{}',
-		config: {},
-		endpoint_url: 'https://graphql.bitquery.io',
-		id: null
-	}]
+	query = [this.currentQuery]
 	
 	constructor() {
 		makeObservable(this, {
@@ -98,8 +93,8 @@ class Queries {
 		if (params.query) this.query[index].query = params.query
 		if (params.variables) this.query[index].variables = params.variables
 		if (params.config) this.query[index].config = params.config
-		if (params.widget_id) this.query[index].widget_id = params.widget_id
-		if (params.displayed_data) this.query[index].displayed_data = params.displayed_data
+		if (typeof params.widget_id === 'string') this.query[index].widget_id = params.widget_id
+		if (typeof params.displayed_data === 'string') this.query[index].displayed_data = params.displayed_data
 		if (params.account_id) this.query[index].account_id = params.account_id
 		if (params.endpoint_url) this.query[index].endpoint_url = params.endpoint_url
 		if (params.url || params.url===null) this.query[index].url = params.url
