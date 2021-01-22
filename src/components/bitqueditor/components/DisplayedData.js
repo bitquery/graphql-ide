@@ -5,11 +5,18 @@ import { QueriesStore, TabsStore } from '../../../store/queriesStore'
 import { getValueFrom } from '../../../utils/common'
 import { useFirstUpdate } from '../../../utils/useFirstUpdate'
 
-const DisplayedData = observer(function DisplayedData({model, dataWidgets, setDataIndexInModel, dataSource, setDataSource, number}) {
+const DisplayedData = observer(function DisplayedData({model, dataWidgets, setDataIndexInModel, dataSource, setDataSource, plugins, number}) {
 	const { updateQuery, currentQuery, defaultWidget } = QueriesStore
 	const { index } = TabsStore
 	const onChangeHandle = (value, i) => {
 		updateQuery({displayed_data: value}, index)
+		let currentNodeNumber = Object.keys(model).indexOf(value)
+		let currentWidgetNubmer = plugins.map(plugin => plugin.id).indexOf(currentQuery.widget_id)
+		let availableWidgetNumbers = dataWidgets[currentNodeNumber].map(
+			(availableWidget, i) => availableWidget && i
+		).filter(number => number || number===0)
+		!availableWidgetNumbers.includes(currentWidgetNubmer) 
+			&& updateQuery({widget_id: plugins[availableWidgetNumbers[0]].id}, index)
 		dataSource.data
 			&& setDataSource(prev => {
 				return {...prev, values: getValueFrom(prev.data, value)}
