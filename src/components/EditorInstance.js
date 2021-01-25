@@ -20,7 +20,7 @@ import JsonPlugin from './bitqueditor/components/JsonWidget'
 import ToolbarComponent from './bitqueditor/components/ToolbarComponent'
 import { TabsStore, QueriesStore, UserStore } from '../store/queriesStore'
 import WidgetEditorControls from './WidgetEditorControls'
-import { getValueFrom, getLeft } from '../utils/common'
+import { getValueFrom, getLeft, getTop } from '../utils/common'
 import "react-loader-spinner/dist/loader/css/react-spinner-loader.css"
 import Loader from "react-loader-spinner"
 import play from '../assets/images/play.svg'
@@ -69,6 +69,32 @@ const EditorInstance = observer(function EditorInstance({number})  {
 			workspace.current.setAttribute('style', `flex: ${flex} 1 0%;`)
 			let execButt = workspace.current.offsetWidth / overwrap.current.offsetWidth
 			executeButton.current.setAttribute('style', `left: calc(${execButt*100}% - 25px);`)
+		}
+		overwrap.current.addEventListener('mousemove', onMouseMove);
+    	overwrap.current.addEventListener('mouseup', onMouseUp);
+	}
+	const workspaceResizer = e => {
+		if (e.target && e.target.className && typeof e.target.className.indexOf === 'function') { 
+			if (e.target.className.indexOf('workspace__sizechanger') !== 0) return 
+		}
+		e.preventDefault()
+		const onMouseUp = () => {
+			overwrap.current.removeEventListener('mousemove', onMouseMove)
+			overwrap.current.removeEventListener('mouseup', onMouseUp)
+		}
+		const onMouseMove = e => {
+			if (e.buttons === 0) {
+				return onMouseUp()
+			}
+			const topSize = e.clientY - getTop(workspace.current) 
+			const bottomSize = workspace.current.clientHeight - 75 - topSize
+			let flex = bottomSize / topSize
+			const widget = document.getElementsByClassName('widget')[number]
+			if (flex >= 0) {
+				widget.setAttribute('style', `flex: ${flex} 1 0%;`)
+				let widgetResizeEvent = new Event('widgetresize')
+				window.dispatchEvent(widgetResizeEvent)
+			}
 		}
 		overwrap.current.addEventListener('mousemove', onMouseMove);
     	overwrap.current.addEventListener('mouseup', onMouseUp);
@@ -242,7 +268,10 @@ const EditorInstance = observer(function EditorInstance({number})  {
 							/> 
 						: 	<img src={play} />}
 				</button>
-				<div className="workspace__wrapper" ref={workspace}>
+				<div className="workspace__wrapper" 
+					 ref={workspace} 
+					 onMouseDown={workspaceResizer}
+				>
 					<GraphqlEditor 
 						schema={schema}
 						query={query[number].query}
@@ -256,6 +285,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 							ref2: variablesEditor
 						}}
 					/>
+					<div className="workspace__sizechanger"/>
 					<WidgetEditorControls 
 						model={queryTypes}
 						dataSource={dataSource}

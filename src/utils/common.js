@@ -39,3 +39,12 @@ export const getLeft = (initialElem) => {
 	}
 	return pt;
 }
+export const getTop = (initialElem) => {
+	let pt = 0;
+	let elem = initialElem;
+	while (elem.offsetParent) {
+	  pt += elem.offsetTop;
+	  elem = elem.offsetParent;
+	}
+	return pt;
+}

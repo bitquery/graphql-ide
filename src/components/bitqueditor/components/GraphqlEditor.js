@@ -28,6 +28,7 @@ const GraphqlEditor = observer(function GraphqlEditor({
 				value={query} 
 			/>
 			<VariableEditor
+				number={number}
 				ref={ref2}
 				onEdit={onEditVariables}
 				variableToType={variableToType}

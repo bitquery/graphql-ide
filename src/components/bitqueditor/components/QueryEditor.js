@@ -28,11 +28,9 @@ export default class QueryEditor extends Component {
 	
 	onDrag = (e) => {
 		if (this.editor && this.state.mouseDown) {
-			const editorWrapper = document.getElementsByClassName('editor__wrapper')[this.number]
-			if (this.wrapperHeight === null) this.wrapperHeight = height_of(editorWrapper)
 			const newSize = this.state.start_h + e.y - this.state.start_y
-			if (newSize <= this.wrapperHeight-67) {
-				this.editor.setSize(null, (this.state.start_h + e.y - this.state.start_y) + "px")
+			if (newSize <= this.wrapperHeight-33 && newSize>= 25) {
+				this.editor.setSize(null, newSize + "px")
 			}
 		}
 	}
@@ -61,6 +59,14 @@ export default class QueryEditor extends Component {
 		}
 	}
 	getEditor = () => this.editor
+	calculateWrapperHeight = () => {
+		const editorWrapper = document.getElementsByClassName('editor__wrapper')[this.number]
+		this.wrapperHeight = height_of(editorWrapper)
+		const editorHeight = this.editor.getWrapperElement().offsetHeight
+		if ( editorHeight > this.wrapperHeight ) {
+			this.editor.setSize(null, `${this.wrapperHeight-45}px`)
+		}
+	}
 
 	componentDidMount() {
 		const CodeMirror = require('codemirror');
@@ -114,11 +120,13 @@ export default class QueryEditor extends Component {
 			gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter']
 		}))
 		if (editor) {
+			this.calculateWrapperHeight()
 			window.addEventListener("mousemove", this.onDrag);
 			document.body.addEventListener("mouseup", this.onRelease);
 			editor.on('change', this._onEdit)
 			editor.on('keyup', this.onKeyUp)
-			
+			window.addEventListener('resize', this.calculateWrapperHeight)
+			window.addEventListener('widgetresize', this.calculateWrapperHeight)
 		}
 	}
 
@@ -152,6 +160,8 @@ export default class QueryEditor extends Component {
 		if (this.editor) {
 			this.editor.off('keyup', this.onKeyUp)
 			this.editor.off('change', this._onEdit)
+			window.removeEventListener('resize', this.calculateWrapperHeight)
+			window.removeEventListener('widgetresize', this.calculateWrapperHeight)
 			window.removeEventListener("mousemove", this.onDrag)
 			document.body.removeEventListener("mouseup", this.onRelease)
 			this.editor = null
@@ -170,7 +180,7 @@ export default class QueryEditor extends Component {
 				/>
 				<div className="handle"
 					onMouseDown={this.onMouseDown}
-				>Query Variables</div>
+				/>
 			</>
 		)
 	}
