@@ -56,13 +56,13 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor }) => {
 				<div className="topBar__logo">
 					<img className="topBar__logo__img" src={logo}/>
 				</div>
-				<button 
+				{!currentQuery.id && <button 
 					className="topBar__button" 
 					onClick={saveHandle}
 					disabled={currentQuery.saved}
 				>
 					Save
-				</button>
+				</button>}
 				<button className="topBar__button"
 					onClick={prettifyQuery}
 				>
