@@ -9,7 +9,11 @@ import './bitqueditor/App.scss'
 import '@bitquery/ide-graph/dist/graphs.min.css'
 import getQueryFacts from '../utils/getQueryFacts'
 import GraphqlEditor from './bitqueditor/components/GraphqlEditor'
-import { getIntrospectionQuery, buildClientSchema, TypeInfo, visitWithTypeInfo } from 'graphql'
+import { 
+	getIntrospectionQuery, 
+	buildClientSchema, 
+	visitWithTypeInfo,
+	TypeInfo} from 'graphql'
 import { visit } from 'graphql/language/visitor'
 import { parse as parseGql } from 'graphql/language'
 import JsonPlugin from './bitqueditor/components/JsonWidget'
@@ -35,6 +39,8 @@ const EditorInstance = observer(function EditorInstance({number})  {
 	const workspace = useRef(null)
 	const overwrap = useRef(null)
 	const executeButton = useRef(null)
+	const queryEditor = useRef(null)
+	const variablesEditor = useRef(null)
 	useEffect(() => {
 		dataModel && setDataModel('')
 		if (queryTypes && currentQuery.displayed_data) {
@@ -217,7 +223,10 @@ const EditorInstance = observer(function EditorInstance({number})  {
 			}
 			key={number}
 		>
-			<ToolbarComponent />
+			<ToolbarComponent 
+				queryEditor={queryEditor}
+				variablesEditor={variablesEditor}
+			/>
 			<div className="over-wrapper" onMouseDown={handleResizer} ref={overwrap}>
 				<button className="execute-button" 
 					disabled={loading} 
@@ -242,6 +251,10 @@ const EditorInstance = observer(function EditorInstance({number})  {
 						variableToType={_variableToType}
 						onEditQuery={editQueryHandler}
 						onEditVariables={editQueryHandler}
+						ref={{
+							ref1: queryEditor,
+							ref2: variablesEditor
+						}}
 					/>
 					<WidgetEditorControls 
 						model={queryTypes}

@@ -12,25 +12,23 @@ const GraphqlEditor = observer(function GraphqlEditor({
 	onEditQuery,
 	onEditVariables,
 	number
-}) {
-	const queryEditor = useRef(null)
-	const variablesEditor = useRef(null)
+}, { ref1, ref2 }) {
 	const { currentTab } = TabsStore
 	useEffect(() => {
-		queryEditor.current.getEditor().refresh()
-		variablesEditor.current.getEditor().refresh()
+		ref1.current.getEditor().refresh()
+		ref2.current.getEditor().refresh()
 	}, [currentTab])
 	return (
 		<div className="editor__wrapper" >
 			<QueryEditor 
 				number={number}
-				ref={queryEditor}
+				ref={ref1}
 				onEdit={onEditQuery}
 				schema={schema} 
 				value={query} 
 			/>
 			<VariableEditor
-				ref={variablesEditor}
+				ref={ref2}
 				onEdit={onEditVariables}
 				variableToType={variableToType}
 				value={variables}
@@ -38,6 +36,6 @@ const GraphqlEditor = observer(function GraphqlEditor({
 			
 		</div>
 	)
-})
+}, { forwardRef: true })
 
 export default GraphqlEditor
