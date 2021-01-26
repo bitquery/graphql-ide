@@ -428,3 +428,26 @@
 .navbar-brand {
 	font-size: 1rem;
 }
+.dropdown{
+	height: 40px;
+	display: flex;
+	border-bottom: 1px solid #dee2e6;
+	&-toggle {
+		&::after {
+			content: none;
+		}
+	}
+}
+.icon {
+	&_user {
+		color: red;
+		width: 35px;
+		height: 35px;
+		margin: 0 5px;
+		cursor: pointer;
+		opacity: .5;
+		&#dropdownMenuButton{
+			opacity: 1;
+		}
+	}
+}

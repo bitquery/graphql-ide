@@ -54,7 +54,11 @@ if (process.env.NODE_ENV==='production') {
 				db.query(sql, [url], (err, result) => {
 					if (err) console.log(err)
 					if (!result.length) {
-						res.send('There is no such querie with same url...')
+						data = replaceData(data, {
+							title: defaultmeta.title,
+							description: defaultmeta.description
+						})
+						res.send(data)
 					} else {
 						data = replaceData(data, {
 							title: result[0].name,
