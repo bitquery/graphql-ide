@@ -31,7 +31,7 @@ require('./endPoints')(app, passport, db)
 
 if (process.env.NODE_ENV==='production') {
 	app.get('*', (req,res) => {
-		const url = req.url.replace(`${process.env.REACT_APP_IDE_URL}/`, '')
+		const url = req.url.substring(2)
 		const filePath = path.resolve(__dirname, '../../build', 'index.html')
 		const fullUrl = req.protocol + '://' + req.get('host') + req.originalUrl
 		const replaceData = (data, meta) => {
@@ -51,7 +51,7 @@ if (process.env.NODE_ENV==='production') {
 					ON widgets.query_id=queries.id
 					WHERE queries.url=?
 					ORDER BY widgets.id DESC LIMIT 1`
-				db.query(sql, [req.url.replace(`${process.env.REACT_APP_IDE_URL}/`, '')], (err, result) => {
+				db.query(sql, [url], (err, result) => {
 					if (err) console.log(err)
 					if (!result.length) {
 						res.send('There is no such querie with same url...')
