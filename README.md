@@ -135,7 +135,7 @@ module.exports = shipit => {
 		shipit.start('npm-install')
 	})
 	shipit.on('published', () => {
-		shipit.start('setup-env')
+		shipit.start('setup-env', 'build')
 	})
 	shipit.on('deployed', () => {
 		shipit.start('run-server')
@@ -149,6 +149,9 @@ module.exports = shipit => {
 	shipit.blTask('setup-env', async () => {
 		await shipit.copyToRemote('.env.production', envPath)
 	})
+	shipit.blTask('build', async () => {
+		await shipit.remote(`cd ${shipit.releasePath} && npm run buildns`)
+	})
 };
 ```
 1. Setup `.env.production`  
@@ -157,9 +160,8 @@ module.exports = shipit => {
 	"homepage": "http://mywebsite.com/relativepath",
 	```
 	or add `PUBLIC_URL` variable to `.env.production`  
-2. Make production build `npm run buildns`  
-3. Update your repository  
-4. Run `npx shipit production deploy`  
+2. Update your repository  
+3. Run `npx shipit production deploy`  
 
 ### Database setup
 
