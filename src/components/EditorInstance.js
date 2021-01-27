@@ -184,7 +184,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 			} else {
 				updateQuery({...handleSubject, url: null}, index, null)
 			}
-	}, [user, schema, queryTypes])
+	}, [user, schema, queryTypes, index])
 	useEffect(() => {
 		if (number === index && schema) {
 			let queryType = getQueryTypes(query[index].query)

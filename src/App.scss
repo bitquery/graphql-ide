@@ -281,6 +281,16 @@
 		justify-content: center;
 		border-bottom: 1px solid #dee2e6;
 		padding-bottom: 5px;
+		&.dropdown{
+			height: 40px;
+			display: flex;
+			border-bottom: 1px solid #dee2e6;
+		}
+		.dropdown-toggle {
+			&::after {
+				content: none;
+			}
+		}
 	}
 	&__email {
 		margin: auto;
@@ -427,16 +437,6 @@
 }
 .navbar-brand {
 	font-size: 1rem;
-}
-.dropdown{
-	height: 40px;
-	display: flex;
-	border-bottom: 1px solid #dee2e6;
-	&-toggle {
-		&::after {
-			content: none;
-		}
-	}
 }
 .icon {
 	&_user {

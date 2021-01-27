@@ -188,12 +188,11 @@ class Tabs {
 	}
 	switchTab = tabID => {
 		this.currentTab = tabID
-		let id = this.tabs.map(tab => tab.id).indexOf(this.currentTab)
+		let id = this.index
 		QueriesStore.setCurrentQuery(id)
 	}
 	renameCurrentTab = name => {
-		let id = this.tabs.map(tab => tab.id).indexOf(this.currentTab)
-		this.tabs[id].name = name
+		this.tabs[this.index].name = name
 	}
 	addNewTab = name => {
 		this.incID()
