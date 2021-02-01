@@ -1,6 +1,5 @@
 import { observer } from 'mobx-react-lite'
 import React, { useEffect } from 'react'
-import { colorSignalConfig } from 'vega-lite/build/src/config'
 import { QueriesStore, TabsStore } from '../../../store/queriesStore'
 import { getValueFrom } from '../../../utils/common'
 import { useFirstUpdate } from '../../../utils/useFirstUpdate'
@@ -19,7 +18,7 @@ const DisplayedData = observer(function DisplayedData({model, dataWidgets, setDa
 			&& updateQuery({widget_id: plugins[availableWidgetNumbers[0]].id}, index)
 		dataSource.data
 			&& setDataSource(prev => {
-				return {...prev, values: getValueFrom(prev.data, value)}
+				return {...prev, displayed_data: value, values: getValueFrom(prev.data, value)}
 			})
 	}
 	useEffect(() => {

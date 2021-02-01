@@ -151,6 +151,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 			setDataSource({
 				execute: getResult,
 				data: ('data' in json) ? json.data : null,
+				displayed_data: currentQuery.displayed_data || '',
 				values: ('data' in json) ? (currentQuery.displayed_data) ? getValueFrom(json.data, currentQuery.displayed_data) : json.data : null,
 				error: ('errors' in json) ? json.errors : null,
 				query: toJS(query[index].query), 
