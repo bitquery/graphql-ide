@@ -34,7 +34,6 @@ const GraphqlEditor = observer(function GraphqlEditor({
 				variableToType={variableToType}
 				value={variables}
 			/>
-			
 		</div>
 	)
 }, { forwardRef: true })

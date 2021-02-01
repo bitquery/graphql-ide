@@ -38,7 +38,12 @@ $top-bar-height: 44px;
   font-size: calc(10px + 2vmin);
   color: white;
 }
-
+.result-window {
+  width: 100%;
+  .CodeMirror {
+    height: 100%;
+  }
+}
 .App-link {
   color: #61dafb;
 }
@@ -67,7 +72,7 @@ $top-bar-height: 44px;
 }
 .widget-option {
   margin-right: 20px;
-  width: 150px;
+  // width: 150px;
 }
 .widget .widget-option {
   align-self: center;
@@ -153,8 +158,7 @@ $top-bar-height: 44px;
   color: #000;
 }
 .sizeChanger {
-	background-color: #f3f3f3;
-	width: .5em;
+  border: 1px solid #f3f3f3;
 	cursor: col-resize;
 }
 .execute-button {
