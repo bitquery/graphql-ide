@@ -35,7 +35,11 @@ class JsonWidget extends Component {
 
   componentDidUpdate() {
     if (this.viewer) {
-      this.viewer.setValue(JSON.stringify(this.props.dataSource.data, null, 2) || '');
+      let value = this.props.dataSource.error 
+        ? `${JSON.stringify(this.props.dataSource.data, null, 2)}
+        ${JSON.stringify(this.props.dataSource.error, null, 2)}`
+        : JSON.stringify(this.props.dataSource.data, null, 2)
+      this.viewer.setValue(value || '');
     }
   }
 
