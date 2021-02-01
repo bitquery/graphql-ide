@@ -225,15 +225,21 @@ module.exports = function(app, passport, db) {
 		req.session.active = null
 		if (checkActive) checkActive = 'Account activated!'
 		db.query(`
-			SELECT queries.*, COUNT(query_logs.id) as number,
-			widgets.widget_id, widgets.config, widgets.displayed_data FROM queries
-			LEFT JOIN query_logs
-			ON queries.id=query_logs.id
-			LEFT JOIN widgets
-			ON widgets.query_id=queries.id
-			WHERE published=true
-			AND queries.deleted=false
-			GROUP BY queries.id  
+			SELECT a.*, COUNT(b.id) as number,
+			w.widget_id, w.config, w.displayed_data FROM queries a
+			LEFT JOIN query_logs b
+			ON a.id=b.id
+			LEFT JOIN (
+						SELECT * FROM widgets
+						WHERE id IN (
+									SELECT MAX(id) AS id
+									FROM widgets 
+									GROUP BY query_id)
+					) w 
+			ON w.query_id=a.id
+			WHERE a.published=true
+			AND a.deleted=false
+			GROUP BY a.id  
 			ORDER BY number DESC`, (err, queries) => {
 				if (err) console.log(err)
 				res.send({queries: queries, msg: checkActive})
@@ -241,13 +247,19 @@ module.exports = function(app, passport, db) {
 	})
 	app.get('/api/getmyqueries', (req, res) => {
 		db.query(`
-			SELECT queries.*, widgets.widget_id, widgets.config, widgets.displayed_data FROM queries
-			LEFT JOIN widgets
-			ON widgets.query_id=queries.id
-			WHERE account_id=?
-			AND deleted=false
-			GROUP BY queries.id
-			ORDER BY updated_at DESC`, [req.session.passport.user], (err, queries) => {
+			SELECT a.*, b.displayed_data, b.widget_id, b.config 
+			FROM queries a
+			LEFT JOIN (
+						SELECT * FROM widgets
+						WHERE id IN (
+									SELECT MAX(id) AS id
+									FROM widgets 
+									GROUP BY query_id)
+					) b 
+			ON a.id=b.query_id
+			WHERE a.account_id=?
+			AND a.deleted=false
+			ORDER BY a.updated_at DESC`, [req.session.passport.user], (err, queries) => {
 				if (err) console.log(err)
 				res.send(queries)
 		})
