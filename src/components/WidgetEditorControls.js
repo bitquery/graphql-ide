@@ -5,7 +5,7 @@ import { observer } from 'mobx-react-lite'
 
 const WidgetEditorControls = observer(
 	function WidgetEditorControls({model, name, plugins, setDataSource, dataSource, number}) {
-	const [dataWidgets, setDataWidgets] = useState() 
+	const [dataWidgets, setDataWidgets] = useState([]) 
 	const [dataIndexInModel, setDataIndexInModel] = useState(0)
 	useEffect(() => {
 		let info = []
@@ -16,8 +16,11 @@ const WidgetEditorControls = observer(
 				info.length > i ? info[i].push(insert) : info.push([insert])
 			})
 		})
-		setDataWidgets(info)
+		if (JSON.stringify(dataWidgets) !== JSON.stringify(info)) {
+			setDataWidgets(info)
+		}
 		console.log(info)
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [JSON.stringify(model)])
 	return (
 		<nav className="navbar navbar-expand-lg navbar-light bg-light">

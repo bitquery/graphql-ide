@@ -26,6 +26,7 @@ const DisplayedData = observer(function DisplayedData({model, dataWidgets, setDa
 			let dataIndex = Object.keys(model).indexOf(currentQuery.displayed_data)
 			dataIndex !== -1 && setDataIndexInModel(dataIndex)
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [currentQuery.displayed_data, JSON.stringify(model)])
 	useEffect(() => {
 		if (!currentQuery.displayed_data && Object.keys(model).length && number===index) {
@@ -34,6 +35,7 @@ const DisplayedData = observer(function DisplayedData({model, dataWidgets, setDa
 				widget_id: defaultWidget
 			}, index)
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [JSON.stringify(model)])
 	useFirstUpdate(() => {
 		if (!Object.keys(model).length && currentQuery.displayed_data && number===index) {
@@ -44,6 +46,7 @@ const DisplayedData = observer(function DisplayedData({model, dataWidgets, setDa
 	return (
 		<li className="nav-item dropdown">
 			<a 	className="nav-link dropdown-toggle" 
+				href="# "
 				id="navbarDropdown" 
 				role="button" 
 				data-toggle="dropdown" 

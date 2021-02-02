@@ -4,7 +4,6 @@ import React, { useEffect, useState } from 'react'
 import { UserStore, QueriesStore } from '../store/queriesStore'
 import QueriesComponent from './QueriesComponent'
 import { useToasts } from 'react-toast-notifications'
-import { autorun } from 'mobx'
 
 const GalleryComponent = observer(function GalleryComponent() {
 	const [allQueries, setAllQueries] = useState([])

@@ -39,6 +39,7 @@ const TabsComponent = observer(() => {
 			setEditTabName(prev=>prev?!prev:prev)
 			setQueryName({[currentTab]: tabs[index].name})
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [setEditTabName, currentTab, queryName])
 	useEventListener('keyup', editTabNameHandler)	
 	useEffect(() => {

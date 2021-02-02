@@ -26,7 +26,7 @@ import Loader from "react-loader-spinner"
 import play from '../assets/images/play.svg'
 
 const EditorInstance = observer(function EditorInstance({number})  {
-	const { tabs, currentTab, index, id } = TabsStore
+	const { tabs, currentTab, index } = TabsStore
 	const { user }  = UserStore
 	const { query, updateQuery, showGallery, currentQuery } = QueriesStore
 	const [schema, setSchema] = useState(null)
@@ -49,6 +49,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 					setDataModel(prev => {return {...prev, [node]: queryTypes[node]}})
 			}
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [queryTypes, currentQuery.displayed_data])
 	const handleResizer = e => {
 		if (e.target && e.target.className && typeof e.target.className.indexOf === 'function') { 
@@ -166,31 +167,33 @@ const EditorInstance = observer(function EditorInstance({number})  {
 		setLoading(false)
 	}
 	const editQueryHandler = useCallback(handleSubject => {
-			if ('query' in handleSubject) {
-				const facts = getQueryFacts(schema, handleSubject.query)
-				if (facts) {
-					const { variableToType } = facts
-					if ((JSON.stringify(variableToType) !== JSON.stringify(_variableToType)) 
-						&& _variableToType!==null) {
-						_setVariableToType(variableToType)
-					}
-				}
-				let queryType = getQueryTypes(handleSubject.query)
-				if (JSON.stringify(queryType) !== JSON.stringify(queryTypes)) {
-					setQueryTypes(queryType)
+		if ('query' in handleSubject) {
+			const facts = getQueryFacts(schema, handleSubject.query)
+			if (facts) {
+				const { variableToType } = facts
+				if ((JSON.stringify(variableToType) !== JSON.stringify(_variableToType)) 
+					&& _variableToType!==null) {
+					_setVariableToType(variableToType)
 				}
 			}
-			if (user && query[index].account_id === user.id ) {
-				updateQuery(handleSubject, index)
-			} else {
-				updateQuery({...handleSubject, url: null}, index, null)
+			let queryType = getQueryTypes(handleSubject.query)
+			if (JSON.stringify(queryType) !== JSON.stringify(queryTypes)) {
+				setQueryTypes(queryType)
 			}
+		}
+		if (user && query[index].account_id === user.id ) {
+			updateQuery(handleSubject, index)
+		} else {
+			updateQuery({...handleSubject, url: null}, index, null)
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [user, schema, queryTypes, index])
 	useEffect(() => {
 		if (number === index && schema) {
 			let queryType = getQueryTypes(query[index].query)
 			setQueryTypes(queryType)
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [schema])
 	const setConfig = (config) => {
 		if (number === index) {
@@ -267,7 +270,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 								height={25}
 								width={25}
 							/> 
-						: 	<img src={play} />}
+						: 	<img src={play} alt="" />}
 				</button>
 				<div className="workspace__wrapper" 
 					 ref={workspace} 

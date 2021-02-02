@@ -118,7 +118,7 @@ function EditDialog({active}) {
 				</div>
 				{shared && <div className="input-group mb-3">
 					<input type="text" className="form-control query-link" 
-						value={queryUrl && (`${window.location.protocol}://${window.location.host}${url}/${queryUrl}`)||''} 
+						value={queryUrl && (`${window.location.protocol}://${window.location.host}${url}/${queryUrl}`||'')} 
 						readOnly 
 						placeholder="Query link" aria-label="Query link" aria-describedby="basic-addon2"
 					/>

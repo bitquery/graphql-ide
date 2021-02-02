@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect } from 'react'
 import { logout } from '../api/api'
 import { observer } from 'mobx-react-lite'
 import ModalStore from '../store/modalStore'

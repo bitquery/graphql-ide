@@ -54,7 +54,11 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor }) => {
 		<div className="topBarWrap">
 			<div className="topBar">
 				<div className="topBar__logo">
-					<img className="topBar__logo__img" src={logo}/>
+					<img 
+						className="topBar__logo__img" 
+						src={logo}
+						alt="logo"
+					/>
 				</div>
 				{!currentQuery.id && <button 
 					className="topBar__button" 

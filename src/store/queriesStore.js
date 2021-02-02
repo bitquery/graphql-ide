@@ -66,7 +66,7 @@ class Queries {
 	get queryParams() {
 		return {
 			id: this.currentQuery.id,
-			account_id: UserStore.user && UserStore.user.id || null,
+			account_id: UserStore.user && (UserStore.user.id || null),
 			query: this.currentQuery.query,
 			arguments: this.currentQuery.variables,
 			config: this.currentQuery.config,
