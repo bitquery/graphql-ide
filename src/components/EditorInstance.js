@@ -3,9 +3,9 @@ import '../App.scss';
 import { observer } from 'mobx-react-lite'
 import { toJS } from 'mobx'
 import useDebounce from '../utils/useDebounce'
-// import { vegaPlugins } from 'vega-widgets'
-import { vegaPlugins } from '../vega-widgets/index'
+import { vegaPlugins } from 'vega-widgets'
 import { graphPlugins } from '@bitquery/ide-graph'
+import { timeChartPlugins } from '@bitquery/ide-charts'
 import './bitqueditor/App.scss'
 import '@bitquery/ide-graph/dist/graphs.min.css'
 import getQueryFacts from '../utils/getQueryFacts'
@@ -53,7 +53,6 @@ const EditorInstance = observer(function EditorInstance({number})  {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [queryTypes, currentQuery.displayed_data])
 	const handleResizer = e => {
-		console.log(e.target.tagName === 'IMG')
 		if (e.target && e.target.tagName) { 
 			if (e.target.tagName === 'IMG') return 
 		}
@@ -244,7 +243,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [debouncedURL])
-	const plugins = useMemo(()=> [JsonPlugin, ...vegaPlugins, ...graphPlugins], [])
+	const plugins = useMemo(()=> [JsonPlugin, ...vegaPlugins, ...graphPlugins, ...timeChartPlugins], [])
 	let indexx = plugins.map(plugin => plugin.id).indexOf(currentQuery.widget_id)
 	const WidgetComponent = indexx>=0 ? plugins[indexx] : plugins[0]
 
