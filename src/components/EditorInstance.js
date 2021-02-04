@@ -3,7 +3,8 @@ import '../App.scss';
 import { observer } from 'mobx-react-lite'
 import { toJS } from 'mobx'
 import useDebounce from '../utils/useDebounce'
-import { vegaPlugins } from 'vega-widgets'
+// import { vegaPlugins } from 'vega-widgets'
+import { vegaPlugins } from '../vega-widgets/index'
 import { graphPlugins } from '@bitquery/ide-graph'
 import './bitqueditor/App.scss'
 import '@bitquery/ide-graph/dist/graphs.min.css'
@@ -52,8 +53,9 @@ const EditorInstance = observer(function EditorInstance({number})  {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [queryTypes, currentQuery.displayed_data])
 	const handleResizer = e => {
-		if (e.target && e.target.className && typeof e.target.className.indexOf === 'function') { 
-			if (e.target.className.indexOf('sizeChanger') !== 0) return 
+		console.log(e.target.tagName === 'IMG')
+		if (e.target && e.target.tagName) { 
+			if (e.target.tagName === 'IMG') return 
 		}
 		e.preventDefault()
 		const onMouseUp = () => {
@@ -70,6 +72,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 			workspace.current.setAttribute('style', `flex: ${flex} 1 0%;`)
 			let execButt = workspace.current.offsetWidth / overwrap.current.offsetWidth
 			executeButton.current.setAttribute('style', `left: calc(${execButt*100}% - 25px);`)
+			window.dispatchEvent(new Event('resize'))
 		}
 		overwrap.current.addEventListener('mousemove', onMouseMove);
     	overwrap.current.addEventListener('mouseup', onMouseUp);
@@ -257,7 +260,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 				queryEditor={queryEditor}
 				variablesEditor={variablesEditor}
 			/>
-			<div className="over-wrapper" onMouseDown={handleResizer} ref={overwrap}>
+			<div className="over-wrapper"  ref={overwrap}>
 				<button className="execute-button" 
 					disabled={loading} 
 					ref={executeButton} 
@@ -306,7 +309,10 @@ const EditorInstance = observer(function EditorInstance({number})  {
 					/> : <div className="widget" /> }
 				</div>
 				<div className="widget-display">
-					<div className="sizeChanger"/>
+					<div 
+						className="sizeChanger" 
+						onMouseDown={handleResizer}
+					/>
 					<WidgetComponent.renderer 
 						dataSource={dataSource} 
 						displayedData={toJS(currentQuery.displayed_data)}
