@@ -180,7 +180,8 @@ const EditorInstance = observer(function EditorInstance({number})  {
 			}
 			let queryType = getQueryTypes(handleSubject.query)
 			if (JSON.stringify(queryType) !== JSON.stringify(queryTypes)) {
-				setQueryTypes(queryType)
+				(typeof queryType === 'object' && Object.keys(queryType).length) 
+					&& setQueryTypes(queryType)
 			}
 		}
 		if (user && query[index].account_id === user.id ) {

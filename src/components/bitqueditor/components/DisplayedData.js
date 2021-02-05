@@ -30,6 +30,7 @@ const DisplayedData = observer(function DisplayedData({model, dataWidgets, setDa
 	}, [currentQuery.displayed_data, JSON.stringify(model)])
 	useEffect(() => {
 		if (!currentQuery.displayed_data && Object.keys(model).length && number===index) {
+			!Object.keys(model)[Object.keys(model).length-1].includes('.') &&
 			updateQuery({
 				displayed_data: Object.keys(model)[Object.keys(model).length-1],
 				widget_id: defaultWidget
