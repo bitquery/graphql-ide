@@ -17,6 +17,9 @@ const TabsComponent = observer(() => {
 	const [queryName, setQueryName] = useState({})
 
 	useEffect(() => {
+		currentQuery.url ? history.push(`${url}/${currentQuery.url}`) : history.push(`${url}`)
+	}, [currentQuery.url])
+	useEffect(() => {
 		async function updateTabs() {
 			if (match) {
 				const { data } = await getQuery(match.params.queryurl)
