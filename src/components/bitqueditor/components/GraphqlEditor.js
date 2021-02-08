@@ -9,6 +9,7 @@ const GraphqlEditor = observer(function GraphqlEditor({
 	query,
 	variables,
 	variableToType,
+	onRunQuery,
 	onEditQuery,
 	onEditVariables,
 	number
@@ -22,6 +23,7 @@ const GraphqlEditor = observer(function GraphqlEditor({
 	return (
 		<div className="editor__wrapper" >
 			<QueryEditor 
+				onRunQuery={onRunQuery}
 				number={number}
 				ref={ref1}
 				onEdit={onEditQuery}

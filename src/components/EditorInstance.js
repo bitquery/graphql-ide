@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react'
 import '../App.scss';
 import { observer } from 'mobx-react-lite'
 import { toJS } from 'mobx'
+import ReactTooltip from 'react-tooltip'
 import useDebounce from '../utils/useDebounce'
 import { vegaPlugins } from 'vega-widgets'
 import { graphPlugins } from '@bitquery/ide-graph'
@@ -262,7 +263,16 @@ const EditorInstance = observer(function EditorInstance({number})  {
 				variablesEditor={variablesEditor}
 			/>
 			<div className="over-wrapper"  ref={overwrap}>
-				<button className="execute-button" 
+				<ReactTooltip 
+					place="top"
+					border={false}
+					borderColor="#fff"
+					backgroundColor="#5f5f5f"
+					arrowColor="transparent"
+					delayShow={750}
+				/>
+				<button className="execute-button"
+					data-tip='Execute query (Ctrl-Enter)' 
 					disabled={loading} 
 					ref={executeButton} 
 					onClick={getResult}
@@ -286,6 +296,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 						number={number}
 						variables={query[number].variables}
 						variableToType={_variableToType}
+						onRunQuery={getResult}
 						onEditQuery={editQueryHandler}
 						onEditVariables={editQueryHandler}
 						ref={{

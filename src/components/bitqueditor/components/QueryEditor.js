@@ -117,7 +117,16 @@ export default class QueryEditor extends Component {
 			jump: {
 				schema: this.props.schema
 			},
-			gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter']
+			gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter'],
+			extraKeys: {
+				'Ctrl-Space': () =>
+					editor.showHint({ completeSingle: true, container: this._node }),
+				'Ctrl-Enter': () => {
+					if (this.props.onRunQuery) {
+						this.props.onRunQuery()
+					}
+				},
+			}
 		}))
 		if (editor) {
 			this.calculateWrapperHeight()
