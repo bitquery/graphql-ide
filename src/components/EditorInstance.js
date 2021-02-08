@@ -21,6 +21,7 @@ import JsonPlugin from './bitqueditor/components/JsonWidget'
 import ToolbarComponent from './bitqueditor/components/ToolbarComponent'
 import { TabsStore, QueriesStore, UserStore } from '../store/queriesStore'
 import WidgetEditorControls from './WidgetEditorControls'
+import QueryErrorIndicator from './QueryErrorIndicator'
 import { getValueFrom, getLeft, getTop } from '../utils/common'
 import "react-loader-spinner/dist/loader/css/react-spinner-loader.css"
 import Loader from "react-loader-spinner"
@@ -308,17 +309,23 @@ const EditorInstance = observer(function EditorInstance({number})  {
 						setConfig={setConfig} 
 					/> : <div className="widget" /> }
 				</div>
-				<div className="widget-display">
+				<div className="widget-display widget-display-wrapper">
 					<div 
 						className="sizeChanger" 
 						onMouseDown={handleResizer}
 					/>
-					<WidgetComponent.renderer 
-						dataSource={dataSource} 
-						displayedData={toJS(currentQuery.displayed_data)}
-						config={toJS(query[index].config)} 
-						el={currentTab === tabs[number].id ? `asd${currentTab}` : ''} 
-					/>
+					<div className="widget-display-container">
+						<QueryErrorIndicator 
+							error={dataSource.error}
+							removeError={setDataSource}
+						/>
+						<WidgetComponent.renderer 
+							dataSource={dataSource} 
+							displayedData={toJS(currentQuery.displayed_data)}
+							config={toJS(query[index].config)} 
+							el={currentTab === tabs[number].id ? `asd${currentTab}` : ''} 
+						/>
+					</div>
 				</div>
 			</div>
 		</div>

@@ -45,11 +45,10 @@ class JsonWidget extends Component {
 	}
 
 	formatResult() {
-		return this.props.dataSource.error 
-			? `${JSON.stringify({[this.props.dataSource.displayed_data]: this.props.dataSource.values}, null, 2)},
-			${JSON.stringify(this.props.dataSource.error, null, 2)}`
-			: JSON.stringify({[this.props.dataSource.displayed_data]: this.props.dataSource.values}, null, 2)
-	}
+		return JSON.stringify({
+			[this.props.dataSource.displayed_data]: this.props.dataSource.values}, 
+			null, 2
+		)}
 
 	render() {
 		return (
