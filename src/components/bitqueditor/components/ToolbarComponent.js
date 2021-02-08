@@ -60,7 +60,7 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor }) => {
 						alt="logo"
 					/>
 				</div>
-				{!currentQuery.id && <button 
+				{(!currentQuery.id || !currentQuery.saved) && <button 
 					className="topBar__button" 
 					onClick={saveHandle}
 					disabled={currentQuery.saved}
