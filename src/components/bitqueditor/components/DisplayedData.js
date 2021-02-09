@@ -33,7 +33,8 @@ const DisplayedData = observer(function DisplayedData({model, dataWidgets, setDa
 			!Object.keys(model)[Object.keys(model).length-1].includes('.') &&
 			updateQuery({
 				displayed_data: Object.keys(model)[Object.keys(model).length-1],
-				widget_id: defaultWidget
+				widget_id: defaultWidget,
+				saved: true
 			}, index)
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
