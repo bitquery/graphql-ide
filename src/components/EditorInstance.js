@@ -170,6 +170,13 @@ const EditorInstance = observer(function EditorInstance({number})  {
 		}
 		setLoading(false)
 	}
+	useEffect(() => {
+		(!dataSource.values && 
+		currentQuery.query &&
+		number === index &&
+		!loading &&
+		schema) && getResult()
+	}, [tabs.length, loading, schema])
 	const editQueryHandler = useCallback(handleSubject => {
 		if ('query' in handleSubject) {
 			const facts = getQueryFacts(schema, handleSubject.query)
