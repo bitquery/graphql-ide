@@ -38,13 +38,13 @@ const EditorInstance = observer(function EditorInstance({number})  {
 	const [queryTypes, setQueryTypes] = useState('')
 	const [dataSource, setDataSource] = useState({})
 	const [dataModel, setDataModel] = useState('')
+	const [accordance, setAccordance] = useState(true)
 	const debouncedURL = useDebounce(query[index].endpoint_url, 500)
 	const workspace = useRef(null)
 	const overwrap = useRef(null)
 	const executeButton = useRef(null)
 	const queryEditor = useRef(null)
 	const variablesEditor = useRef(null)
-	const accordance = useRef()
 	useEffect(() => {
 		dataModel && setDataModel('')
 		if (queryTypes && currentQuery.displayed_data) {
@@ -151,7 +151,6 @@ const EditorInstance = observer(function EditorInstance({number})  {
 		return typesMap
 	}
 	const getResult = async () => {
-		accordance.current = true
 		setLoading(true)
 		const data = await fetcher({query: query[index].query, variables: query[index].variables})
 		data.json().then(json => {
@@ -171,14 +170,15 @@ const EditorInstance = observer(function EditorInstance({number})  {
 			setQueryTypes(queryType)
 		}
 		setLoading(false)
+		setAccordance(true)
 	}
 	useEffect(() => {
 		(!dataSource.values && 
 		currentQuery.query &&
 		currentQuery.saved &&
 		number === index &&
-		!loading) && getResult()
-	}, [tabs.length, loading])
+		schema) && getResult()
+	}, [tabs.length, schema])
 	const editQueryHandler = useCallback(handleSubject => {
 		if ('query' in handleSubject) {
 			const facts = getQueryFacts(schema, handleSubject.query)
@@ -200,13 +200,13 @@ const EditorInstance = observer(function EditorInstance({number})  {
 		} else {
 			updateQuery({...handleSubject, url: null}, index, null)
 		}
+		setAccordance(false)
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [user, schema, queryTypes, index])
 	useEffect(() => {
 		if (number === index && schema) {
 			let queryType = getQueryTypes(query[index].query)
 			setQueryTypes(queryType)
-			accordance.current = !queryTypes && true
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [schema])
@@ -256,9 +256,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [debouncedURL])
-	useEffect(() => {
-		accordance.current = false
-	}, [queryTypes])
+
 	const plugins = useMemo(()=> [JsonPlugin, ...vegaPlugins, ...graphPlugins, ...timeChartPlugins], [])
 	let indexx = plugins.map(plugin => plugin.id).indexOf(currentQuery.widget_id)
 	const WidgetComponent = indexx>=0 ? plugins[indexx] : plugins[0]
@@ -297,7 +295,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 								height={25}
 								width={25}
 							/> 
-						: 	<PlayIcon fill={accordance.current ? '#eee' : '#14ff41'} />}
+						: 	<PlayIcon fill={accordance ? '#eee' : '#14ff41'} />}
 				</button>
 				<div className="workspace__wrapper" 
 					 ref={workspace} 
