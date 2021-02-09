@@ -177,9 +177,8 @@ const EditorInstance = observer(function EditorInstance({number})  {
 		currentQuery.query &&
 		currentQuery.saved &&
 		number === index &&
-		!loading &&
-		schema) && getResult()
-	}, [tabs.length, loading, schema])
+		!loading) && getResult()
+	}, [tabs.length, loading])
 	const editQueryHandler = useCallback(handleSubject => {
 		if ('query' in handleSubject) {
 			const facts = getQueryFacts(schema, handleSubject.query)
