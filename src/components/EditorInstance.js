@@ -175,6 +175,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 	useEffect(() => {
 		(!dataSource.values && 
 		currentQuery.query &&
+		currentQuery.saved &&
 		number === index &&
 		!loading &&
 		schema) && getResult()
@@ -297,7 +298,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 								height={25}
 								width={25}
 							/> 
-						: 	<PlayIcon fill={accordance.current ? '#eee' : '#38a22b'} />}
+						: 	<PlayIcon fill={accordance.current ? '#eee' : '#14ff41'} />}
 				</button>
 				<div className="workspace__wrapper" 
 					 ref={workspace} 
