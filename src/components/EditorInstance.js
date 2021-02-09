@@ -150,9 +150,9 @@ const EditorInstance = observer(function EditorInstance({number})  {
 		} catch (e) {}
 		return typesMap
 	}
-	const getResult = useCallback (() => {
+	const getResult = async () => {
 		setLoading(true)
-		fetcher({query: query[index].query, variables: query[index].variables}).then(data =>
+		const data = await fetcher({query: query[index].query, variables: query[index].variables})
 		data.json().then(json => {
 			setDataSource({
 				execute: getResult,
@@ -164,14 +164,14 @@ const EditorInstance = observer(function EditorInstance({number})  {
 				variables: toJS(query[index].variables)
 			})
 			if (!('data' in json)) updateQuery({widget_id: 'json.widget'}, index)
-			setLoading(false)
-		}))
+		})
 		let queryType = getQueryTypes(query[index].query)
 		if (JSON.stringify(queryType) !== JSON.stringify(queryTypes)) {
 			setQueryTypes(queryType)
 		}
+		setLoading(false)
 		setAccordance(true)
-	}, [index, JSON.stringify(currentQuery)])
+	}
 	useEffect(() => {
 		(!dataSource.values && 
 		currentQuery.query &&
