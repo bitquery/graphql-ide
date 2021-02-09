@@ -4,6 +4,7 @@ import { observer } from 'mobx-react-lite'
 import { toJS } from 'mobx'
 import ReactTooltip from 'react-tooltip'
 import useDebounce from '../utils/useDebounce'
+import PlayIcon from './PlayIcon.js'
 import { vegaPlugins } from 'vega-widgets'
 import { graphPlugins } from '@bitquery/ide-graph'
 import { timeChartPlugins } from '@bitquery/ide-charts'
@@ -26,7 +27,6 @@ import QueryErrorIndicator from './QueryErrorIndicator'
 import { getValueFrom, getLeft, getTop } from '../utils/common'
 import "react-loader-spinner/dist/loader/css/react-spinner-loader.css"
 import Loader from "react-loader-spinner"
-import play from '../assets/images/play.svg'
 
 const EditorInstance = observer(function EditorInstance({number})  {
 	const { tabs, currentTab, index } = TabsStore
@@ -44,6 +44,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 	const executeButton = useRef(null)
 	const queryEditor = useRef(null)
 	const variablesEditor = useRef(null)
+	const accordance = useRef()
 	useEffect(() => {
 		dataModel && setDataModel('')
 		if (queryTypes && currentQuery.displayed_data) {
@@ -150,6 +151,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 		return typesMap
 	}
 	const getResult = async () => {
+		accordance.current = true
 		setLoading(true)
 		const data = await fetcher({query: query[index].query, variables: query[index].variables})
 		data.json().then(json => {
@@ -204,6 +206,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 		if (number === index && schema) {
 			let queryType = getQueryTypes(query[index].query)
 			setQueryTypes(queryType)
+			accordance.current = !queryTypes && true
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [schema])
@@ -253,6 +256,9 @@ const EditorInstance = observer(function EditorInstance({number})  {
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [debouncedURL])
+	useEffect(() => {
+		accordance.current = false
+	}, [queryTypes])
 	const plugins = useMemo(()=> [JsonPlugin, ...vegaPlugins, ...graphPlugins, ...timeChartPlugins], [])
 	let indexx = plugins.map(plugin => plugin.id).indexOf(currentQuery.widget_id)
 	const WidgetComponent = indexx>=0 ? plugins[indexx] : plugins[0]
@@ -291,7 +297,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 								height={25}
 								width={25}
 							/> 
-						: 	<img src={play} alt="" />}
+						: 	<PlayIcon fill={accordance.current ? '#eee' : '#38a22b'} />}
 				</button>
 				<div className="workspace__wrapper" 
 					 ref={workspace} 
