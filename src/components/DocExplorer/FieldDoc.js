@@ -3,7 +3,6 @@ import Argument from './Argument';
 import Directive from './Directive';
 import MarkdownContent from './MarkdownContent';
 import TypeLink from './TypeLink';
-import { GraphQLArgument, DirectiveNode } from 'graphql';
 
 export default function FieldDoc({ field, onClickType }) {
   let argsDef;

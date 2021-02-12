@@ -1,5 +1,4 @@
 import React from 'react';
-import { DirectiveNode } from 'graphql';
 
 export default function Directive({ directive }) {
   return (

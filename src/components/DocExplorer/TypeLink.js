@@ -34,7 +34,7 @@ function renderType(type, onClick) {
         event.preventDefault();
         onClick(type, event);
       }}
-      href="#">
+      href="# ">
       {type?.name}
     </a>
   );

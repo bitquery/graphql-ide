@@ -1,5 +1,4 @@
-import React, { ReactNode } from 'react';
-import { GraphQLSchema, GraphQLNamedType } from 'graphql';
+import React from 'react';
 
 import Argument from './Argument';
 import TypeLink from './TypeLink';
@@ -75,6 +74,7 @@ export default class SearchResults extends React.Component {
                 '.',
               ]}
               <a
+                href="# "
                 className="field-name"
                 onClick={event => onClickField(field, type, event)}>
                 {field.name}

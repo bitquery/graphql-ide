@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
-import '../App.scss';
 import { observer } from 'mobx-react-lite'
 import { toJS } from 'mobx'
 import ReactTooltip from 'react-tooltip'
@@ -188,6 +187,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 		currentQuery.saved &&
 		number === index &&
 		schema) && getResult()
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [tabs.length, schema])
 	const editQueryHandler = useCallback(handleSubject => {
 		if ('query' in handleSubject) {

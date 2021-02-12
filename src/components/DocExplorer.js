@@ -1,5 +1,5 @@
 import React from 'react';
-import { GraphQLSchema, isType, GraphQLNamedType } from 'graphql';
+import { isType } from 'graphql';
 
 import FieldDoc from './DocExplorer/FieldDoc';
 import SchemaDoc from './DocExplorer/SchemaDoc';

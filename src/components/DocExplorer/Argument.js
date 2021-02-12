@@ -1,5 +1,4 @@
 import React from 'react';
-import { GraphQLArgument } from 'graphql';
 import TypeLink from './TypeLink';
 import DefaultValue from './DefaultValue';
 

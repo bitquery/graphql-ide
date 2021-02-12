@@ -1,12 +1,9 @@
-import React, { ReactNode } from 'react';
+import React from 'react';
 import {
-  GraphQLSchema,
   GraphQLObjectType,
   GraphQLInterfaceType,
   GraphQLUnionType,
   GraphQLEnumType,
-  GraphQLType,
-  GraphQLEnumValue,
 } from 'graphql';
 
 import Argument from './Argument';
@@ -174,6 +171,7 @@ function Field({ type, field, onClickType, onClickField }) {
     <div className="doc-category-item">
       <a
         className="field-name"
+        href="# "
         onClick={event => onClickField(field, type, event)}>
         {field.name}
       </a>

@@ -18,6 +18,7 @@ const TabsComponent = observer(() => {
 
 	useEffect(() => {
 		currentQuery.url ? history.push(`${url}/${currentQuery.url}`) : history.push(`${url}`)
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [currentQuery.url])
 	useEffect(() => {
 		async function updateTabs() {
