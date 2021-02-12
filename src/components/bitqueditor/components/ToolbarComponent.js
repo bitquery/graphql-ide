@@ -7,7 +7,7 @@ import { print } from 'graphql'
 import logo from '../../../assets/images/bitquery_logo_w.png'
 import React from 'react'
 
-const ToolbarComponent = observer(({ queryEditor, variablesEditor }) => {
+const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOpen, toggleDocExplorer }) => {
 	const { currentQuery, queryParams, saveQuery, updateQuery, queryNumber } = QueriesStore
 	const { user }  = UserStore
 	const { toggleModal, toggleEditDialog } = modalStore
@@ -78,6 +78,26 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor }) => {
 					value={currentQuery.endpoint_url}
 					onChange={handleInputURLChange}
 				/>
+				{!docExplorerOpen ? <button
+					className="docExplorerShow"
+					onClick={() => toggleDocExplorer(prev => !prev)}
+					aria-label="Open Documentation Explorer">
+					{'Docs'}
+				</button> : 
+				<div className="doc-explorer-title-bar">
+					<div className="doc-explorer-title">
+						Documentation Explorer
+					</div>
+					<div className="doc-explorer-rhs">
+						<button 
+							class="docExplorerHide" 
+							aria-label="Close Documentation Explorer"
+							onClick={() => toggleDocExplorer(prev => !prev)}
+						>
+							{'\u2715'}
+						</button>
+					</div>
+				</div>}
 			</div>
 		</div>
 	)

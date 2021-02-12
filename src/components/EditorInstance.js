@@ -27,12 +27,14 @@ import QueryErrorIndicator from './QueryErrorIndicator'
 import { getValueFrom, getLeft, getTop } from '../utils/common'
 import "react-loader-spinner/dist/loader/css/react-spinner-loader.css"
 import Loader from "react-loader-spinner"
+import { DocExplorer } from './DocExplorer'
 
 const EditorInstance = observer(function EditorInstance({number})  {
 	const { tabs, currentTab, index } = TabsStore
 	const { user }  = UserStore
 	const { query, updateQuery, showGallery, currentQuery } = QueriesStore
 	const [schema, setSchema] = useState(null)
+	const [docExplorerOpen, toggleDocExplorer] = useState(false)
 	const [_variableToType, _setVariableToType] = useState(null)
 	const [loading, setLoading] = useState(false)
 	const [queryTypes, setQueryTypes] = useState('')
@@ -272,6 +274,8 @@ const EditorInstance = observer(function EditorInstance({number})  {
 			<ToolbarComponent 
 				queryEditor={queryEditor}
 				variablesEditor={variablesEditor}
+				docExplorerOpen={docExplorerOpen}
+				toggleDocExplorer={toggleDocExplorer}
 			/>
 			<div className="over-wrapper"  ref={overwrap}>
 				<ReactTooltip 
@@ -335,7 +339,9 @@ const EditorInstance = observer(function EditorInstance({number})  {
 					<div 
 						className="sizeChanger" 
 						onMouseDown={handleResizer}
-					/>
+					>
+						
+					</div>
 					<div className="widget-display-container">
 						<QueryErrorIndicator 
 							error={dataSource.error}
@@ -349,6 +355,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 						/>
 					</div>
 				</div>
+				{docExplorerOpen && <DocExplorer schema={schema} />}
 			</div>
 		</div>
 	)

@@ -215,7 +215,7 @@ $top-bar-height: 44px;
 }
 .sizeChanger {
   border: 1px solid #f3f3f3;
-	cursor: col-resize;
+  cursor: col-resize;
 }
 .execute-button {
   position: absolute;
@@ -226,6 +226,7 @@ $top-bar-height: 44px;
   font-size: 12px;
   z-index: 10;
   top:50%;
+  right: 0;
   left: calc(50% - 25px);
   border: none;
   outline: none !important;
