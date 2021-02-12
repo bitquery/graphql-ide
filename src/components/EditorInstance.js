@@ -27,6 +27,8 @@ import { getValueFrom, getLeft, getTop } from '../utils/common'
 import "react-loader-spinner/dist/loader/css/react-spinner-loader.css"
 import Loader from "react-loader-spinner"
 import { DocExplorer } from './DocExplorer'
+import { FullScreen, useFullScreenHandle } from "react-full-screen"
+import FullscreenIcon from './FullscreenIcon'
 
 const EditorInstance = observer(function EditorInstance({number})  {
 	const { tabs, currentTab, index } = TabsStore
@@ -266,6 +268,8 @@ const EditorInstance = observer(function EditorInstance({number})  {
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [debouncedURL])
+	
+	const fullscreenHandle = useFullScreenHandle()
 
 	const plugins = useMemo(()=> [JsonPlugin, ...vegaPlugins, ...graphPlugins, ...timeChartPlugins], [])
 	let indexx = plugins.map(plugin => plugin.id).indexOf(currentQuery.widget_id)
@@ -356,12 +360,20 @@ const EditorInstance = observer(function EditorInstance({number})  {
 							error={dataSource.error}
 							removeError={setDataSource}
 						/>
-						<WidgetComponent.renderer 
-							dataSource={dataSource} 
-							displayedData={toJS(currentQuery.displayed_data)}
-							config={toJS(query[index].config)} 
-							el={currentTab === tabs[number].id ? `asd${currentTab}` : ''} 
-						/>
+						<FullScreen className="widget-display" handle={fullscreenHandle}>
+							<WidgetComponent.renderer 
+								dataSource={dataSource} 
+								displayedData={toJS(currentQuery.displayed_data)}
+								config={toJS(query[index].config)} 
+								el={currentTab === tabs[number].id ? `asd${currentTab}` : ''} 
+							>
+								<FullscreenIcon onClick={
+									fullscreenHandle.active 
+									? fullscreenHandle.exit 
+									: fullscreenHandle.enter} 
+								/>
+							</WidgetComponent.renderer>
+						</FullScreen>
 					</div>
 				</div>
 				{docExplorerOpen && <DocExplorer schema={schema} />}
