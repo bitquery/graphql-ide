@@ -47,6 +47,12 @@ const EditorInstance = observer(function EditorInstance({number})  {
 	const executeButton = useRef(null)
 	const queryEditor = useRef(null)
 	const variablesEditor = useRef(null)
+	const widgetDisplay = useRef(null)
+	const setupExecButtonPosition = () => {
+		let execButt = workspace.current.offsetWidth / overwrap.current.offsetWidth
+		executeButton.current.setAttribute('style', `left: calc(${execButt*100}% - 25px);`)
+		window.dispatchEvent(new Event('resize'))
+	}
 	useEffect(() => {
 		dataModel && setDataModel('')
 		if (queryTypes && currentQuery.displayed_data) {
@@ -71,16 +77,18 @@ const EditorInstance = observer(function EditorInstance({number})  {
 				return onMouseUp()
 			}
 			const leftSize = e.clientX - getLeft(overwrap.current) 
-			const rightSize = overwrap.current.clientWidth - leftSize
+			const editorWidth = workspace.current.clientWidth + widgetDisplay.current.clientWidth
+			const rightSize = editorWidth - leftSize
 			let flex = leftSize / rightSize
-			workspace.current.setAttribute('style', `flex: ${flex} 1 0%;`)
-			let execButt = workspace.current.offsetWidth / overwrap.current.offsetWidth
-			executeButton.current.setAttribute('style', `left: calc(${execButt*100}% - 25px);`)
-			window.dispatchEvent(new Event('resize'))
+			flex >= 0 && workspace.current.setAttribute('style', `flex: ${flex} 1 0%;`)
+			setupExecButtonPosition()
 		}
 		overwrap.current.addEventListener('mousemove', onMouseMove);
     	overwrap.current.addEventListener('mouseup', onMouseUp);
 	}
+	useEffect(() => {
+		setupExecButtonPosition()
+	}, [docExplorerOpen])
 	const workspaceResizer = e => {
 		if (e.target && e.target.className && typeof e.target.className.indexOf === 'function') { 
 			if (e.target.className.indexOf('workspace__sizechanger') !== 0) return 
@@ -302,8 +310,8 @@ const EditorInstance = observer(function EditorInstance({number})  {
 						: 	<PlayIcon fill={accordance ? '#eee' : '#14ff41'} />}
 				</button>
 				<div className="workspace__wrapper" 
-					 ref={workspace} 
-					 onMouseDown={workspaceResizer}
+						ref={workspace} 
+						onMouseDown={workspaceResizer}
 				>
 					<GraphqlEditor 
 						schema={schema}
@@ -335,7 +343,8 @@ const EditorInstance = observer(function EditorInstance({number})  {
 						setConfig={setConfig} 
 					/> : <div className="widget" /> }
 				</div>
-				<div className="widget-display widget-display-wrapper">
+				<div className="widget-display widget-display-wrapper" 
+					ref={widgetDisplay}>
 					<div 
 						className="sizeChanger" 
 						onMouseDown={handleResizer}

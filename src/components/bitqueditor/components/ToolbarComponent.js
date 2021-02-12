@@ -78,7 +78,8 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 					value={currentQuery.endpoint_url}
 					onChange={handleInputURLChange}
 				/>
-				{!docExplorerOpen ? <button
+				{!docExplorerOpen ? 
+				<button
 					className="docExplorerShow"
 					onClick={() => toggleDocExplorer(prev => !prev)}
 					aria-label="Open Documentation Explorer">
@@ -90,7 +91,7 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 					</div>
 					<div className="doc-explorer-rhs">
 						<button 
-							class="docExplorerHide" 
+							className="docExplorerHide" 
 							aria-label="Close Documentation Explorer"
 							onClick={() => toggleDocExplorer(prev => !prev)}
 						>
