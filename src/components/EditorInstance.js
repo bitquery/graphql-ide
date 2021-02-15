@@ -161,28 +161,29 @@ const EditorInstance = observer(function EditorInstance({number})  {
 		} catch (e) {}
 		return typesMap
 	}
-	const getResult = async () => {
+	const getResult = useCallback(() => {
 		setLoading(true)
-		const data = await fetcher({query: query[index].query, variables: query[index].variables})
-		data.json().then(json => {
-			setDataSource({
-				execute: getResult,
-				data: ('data' in json) ? json.data : null,
-				displayed_data: currentQuery.displayed_data || '',
-				values: ('data' in json) ? (currentQuery.displayed_data) ? getValueFrom(json.data, currentQuery.displayed_data) : json.data : null,
-				error: ('errors' in json) ? json.errors : null,
-				query: toJS(query[index].query), 
-				variables: toJS(query[index].variables)
+		fetcher({query: currentQuery.query, variables: currentQuery.variables}).then(data => {
+			data.json().then(json => {
+				setDataSource({
+					execute: getResult,
+					data: ('data' in json) ? json.data : null,
+					displayed_data: currentQuery.displayed_data || '',
+					values: ('data' in json) ? (currentQuery.displayed_data) ? getValueFrom(json.data, currentQuery.displayed_data) : json.data : null,
+					error: ('errors' in json) ? json.errors : null,
+					query: toJS(currentQuery.query), 
+					variables: toJS(currentQuery.variables)
+				})
+				if (!('data' in json)) updateQuery({widget_id: 'json.widget'}, index)
 			})
-			if (!('data' in json)) updateQuery({widget_id: 'json.widget'}, index)
+			let queryType = getQueryTypes(currentQuery.query)
+			if (JSON.stringify(queryType) !== JSON.stringify(queryTypes)) {
+				setQueryTypes(queryType)
+			}
+			setLoading(false)
+			setAccordance(true)
 		})
-		let queryType = getQueryTypes(query[index].query)
-		if (JSON.stringify(queryType) !== JSON.stringify(queryTypes)) {
-			setQueryTypes(queryType)
-		}
-		setLoading(false)
-		setAccordance(true)
-	}
+	}, [currentQuery, schema])
 	useEffect(() => {
 		(!dataSource.values && 
 		currentQuery.query &&
@@ -231,7 +232,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 	}
 	const fetcher = (graphQLParams) => {
 		return fetch(
-			query[index].endpoint_url,
+			currentQuery.endpoint_url,
 			{
 				method: 'POST',
 				headers: {
@@ -355,26 +356,24 @@ const EditorInstance = observer(function EditorInstance({number})  {
 					>
 						
 					</div>
-					<div className="widget-display-container">
-						<QueryErrorIndicator 
-							error={dataSource.error}
-							removeError={setDataSource}
-						/>
-						<FullScreen className="widget-display" handle={fullscreenHandle}>
-							<WidgetComponent.renderer 
-								dataSource={dataSource} 
-								displayedData={toJS(currentQuery.displayed_data)}
-								config={toJS(query[index].config)} 
-								el={currentTab === tabs[number].id ? `asd${currentTab}` : ''} 
-							>
-								<FullscreenIcon onClick={
-									fullscreenHandle.active 
-									? fullscreenHandle.exit 
-									: fullscreenHandle.enter} 
-								/>
-							</WidgetComponent.renderer>
-						</FullScreen>
-					</div>
+					<QueryErrorIndicator 
+						error={dataSource.error}
+						removeError={setDataSource}
+					/>
+					<FullScreen className="widget-display" handle={fullscreenHandle}>
+						<WidgetComponent.renderer 
+							dataSource={dataSource} 
+							displayedData={toJS(currentQuery.displayed_data)}
+							config={toJS(query[index].config)} 
+							el={currentTab === tabs[number].id ? `asd${currentTab}` : ''} 
+						>
+							<FullscreenIcon onClick={
+								fullscreenHandle.active 
+								? fullscreenHandle.exit 
+								: fullscreenHandle.enter} 
+							/>
+						</WidgetComponent.renderer>
+					</FullScreen>
 				</div>
 				{docExplorerOpen && <DocExplorer schema={schema} />}
 			</div>
