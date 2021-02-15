@@ -46,7 +46,7 @@ const GalleryComponent = observer(function GalleryComponent() {
 	}, [user, queryJustSaved])
 
 	return (
-		<div className={'gallery flex flex-col ' + (showGallery && 'active')}>
+		<div className={'gallery flex flex-col active'}>
 			{!showGallery &&<i className="open fas fa-angle-double-right" onClick={toggleGallery} />}
 			<div className="gallery__header flex flex-col">
 				{!user && <p className="gallery__header__title">Queries</p>}

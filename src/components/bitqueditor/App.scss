@@ -334,3 +334,19 @@ div.CodeMirror span.CodeMirror-matchingbracket {
   left: 20px;
   cursor: pointer;
 }
+.docExplorerWrap {
+  .doc-explorer-contents {
+    display: contents;
+    input {
+      width: auto;
+    }
+    .graphiql-operation-title-bar {
+      span > input {
+        width: auto;
+      }
+      .toolbar-button {
+        display: none;
+      }
+    }
+  }
+}

@@ -149,8 +149,8 @@
 		}
 		&.active {
 			flex-basis: 15%;
-			min-width: 220px;
-			max-width: 220px;
+			min-width: 300px;
+			max-width: 300px;
 			.gallery__header {
 				display: flex;
 			}
@@ -160,7 +160,7 @@
 .graphiql__wrapper {
 	display: none;
 	flex: 1 1 auto;
-	max-width: calc(100% - 220px);
+	max-width: calc(100% - 300px);
 	&_active {
 		display: flex;
 		flex-direction: column;

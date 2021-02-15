@@ -2,7 +2,6 @@ import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react'
 import { observer } from 'mobx-react-lite'
 import { toJS } from 'mobx'
 import ReactTooltip from 'react-tooltip'
-import useDebounce from '../utils/useDebounce'
 import PlayIcon from './PlayIcon.js'
 import { vegaPlugins } from 'vega-widgets'
 import { graphPlugins } from '@bitquery/ide-graph'
@@ -12,8 +11,6 @@ import '@bitquery/ide-graph/dist/graphs.min.css'
 import getQueryFacts from '../utils/getQueryFacts'
 import GraphqlEditor from './bitqueditor/components/GraphqlEditor'
 import { 
-	getIntrospectionQuery, 
-	buildClientSchema, 
 	visitWithTypeInfo,
 	TypeInfo} from 'graphql'
 import { visit } from 'graphql/language/visitor'
@@ -30,19 +27,17 @@ import { DocExplorer } from './DocExplorer'
 import { FullScreen, useFullScreenHandle } from "react-full-screen"
 import FullscreenIcon from './FullscreenIcon'
 
-const EditorInstance = observer(function EditorInstance({number})  {
+
+const EditorInstance = observer(function EditorInstance({number, schema, loading, setLoading})  {
 	const { tabs, currentTab, index } = TabsStore
 	const { user }  = UserStore
 	const { query, updateQuery, showGallery, currentQuery } = QueriesStore
-	const [schema, setSchema] = useState(null)
 	const [docExplorerOpen, toggleDocExplorer] = useState(false)
 	const [_variableToType, _setVariableToType] = useState(null)
-	const [loading, setLoading] = useState(false)
 	const [queryTypes, setQueryTypes] = useState('')
 	const [dataSource, setDataSource] = useState({})
 	const [dataModel, setDataModel] = useState('')
 	const [accordance, setAccordance] = useState(true)
-	const debouncedURL = useDebounce(query[index].endpoint_url, 500)
 	const workspace = useRef(null)
 	const overwrap = useRef(null)
 	const executeButton = useRef(null)
@@ -81,7 +76,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 			const editorWidth = workspace.current.clientWidth + widgetDisplay.current.clientWidth
 			const rightSize = editorWidth - leftSize
 			let flex = leftSize / rightSize
-			flex >= 0 && workspace.current.setAttribute('style', `flex: ${flex} 1 0%;`)
+			if (flex >= 0 && isFinite(flex)) workspace.current.setAttribute('style', `flex: ${flex} 1 0%;`)
 			setupExecButtonPosition()
 		}
 		overwrap.current.addEventListener('mousemove', onMouseMove);
@@ -183,7 +178,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 			setLoading(false)
 			setAccordance(true)
 		})
-	}, [currentQuery, schema])
+	}, [currentQuery.query, currentQuery.variables, schema])
 	useEffect(() => {
 		(!dataSource.values && 
 		currentQuery.query &&
@@ -244,31 +239,6 @@ const EditorInstance = observer(function EditorInstance({number})  {
 			},
 		)
 	}
-	useEffect(() => {
-		if (number === index) {
-			const fetchSchema = () => {
-				setLoading(true)
-				let introspectionQuery = getIntrospectionQuery()
-				let staticName = 'IntrospectionQuery'
-				let introspectionQueryName = staticName
-				let graphQLParams = {
-					query: introspectionQuery,
-					operationName: introspectionQueryName,
-				}
-				fetcher(graphQLParams)
-				.then(data => data.json())	
-				.then(result => {
-					if (typeof result !== 'string' && 'data' in result) {
-						let schema = buildClientSchema(result.data)
-						setSchema(schema)
-					}
-					setLoading(false)
-				}).catch(e => {})
-			}
-			fetchSchema() 
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [debouncedURL])
 	
 	const fullscreenHandle = useFullScreenHandle()
 
@@ -299,6 +269,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 					arrowColor="transparent"
 					delayShow={750}
 				/>
+				
 				<button className="execute-button"
 					data-tip='Execute query (Ctrl-Enter)' 
 					disabled={loading} 
