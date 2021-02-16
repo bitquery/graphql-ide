@@ -32,6 +32,7 @@ class Queries {
 	currentVariables = ''
 	showGallery = true
 	queryJustSaved = false
+	isMobile = window.innerWidth <= 768
 	currentQuery = {
 		query: '',
 		variables: '{}',
@@ -47,6 +48,7 @@ class Queries {
 			queryJustSaved: observable,
 			currentQuery: observable,
 			showGallery: observable,
+			isMobile: observable,
 			query: observable,
 			queryParams: computed,
 			queryNumber: computed,
@@ -57,6 +59,7 @@ class Queries {
 			removeQuery: action,
 			saveToggle: action,
 			saveQuery: action,
+			setMobile: action,
 			setQuery: action
 		})
 	}
@@ -78,7 +81,7 @@ class Queries {
 			endpoint_url: this.currentQuery.endpoint_url && this.currentQuery.endpoint_url
 		}
 	}
-
+	setMobile = (mobile) => this.isMobile = mobile
 	setQuery = (params, id) => {
 		this.query.push({ id: id ? id : null })
 		if (this.query[this.query.length-1].id && !('saved' in params)) 
@@ -91,7 +94,7 @@ class Queries {
 	}
 	updateQuery = (params, index, id) => {
 		if (params.query) this.query[index].query = params.query
-		if (params.variables) this.query[index].variables = params.variables
+		this.query[index].variables = params.variables ?? ''
 		if (params.config) this.query[index].config = params.config
 		if (typeof params.widget_id === 'string') this.query[index].widget_id = params.widget_id
 		if (typeof params.displayed_data === 'string') this.query[index].displayed_data = params.displayed_data

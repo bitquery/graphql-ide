@@ -33,7 +33,7 @@ import FullscreenIcon from './FullscreenIcon'
 const EditorInstance = observer(function EditorInstance({number})  {
 	const { tabs, currentTab, index } = TabsStore
 	const { user }  = UserStore
-	const { query, updateQuery, showGallery, currentQuery } = QueriesStore
+	const { query, updateQuery, showGallery, currentQuery, isMobile, setMobile } = QueriesStore
 	const [schema, setSchema] = useState(null)
 	const [docExplorerOpen, toggleDocExplorer] = useState(false)
 	const [_variableToType, _setVariableToType] = useState(null)
@@ -49,6 +49,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 	const queryEditor = useRef(null)
 	const variablesEditor = useRef(null)
 	const widgetDisplay = useRef(null)
+
 	const setupExecButtonPosition = () => {
 		let execButt = workspace.current.offsetWidth / overwrap.current.offsetWidth
 		executeButton.current.setAttribute('style', `left: calc(${execButt*100}% - 25px);`)
@@ -183,6 +184,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 			setLoading(false)
 			setAccordance(true)
 		})
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [currentQuery, schema])
 	useEffect(() => {
 		(!dataSource.values && 
@@ -348,7 +350,8 @@ const EditorInstance = observer(function EditorInstance({number})  {
 						setConfig={setConfig} 
 					/> : <div className="widget" /> }
 				</div>
-				<div className="widget-display widget-display-wrapper" 
+				<div className={'widget-display widget-display-wrapper'+
+					(isMobile ? ' widget-display-wrapper-fullscreen' : '')} 
 					ref={widgetDisplay}>
 					<div 
 						className="sizeChanger" 
@@ -368,6 +371,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 							el={currentTab === tabs[number].id ? `asd${currentTab}` : ''} 
 						>
 							<FullscreenIcon onClick={
+								isMobile ? ()=>setMobile(false) :
 								fullscreenHandle.active 
 								? fullscreenHandle.exit 
 								: fullscreenHandle.enter} 
