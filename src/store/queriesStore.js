@@ -94,7 +94,7 @@ class Queries {
 	}
 	updateQuery = (params, index, id) => {
 		if (params.query) this.query[index].query = params.query
-		this.query[index].variables = params.variables ?? ''
+		if (params.variables) this.query[index].variables = params.variables
 		if (params.config) this.query[index].config = params.config
 		if (typeof params.widget_id === 'string') this.query[index].widget_id = params.widget_id
 		if (typeof params.displayed_data === 'string') this.query[index].displayed_data = params.displayed_data
