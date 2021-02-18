@@ -233,6 +233,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 		}
 	}
 	const fetcher = (graphQLParams) => {
+		let keyHeader = user ? {'X-API-KEY': user.key} : {}
 		return fetch(
 			currentQuery.endpoint_url,
 			{
@@ -240,6 +241,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 				headers: {
 					Accept: 'application/json',
 					'Content-Type': 'application/json',
+					...keyHeader
 				},
 				body: JSON.stringify(graphQLParams),
 				credentials: 'same-origin',
@@ -247,6 +249,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 		)
 	}
 	useEffect(() => {
+		console.log('fetch', debouncedURL)
 		if (number === index) {
 			const fetchSchema = () => {
 				setLoading(true)
@@ -381,7 +384,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 				</div>
 				{docExplorerOpen && <DocExplorer schema={schema} />}
 			</div>
-		</div>
+		</div> 
 	)
 })
 

@@ -3,6 +3,7 @@ import { makeObservable, observable, action } from "mobx"
 class Modal {
 	modalIsOpen = false
 	loginIsOpen = false
+	apiKeyIsOpen = false
 	registerIsOpen = false
 	saveQueryIsOpen = false
 	shareQueryIsOpen = false
@@ -15,6 +16,7 @@ class Modal {
 		makeObservable(this, {
 			modalIsOpen: observable,
 			loginIsOpen: observable,
+			apiKeyIsOpen: observable,
 			registerIsOpen: observable,
 			saveQueryIsOpen: observable,
 			shareQueryIsOpen: observable,
@@ -38,6 +40,9 @@ class Modal {
 	toggleLogin = (e) => {
 		if (e) e.preventDefault()
 		this.loginIsOpen = !this.loginIsOpen
+	}
+	toggleApiKey = () => {
+		this.apiKeyIsOpen = !this.apiKeyIsOpen
 	}
 	toggleRegister = () => {
 		this.registerIsOpen = !this.registerIsOpen

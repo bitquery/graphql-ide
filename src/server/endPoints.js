@@ -104,6 +104,18 @@ module.exports = function(app, passport, db) {
 		transporter.sendMail(message)
 	}
 
+	app.post('/api/regenerate', (req, res) => {
+		db.query('update api_keys set active=false, updated_at=CURRENT_TIMESTAMP where user_id=? and active=true',
+		[req.session.passport.user], (err, _) => {
+			if (err) console.log(err)
+		})
+		db.query('insert into api_keys SET ?', {
+			user_id: req.session.passport.user,
+			key: req.body.key,
+			active: true
+		})
+
+	})
 	app.post('/api/login', (req, res, next) => {
 		passport.authenticate('local-login', (err, user, info) => {
 			if (err) {
@@ -185,13 +197,18 @@ module.exports = function(app, passport, db) {
 	});
 	
 	app.get("/api/user", authMiddleware, (req, res) => {
-		db.query(`select * from accounts where id = ?`, 
+		db.query(`SELECT a.*, ak.\`key\` FROM accounts a
+		JOIN api_keys ak
+		ON a.id = ak.user_id
+		WHERE a.id = ?
+		AND ak.active = true`, 
 			[req.session.passport.user],
 			(err, user) => {
 				if (err) console.log(err)
 				if (user.length) {
 					let userSend = [{
 						id: user[0].id,
+						key: user[0].key,
 						email: user[0].email,
 						active: user[0].active,
 						updated_at: user[0].updated_at,
