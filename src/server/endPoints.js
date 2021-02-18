@@ -172,7 +172,7 @@ module.exports = function(app, passport, db) {
 	})
 
 	app.post('/api/deletequery', (req, res) => {
-		db.query(`UPDATE queries SET deleted=? where id=?`, [true, req.body.id], (err, _) => {
+		db.query(`UPDATE queries SET deleted=?, updated_at=CURRENT_TIMESTAMP where id=?`, [true, req.body.id], (err, _) => {
 			if (err) console.log(err)
 			res.send('Query deleted')
 		})
