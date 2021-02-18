@@ -106,15 +106,17 @@ module.exports = function(app, passport, db) {
 
 	app.post('/api/regenerate', (req, res) => {
 		db.query('update api_keys set active=false, updated_at=CURRENT_TIMESTAMP where user_id=? and active=true',
-		[req.session.passport.user], (err, _) => {
-			if (err) console.log(err)
+		[req.session.passport.user], (error, _) => {
+			if (error) console.log(error)
+			db.query('insert into api_keys SET ?', {
+				user_id: req.session.passport.user,
+				key: req.body.key,
+				active: true
+			}, (err, _) => {
+				if (err) console.log(err)
+				res.send(200)
+			})
 		})
-		db.query('insert into api_keys SET ?', {
-			user_id: req.session.passport.user,
-			key: req.body.key,
-			active: true
-		})
-
 	})
 	app.post('/api/login', (req, res, next) => {
 		passport.authenticate('local-login', (err, user, info) => {

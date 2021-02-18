@@ -1,6 +1,6 @@
 import { makeObservable, observable, action, computed } from "mobx"
 import axios from 'axios'
-import { getUser } from "../api/api"
+import { getUser, regenerateKey } from "../api/api"
 
 class User {
 	user = null
@@ -21,6 +21,15 @@ class User {
 		try {
 			const { data } = await getUser()
 			this.setUser(data.user[0])
+		} catch (error) {
+			console.log(error.response.data)
+		}
+	}
+
+	regenKey = async (key) => {
+		try {
+			await regenerateKey(key)
+			await this.getUser()
 		} catch (error) {
 			console.log(error.response.data)
 		}

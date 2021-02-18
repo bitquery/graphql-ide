@@ -43,7 +43,7 @@ const GalleryComponent = observer(function GalleryComponent() {
 			getMyQueries()
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [user, queryJustSaved])
+	}, [user?.id, queryJustSaved])
 
 	return (
 		<div className={'gallery flex flex-col ' + (showGallery && 'active')}>

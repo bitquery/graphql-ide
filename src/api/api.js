@@ -1,10 +1,6 @@
 import axios from 'axios'
-/* import { observable } from 'mobx'
-import { UserStore } from '../store/queriesStore'
-const { user } = observable(UserStore) */
 axios.defaults.withCredentials = true
 axios.defaults.credentials = 'include'
-// axios.defaults.headers.common['X-API-KEY'] = user?.key
 
 export const signUp = (email, password) => 
 	axios.post('/api/signup', {

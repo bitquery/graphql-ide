@@ -2,22 +2,41 @@ import React from 'react'
 import modalStore from '../../store/modalStore'
 import { UserStore } from '../../store/queriesStore'
 import { makekey } from '../../utils/common'
-import { regenerateKey } from '../../api/api'
+import copy from 'copy-to-clipboard'
+import { useToasts } from 'react-toast-notifications'
+import { observer } from 'mobx-react-lite'
 
-function ApiKeyModal({ active }) {
-    const { user } = UserStore
+const ApiKeyModal = observer(function ApiKeyModal({ active }) {
+    const { user, regenKey } = UserStore
+	const { addToast } = useToasts()
 	const { toggleModal, toggleApiKey } = modalStore
-	const closeHandler = () => {
+	const closeHandler = e => {
+		e.preventDefault()
 		toggleModal()
 		toggleApiKey()		
 	}
+	const handleCopy = () => {
+		copy(user.key)
+		addToast('Copied to clipboard', {appearance: 'success'})
+	}
 	return (
-		<form className={'modal__form '+(!active && 'modal__form_hide')} >
-			API key - {user?.key}
-            <button className="button button_filled" onClick={()=>regenerateKey(makekey())}>Re-generate key</button>
+		<div className={'modal__form '+(!active && 'modal__form_hide')} >
+			<p className="mb-0 mt-3">API key must be included as HTTP header in every GraphQL request. Header name is X-API-KEY ( not case sensitive )</p>
+			<div className="input-group mb-3 mt-3 flex-nowrap" style={{maxWidth: '500px'}}>
+				<div className="input-group-prepend">
+    				<span className="input-group-text">API key</span>
+				</div>
+				<input readOnly type="text" className="form-control" value={user ? user.key: ''} aria-describedby="basic-addon2"/>
+				<div className="input-group-append">
+					<button className="btn btn-outline-secondary" type="button" onClick={handleCopy}>
+						<i className="fas fa-copy" />
+					</button>
+				</div>
+			</div>
+            <button className="button button_filled m-0" onClick={()=>regenKey(makekey())}>Re-generate key</button>
 			<i className="handler handler__close fas fa-times" onClick={closeHandler} />
-		</form>
+		</div>
 	)
-}
+})
 
 export default ApiKeyModal
