@@ -45,10 +45,10 @@ if (process.env.NODE_ENV==='production') {
 				if (err) {
 					return console.log(err)
 				}
-				const sql = `SELECT * FROM queries WHERE url='?`
+				const sql = `SELECT * FROM queries WHERE url=?`
 				db.query(sql, [url], (err, result) => {
 					if (err) console.log(err)
-					if (!result.length) {
+					if (!result?.length) {
 						data = replaceData(data, {
 							title: defaultmeta.title,
 							description: defaultmeta.description
