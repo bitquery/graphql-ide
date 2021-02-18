@@ -233,7 +233,8 @@ const EditorInstance = observer(function EditorInstance({number})  {
 		}
 	}
 	const fetcher = (graphQLParams) => {
-		let keyHeader = user ? {'X-API-KEY': user.key} : {}
+		let key = user ? user.key : process.env.REACT_APP_IDE_GUEST_API_KEY
+		let keyHeader = {'X-API-KEY': key}
 		return fetch(
 			currentQuery.endpoint_url,
 			{
