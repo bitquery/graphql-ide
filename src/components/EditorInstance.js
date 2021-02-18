@@ -250,7 +250,6 @@ const EditorInstance = observer(function EditorInstance({number})  {
 		)
 	}
 	useEffect(() => {
-		console.log('fetch', debouncedURL)
 		if (number === index) {
 			const fetchSchema = () => {
 				setLoading(true)
