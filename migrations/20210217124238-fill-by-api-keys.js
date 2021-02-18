@@ -28,7 +28,7 @@ exports.up = function(db) {
   return db.runSql(
     `SELECT id from accounts`
   ).then(ids => {
-    let sql = 'INSERT INTO `api-keys` (user_id, `key`, active) VALUES'
+    let sql = 'INSERT INTO api_keys (user_id, `key`, active) VALUES'
     for (let i = 0; i < ids.length; i++) {
       sql += ` (${ids[i].id}, '${makekey()}', true)`
       if (i !== ids.length - 1) sql +=',' 
@@ -38,7 +38,7 @@ exports.up = function(db) {
 };
 
 exports.down = function(db) {
-  return db.runSql('DELETE FROM `api-keys`');
+  return db.runSql('DELETE FROM api_keys');
 };
 
 exports._meta = {

@@ -4,16 +4,6 @@ var dbm;
 var type;
 var seed;
 
-function makekey() {
-  let result           = '';
-  let characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  let charactersLength = characters.length;
-  for ( let i = 0; i < 30; i++ ) {
-     result += characters.charAt(Math.floor(Math.random() * charactersLength));
-  }
-  return result
-}
-
 /**
   * We receive the dbmigrate dependency from dbmigrate initially.
   * This enables us to not have to rely on NODE_PATH.
@@ -25,7 +15,7 @@ exports.setup = function(options, seedLink) {
 };
 
 exports.up = function(db) {
-  return db.createTable('api-keys', {
+  return db.createTable('api_keys', {
     columns: {
       id: { type: 'int', primaryKey: true, autoIncrement: true },
       user_id: { type: 'int', length: 10, notNull: true, foreignKey: {
@@ -59,7 +49,7 @@ exports.up = function(db) {
 };
 
 exports.down = function(db) {
-  return db.dropTable('api-keys')
+  return db.dropTable('api_keys')
 };
 
 exports._meta = {

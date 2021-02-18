@@ -15,11 +15,11 @@ exports.setup = function(options, seedLink) {
 };
 
 exports.up = function(db) {
-  return db.addIndex('api-keys', 'user_id_active', ['user_id', 'active'])
+  return db.addIndex('api_keys', 'user_id_active', ['user_id', 'active'])
 };
 
 exports.down = function(db) {
-  return db.removeIndex('api-keys' ,'user_id_active')
+  return db.removeIndex('api_keys' ,'user_id_active')
 };
 
 exports._meta = {
