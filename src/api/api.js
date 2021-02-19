@@ -18,4 +18,10 @@ export const logout = () => axios.get('/api/logout')
 
 export const getUser = () => axios.get('/api/user')
 
+export const regenerateKey = key => axios.post('/api/regenerate', {key})
+
 export const getQuery = url => axios.get(`/api/getquery/${url}`)
+
+export const deleteQuery = id => axios.post('/api/deletequery', 
+	{ id }  
+)

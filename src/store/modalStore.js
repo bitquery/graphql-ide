@@ -1,28 +1,38 @@
 import { makeObservable, observable, action } from "mobx"
 
 class Modal {
-	registerIsOpen = false
+	modalIsOpen = false
 	loginIsOpen = false
+	apiKeyIsOpen = false
+	registerIsOpen = false
 	saveQueryIsOpen = false
 	shareQueryIsOpen = false
-	changePasswordIsOpen = false
+	editDialogIsOpen = false
+	confirmationIsOpen = false
+	confirmationAction = null
+	confirmationMessage = ''
 	forgotPasswordIsOpen = false
-	modalIsOpen = false
+	changePasswordIsOpen = false
 	
 	constructor() {
 		makeObservable(this, {
 			modalIsOpen: observable,
+			loginIsOpen: observable,
+			apiKeyIsOpen: observable,
 			registerIsOpen: observable,
 			saveQueryIsOpen: observable,
 			shareQueryIsOpen: observable,
+			confirmationAction: observable,
+			confirmationIsOpen: observable,
+			confirmationMessage: observable,
 			changePasswordIsOpen: observable,
 			forgotPasswordIsOpen: observable,
-			loginIsOpen: observable,
 			toggleModal: action,
 			toggleLogin: action,
 			toggleRegister: action,
 			toggleSaveQuery: action,
 			toggleShareQuery: action,
+			toggleConfirmation: action,
 			toggleForgotPassword: action,
 			toggleChangePassword: action
 		})
@@ -35,6 +45,9 @@ class Modal {
 		if (e) e.preventDefault()
 		this.loginIsOpen = !this.loginIsOpen
 	}
+	toggleApiKey = () => {
+		this.apiKeyIsOpen = !this.apiKeyIsOpen
+	}
 	toggleRegister = () => {
 		this.registerIsOpen = !this.registerIsOpen
 	}
@@ -43,6 +56,14 @@ class Modal {
 	}
 	toggleShareQuery = () => {
 		this.shareQueryIsOpen = !this.shareQueryIsOpen
+	}
+	toggleEditDialog = () => {
+		this.editDialogIsOpen = !this.editDialogIsOpen
+	}
+	toggleConfirmation = (message, action) => {
+		this.confirmationIsOpen = !this.confirmationIsOpen
+		if (message) this.confirmationMessage = message
+		if (action) this.confirmationAction = action
 	}
 	toggleForgotPassword = () => {
 		this.forgotPasswordIsOpen = !this.forgotPasswordIsOpen

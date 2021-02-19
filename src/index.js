@@ -2,13 +2,14 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App'
 import * as serviceWorker from './serviceWorker'
-import 'graphiql/graphiql.css'
+import './editor.css'
+
 import { ToastProvider } from 'react-toast-notifications'
 import axios from 'axios'
 import { BrowserRouter, Route } from 'react-router-dom';
 if (process.env.NODE_ENV==='production') {
-	let url = document.getElementById('graphql_ide').getAttribute('baseurl')
-	axios.defaults.baseURL = url
+	// let url = document.getElementById('graphql_ide').getAttribute('baseurl')
+	axios.defaults.baseURL = process.env.REACT_APP_ENDPOINT_URL
 }
 
 ReactDOM.render(

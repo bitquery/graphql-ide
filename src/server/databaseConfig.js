@@ -9,5 +9,6 @@ module.exports = {
     'queries_table': 'queries',
     'query_logs_table': 'query_logs',
     'users_table': 'accounts',
-    'activations_table': 'activations'
+    'activations_table': 'activations',
+    'widgets_table': 'widgets'
 };

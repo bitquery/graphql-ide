@@ -1,0 +1,10 @@
+
+
+--- SERVICE SETUP --
+
+sudo vim /etc/systemd/system/ide.service
+sudo systemctl enable ide
+
+sudo service ide start
+sudo service ide status
+sudo service ide stop

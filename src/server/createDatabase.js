@@ -4,7 +4,7 @@ let dbconfig = require('./databaseConfig')
 
 let connection = mysql.createConnection(dbconfig.connection)
 
-connection.query('CREATE DATABASE ' + dbconfig.database)
+connection.query('CREATE DATABASE ' + dbconfig.database + ' character set UTF8mb4 collate utf8mb4_bin')
 
 connection.query(`
 	CREATE TABLE ${dbconfig.database}.${dbconfig.queries_table} (
@@ -14,7 +14,9 @@ connection.query(`
 		arguments LONGTEXT not null,
 		url VARCHAR(200),
 		name VARCHAR(200),
+		endpoint_url VARCHAR(200) not null,
 		description LONGTEXT,
+		deleted BOOLEAN not null default FALSE,
 		published BOOLEAN,
 		created_at TIMESTAMP not null default CURRENT_TIMESTAMP
 )`)
@@ -42,6 +44,16 @@ connection.query(`
 	create table ${dbconfig.database}.${dbconfig.activations_table} (
 		user_id INT(10) not null,
 		code VARCHAR(128) not null
+	)
+`)
+connection.query(`
+	create table ${dbconfig.database}.${dbconfig.widgets_table} (
+		id INT PRIMARY KEY AUTO_INCREMENT,
+		query_id INT not null,
+		widget_id VARCHAR(200),
+		config LONGTEXT,
+		FOREIGN KEY (query_id) REFERENCES queries (id)
+		ON DELETE RESTRICT ON UPDATE CASCADE
 	)
 `)
 

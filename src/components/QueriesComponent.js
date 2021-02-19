@@ -1,63 +1,56 @@
 import React, { useState } from 'react'
-import { Link, useRouteMatch } from 'react-router-dom'
-import {TabsStore, QueriesStore} from '../store/queriesStore'
-import copy from 'copy-to-clipboard'
-import { useToasts } from 'react-toast-notifications'
+import { Link, useHistory, useRouteMatch } from 'react-router-dom'
+import { TabsStore, QueriesStore } from '../store/queriesStore'
 import { observer } from 'mobx-react-lite'
+import QueriesControls from './QueriesControls'
 
-const QueriesComponent = observer(({ queries }) => {
+const QueriesComponent = observer(function QueriesComponent({ queries }) {
 	const { url } = useRouteMatch()
-	const { addToast } = useToasts()
+	let history = useHistory()
 	const [hoverElementIndex, setHoverElementIndex] = useState(false)
-	const { addNewTab, switchTab, tabs } = TabsStore
-	const { setQuery, setCurrentQuery, query, currentQuery } = QueriesStore
+	const { switchTab, tabs } = TabsStore
+	const { setQuery, query, currentQuery } = QueriesStore
 	const showDescription = (i1, i2) => i1===i2 ? true : false
 	const handleClick = (queryFromGallery) => {
 		if (query.map(query => query.id).indexOf(queryFromGallery.id) === -1) {
-			const params = {
-				query: queryFromGallery.query,
-				variables: queryFromGallery.arguments,
-				url: queryFromGallery.url
-			}
-			setQuery(params, queryFromGallery.id)
-			setCurrentQuery(params, queryFromGallery.id)
-			addNewTab(queryFromGallery.name)
+			setQuery({...queryFromGallery, variables: queryFromGallery.arguments}, queryFromGallery.id)
 		} else {
 			let tabID = query.map(query => query.id).indexOf(queryFromGallery.id)
 			switchTab(tabs[tabID].id)
 		}
 	}
+	const queryUrl = queryUrl => queryUrl ? `${url}/${queryUrl}` : `${url}`
 	const queryIsOpen = (queryFromGallery) => 
-		queryFromGallery.id === currentQuery.id ? true : false		
+		queryFromGallery.id === currentQuery.id ? true : false	
+	const isSaved = baseQuery => {
+		for (let i =0; i<query.length; i++) {
+			if (!((('saved' in query[i]) && query[i].saved) || !('saved' in query[i]))) {
+				if (baseQuery.id === query[i].id) return false
+			}
+		}
+		return true
+	}	
 	
-	const handleCopy = (queryurl) => {
-		copy(`${window.location.protocol}://${window.location.host}${url}/${queryurl}`)
-		addToast('Link copied to clipboard', {appearance: 'success'})
-	}
-
 	return (
-		queries.queries.map((query, index) => (
+		('queries'in queries) && queries.queries.map((baseQuery, index) => (
 			<li className="list-group-item" key={index}
 				onMouseEnter={() => setHoverElementIndex(index)}
 				onMouseLeave={() => setHoverElementIndex(-1)}
+				onClick={()=>{history.push(queryUrl(baseQuery.url));handleClick(baseQuery)}}
 			> 
 				<div className="gallery__query__wrapper flex">
-					<Link to={`${url}/${query.url}`} onClick={() => handleClick(query)}> {query.name} </Link>
-					{
-						query.url &&
-						<button type="button" className="btn btn-sm btn-outline-primary"
-							onClick={()=>handleCopy(query.url)}
-						>
-							Get link
-							<span className="shared-link"></span>
-						</button>
-					}
+					<Link to={queryUrl(baseQuery.url)} onClick={() => handleClick(baseQuery)}> 
+						{isSaved(baseQuery) ? baseQuery.name : `*${baseQuery.name}`}
+					</Link>
 				</div>
 				{ 
-					(showDescription(hoverElementIndex, index) || queryIsOpen(query)) && 
-						<label className="gallery__query__description" > 
-							{query.description} 
-						</label>
+					(showDescription(hoverElementIndex, index) || queryIsOpen(baseQuery)) && 
+						<>
+							<label className="gallery__query__description" > 
+								{baseQuery.description} 
+							</label>
+							<QueriesControls query={baseQuery} isSaved={isSaved(baseQuery)} />
+						</>
 				}
 			</li>
 		))

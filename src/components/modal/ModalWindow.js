@@ -1,11 +1,12 @@
 import React from 'react'
 import Modal from 'react-modal'
-import modalStore from '../../store/modalStore'
-import { observer } from 'mobx-react-lite'
-import RegisterForm from './RegisterForm'
 import LoginForm from './LoginForm'
+import EditDialog from './EditDialog'
+import ApiKeyModal from './ApiKeyModal'
+import RegisterForm from './RegisterForm'
+import { observer } from 'mobx-react-lite'
 import SaveQueryFrom from './SaveQueryForm'
-import ShareQueryFrom from './ShareQueryForm'
+import modalStore from '../../store/modalStore'
 import ForgotPasswordForm from './ForgotPasswordForm'
 import ChangePasswordForm from './ChangePasswordForm'
 
@@ -45,19 +46,20 @@ Modal.setAppElement('#graphql_ide')
 const ModalWindow = observer(() => {
 	const { 
 		registerIsOpen, loginIsOpen, modalIsOpen,
-		saveQueryIsOpen, shareQueryIsOpen,
+		saveQueryIsOpen, editDialogIsOpen, apiKeyIsOpen,
 		forgotPasswordIsOpen, changePasswordIsOpen,
 		toggleModal, toggleLogin, toggleRegister, 
-		toggleSaveQuery, toggleShareQuery,
+		toggleSaveQuery, toggleEditDialog, toggleApiKey,
 		toggleForgotPassword, toggleChangePassword 
 	} = modalStore
 	
 	const onRequestClose = () => {
 		toggleModal()
 		loginIsOpen && toggleLogin()
+		apiKeyIsOpen && toggleApiKey()
 		registerIsOpen && toggleRegister()
 		saveQueryIsOpen && toggleSaveQuery()
-		shareQueryIsOpen && toggleShareQuery()
+		editDialogIsOpen && toggleEditDialog()
 		forgotPasswordIsOpen && toggleForgotPassword()
 		changePasswordIsOpen && toggleChangePassword()
 	}
@@ -69,9 +71,10 @@ const ModalWindow = observer(() => {
 			contentLabel="Example Modal"
 		>
 			<LoginForm active={loginIsOpen} />
+			<ApiKeyModal active={apiKeyIsOpen} />
+			<EditDialog active={editDialogIsOpen} />
 			<RegisterForm active={registerIsOpen} />
 			<SaveQueryFrom  active={saveQueryIsOpen} />
-			<ShareQueryFrom active={shareQueryIsOpen} />
 			<ChangePasswordForm active={changePasswordIsOpen} />
 			<ForgotPasswordForm active={forgotPasswordIsOpen} />
 		</Modal>
