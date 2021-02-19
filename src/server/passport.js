@@ -1,6 +1,16 @@
 const LocalStrategy = require('passport-local').Strategy
 const bcrypt = require('bcrypt')
 
+function makekey() {
+	let result           = '';
+	let characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+	let charactersLength = characters.length;
+	for ( let i = 0; i < 29; i++ ) {
+	   result += characters.charAt(Math.floor(Math.random() * charactersLength));
+	}
+	return `BQY${result}`
+  }
+
 module.exports = function(passport, db) {
     passport.serializeUser((user, done) => {
 		done(null, user[0].id)
@@ -36,8 +46,11 @@ module.exports = function(passport, db) {
 						if (err) console.log(err)
 						console.log(rows)
 						newUser[0].id = rows.insertId
-						console.log(newUser)
-						return done(null, newUser)
+						db.query(`INSERT INTO api_keys SET ?`, {user_id: rows.insertId, key: makekey(), active: true}, (err, result) => {
+							if (err) console.log(err)
+							console.log(newUser)
+							return done(null, newUser)
+						})
 					})
 				})
 				
