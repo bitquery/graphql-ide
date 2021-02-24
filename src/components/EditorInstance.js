@@ -157,30 +157,47 @@ const EditorInstance = observer(function EditorInstance({number, schema, loading
 		} catch (e) {}
 		return typesMap
 	}
+
+	const plugins = useMemo(()=> [JsonPlugin, ...vegaPlugins, ...graphPlugins, ...timeChartPlugins], [])
+	let indexx = plugins.map(plugin => plugin.id).indexOf(currentQuery.widget_id)
+	const WidgetComponent = indexx>=0 ? plugins[indexx] : plugins[0]
+
 	const getResult = useCallback(() => {
 		setLoading(true)
+		let queryType = getQueryTypes(currentQuery.query)
+		if (JSON.stringify(queryType) !== JSON.stringify(queryTypes)) {
+			setQueryTypes(queryType)
+		}
+		let indexOfData = Object.keys(queryType).indexOf(currentQuery.displayed_data)
+		let indexOfWidget = plugins.map(p => p.id).indexOf(currentQuery.widget_id)
+		const unusablePair = indexOfData < 0 || indexOfWidget < 0
+		let displayed_data = unusablePair ? Object.keys(queryType)[Object.keys(queryType).length-1] : currentQuery.displayed_data
+		if (unusablePair) {
+			updateQuery({
+				displayed_data,
+				widget_id: 'json.widget',
+				saved: currentQuery.id && true
+			}, index)
+		}
 		fetcher({query: currentQuery.query, variables: currentQuery.variables}).then(data => {
 			data.json().then(json => {
 				setDataSource({
 					execute: getResult,
 					data: ('data' in json) ? json.data : null,
-					displayed_data: currentQuery.displayed_data || '',
-					values: ('data' in json) ? (currentQuery.displayed_data) ? getValueFrom(json.data, currentQuery.displayed_data) : json.data : null,
+					displayed_data: displayed_data || '',
+					values: ('data' in json) ? (currentQuery.displayed_data) ? getValueFrom(json.data, displayed_data) : json.data : null,
 					error: ('errors' in json) ? json.errors : null,
 					query: toJS(currentQuery.query), 
 					variables: toJS(currentQuery.variables)
 				})
 				if (!('data' in json)) updateQuery({widget_id: 'json.widget'}, index)
 			})
-			let queryType = getQueryTypes(currentQuery.query)
-			if (JSON.stringify(queryType) !== JSON.stringify(queryTypes)) {
-				setQueryTypes(queryType)
-			}
+			
 			setLoading(false)
 			setAccordance(true)
 		})
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [currentQuery, schema])
+	}, [JSON.stringify(currentQuery), schema])
 	useEffect(() => {
 		(!dataSource.values && 
 		currentQuery.query &&
@@ -224,6 +241,7 @@ const EditorInstance = observer(function EditorInstance({number, schema, loading
 		if (number === index) {
 			if (JSON.stringify(currentQuery.config) !== JSON.stringify(config)) {
 				updateQuery({config}, index)
+				console.log('setconfig')
 			}
 		}
 	}
@@ -247,9 +265,7 @@ const EditorInstance = observer(function EditorInstance({number, schema, loading
 	
 	const fullscreenHandle = useFullScreenHandle()
 
-	const plugins = useMemo(()=> [JsonPlugin, ...vegaPlugins, ...graphPlugins, ...timeChartPlugins], [])
-	let indexx = plugins.map(plugin => plugin.id).indexOf(currentQuery.widget_id)
-	const WidgetComponent = indexx>=0 ? plugins[indexx] : plugins[0]
+	
 
 	return (
 		<div 
