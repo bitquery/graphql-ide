@@ -38,6 +38,7 @@ const ApiKeyModal = observer(function ApiKeyModal({ active }) {
 					</button>
 				</div>
 			</div>
+			<p>Your graphql API endpoint URL - https://graphql.bitquery.io</p>
 			<button className="button button_filled m-0" onClick={closeHandler}>Ok</button>
 			<button type="button" style={{position: 'absolute', bottom: 0, left: 0}} className="btn btn-link" onClick={confirm}>Re-generate key</button>
 			<i className="handler handler__close fas fa-times" onClick={closeHandler} />
