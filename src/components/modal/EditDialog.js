@@ -63,6 +63,10 @@ function EditDialog({active}) {
 			}
 		} else { addToast('Name is required', {appearance: 'error'}) }
 	}
+	const confirm = () => {
+		toggleConfirmation('Are you sure you want to delete this query?', 
+		deleteHandler)
+	}
 	const deleteHandler = async () => {
 		const data = await deleteQuery(currentQuery.id)
 		saveToggle()
@@ -148,7 +152,7 @@ function EditDialog({active}) {
 					</span>
 					<ReactTooltip id="savequerybutton" place="top"/>
 					<button type="button" className="btn btn-outline-danger btn-sm" 
-						onClick={toggleConfirmation} disabled={!currentQuery.id ? true : false} 
+						onClick={confirm} disabled={!currentQuery.id ? true : false} 
 					>
 						Delete
 					</button>

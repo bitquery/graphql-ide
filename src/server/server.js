@@ -31,7 +31,7 @@ require('./endPoints')(app, passport, db)
 
 if (process.env.NODE_ENV==='production') {
 	app.get('*', (req,res) => {
-		const url = req.url.substring(2)
+		const url = req.url.substring(1)
 		const filePath = path.resolve(__dirname, '../../build', 'index.html')
 		const fullUrl = req.protocol + '://' + req.get('host') + req.originalUrl
 		const replaceData = (data, meta) => {
@@ -40,20 +40,15 @@ if (process.env.NODE_ENV==='production') {
 				.replace(/__DESCRIPTION__/g, meta.description)
 				.replace(/__URL__/g, fullUrl)
 		}
-		if (url && url!==process.env.REACT_APP_IDE_URL) {
+		if (url) {
 			fs.readFile(filePath, 'utf8', (err, data) => {
 				if (err) {
 					return console.log(err)
 				}
-				const sql = `
-					SELECT queries.*, widgets.widget_id, widgets.config, widgets.displayed_data FROM queries
-					LEFT JOIN widgets 
-					ON widgets.query_id=queries.id
-					WHERE queries.url=?
-					ORDER BY widgets.id DESC LIMIT 1`
+				const sql = `SELECT * FROM queries WHERE url=?`
 				db.query(sql, [url], (err, result) => {
 					if (err) console.log(err)
-					if (!result.length) {
+					if (!result?.length) {
 						data = replaceData(data, {
 							title: defaultmeta.title,
 							description: defaultmeta.description

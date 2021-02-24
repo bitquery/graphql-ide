@@ -8,7 +8,7 @@ import { Dropdown } from 'react-bootstrap'
 
 const Profile = observer(() => {
 	const { getUser, user, setUser } = UserStore
-	const { toggleModal, toggleLogin, toggleChangePassword } = ModalStore
+	const { toggleModal, toggleLogin, toggleChangePassword, toggleApiKey } = ModalStore
 
 	const clickHandler = () => {
 		toggleModal()
@@ -17,6 +17,10 @@ const Profile = observer(() => {
 	const changePasswordHadler = () => {
 		toggleModal()
 		toggleChangePassword()
+	}
+	const apiKeyHandler = () => {
+		toggleModal()
+		toggleApiKey()
 	}
 	const logOut = async () => {
 		await logout().catch(e => console.log(e))
@@ -39,6 +43,7 @@ const Profile = observer(() => {
 			</Dropdown.Toggle>
 		
 			<Dropdown.Menu>
+				<Dropdown.Item href="# " onClick={apiKeyHandler}>API Key</Dropdown.Item>
 				<Dropdown.Item href="# " onClick={changePasswordHadler}>Change password</Dropdown.Item>
 				<Dropdown.Item href="# "onClick={logOut}>Logout</Dropdown.Item>
 			</Dropdown.Menu>

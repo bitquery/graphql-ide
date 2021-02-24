@@ -31,7 +31,7 @@ import FullscreenIcon from './FullscreenIcon'
 const EditorInstance = observer(function EditorInstance({number, schema, loading, setLoading})  {
 	const { tabs, currentTab, index } = TabsStore
 	const { user }  = UserStore
-	const { query, updateQuery, showGallery, currentQuery, showSideBar } = QueriesStore
+	const { query, updateQuery, currentQuery, isMobile, setMobile, showSideBar } = QueriesStore
 	const [docExplorerOpen, toggleDocExplorer] = useState(false)
 	const [_variableToType, _setVariableToType] = useState(null)
 	const [queryTypes, setQueryTypes] = useState('')
@@ -44,6 +44,7 @@ const EditorInstance = observer(function EditorInstance({number, schema, loading
 	const queryEditor = useRef(null)
 	const variablesEditor = useRef(null)
 	const widgetDisplay = useRef(null)
+
 	const setupExecButtonPosition = () => {
 		let execButt = workspace.current.offsetWidth / overwrap.current.offsetWidth
 		executeButton.current.setAttribute('style', `left: calc(${execButt*100}% - 25px);`)
@@ -178,7 +179,8 @@ const EditorInstance = observer(function EditorInstance({number, schema, loading
 			setLoading(false)
 			setAccordance(true)
 		})
-	}, [currentQuery.query, currentQuery.variables, schema])
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [currentQuery, schema])
 	useEffect(() => {
 		(!dataSource.values && 
 		currentQuery.query &&
@@ -226,6 +228,8 @@ const EditorInstance = observer(function EditorInstance({number, schema, loading
 		}
 	}
 	const fetcher = (graphQLParams) => {
+		let key = user ? user.key : process.env.REACT_APP_IDE_GUEST_API_KEY
+		let keyHeader = {'X-API-KEY': key}
 		return fetch(
 			currentQuery.endpoint_url,
 			{
@@ -233,6 +237,7 @@ const EditorInstance = observer(function EditorInstance({number, schema, loading
 				headers: {
 					Accept: 'application/json',
 					'Content-Type': 'application/json',
+					...keyHeader
 				},
 				body: JSON.stringify(graphQLParams),
 				credentials: 'same-origin',
@@ -319,7 +324,8 @@ const EditorInstance = observer(function EditorInstance({number, schema, loading
 						setConfig={setConfig} 
 					/> : <div className="widget" /> }
 				</div>
-				<div className="widget-display widget-display-wrapper" 
+				<div className={'widget-display widget-display-wrapper'+
+					(isMobile ? ' widget-display-wrapper-fullscreen' : '')} 
 					ref={widgetDisplay}>
 					<div 
 						className="sizeChanger" 
@@ -339,6 +345,7 @@ const EditorInstance = observer(function EditorInstance({number, schema, loading
 							el={currentTab === tabs[number].id ? `asd${currentTab}` : ''} 
 						>
 							<FullscreenIcon onClick={
+								isMobile ? ()=>setMobile(false) :
 								fullscreenHandle.active 
 								? fullscreenHandle.exit 
 								: fullscreenHandle.enter} 
@@ -348,7 +355,7 @@ const EditorInstance = observer(function EditorInstance({number, schema, loading
 				</div>
 				{docExplorerOpen && <DocExplorer schema={schema} />}
 			</div>
-		</div>
+		</div> 
 	)
 })
 

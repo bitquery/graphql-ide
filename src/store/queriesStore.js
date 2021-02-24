@@ -1,6 +1,6 @@
 import { makeObservable, observable, action, computed } from "mobx"
 import axios from 'axios'
-import { getUser } from "../api/api"
+import { getUser, regenerateKey } from "../api/api"
 
 class User {
 	user = null
@@ -25,6 +25,15 @@ class User {
 			console.log(error.response.data)
 		}
 	}
+
+	regenKey = async (key) => {
+		try {
+			await regenerateKey(key)
+			await this.getUser()
+		} catch (error) {
+			console.log(error.response.data)
+		}
+	}
 }
 
 class Queries {
@@ -33,6 +42,7 @@ class Queries {
 	showGallery = true
 	showSideBar = true
 	queryJustSaved = false
+	isMobile = window.innerWidth <= 768
 	currentQuery = {
 		query: '',
 		variables: '{}',
@@ -49,6 +59,7 @@ class Queries {
 			currentQuery: observable,
 			showGallery: observable,
 			showSideBar: observable,
+			isMobile: observable,
 			query: observable,
 			queryParams: computed,
 			queryNumber: computed,
@@ -59,6 +70,7 @@ class Queries {
 			removeQuery: action,
 			saveToggle: action,
 			saveQuery: action,
+			setMobile: action,
 			setQuery: action
 		})
 	}
@@ -80,7 +92,7 @@ class Queries {
 			endpoint_url: this.currentQuery.endpoint_url && this.currentQuery.endpoint_url
 		}
 	}
-
+	setMobile = (mobile) => this.isMobile = mobile
 	setQuery = (params, id) => {
 		this.query.push({ id: id ? id : null })
 		if (this.query[this.query.length-1].id && !('saved' in params)) 

@@ -1,13 +1,14 @@
 import React from 'react'
 import Modal from 'react-modal'
-import modalStore from '../../store/modalStore'
-import { observer } from 'mobx-react-lite'
-import RegisterForm from './RegisterForm'
 import LoginForm from './LoginForm'
+import EditDialog from './EditDialog'
+import ApiKeyModal from './ApiKeyModal'
+import RegisterForm from './RegisterForm'
+import { observer } from 'mobx-react-lite'
 import SaveQueryFrom from './SaveQueryForm'
+import modalStore from '../../store/modalStore'
 import ForgotPasswordForm from './ForgotPasswordForm'
 import ChangePasswordForm from './ChangePasswordForm'
-import EditDialog from './EditDialog'
 
 const customStyles = {
 	overlay: {
@@ -45,20 +46,20 @@ Modal.setAppElement('#graphql_ide')
 const ModalWindow = observer(() => {
 	const { 
 		registerIsOpen, loginIsOpen, modalIsOpen,
-		saveQueryIsOpen, editDialogIsOpen,
+		saveQueryIsOpen, editDialogIsOpen, apiKeyIsOpen,
 		forgotPasswordIsOpen, changePasswordIsOpen,
 		toggleModal, toggleLogin, toggleRegister, 
-		toggleSaveQuery, toggleEditDialog,
+		toggleSaveQuery, toggleEditDialog, toggleApiKey,
 		toggleForgotPassword, toggleChangePassword 
 	} = modalStore
 	
 	const onRequestClose = () => {
 		toggleModal()
 		loginIsOpen && toggleLogin()
+		apiKeyIsOpen && toggleApiKey()
 		registerIsOpen && toggleRegister()
 		saveQueryIsOpen && toggleSaveQuery()
 		editDialogIsOpen && toggleEditDialog()
-		
 		forgotPasswordIsOpen && toggleForgotPassword()
 		changePasswordIsOpen && toggleChangePassword()
 	}
@@ -70,6 +71,7 @@ const ModalWindow = observer(() => {
 			contentLabel="Example Modal"
 		>
 			<LoginForm active={loginIsOpen} />
+			<ApiKeyModal active={apiKeyIsOpen} />
 			<EditDialog active={editDialogIsOpen} />
 			<RegisterForm active={registerIsOpen} />
 			<SaveQueryFrom  active={saveQueryIsOpen} />

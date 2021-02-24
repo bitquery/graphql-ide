@@ -1,15 +1,12 @@
-export default function debounce (
-  duration,
-  fn,
-) {
-  let timeout;
-  return function (that, ...args) {
-    if (timeout) {
-      window.clearTimeout(timeout);
-    }
-    timeout = window.setTimeout(() => {
-      timeout = null;
-      fn.apply(that, args);
-    }, duration);
-  };
+export default function debounce(wait, func, immediate) {
+	var timeout;
+	return function() {
+		var context = this, args = arguments;
+		clearTimeout(timeout);
+		timeout = setTimeout(function() {
+			timeout = null;
+			if (!immediate) func.apply(context, args);
+		}, wait);
+		if (immediate && !timeout) func.apply(context, args);
+	};
 }

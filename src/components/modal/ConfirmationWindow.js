@@ -36,22 +36,23 @@ const customStyles = {
 
 Modal.setAppElement('#graphql_ide')
 
-const ConfirmationWindow = observer(({message, action}) => {
-	const { confirmationIsOpen, toggleConfirmation } = modalStore
+const ConfirmationWindow = observer(() => {
+	const { confirmationIsOpen, toggleConfirmation, 
+		confirmationMessage, confirmationAction } = modalStore
 	const confirmHandler = () => {
-		action()
+		confirmationAction()
 		toggleConfirmation()
 	}
 	return (
 		<Modal
 			isOpen={confirmationIsOpen}
-			onRequestClose={toggleConfirmation}
+			onRequestClose={()=>toggleConfirmation()}
 			style={customStyles}
 			contentLabel="Confirmation Modal"
 		>
-			<p>{message}</p>
+			<p>{confirmationMessage}</p>
 			<div className="buttons flex" style={{'justifyContent': 'space-around', 'width': '100%'}}>
-				<button type="button" className="btn btn-primary btn-sm" onClick={toggleConfirmation}>Cancel</button>
+				<button type="button" className="btn btn-primary btn-sm" onClick={()=>toggleConfirmation()}>Cancel</button>
 				<button type="button" className="btn btn-danger btn-sm" onClick={confirmHandler}>Confirm</button>
 			</div>	
 		</Modal>

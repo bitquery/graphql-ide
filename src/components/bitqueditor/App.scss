@@ -118,6 +118,14 @@ $top-bar-height: 44px;
     display: flex;
     flex-direction: column;
   }
+  &-wrapper-fullscreen {
+    position: absolute;
+    z-index: 9999;
+    width: 100vw;
+    height: 100vh;
+    left: -220px;
+    top: -44px;
+  }
 }
 .widget-editor {
   display: flex;
