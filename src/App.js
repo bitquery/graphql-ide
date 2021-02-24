@@ -14,18 +14,22 @@ import {
 	getIntrospectionQuery, 
 	buildClientSchema, 
 	} from 'graphql'
-import Explorer from "graphiql-explorer"
+import QueryBuilder from './components/QueryBuilder/index'
 import { makeDefaultArg, getDefaultScalarArgValue } from "./components/Explorer/CustomArgs"
 
 if (process.env.NODE_ENV === 'development') {
 	require('@welldone-software/why-did-you-render')(React, {
 	  trackAllPureComponents: true,
+	  exclude: [/^Explorer/, /^RootView/, 
+		/^FieldView/, /^ArgView/, 
+		/^AbstractArgView/, /^InputArgView/, 
+		/^AbstractArgView/, /^ScalarInput/]
 	});
   }
 
 const App = observer(function App() {
 	const { path } = useRouteMatch()
-	const { query, currentQuery, updateQuery, showGallery, toggleGallery } = QueriesStore
+	const { query, currentQuery, updateQuery, showGallery, showSideBar, toggleSideBar, toggleGallery } = QueriesStore
 	const { index } = TabsStore
 	const [schema, setSchema] = useState(null)
 	const [loading, setLoading] = useState(false)
@@ -92,13 +96,17 @@ const App = observer(function App() {
 						<ModalWindow />
 						<ControlPanel />
 						<div className="content flex">
-							{showGallery && <GalleryComponent />}
-							<Explorer
+							{(showGallery && showSideBar) && <GalleryComponent />}
+							<QueryBuilder
+								width={'300px'}
+								minWidth={'300px'}
+								title={'Builder'}
 								schema={schema}
 								query={currentQuery.query}
 								onEdit={query=>updateQuery({query}, index)}
-								explorerIsOpen={!showGallery}
+								explorerIsOpen={!showGallery && showSideBar}
 								onToggleExplorer={toggleGallery}
+								onToggleSideBar={toggleSideBar}
 								getDefaultScalarArgValue={getDefaultScalarArgValue}
 								makeDefaultArg={makeDefaultArg}
 							/>

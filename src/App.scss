@@ -71,7 +71,29 @@
 			opacity: 0.5;
 			position: absolute;
 			left: 5px;
-			top: 5px;
+			top: 15px;
+			transition: opacity 150ms;
+			cursor: pointer;
+			&:hover{
+				opacity: 1;
+			}
+		}
+		&__change {
+			opacity: 0.5;
+			position: absolute;
+			left: 30px;
+			top: 15px;
+			transition: opacity 150ms;
+			cursor: pointer;
+			&:hover{
+				opacity: 1;
+			}
+		}
+		&__toggle {
+			opacity: 0.5;
+			position: relative;
+			left: -10px;
+			top: 0;
 			transition: opacity 150ms;
 			cursor: pointer;
 			&:hover{
@@ -166,7 +188,7 @@
 		flex-direction: column;
 	}
 	&_wide {
-		max-width: calc(100% - 22px);
+		max-width: 100%;
 	}
 }
 .graphiql-container {

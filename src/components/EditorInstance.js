@@ -31,7 +31,7 @@ import FullscreenIcon from './FullscreenIcon'
 const EditorInstance = observer(function EditorInstance({number, schema, loading, setLoading})  {
 	const { tabs, currentTab, index } = TabsStore
 	const { user }  = UserStore
-	const { query, updateQuery, showGallery, currentQuery } = QueriesStore
+	const { query, updateQuery, showGallery, currentQuery, showSideBar } = QueriesStore
 	const [docExplorerOpen, toggleDocExplorer] = useState(false)
 	const [_variableToType, _setVariableToType] = useState(null)
 	const [queryTypes, setQueryTypes] = useState('')
@@ -250,7 +250,7 @@ const EditorInstance = observer(function EditorInstance({number, schema, loading
 		<div 
 			className={'graphiql__wrapper ' + 
 				(currentTab === tabs[number].id ? 'graphiql__wrapper_active' : '')
-				+ (!showGallery ? ' graphiql__wrapper_wide' : '')
+				+ (!showSideBar ? ' graphiql__wrapper_wide' : '')
 			}
 			key={number}
 		>

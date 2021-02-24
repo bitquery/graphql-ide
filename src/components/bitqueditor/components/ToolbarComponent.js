@@ -8,7 +8,8 @@ import logo from '../../../assets/images/bitquery_logo_w.png'
 import React from 'react'
 
 const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOpen, toggleDocExplorer }) => {
-	const { currentQuery, queryParams, saveQuery, updateQuery, queryNumber } = QueriesStore
+	const { currentQuery, queryParams, saveQuery, updateQuery, queryNumber, 
+		showSideBar, toggleSideBar } = QueriesStore
 	const { user }  = UserStore
 	const { toggleModal, toggleEditDialog } = modalStore
 	const { addToast } = useToasts()
@@ -53,6 +54,10 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 	return (
 		<div className="topBarWrap">
 			<div className="topBar">
+				{!showSideBar && <i 
+					className="gallery__toggle fas fa-angle-double-right" 
+					onClick={toggleSideBar}
+				/>}
 				<div className="topBar__logo">
 					<img 
 						className="topBar__logo__img" 

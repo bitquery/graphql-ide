@@ -9,7 +9,7 @@ const GalleryComponent = observer(function GalleryComponent() {
 	const [allQueries, setAllQueries] = useState([])
 	const [myQueries, setMyQueries] = useState([])
 	const [showAllQueries, toggleQueries] = useState(true)
-	const { showGallery, toggleGallery, queryJustSaved } = QueriesStore
+	const { showGallery, toggleSideBar, toggleGallery, queryJustSaved } = QueriesStore
 	const { user } = UserStore
 	const { addToast } = useToasts()
 
@@ -50,7 +50,8 @@ const GalleryComponent = observer(function GalleryComponent() {
 			{!showGallery &&<i className="open fas fa-angle-double-right" onClick={toggleGallery} />}
 			<div className="gallery__header flex flex-col">
 				{!user && <p className="gallery__header__title">Queries</p>}
-				<i className="gallery__close fas fa-angle-double-left" onClick={toggleGallery} />
+				<i className="gallery__close fas fa-angle-double-left" onClick={toggleSideBar} />
+				<i className="gallery__change fas fa-exchange-alt" onClick={toggleGallery} ></i>
 				{ user && 
 					<ul className="nav nav-tabs">
 						<li className="nav-item" onClick={() => toggleQueries(!showAllQueries)} >

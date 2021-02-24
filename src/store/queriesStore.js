@@ -31,6 +31,7 @@ class Queries {
 	defaultWidget = 'json.widget'
 	currentVariables = ''
 	showGallery = true
+	showSideBar = true
 	queryJustSaved = false
 	currentQuery = {
 		query: '',
@@ -47,6 +48,7 @@ class Queries {
 			queryJustSaved: observable,
 			currentQuery: observable,
 			showGallery: observable,
+			showSideBar: observable,
 			query: observable,
 			queryParams: computed,
 			queryNumber: computed,
@@ -117,6 +119,9 @@ class Queries {
 	}
 	toggleGallery = () => {
 		this.showGallery = !this.showGallery
+	}
+	toggleSideBar = () => {
+		this.showSideBar = !this.showSideBar
 	}
 	setCurrentQuery = (id) => {
 		this.currentQuery = {...this.query[id]}
