@@ -2221,51 +2221,11 @@ class RootView extends React.PureComponent<
           onMouseEnter={() => this.setState({displayTitleActions: true})}
           onMouseLeave={() => this.setState({displayTitleActions: false})}>
           {operationType}{' '}
-          <span style={{color: styleConfig.colors.def}}>
-            <input
-              style={{
-                color: styleConfig.colors.def,
-                border: 'none',
-                borderBottom: '1px solid #888',
-                outline: 'none',
-                width: `${Math.max(4, operationDisplayName.length)}ch`,
-              }}
-              autoComplete="false"
-              placeholder={`${capitalize(operationType)} Name`}
-              value={this.props.name}
-              onKeyDown={this._handlePotentialRun}
-              onChange={this._onOperationRename}
-            />
-          </span>
           {!!this.props.onTypeName ? (
             <span>
               <br />
               {`on ${this.props.onTypeName}`}
             </span>
-          ) : (
-            ''
-          )}
-          {!!this.state.displayTitleActions ? (
-            <React.Fragment>
-              <button
-                type="submit"
-                className="toolbar-button"
-                onClick={() => this.props.onOperationDestroy()}
-                style={{
-                  ...styleConfig.styles.actionButtonStyle,
-                }}>
-                <span>{'\u2715'}</span>
-              </button>
-              <button
-                type="submit"
-                className="toolbar-button"
-                onClick={() => this.props.onOperationClone()}
-                style={{
-                  ...styleConfig.styles.actionButtonStyle,
-                }}>
-                <span>{'⎘'}</span>
-              </button>
-            </React.Fragment>
           ) : (
             ''
           )}
@@ -2833,11 +2793,6 @@ class ExplorerWrapper extends React.PureComponent<Props, {}> {
           flexDirection: 'column',
           overflow: 'hidden',
         }}>
-        <div className="doc-explorer-title-bar">
-          <i className="gallery__close fas fa-angle-double-left" onClick={this.props.onToggleSideBar} />
-				  <i className="gallery__change fas fa-exchange-alt" onClick={this.props.onToggleExplorer} ></i>
-          <div className="doc-explorer-title">{this.props.title}</div>
-        </div>
         <div
           className="doc-explorer-contents"
           style={{

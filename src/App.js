@@ -96,20 +96,7 @@ const App = observer(function App() {
 						<ModalWindow />
 						<ControlPanel />
 						<div className="content flex">
-							{(showGallery && showSideBar) && <GalleryComponent />}
-							<QueryBuilder
-								width={'300px'}
-								minWidth={'300px'}
-								title={'Builder'}
-								schema={schema}
-								query={currentQuery.query}
-								onEdit={query=>updateQuery({query}, index)}
-								explorerIsOpen={!showGallery && showSideBar}
-								onToggleExplorer={toggleGallery}
-								onToggleSideBar={toggleSideBar}
-								getDefaultScalarArgValue={getDefaultScalarArgValue}
-								makeDefaultArg={makeDefaultArg}
-							/>
+							{showSideBar && <GalleryComponent schema={schema} />}
 							<GraphqlExplorer schema={schema} loading={loading} setLoading={setLoading} />
 						</div>
 					</Route>
