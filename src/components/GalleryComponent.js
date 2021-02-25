@@ -95,10 +95,10 @@ const GalleryComponent = observer(function GalleryComponent() {
 			<div className="gallery__header flex flex-col">
 				<i className="gallery__close fas fa-angle-double-left" onClick={toggleSideBar} />
 					<ul className="nav nav-tabs">
-						{user && <li className="nav-item" onClick={() => {toggleQueries(!showAllQueries); toggleBuilder(false);}} >
+						{user && <li className="nav-item" onClick={() => {toggleQueries(false); toggleBuilder(false);}} >
 							<a className={"nav-link " + ((!showAllQueries && !showBuilder) && 'active')} href="# ">Private</a>
 						</li>}
-						<li className="nav-item" onClick={() => {toggleQueries(!showAllQueries); toggleBuilder(false);}}>
+						<li className="nav-item" onClick={() => {toggleQueries(true); toggleBuilder(false);}}>
 							<a className={"nav-link " + ((showAllQueries && !showBuilder) && 'active')} href="# ">{user ? 'Shared' : 'Queries'}</a>
 						</li>
 						<li className="nav-item" onClick={() => toggleBuilder(true)}>
