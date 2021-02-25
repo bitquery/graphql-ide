@@ -69,6 +69,7 @@ class Queries {
 			setCurrentVariables: action,
 			setCurrentQuery: action,
 			toggleGallery: action,
+			toggleSideBar: action,
 			updateQuery: action,
 			removeQuery: action,
 			saveToggle: action,
