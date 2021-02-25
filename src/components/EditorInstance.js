@@ -168,6 +168,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 	const WidgetComponent = indexx>=0 ? plugins[indexx] : plugins[0]
 
 	const getResult = useCallback(() => {
+		ReactTooltip.hide(executeButton.current)
 		setLoading(true)
 		let queryType = getQueryTypes(currentQuery.query)
 		if (JSON.stringify(queryType) !== JSON.stringify(queryTypes)) {
