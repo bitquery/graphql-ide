@@ -5,17 +5,9 @@ import ControlPanel from './components/ControlPanel'
 import { Route, Switch, useRouteMatch } from 'react-router-dom'
 import ResetPassword from './pages/ResetPassword'
 import GalleryComponent from './components/GalleryComponent'
-import { useEffect, useState } from 'react'
-import { QueriesStore, TabsStore } from './store/queriesStore'
+import { useEffect } from 'react'
+import { QueriesStore } from './store/queriesStore'
 import { GraphqlExplorer } from './components/GraphqlExplorer'
-import useDebounce from './utils/useDebounce'
-import { observer } from 'mobx-react-lite'
-import { 
-	getIntrospectionQuery, 
-	buildClientSchema, 
-	} from 'graphql'
-import QueryBuilder from './components/QueryBuilder/index'
-import { makeDefaultArg, getDefaultScalarArgValue } from "./components/Explorer/CustomArgs"
 
 if (process.env.NODE_ENV === 'development') {
 	require('@welldone-software/why-did-you-render')(React, {
@@ -27,13 +19,9 @@ if (process.env.NODE_ENV === 'development') {
 	});
   }
 
-const App = observer(function App() {
+function App() {
 	const { path } = useRouteMatch()
-	const { query, currentQuery, updateQuery, showGallery, showSideBar, toggleSideBar, toggleGallery } = QueriesStore
-	const { index } = TabsStore
-	const [schema, setSchema] = useState(null)
-	const [loading, setLoading] = useState(false)
-	const debouncedURL = useDebounce(currentQuery.endpoint_url, 500)
+	const { query, showSideBar } = QueriesStore
 	useEffect(() => {
 		const handleUnload = e => {
 			for (let i=0; i<query.length; i++) {
@@ -49,43 +37,7 @@ const App = observer(function App() {
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
-	const fetcher = (graphQLParams) => {
-		return fetch(
-			currentQuery.endpoint_url,
-			{
-				method: 'POST',
-				headers: {
-					Accept: 'application/json',
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify(graphQLParams),
-				credentials: 'same-origin',
-			},
-		)
-	}
-	useEffect(() => {
-			const fetchSchema = () => {
-				setLoading(true)
-				let introspectionQuery = getIntrospectionQuery()
-				let staticName = 'IntrospectionQuery'
-				let introspectionQueryName = staticName
-				let graphQLParams = {
-					query: introspectionQuery,
-					operationName: introspectionQueryName,
-				}
-				fetcher(graphQLParams)
-				.then(data => data.json())	
-				.then(result => {
-					if (typeof result !== 'string' && 'data' in result) {
-						let schema = buildClientSchema(result.data)
-						setSchema(schema)
-					}
-					setLoading(false)
-				}).catch(e => {})
-			}
-			fetchSchema() 
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [debouncedURL])
+	
 	return (
 		<div className="App">
 				<Switch>
@@ -96,13 +48,13 @@ const App = observer(function App() {
 						<ModalWindow />
 						<ControlPanel />
 						<div className="content flex">
-							{showSideBar && <GalleryComponent schema={schema} />}
-							<GraphqlExplorer schema={schema} loading={loading} setLoading={setLoading} />
+							{showSideBar && <GalleryComponent />}
+							<GraphqlExplorer />
 						</div>
 					</Route>
 				</Switch>
 		</div>
 	)
-})
+}
 
 export default App;

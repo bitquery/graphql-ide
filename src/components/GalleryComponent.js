@@ -7,14 +7,14 @@ import { useToasts } from 'react-toast-notifications'
 import QueryBuilder from './QueryBuilder/index'
 import { makeDefaultArg, getDefaultScalarArgValue } from "./Explorer/CustomArgs"
 
-const GalleryComponent = observer(function GalleryComponent({schema}) {
+const GalleryComponent = observer(function GalleryComponent() {
 	const [allQueries, setAllQueries] = useState([])
 	const [myQueries, setMyQueries] = useState([])
 	const [showAllQueries, toggleQueries] = useState(true)
 	const [showBuilder, toggleBuilder] = useState(false)
 	const { showGallery, currentQuery, 
 		toggleSideBar, toggleGallery, 
-		queryJustSaved, updateQuery } = QueriesStore
+		queryJustSaved, updateQuery, schema } = QueriesStore
 	const { index } = TabsStore
 	const { user } = UserStore
 	const { addToast } = useToasts()

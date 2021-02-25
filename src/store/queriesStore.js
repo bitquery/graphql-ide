@@ -42,6 +42,7 @@ class Queries {
 	showGallery = true
 	showSideBar = true
 	queryJustSaved = false
+	schema = null
 	isMobile = window.innerWidth <= 768
 	currentQuery = {
 		query: '',
@@ -60,6 +61,7 @@ class Queries {
 			showGallery: observable,
 			showSideBar: observable,
 			isMobile: observable,
+			schema: observable,
 			query: observable,
 			queryParams: computed,
 			queryNumber: computed,
@@ -70,6 +72,7 @@ class Queries {
 			removeQuery: action,
 			saveToggle: action,
 			saveQuery: action,
+			setSchema: action,
 			setMobile: action,
 			setQuery: action
 		})
@@ -92,6 +95,7 @@ class Queries {
 			endpoint_url: this.currentQuery.endpoint_url && this.currentQuery.endpoint_url
 		}
 	}
+	setSchema = schema => this.schema = schema
 	setMobile = (mobile) => this.isMobile = mobile
 	setQuery = (params, id) => {
 		this.query.push({ id: id ? id : null })
