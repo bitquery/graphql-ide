@@ -20,6 +20,17 @@ const GalleryComponent = observer(function GalleryComponent() {
 	const { addToast } = useToasts()
 
 	useEffect(() => {
+		const handler = () => addToast((
+			<a href="https://bitquery.io/blog/blockchain-graphql-query" target="_blank" rel="noopener noreferrer">
+				Create your first GraphQL Query
+			</a>), 
+			{
+				appearance: 'info'
+			})
+		window.addEventListener('unauth', handler)
+		return () => window.removeEventListener('unauth', handler)
+	}, [addToast])
+	useEffect(() => {
 		const getQueries = async () => {
 			try {
 				const { data } = await axios.get('/api/getqueries')
