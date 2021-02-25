@@ -814,7 +814,7 @@ class ScalarInput extends React.PureComponent<ScalarInputProps, {}> {
             border: 'none',
             borderBottom: '1px solid #888',
             outline: 'none',
-            width: `${Math.max(1, Math.min(15, value.length))}ch`,
+            width: `${Math.max(1, Math.min(15, value.length+1))}ch`,
             color,
           }}
           ref={ref => {
