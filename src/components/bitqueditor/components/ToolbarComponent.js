@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react-lite'
-import { QueriesStore, UserStore } from '../../../store/queriesStore'
+import { QueriesStore, UserStore, TabsStore } from '../../../store/queriesStore'
 import modalStore from '../../../store/modalStore'
 import { useToasts } from 'react-toast-notifications'
 import { parse as parseGql } from 'graphql/language'
@@ -8,13 +8,14 @@ import logo from '../../../assets/images/bitquery_logo_w.png'
 import React from 'react'
 
 const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOpen, toggleDocExplorer }) => {
-	const { currentQuery, queryParams, saveQuery, updateQuery, queryNumber, 
+	const { currentQuery, queryParams, saveQuery, updateQuery, 
 		showSideBar, toggleSideBar } = QueriesStore
+	const { index } = TabsStore
 	const { user }  = UserStore
 	const { toggleModal, toggleEditDialog } = modalStore
 	const { addToast } = useToasts()
 	const handleInputURLChange = e => {
-		updateQuery({endpoint_url: e.target.value}, queryNumber)
+		updateQuery({endpoint_url: e.target.value}, index)
 	}
 	const saveHandle = () => {
 		if (user) {
