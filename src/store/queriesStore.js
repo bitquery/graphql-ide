@@ -219,6 +219,7 @@ class Tabs {
 		this.tabs[this.index].name = name
 	}
 	addNewTab = name => {
+		QueriesStore.setSchema(null)
 		this.incID()
 		this.tabs.push({
 			name: name,

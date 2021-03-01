@@ -57,7 +57,7 @@ if (process.env.NODE_ENV==='production') {
 					} else {
 						data = replaceData(data, {
 							title: result[0].name,
-							description: result[0].description
+							description: result[0].description ? result[0].description : defaultmeta.description
 						})
 						res.send(data)
 					}

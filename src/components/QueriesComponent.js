@@ -19,7 +19,7 @@ const QueriesComponent = observer(function QueriesComponent({ queries }) {
 			switchTab(tabs[tabID].id)
 		}
 	}
-	const queryUrl = queryUrl => queryUrl ? `${url}/${queryUrl}` : `${url}`
+	const queryUrl = queryUrl => queryUrl ? `${process.env.REACT_APP_IDE_URL}/${queryUrl}` : `${process.env.REACT_APP_IDE_URL}`
 	const queryIsOpen = (queryFromGallery) => 
 		queryFromGallery.id === currentQuery.id ? true : false	
 	const isSaved = baseQuery => {

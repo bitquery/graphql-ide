@@ -211,7 +211,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 		number === index &&
 		schema) && getResult()
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [tabs.length, schema])
+	}, [schema])
 	const editQueryHandler = useCallback(handleSubject => {
 		if ('query' in handleSubject) {
 			const facts = getQueryFacts(schema, handleSubject.query)
