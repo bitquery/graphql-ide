@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { useToasts } from 'react-toast-notifications'
+import { Link } from 'react-router-dom'
 import axios from 'axios'
 
 function ResetPasswordForm() {
@@ -32,6 +33,7 @@ function ResetPasswordForm() {
 	}
 	return (
 		<form style={style} onSubmit={resetPassword} className="reset__form" >
+			<Link to="/">Home</Link>
 			<h1>Confirm new password</h1>
 			<p className="p-modal">New password</p>
 			<input type="password" className="query__save" 

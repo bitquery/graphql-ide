@@ -42,10 +42,10 @@ const App = observer(function App() {
 	return (
 		<div className="App">
 				<Switch>
-					<Route path={`${path}/reset`} >
+					<Route path={`${process.env.REACT_APP_IDE_URL}/reset`} >
 						<ResetPassword />
 					</Route>
-					<Route path={['/:queryurl', '/']} >
+					<Route path={[`${process.env.REACT_APP_IDE_URL}/:queryurl`, `${process.env.REACT_APP_IDE_URL}`]} >
 						<ModalWindow />
 						<ControlPanel />
 						<div className="content flex">

@@ -313,11 +313,11 @@ module.exports = function(app, passport, db) {
 					subject: 'Account password reset',
 					text: 'You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n' +
 						'Please click on the following link, or paste this into your browser to complete the process:\n\n' +
-						req.protocol + '://' + req.get('Host') + '/api/reset/' + token + '\n\n' +
+						process.env.IDE_URL + '/api/reset/' + token + '\n\n' +
 						'If you did not request this, please ignore this email and your password will remain unchanged.\n',
 				}
 				transporter.sendMail(message)
-				res.send('An e-mail has been sent to ' + req.params.email + ' with further instructions.')
+				res.send('An e-mail has been sent to ' + req.body.email + ' with further instructions.')
 			} else {
 				res.send('There is no such account with this email')
 			}

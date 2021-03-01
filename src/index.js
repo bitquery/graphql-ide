@@ -15,7 +15,7 @@ if (process.env.NODE_ENV==='production') {
 ReactDOM.render(
 	<ToastProvider autoDismiss={true} >
 		<BrowserRouter>
-			<Route path={`${process.env.REACT_APP_IDE_URL}`}>
+			<Route>
 				<App/>
 			</Route>
 		</BrowserRouter>
