@@ -2,11 +2,14 @@ import React, { useEffect, useState } from 'react'
 import WidgetSelect from './bitqueditor/components/WidgetSelect'
 import DisplayedData from './bitqueditor/components/DisplayedData'
 import { observer } from 'mobx-react-lite'
+import { QueriesStore, TabsStore } from '../store/queriesStore'
 
 const WidgetEditorControls = observer(
 	function WidgetEditorControls({model, name, plugins, setDataSource, dataSource, number}) {
 	const [dataWidgets, setDataWidgets] = useState([]) 
 	const [dataIndexInModel, setDataIndexInModel] = useState(0)
+	const { updateQuery } = QueriesStore
+	const { index } = TabsStore
 	useEffect(() => {
 		let info = []
 		let insert = null
@@ -22,6 +25,13 @@ const WidgetEditorControls = observer(
 		console.log(info)
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [JSON.stringify(model)])
+	const generalJson = () => {
+		console.log(model)
+		updateQuery({
+			displayed_data: Object.keys(model).filter(key => !key.includes('.'))[0],
+			widget_id: plugins[0].id
+		}, index)
+	}
 	return (
 		<nav className="navbar navbar-expand-lg navbar-light bg-light">
 			<a className="navbar-brand" href="# ">Display</a>
@@ -50,6 +60,8 @@ const WidgetEditorControls = observer(
 					/>
 				</ul>
 			</div>
+			{dataSource?.displayed_data &&
+				<button className="topBar__button" onClick={generalJson}>General JSON</button>}
 		</nav>
 	)
 })
