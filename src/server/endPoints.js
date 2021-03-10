@@ -1,6 +1,8 @@
 const transporter = require('./mailer')
 const crypto = require('crypto')
 const bcrypt = require('bcrypt')
+const fs = require('fs')
+const path = require('path')
 
 module.exports = function(app, passport, db) {
 
@@ -299,6 +301,15 @@ module.exports = function(app, passport, db) {
 			} else {
 				res.send('Something went wrong...')
 			}
+		})
+	})
+
+	app.get('/api/js', (req, res) => {
+		const filePath = path.resolve(__dirname, '../vega-widgets/src/components/widgets', 'barWidgetRenderFunc.js')
+		fs.readFile(filePath, 'utf8', (err, data) => {
+			if (err) console.log(err)
+			let js = data.match(/async function[^{]+\{([\s\S]*)\}/)[0]
+			res.send(js)
 		})
 	})
 

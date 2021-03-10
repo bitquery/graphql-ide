@@ -1,0 +1,18 @@
+.widget {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 50%;
+  align-items: center;
+  overflow: auto;
+}
+.widget-display{
+  display: flex;
+  flex: 1 1 80%;
+  width: 100%;
+  overflow: hidden;
+}
+.widget-editor {
+  display: flex;
+  flex-direction: column;
+  padding: 10px 10px 0;
+}

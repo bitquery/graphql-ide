@@ -3,7 +3,8 @@ import { observer } from 'mobx-react-lite'
 import { toJS } from 'mobx'
 import ReactTooltip from 'react-tooltip'
 import PlayIcon from './PlayIcon.js'
-import { vegaPlugins } from 'vega-widgets'
+// import { vegaPlugins } from 'vega-widgets'
+import { vegaPlugins } from '../vega-widgets/index'
 import { graphPlugins } from '@bitquery/ide-graph'
 import { timeChartPlugins } from '@bitquery/ide-charts'
 import './bitqueditor/App.scss'
@@ -28,7 +29,6 @@ import { FullScreen, useFullScreenHandle } from "react-full-screen"
 import FullscreenIcon from './FullscreenIcon'
 import { getIntrospectionQuery, buildClientSchema } from 'graphql'
 import useDebounce from '../utils/useDebounce'
-
 
 const EditorInstance = observer(function EditorInstance({number})  {
 	const { tabs, currentTab, index } = TabsStore
@@ -188,7 +188,6 @@ const EditorInstance = observer(function EditorInstance({number})  {
 		fetcher({query: currentQuery.query, variables: currentQuery.variables}).then(data => {
 			data.json().then(json => {
 				setDataSource({
-					execute: getResult,
 					data: ('data' in json) ? json.data : null,
 					displayed_data: displayed_data || '',
 					values: ('data' in json) ? (currentQuery.displayed_data) ? getValueFrom(json.data, displayed_data) : json.data : null,
