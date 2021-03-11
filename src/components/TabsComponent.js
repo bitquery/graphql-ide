@@ -9,7 +9,6 @@ import useEventListener from '../utils/useEventListener'
 
 const TabsComponent = observer(() => {
 	const history = useHistory()
-	const { url } = useRouteMatch()
 	const { tabs, currentTab, switchTab, index } = TabsStore
 	const match = useRouteMatch(`${process.env.REACT_APP_IDE_URL}/:queryurl`)
 	const { setQuery, removeQuery, query, updateQuery, currentQuery } = QueriesStore

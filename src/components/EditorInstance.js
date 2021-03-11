@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react'
 import { observer } from 'mobx-react-lite'
 import { toJS } from 'mobx'
 import ReactTooltip from 'react-tooltip'
-import PlayIcon from './PlayIcon.js'
+import PlayIcon from './icons/PlayIcon.js'
 import { vegaPlugins } from 'vega-widgets'
 import { graphPlugins } from '@bitquery/ide-graph'
 import { timeChartPlugins } from '@bitquery/ide-charts'
@@ -18,14 +18,14 @@ import { parse as parseGql } from 'graphql/language'
 import JsonPlugin from './bitqueditor/components/JsonWidget'
 import ToolbarComponent from './bitqueditor/components/ToolbarComponent'
 import { TabsStore, QueriesStore, UserStore } from '../store/queriesStore'
-import WidgetEditorControls from './WidgetEditorControls'
+import WidgetEditorControls from './bitqueditor/components/WidgetEditorControls'
 import QueryErrorIndicator from './QueryErrorIndicator'
 import { getValueFrom, getLeft, getTop } from '../utils/common'
 import "react-loader-spinner/dist/loader/css/react-spinner-loader.css"
 import Loader from "react-loader-spinner"
 import { DocExplorer } from './DocExplorer'
 import { FullScreen, useFullScreenHandle } from "react-full-screen"
-import FullscreenIcon from './FullscreenIcon'
+import FullscreenIcon from './icons/FullscreenIcon'
 import { getIntrospectionQuery, buildClientSchema } from 'graphql'
 import useDebounce from '../utils/useDebounce'
 
@@ -373,32 +373,34 @@ const EditorInstance = observer(function EditorInstance({number})  {
 				</div>
 				<div className={'widget-display widget-display-wrapper'+
 					(isMobile ? ' widget-display-wrapper-fullscreen' : '')} 
-					ref={widgetDisplay}>
+					ref={widgetDisplay}
+				>
 					<div 
 						className="sizeChanger" 
 						onMouseDown={handleResizer}
 					>
-						
 					</div>
-					<QueryErrorIndicator 
-						error={dataSource.error}
-						removeError={setDataSource}
-					/>
-					<FullScreen className="widget-display" handle={fullscreenHandle}>
-						<WidgetComponent.renderer 
-							dataSource={dataSource} 
-							displayedData={toJS(currentQuery.displayed_data)}
-							config={toJS(query[index].config)} 
-							el={currentTab === tabs[number].id ? `asd${currentTab}` : ''} 
-						>
-							<FullscreenIcon onClick={
-								isMobile ? ()=>setMobile(false) :
-								fullscreenHandle.active 
-								? fullscreenHandle.exit 
-								: fullscreenHandle.enter} 
-							/>
-						</WidgetComponent.renderer>
-					</FullScreen>
+					<div className="flex-col w-100">
+						<QueryErrorIndicator 
+							error={dataSource.error}
+							removeError={setDataSource}
+						/>
+						<FullScreen className="widget-display" handle={fullscreenHandle}>
+							<WidgetComponent.renderer 
+								dataSource={dataSource} 
+								displayedData={toJS(currentQuery.displayed_data)}
+								config={toJS(query[index].config)} 
+								el={currentTab === tabs[number].id ? `asd${currentTab}` : ''} 
+							>
+								<FullscreenIcon onClick={
+									isMobile ? ()=>setMobile(false) :
+									fullscreenHandle.active 
+									? fullscreenHandle.exit 
+									: fullscreenHandle.enter} 
+								/>
+							</WidgetComponent.renderer>
+						</FullScreen>
+					</div>
 				</div>
 				{docExplorerOpen && <DocExplorer schema={schema} />}
 			</div>

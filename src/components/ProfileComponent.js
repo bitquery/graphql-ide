@@ -3,7 +3,7 @@ import { logout } from '../api/api'
 import { observer } from 'mobx-react-lite'
 import ModalStore from '../store/modalStore'
 import { UserStore } from '../store/queriesStore'
-import UserIcon from './UserIcon'
+import UserIcon from './icons/UserIcon'
 import { Dropdown } from 'react-bootstrap'
 
 const Profile = observer(() => {

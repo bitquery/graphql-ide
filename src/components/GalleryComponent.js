@@ -2,10 +2,10 @@ import axios from 'axios'
 import { observer } from 'mobx-react-lite'
 import React, { useEffect, useState } from 'react'
 import { UserStore, QueriesStore, TabsStore } from '../store/queriesStore'
-import QueriesComponent from './QueriesComponent'
+import QueriesComponent from './Gallery/QueriesComponent'
 import { useToasts } from 'react-toast-notifications'
-import QueryBuilder from './QueryBuilder/index'
-import { makeDefaultArg, getDefaultScalarArgValue } from "./Explorer/CustomArgs"
+import QueryBuilder from './Gallery/QueryBuilder/index'
+import { makeDefaultArg, getDefaultScalarArgValue } from "./Gallery/QueryBuilder/CustomArgs"
 
 const GalleryComponent = observer(function GalleryComponent() {
 	const [allQueries, setAllQueries] = useState([])

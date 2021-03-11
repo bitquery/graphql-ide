@@ -1,4 +1,4 @@
-import GraphiQLExplorer from "../QueryBuilder/index";
+import GraphiQLExplorer from "./index";
 import { isEnumType, isWrappingType } from "graphql";
 
 function unwrapOutputType(outputType) {

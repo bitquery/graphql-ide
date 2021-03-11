@@ -2,7 +2,7 @@ import React from 'react'
 import './App.scss'
 import ModalWindow from './components/modal/ModalWindow'
 import ControlPanel from './components/ControlPanel'
-import { Route, Switch, useRouteMatch } from 'react-router-dom'
+import { Route, Switch } from 'react-router-dom'
 import ResetPassword from './pages/ResetPassword'
 import GalleryComponent from './components/GalleryComponent'
 import { useEffect } from 'react'
@@ -21,7 +21,6 @@ if (process.env.NODE_ENV === 'development') {
   }
 
 const App = observer(function App() {
-	const { path } = useRouteMatch()
 	const { query, showSideBar } = QueriesStore
 	useEffect(() => {
 		const handleUnload = e => {

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import WidgetSelect from './bitqueditor/components/WidgetSelect'
-import DisplayedData from './bitqueditor/components/DisplayedData'
+import WidgetSelect from './WidgetSelect'
+import DisplayedData from './DisplayedData'
 import { observer } from 'mobx-react-lite'
 
 const WidgetEditorControls = observer(
