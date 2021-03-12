@@ -9,14 +9,13 @@ function ChangePassword({active}) {
 	const { addToast } = useToasts()
 	const [oldPwd, setOldPwd] = useState('')
 	const [newPwd, setNewPwd] = useState('')
-	const [confirmNewPwd, setConfirmNewPwd] = useState('')
 	const closeHandler = () => {
 		toggleChangePassword()
 		toggleModal()
 	}
 	const changePwd = async (e) => {
 		e.preventDefault()
-		if (newPwd === confirmNewPwd && oldPwd && newPwd) {
+		if (oldPwd && newPwd) {
 			try {
 				const { data } = await axios.post('/api/changepassword', {
 					oldPwd,
@@ -28,8 +27,6 @@ function ChangePassword({active}) {
 			} catch (error) {
 				addToast(error.response.data, { appearance: 'error' })
 			}
-		} else if (newPwd !== confirmNewPwd) {
-			addToast('Passwords do not match!', { appearance: 'error' })
 		} else {
 			addToast('Fill all fields', { appearance: 'error' })
 		}
@@ -43,8 +40,6 @@ function ChangePassword({active}) {
 				<input type="password" className="query__save" value={oldPwd} onChange={e => setOldPwd(e.target.value)} />  
 				<p className="p-modal">New Password</p>
 				<input type="password" className="query__save" value={newPwd} onChange={e => setNewPwd(e.target.value)} />  
-				<p className="p-modal">Confirm Password</p>
-				<input type="password" className="query__save" value={confirmNewPwd} onChange={e => setConfirmNewPwd(e.target.value)} />  
 				<i className="handler handler__close fas fa-times" onClick={closeHandler} />
 				<button className="button button_filled" type="submit">Apply</button>
 			</form>

@@ -22,6 +22,7 @@ class User {
 			const { data } = await getUser()
 			this.setUser(data.user[0])
 		} catch (error) {
+			this.setUser(undefined)
 			window.dispatchEvent(new Event('unauth'))
 			console.log(error.response.data)
 		}

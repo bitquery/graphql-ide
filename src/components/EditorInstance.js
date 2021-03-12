@@ -269,7 +269,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 		)
 	}
 	useEffect(() => {
-		if (number === index) {
+		if (number === index && user !== null) {
 			const fetchSchema = () => {
 				setLoading(true)
 				let introspectionQuery = getIntrospectionQuery()
@@ -292,7 +292,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 			fetchSchema() 
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [debouncedURL])
+	}, [debouncedURL, user])
 	
 	const fullscreenHandle = useFullScreenHandle()
 
