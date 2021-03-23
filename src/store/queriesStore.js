@@ -142,6 +142,7 @@ class Queries {
 		this.showSideBar = !this.showSideBar
 	}
 	setCurrentQuery = (id) => {
+		TabsStore.toggleMode('view')
 		this.currentQuery = {...this.query[id]}
 		document.title = this.currentQuery.name || 'New Query'
 	}
@@ -189,13 +190,20 @@ class Tabs {
 		}
 	]
 	currentTab = 0
+	jsonMode = false
+	codeMode = false
+	viewMode = true
 
 	constructor() {
 		makeObservable(this, {
 			tabs: observable,
 			id: observable,
 			currentTab: observable,
+			jsonMode: observable,
+			codeMode: observable,
+			viewMode: observable,
 			index: computed,
+			toggleMode: action,
 			switchTab: action,
 			incID: action,
 			removeTab: action,
@@ -206,6 +214,25 @@ class Tabs {
 
 	get index() {
 		return this.tabs.map(tab=>tab.id).indexOf(this.currentTab)
+	}
+	toggleMode = (mode) => {
+		switch (mode) {
+			case 'json':
+				this.jsonMode = true
+				this.codeMode = false
+				this.viewMode = false
+				break;
+			case 'code': 
+				this.jsonMode = false
+				this.codeMode = true
+				this.viewMode = false
+				break;
+			case 'view':
+				this.jsonMode = false
+				this.codeMode = false
+				this.viewMode = true
+				break;
+		}
 	}
 	incID = () => {
 		this.id = this.id + 1

@@ -305,7 +305,7 @@ module.exports = function(app, passport, db) {
 	})
 
 	app.get('/api/js', (req, res) => {
-		const filePath = path.resolve(__dirname, '../vega-widgets/src/components/widgets', 'barWidgetRenderFunc.js')
+		const filePath = path.resolve(__dirname, req.query.source)
 		fs.readFile(filePath, 'utf8', (err, data) => {
 			if (err) console.log(err)
 			let js = data.match(/async function[^{]+\{([\s\S]*)\}/)[0]
