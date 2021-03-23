@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import WidgetSelect from './WidgetSelect'
 import DisplayedData from './DisplayedData'
+import { QueriesStore, TabsStore } from '../../../store/queriesStore'
 import { observer } from 'mobx-react-lite'
 
 const WidgetEditorControls = observer(
 	function WidgetEditorControls({model, name, plugins, setDataSource, dataSource, number}) {
+	const { currentQuery, defaultWidget } = QueriesStore
+	const { toggleMode, jsonMode, codeMode, viewMode } = TabsStore
 	const [dataWidgets, setDataWidgets] = useState([]) 
 	const [dataIndexInModel, setDataIndexInModel] = useState(0)
 	useEffect(() => {
@@ -50,6 +53,30 @@ const WidgetEditorControls = observer(
 					/>
 				</ul>
 			</div>
+			{(('widget_id' in currentQuery) && currentQuery.widget_id !== defaultWidget) && 
+				<div className="btn-group btn-group-toggle" data-toggle="buttons">
+					<label className={"btn btn-secondary topBar__button "+(viewMode && 'active')}>
+						<input type="radio" name="options" 
+							id="option1" autoComplete="off" 
+							defaultChecked={true}
+							onClick={()=>toggleMode('view')}
+						/> View
+					</label>
+					<label className={"btn btn-secondary topBar__button "+(jsonMode && 'active')}>
+						<input type="radio" name="options" 
+							id="option2" autoComplete="off" 
+							defaultChecked={false}
+							onClick={()=>toggleMode('json')}
+						/> JSON
+					</label>
+					<label className={"btn btn-secondary topBar__button "+(codeMode && 'active')}>
+						<input type="radio" name="options" 
+							id="option3" autoComplete="off"
+							defaultChecked={false}
+							onClick={()=>toggleMode('code')}
+						/> JS
+					</label>
+				</div>}
 		</nav>
 	)
 })
