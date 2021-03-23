@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@bitquery/ide-charts": "^1.0.9",
-    "@bitquery/ide-graph": "^1.0.7",
+    "@bitquery/ide-charts": "^2.0.1",
+    "@bitquery/ide-graph": "^2.0.1",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.5.0",
     "@testing-library/user-event": "^7.2.1",
@@ -50,7 +50,7 @@
     "vega": "^5.19.1",
     "vega-embed": "^6.15.1",
     "vega-lite": "^4.17.0",
-    "vega-widgets": "^1.0.11"
+    "vega-widgets": "^2.0.0"
   },
   "scripts": {
     "createdb": "node ./src/server/createDatabase.js",

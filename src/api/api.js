@@ -25,3 +25,6 @@ export const getQuery = url => axios.get(`/api/getquery/${url}`)
 export const deleteQuery = id => axios.post('/api/deletequery', 
 	{ id }  
 )
+export const getCheckoutCode = source => axios.get('/api/js', {
+	params: { source: `../../${source}` }
+})

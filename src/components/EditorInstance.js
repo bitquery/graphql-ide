@@ -3,6 +3,7 @@ import { observer } from 'mobx-react-lite'
 import { toJS } from 'mobx'
 import ReactTooltip from 'react-tooltip'
 import PlayIcon from './icons/PlayIcon.js'
+import { generateLink } from '../utils/common'
 import { vegaPlugins } from 'vega-widgets'
 import { graphPlugins } from '@bitquery/ide-graph'
 import { timeChartPlugins } from '@bitquery/ide-charts'
@@ -28,10 +29,11 @@ import { FullScreen, useFullScreenHandle } from "react-full-screen"
 import FullscreenIcon from './icons/FullscreenIcon'
 import { getIntrospectionQuery, buildClientSchema } from 'graphql'
 import useDebounce from '../utils/useDebounce'
-
+import WidgetView from './bitqueditor/components/WidgetView'
+import { getCheckoutCode } from '../api/api'
 
 const EditorInstance = observer(function EditorInstance({number})  {
-	const { tabs, currentTab, index } = TabsStore
+	const { tabs, currentTab, index, jsonMode, codeMode, viewMode } = TabsStore
 	const { user }  = UserStore
 	const { query, updateQuery, currentQuery, isMobile,
 		setMobile, showSideBar, schema, setSchema } = QueriesStore
@@ -42,6 +44,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 	const [dataSource, setDataSource] = useState({})
 	const [dataModel, setDataModel] = useState('')
 	const [accordance, setAccordance] = useState(true)
+	const [checkoutCode, setCheckOutCode] = useState('')
 	const debouncedURL = useDebounce(currentQuery.endpoint_url, 500)
 	const workspace = useRef(null)
 	const overwrap = useRef(null)
@@ -50,6 +53,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 	const variablesEditor = useRef(null)
 	const widgetDisplay = useRef(null)
 
+	
 	const setupExecButtonPosition = () => {
 		let execButt = workspace.current.offsetWidth / overwrap.current.offsetWidth
 		executeButton.current.setAttribute('style', `left: calc(${execButt*100}% - 25px);`)
@@ -188,7 +192,6 @@ const EditorInstance = observer(function EditorInstance({number})  {
 		fetcher({query: currentQuery.query, variables: currentQuery.variables}).then(data => {
 			data.json().then(json => {
 				setDataSource({
-					execute: getResult,
 					data: ('data' in json) ? json.data : null,
 					displayed_data: displayed_data || '',
 					values: ('data' in json) ? (currentQuery.displayed_data) ? getValueFrom(json.data, displayed_data) : json.data : null,
@@ -201,6 +204,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 			
 			setLoading(false)
 			setAccordance(true)
+			ReactTooltip.hide(executeButton.current)
 		})
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [JSON.stringify(currentQuery), schema])
@@ -296,7 +300,23 @@ const EditorInstance = observer(function EditorInstance({number})  {
 	
 	const fullscreenHandle = useFullScreenHandle()
 
-	
+	const getCode = useCallback( async () => {
+		const data = WidgetComponent.source && await getCheckoutCode(WidgetComponent.source)
+		const id = generateLink()
+		let renderFunc = WidgetComponent.source ? data.data.match(/function(.*?)\(/)[1].trim() : WidgetComponent.renderer.name.split('_')[0]
+		let dependencies = WidgetComponent.dependencies.map(dep => `<script src="${dep}"></script>`).join('\n')
+		return `
+${dependencies}
+<script src="https://cdn.jsdelivr.net/gh/Spendil/dsw@v1.2/dataSource.js"></script>
+<div style="width: 500px; height: 500px; overflow-y: hidden;" id="${id}"></div>
+<script>
+	let ds = new dataSourceWidget(\`${currentQuery.query}\`, ${currentQuery.variables}, \`${currentQuery.displayed_data}\`, '${user.key}')
+	${data ? data.data : ''}
+	const config = ${JSON.stringify(currentQuery.config)}
+	${renderFunc}(ds, config, '${id}')
+</script>
+		`
+	}, [WidgetComponent.id, JSON.stringify(currentQuery), user])
 
 	return (
 		<div 
@@ -385,12 +405,22 @@ const EditorInstance = observer(function EditorInstance({number})  {
 							error={dataSource.error}
 							removeError={setDataSource}
 						/>
-						<FullScreen className="widget-display" handle={fullscreenHandle}>
-							<WidgetComponent.renderer 
+						{currentQuery.widget_id==='json.widget' || jsonMode || codeMode ? 
+							<JsonPlugin.renderer
+								code={checkoutCode}
+								getCode={getCode}
+								mode={jsonMode ? 'json' : codeMode ? 'code' : ''}
 								dataSource={dataSource} 
 								displayedData={toJS(currentQuery.displayed_data)}
 								config={toJS(query[index].config)} 
-								el={currentTab === tabs[number].id ? `asd${currentTab}` : ''} 
+							/> : 
+							<FullScreen className="widget-display" handle={fullscreenHandle}>
+							<WidgetView 
+								renderFunc={WidgetComponent.renderer}
+								dataSource={dataSource} 
+								displayedData={toJS(currentQuery.displayed_data)}
+								config={toJS(query[index].config)} 
+								el={currentTab === tabs[number].id ? `asd${currentTab}` : 'x'} 
 							>
 								<FullscreenIcon onClick={
 									isMobile ? ()=>setMobile(false) :
@@ -398,8 +428,9 @@ const EditorInstance = observer(function EditorInstance({number})  {
 									? fullscreenHandle.exit 
 									: fullscreenHandle.enter} 
 								/>
-							</WidgetComponent.renderer>
+							</WidgetView>
 						</FullScreen>
+							}
 					</div>
 				</div>
 				{docExplorerOpen && <DocExplorer schema={schema} />}

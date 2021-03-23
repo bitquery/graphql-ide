@@ -317,6 +317,12 @@ div.CodeMirror span.CodeMirror-matchingbracket {
     text-overflow: ellipsis;
     white-space: nowrap;
     max-width: 150px;
+    &.active {
+      color: #007bff !important;
+    }
+    &:hover {
+      color: #aa8f8f;
+    }
     &:disabled {
       opacity: 0.5;
       cursor: default;

@@ -9,8 +9,8 @@ import React from 'react'
 
 const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOpen, toggleDocExplorer }) => {
 	const { currentQuery, queryParams, saveQuery, updateQuery, 
-		showSideBar, toggleSideBar } = QueriesStore
-	const { index } = TabsStore
+		showSideBar, toggleSideBar, defaultWidget } = QueriesStore
+	const { index, toggleMode, jsonMode, codeMode, viewMode } = TabsStore
 	const { user }  = UserStore
 	const { toggleModal, toggleEditDialog } = modalStore
 	const { addToast } = useToasts()
@@ -30,6 +30,7 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 		}
 	}
 	const prettifyQuery = () => {
+		console.log(jsonMode, codeMode, viewMode)
 		const editor = queryEditor.current.getEditor()
 		const editorContent = editor?.getValue() ?? ''
 		const prettifiedEditorContent = editorContent && print(
@@ -78,6 +79,30 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 				>
 					Prettify
 				</button>
+				{(('widget_id' in currentQuery) && currentQuery.widget_id !== defaultWidget) && 
+				<div className="btn-group btn-group-toggle" data-toggle="buttons">
+					<label className={"btn btn-secondary topBar__button "+(viewMode && 'active')}>
+						<input type="radio" name="options" 
+							id="option1" autoComplete="off" 
+							defaultChecked={true}
+							onClick={()=>toggleMode('view')}
+						/> View
+					</label>
+					<label className={"btn btn-secondary topBar__button "+(jsonMode && 'active')}>
+						<input type="radio" name="options" 
+							id="option2" autoComplete="off" 
+							defaultChecked={false}
+							onClick={()=>toggleMode('json')}
+						/> JSON
+					</label>
+					<label className={"btn btn-secondary topBar__button "+(codeMode && 'active')}>
+						<input type="radio" name="options" 
+							id="option3" autoComplete="off"
+							defaultChecked={false}
+							onClick={()=>toggleMode('code')}
+						/> Checkout code
+					</label>
+				</div>}
 				<input 
 					className="endpointURL"
 					type="text" 
