@@ -302,8 +302,8 @@ const EditorInstance = observer(function EditorInstance({number})  {
 
 	const getCode = useCallback( async () => {
 		const data = WidgetComponent.source && await getCheckoutCode(WidgetComponent.source)
-		const id = generateLink()
-		let renderFunc = WidgetComponent.source ? data.data.match(/function(.*?)\(/)[1].trim() : WidgetComponent.renderer.name.split('_')[0]
+		const id = generateLink(true)
+		let renderFunc = WidgetComponent.source ? data.data.match(/function(.*?)\(/)[1].trim() : WidgetComponent.rendererName
 		let dependencies = WidgetComponent.dependencies.map(dep => `<script src="${dep}"></script>`).join('\n')
 		return `
 ${dependencies}
