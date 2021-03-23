@@ -307,7 +307,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 		let dependencies = WidgetComponent.dependencies.map(dep => `<script src="${dep}"></script>`).join('\n')
 		return `
 ${dependencies}
-<script src="https://cdn.jsdelivr.net/gh/Spendil/dsw@v1.2/dataSource.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/bitquery/widgets-runtime@v1.0/dataSource.js"></script>
 <div style="width: 500px; height: 500px; overflow-y: hidden;" id="${id}"></div>
 <script>
 	let ds = new dataSourceWidget(\`${currentQuery.query}\`, ${currentQuery.variables}, \`${currentQuery.displayed_data}\`, '${user.key}')
