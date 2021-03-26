@@ -114,7 +114,10 @@ class Queries {
 		if (params.query) this.query[index].query = params.query
 		if (params.variables) this.query[index].variables = params.variables
 		if (params.config) this.query[index].config = params.config
-		if (typeof params.widget_id === 'string') this.query[index].widget_id = params.widget_id
+		if (typeof params.widget_id === 'string') {
+			this.query[index].widget_id = params.widget_id
+			// params.widget_id === this.defaultWidget && TabsStore.toggleMode('json')
+		}
 		if (typeof params.displayed_data === 'string') this.query[index].displayed_data = params.displayed_data
 		if (params.account_id) this.query[index].account_id = params.account_id
 		if (params.endpoint_url) this.query[index].endpoint_url = params.endpoint_url
@@ -143,7 +146,8 @@ class Queries {
 		this.showSideBar = !this.showSideBar
 	}
 	setCurrentQuery = (id) => {
-		TabsStore.toggleMode('view')
+		const mode = this.query[id].widget_id === this.defaultWidget ? 'json' : 'view'
+		TabsStore.toggleMode(mode)
 		this.currentQuery = {...this.query[id]}
 		document.title = this.currentQuery.name || 'New Query'
 	}
