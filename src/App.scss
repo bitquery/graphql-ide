@@ -2,6 +2,18 @@
 	font-family: 'Nunito';
 	src: url('./assets/fonts/Nunito-Regular.ttf') format('truetype')
 }
+.grid-stack { 
+	background: #FAFAD2; 
+	width: 100%;
+	height: 100% !important;
+}
+
+.grid-stack-item-content { 
+	background-color: #18BC9C; 
+	/* width: 500px !important;
+	height: 500px !important;
+	overflow-y: hidden !important; */
+}
 .App {
 	height: 100vh;
 	display: flex;

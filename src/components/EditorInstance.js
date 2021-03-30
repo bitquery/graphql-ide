@@ -191,6 +191,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 		}
 		fetcher({query: currentQuery.query, variables: currentQuery.variables}).then(data => {
 			data.json().then(json => {
+				console.log(getValueFrom(json.data, displayed_data))
 				setDataSource({
 					data: ('data' in json) ? json.data : null,
 					displayed_data: displayed_data || '',
