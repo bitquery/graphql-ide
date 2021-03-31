@@ -10,7 +10,7 @@ function WidgetView({ el, config, dataSource, displayedData, children, renderFun
 	return (
 		<>
 			{children}
-			<div style={{'width': '100%', 'overflowY': 'hidden'}} id={el} />
+			<div style={{'width': '100%', 'height': '100%', 'overflowY': 'hidden'}} id={el} />
 		</>
 	)
 }

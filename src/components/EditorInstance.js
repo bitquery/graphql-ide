@@ -31,6 +31,7 @@ import { getIntrospectionQuery, buildClientSchema } from 'graphql'
 import useDebounce from '../utils/useDebounce'
 import WidgetView from './bitqueditor/components/WidgetView'
 import { getCheckoutCode } from '../api/api'
+import DashBoard from './DashBoard'
 
 const EditorInstance = observer(function EditorInstance({number})  {
 	const { tabs, currentTab, index, jsonMode, codeMode, viewMode } = TabsStore
@@ -54,11 +55,11 @@ const EditorInstance = observer(function EditorInstance({number})  {
 	const widgetDisplay = useRef(null)
 
 	
-	const setupExecButtonPosition = () => {
+	/* const setupExecButtonPosition = () => {
 		let execButt = workspace.current.offsetWidth / overwrap.current.offsetWidth
 		executeButton.current.setAttribute('style', `left: calc(${execButt*100}% - 25px);`)
 		window.dispatchEvent(new Event('resize'))
-	}
+	} */
 	useEffect(() => {
 		dataModel && setDataModel('')
 		if (queryTypes && currentQuery.displayed_data) {
@@ -87,13 +88,13 @@ const EditorInstance = observer(function EditorInstance({number})  {
 			const rightSize = editorWidth - leftSize
 			let flex = leftSize / rightSize
 			if (flex >= 0 && isFinite(flex)) workspace.current.setAttribute('style', `flex: ${flex} 1 0%;`)
-			setupExecButtonPosition()
+			// setupExecButtonPosition()
 		}
 		overwrap.current.addEventListener('mousemove', onMouseMove);
     	overwrap.current.addEventListener('mouseup', onMouseUp);
 	}
 	useEffect(() => {
-		setupExecButtonPosition()
+		// setupExecButtonPosition()
 	}, [docExplorerOpen])
 	const workspaceResizer = e => {
 		if (e.target && e.target.className && typeof e.target.className.indexOf === 'function') { 
@@ -327,115 +328,10 @@ ${dependencies}
 			}
 			key={number}
 		>
-			<ToolbarComponent 
-				queryEditor={queryEditor}
-				variablesEditor={variablesEditor}
-				docExplorerOpen={docExplorerOpen}
-				toggleDocExplorer={toggleDocExplorer}
+			<DashBoard 
+				dataSource={dataSource} 
+				WidgetComponent={WidgetComponent}
 			/>
-			<div className="over-wrapper"  ref={overwrap}>
-				<ReactTooltip 
-					place="top"
-					border={false}
-					borderColor="#fff"
-					backgroundColor="#5f5f5f"
-					arrowColor="transparent"
-					delayShow={750}
-				/>
-				
-				<button className="execute-button"
-					data-tip='Execute query (Ctrl-Enter)' 
-					disabled={loading} 
-					ref={executeButton} 
-					onClick={getResult}
-				>
-					{loading 
-						?	<Loader
-								type="Oval"
-								color="#3d77b6"
-								height={25}
-								width={25}
-							/> 
-						: 	<PlayIcon fill={accordance ? '#eee' : '#14ff41'} />}
-				</button>
-				<div className="workspace__wrapper" 
-						ref={workspace} 
-						onMouseDown={workspaceResizer}
-				>
-					<GraphqlEditor 
-						schema={schema}
-						query={query[number].query}
-						number={number}
-						variables={query[number].variables}
-						variableToType={_variableToType}
-						onRunQuery={getResult}
-						onEditQuery={editQueryHandler}
-						onEditVariables={editQueryHandler}
-						ref={{
-							ref1: queryEditor,
-							ref2: variablesEditor
-						}}
-					/>
-					<div className="workspace__sizechanger"/>
-					<WidgetEditorControls 
-						model={queryTypes}
-						dataSource={dataSource}
-						setDataSource={setDataSource}
-						name={WidgetComponent.name}
-						plugins={plugins}
-						number={number}
-					/>
-					{currentQuery.displayed_data ? <WidgetComponent.editor 
-						model={dataModel}
-						displayedData={toJS(query[index].displayed_data)}
-						config={toJS(query[index].config)}
-						setConfig={setConfig} 
-					/> : <div className="widget" /> }
-				</div>
-				<div className={'widget-display widget-display-wrapper'+
-					(isMobile ? ' widget-display-wrapper-fullscreen' : '')} 
-					ref={widgetDisplay}
-				>
-					<div 
-						className="sizeChanger" 
-						onMouseDown={handleResizer}
-					>
-					</div>
-					<div className="flex-col w-100">
-						<QueryErrorIndicator 
-							error={dataSource.error}
-							removeError={setDataSource}
-						/>
-						{currentQuery.widget_id==='json.widget' || jsonMode || codeMode ? 
-							<JsonPlugin.renderer
-								code={checkoutCode}
-								getCode={getCode}
-								mode={jsonMode ? 'json' : codeMode ? 'code' : ''}
-								dataSource={dataSource} 
-								displayedData={toJS(currentQuery.displayed_data)}
-								config={toJS(query[index].config)} 
-							/> : 
-							<FullScreen className="widget-display" handle={fullscreenHandle}>
-							<WidgetView 
-								renderFunc={WidgetComponent.renderer}
-								dataSource={dataSource} 
-								displayedData={toJS(currentQuery.displayed_data)}
-								config={toJS(query[index].config)} 
-								el={currentTab === tabs[number].id ? `asd${currentTab}` : 'x'} 
-							>
-								<FullscreenIcon onClick={
-									isMobile ? ()=>setMobile(false) :
-									fullscreenHandle.active 
-									? fullscreenHandle.exit 
-									: fullscreenHandle.enter} 
-								/>
-							</WidgetView>
-						</FullScreen>
-							}
-					</div>
-				</div>
-				{docExplorerOpen && <DocExplorer schema={schema} />}
-			</div>
 		</div> 
 	)
 })

@@ -11,8 +11,10 @@
 .grid-stack-item-content { 
 	background-color: #18BC9C; 
 	/* width: 500px !important;
-	height: 500px !important;
-	overflow-y: hidden !important; */
+	height: 500px !important;*/
+	overflow: hidden !important;
+	/* min-width: 300px !important;
+	min-height: 300px !important; */
 }
 .App {
 	height: 100vh;
