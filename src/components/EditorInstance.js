@@ -329,8 +329,7 @@ ${dependencies}
 			key={number}
 		>
 			<DashBoard 
-				dataSource={dataSource} 
-				WidgetComponent={WidgetComponent}
+				plugins={plugins}
 			/>
 		</div> 
 	)

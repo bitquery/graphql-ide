@@ -53,12 +53,14 @@ class Queries {
 		endpoint_url: 'https://graphql.bitquery.io',
 		id: null
 	}
+	dashboardQuery = this.currentQuery
 	query = [this.currentQuery]
 	
 	constructor() {
 		makeObservable(this, {
 			currentVariables: observable,
 			queryJustSaved: observable,
+			dashboardQuery: observable,
 			currentQuery: observable,
 			showGallery: observable,
 			showSideBar: observable,
@@ -68,6 +70,7 @@ class Queries {
 			queryParams: computed,
 			queryNumber: computed,
 			setCurrentVariables: action,
+			setDashboardQuery : action,
 			setCurrentQuery: action,
 			toggleGallery: action,
 			toggleSideBar: action,
@@ -150,6 +153,12 @@ class Queries {
 		TabsStore.toggleMode(mode)
 		this.currentQuery = {...this.query[id]}
 		document.title = this.currentQuery.name || 'New Query'
+	}
+	setDashboardQuery = (params, id) => {
+		this.dashboardQuery = {...params, id}
+		if (this.dashboardQuery.config && typeof this.dashboardQuery.config === 'string') {
+			this.dashboardQuery.config = JSON.parse(this.dashboardQuery.config)
+		}
 	}
 	setCurrentVariables = variables => {
 		this.currentVariables = variables

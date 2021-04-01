@@ -3,38 +3,15 @@ import { Link, useHistory } from 'react-router-dom'
 import { TabsStore, QueriesStore } from '../../store/queriesStore'
 import { observer } from 'mobx-react-lite'
 import QueriesControls from './QueriesControls'
-import 'gridstack/dist/gridstack.min.css';
-import {GridStack} from 'gridstack';
-import 'gridstack/dist/h5/gridstack-dd-native';
+
 
 const QueriesComponent = observer(function QueriesComponent({ queries }) {
 	
-	/* useEffect(() => {
-		const helper = (event) => {
-			let el = document.createElement('div')
-			// el.setAttribute('id', 'asd')
-			return el
-		  }
-		let options = {
-			acceptWidgets: function(el) { return true; }
-		}
-		var items = [
-			{content: 'my first widget'}, // will default to location (0,0) and 1x1
-			{w: 2, content: 'another longer widget!'} // will be placed next at (1,0) and 2x1
-		];
-		var grid = GridStack.init(options);
-		GridStack.setupDragIn('.list-group-item.grid-stack-item', { 
-			revert: 'invalid',
-			scroll: false,
-			appendTo: 'body',
-			helper: helper
-		});
-		grid.load(items);
-	}, [GridStack]) */
+	
 	let history = useHistory()
 	const [hoverElementIndex, setHoverElementIndex] = useState(false)
 	const { switchTab, tabs } = TabsStore
-	const { setQuery, query, currentQuery } = QueriesStore
+	const { setQuery, setDashboardQuery, query, currentQuery } = QueriesStore
 	const showDescription = (i1, i2) => i1===i2 ? true : false
 	const handleClick = (queryFromGallery) => {
 		if (query.map(query => query.id).indexOf(queryFromGallery.id) === -1) {
@@ -43,6 +20,10 @@ const QueriesComponent = observer(function QueriesComponent({ queries }) {
 			let tabID = query.map(query => query.id).indexOf(queryFromGallery.id)
 			switchTab(tabs[tabID].id)
 		}
+	}
+	const dragEnd = (queryFromGallery) => {
+		setDashboardQuery({...queryFromGallery, variables: queryFromGallery.arguments}, queryFromGallery.id)
+		window.dispatchEvent(new CustomEvent('query-request', {detail: queryFromGallery}))
 	}
 	const queryUrl = queryUrl => queryUrl ? `${process.env.REACT_APP_IDE_URL}/${queryUrl}` : `${process.env.REACT_APP_IDE_URL}`
 	const queryIsOpen = (queryFromGallery) => 
@@ -61,6 +42,7 @@ const QueriesComponent = observer(function QueriesComponent({ queries }) {
 			<li className="list-group-item grid-stack-item" key={index}
 				onMouseEnter={() => setHoverElementIndex(index)}
 				onMouseLeave={() => setHoverElementIndex(-1)}
+				onDragEnd={() => dragEnd(baseQuery)}
 				onClick={()=>{history.push(queryUrl(baseQuery.url));handleClick(baseQuery)}}
 			> 
 				<div className="gallery__query__wrapper flex">
