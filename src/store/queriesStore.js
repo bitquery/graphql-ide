@@ -116,7 +116,9 @@ class Queries {
 		if (params.config) this.query[index].config = params.config
 		if (typeof params.widget_id === 'string') {
 			this.query[index].widget_id = params.widget_id
-			// params.widget_id === this.defaultWidget && TabsStore.toggleMode('json')
+			params.widget_id === this.defaultWidget 
+				? TabsStore.toggleMode('json') 
+				: TabsStore.toggleMode('view')
 		}
 		if (typeof params.displayed_data === 'string') this.query[index].displayed_data = params.displayed_data
 		if (params.account_id) this.query[index].account_id = params.account_id
@@ -146,8 +148,6 @@ class Queries {
 		this.showSideBar = !this.showSideBar
 	}
 	setCurrentQuery = (id) => {
-		const mode = this.query[id].widget_id === this.defaultWidget ? 'json' : 'view'
-		TabsStore.toggleMode(mode)
 		this.currentQuery = {...this.query[id]}
 		document.title = this.currentQuery.name || 'New Query'
 	}
