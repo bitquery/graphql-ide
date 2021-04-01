@@ -216,7 +216,8 @@ module.exports = function(app, passport, db) {
 						email: user[0].email,
 						active: user[0].active,
 						updated_at: user[0].updated_at,
-						created_at: user[0].created_at
+						created_at: user[0].created_at,
+						role: user[0].role
 					}]
 					res.send({user: userSend})
 				} else {
