@@ -25,6 +25,7 @@ app.use(cookieSession({
 }))
 app.use(passport.initialize());
 app.use(passport.session());
+app.enable('trust proxy');
 
 require('./passport')(passport, db)
 require('./endPoints')(app, passport, db)
