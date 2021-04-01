@@ -53,6 +53,8 @@ class JsonWidget extends Component {
 				updateValue()
 			}
 		}
+		const value = this.formatResult()
+		this.viewer.setValue(value || '')
 	}
 
 	componentWillUnmount() {

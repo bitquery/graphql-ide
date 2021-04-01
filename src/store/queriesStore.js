@@ -149,6 +149,9 @@ class Queries {
 	}
 	setCurrentQuery = (id) => {
 		this.currentQuery = {...this.query[id]}
+		this.currentQuery.widget_id === this.defaultWidget
+			? TabsStore.toggleMode('json')
+			: TabsStore.toggleMode('view')
 		document.title = this.currentQuery.name || 'New Query'
 	}
 	setCurrentVariables = variables => {
@@ -195,9 +198,9 @@ class Tabs {
 		}
 	]
 	currentTab = 0
-	jsonMode = false
+	jsonMode = true
 	codeMode = false
-	viewMode = true
+	viewMode = false
 
 	constructor() {
 		makeObservable(this, {
