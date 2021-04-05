@@ -39,10 +39,13 @@ const QueriesComponent = observer(function QueriesComponent({ queries }) {
 	
 	return (
 		('queries'in queries) && queries.queries.map((baseQuery, index) => (
-			<li className="list-group-item grid-stack-item" key={index}
+			<li className="list-group-item grid-stack-item droppable-element" key={index}
 				onMouseEnter={() => setHoverElementIndex(index)}
 				onMouseLeave={() => setHoverElementIndex(-1)}
 				onDragEnd={() => dragEnd(baseQuery)}
+				draggable={true}
+				unselectable="on"
+				onDragStart={e => e.dataTransfer.setData("text/plain", "")}
 				onClick={()=>{history.push(queryUrl(baseQuery.url));handleClick(baseQuery)}}
 			> 
 				<div className="gallery__query__wrapper flex">

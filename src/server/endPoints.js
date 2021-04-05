@@ -106,6 +106,52 @@ module.exports = function(app, passport, db) {
 		transporter.sendMail(message)
 	}
 
+	app.get('/api/dashboardsquery/:url', (req, res) => {
+		db.query('SELECT * from dashboards where url = ?', [req.params.url], (err, rslt) => {
+			let dashboardqueries = []
+			const widget_ids = JSON.parse(rslt[0].widget_ids)
+			widget_ids.forEach((id, idx) => {
+				db.query(`SELECT a.displayed_data , a.widget_id, a.config, b.*, a.id AS widget_number 
+				FROM bitquery.widgets a
+				JOIN bitquery.queries b
+				ON a.query_id = b.id
+				WHERE a.id = ?`, [id], (err, result) => {
+					dashboardqueries.push(result[0])
+					// if (id === widget_ids[widget_ids.length-1]) {
+					if (idx === widget_ids.length - 1) {
+						res.send({
+							queries: dashboardqueries,
+							dashboard_id: rslt[0].id,
+							layout: JSON.parse(rslt[0].layout)
+						})		
+					}
+				})
+			})
+			// res.send(JSON.parse(result[0].widget_ids))
+		})
+	})
+
+	app.post('/api/savedashboard', (req, response) => {
+		req.body.dashboard_id ?
+		db.query('update dashboards set widget_ids=?, layout=? WHERE id = ?', 
+		[
+			JSON.stringify(req.body.widget_ids),
+			JSON.stringify(req.body.layout),
+			req.body.dashboard_id
+		], (err, res) => {
+			if (err) console.log(err)
+			response.sendStatus(200)	
+		}) :
+		db.query('insert into dashboards SET ?', {
+			widget_ids: JSON.stringify(req.body.widget_ids),
+			url: 'aaaaa', //random url,
+			layout: JSON.stringify(req.body.layout)
+		}, (err, res) => {
+			if (err) console.log(err)
+			response.sendStatus(200)	
+		})	
+	})
+
 	app.post('/api/regenerate', (req, res) => {
 		db.query('update api_keys set active=false, updated_at=CURRENT_TIMESTAMP where user_id=? and active=true',
 		[req.session.passport.user], (error, _) => {
@@ -268,7 +314,7 @@ module.exports = function(app, passport, db) {
 	})
 	app.get('/api/getmyqueries', (req, res) => {
 		db.query(`
-			SELECT a.*, b.displayed_data, b.widget_id, b.config 
+			SELECT a.*, b.displayed_data, b.widget_id, b.config, b.id AS widget_number 
 			FROM queries a
 			LEFT JOIN (
 						SELECT * FROM widgets

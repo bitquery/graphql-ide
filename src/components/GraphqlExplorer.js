@@ -4,6 +4,7 @@ import { TabsStore } from '../store/queriesStore';
 import { observer } from 'mobx-react-lite'
 import EditorInstance from './EditorInstance'
 import DashBoard from './DashBoard'
+import DadhboardReact from './DashboardReact'
 import './bitqueditor/App.scss'
 
 export const GraphqlExplorer = observer(() => {

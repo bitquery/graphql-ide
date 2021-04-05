@@ -7,7 +7,7 @@ const mysql = require('mysql')
 const dbconfig = require('./databaseConfig')
 const db = mysql.createPool({
 	...dbconfig.connection,
-	'connectionLimit': 10,
+	'connectionLimit': 10, //create 100
 	'database': dbconfig.database
 })
 const app = express()

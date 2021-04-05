@@ -32,6 +32,8 @@ import useDebounce from '../utils/useDebounce'
 import WidgetView from './bitqueditor/components/WidgetView'
 import { getCheckoutCode } from '../api/api'
 import DashBoard from './DashBoard'
+import DashboardReact from './DashboardReact'
+
 
 const EditorInstance = observer(function EditorInstance({number})  {
 	const { tabs, currentTab, index, jsonMode, codeMode, viewMode } = TabsStore
@@ -328,9 +330,10 @@ ${dependencies}
 			}
 			key={number}
 		>
-			<DashBoard 
+			{/* <DashBoard 
 				plugins={plugins}
-			/>
+			/> */}
+			<DashboardReact plugins={plugins} />
 		</div> 
 	)
 })

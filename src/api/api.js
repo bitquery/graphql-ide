@@ -28,3 +28,7 @@ export const deleteQuery = id => axios.post('/api/deletequery',
 export const getCheckoutCode = source => axios.get('/api/js', {
 	params: { source: `../../${source}` }
 })
+
+export const getDashboardQueries = url => axios.get(`/api/dashboardsquery/${url}`)
+
+export const setDashboard = data => axios.post('/api/savedashboard', data)
