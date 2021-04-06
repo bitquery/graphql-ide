@@ -101,7 +101,7 @@ module.exports = function(app, passport, db) {
 			to: userEmail,
 			subject: 'Account activations',
 			text: 'Plaintext version of the message',
-			html: `<p>To activate your account follow this <a href="${req.protocol}://${req.get('Host')}/api/activate?code=${code}">link</a> </p>`
+			html: `<p>To activate your account follow this <a href="${process.env.IDE_URL}/api/activate?code=${code}">link</a> </p>`
 		}
 		transporter.sendMail(message)
 	}
