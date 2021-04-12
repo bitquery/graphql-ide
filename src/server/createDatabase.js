@@ -23,7 +23,7 @@ connection.query(`
 connection.query(`
 	create table ${dbconfig.database}.${dbconfig.users_table} (
 		id INT(10) not null auto_increment primary key,
-		email VARCHAR(200) not null,
+		email VARCHAR(200) not null default '',
 		authenticated_by VARCHAR(20),
 		encrypted_credentials VARCHAR(100),
 		active BOOLEAN default false,
