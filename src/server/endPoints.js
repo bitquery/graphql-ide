@@ -145,9 +145,17 @@ module.exports = function(app, passport, db) {
 				return res.status(400).send("user already exist")
 			}
 			console.log("you are in ............")
-			sendActivationLink(user[0].id, user[0].email, req)
-			res.send('Activation link sent. Check your email for further instructions!')
+			db.query('UPDATE accounts SET name=?, company_name=? WHERE email=?', [
+				req.body.accountName,
+				req.body.companyName,
+				req.body.email
+			], (err, _) => {
+				if (err) console.log(err)
+				sendActivationLink(user[0].id, user[0].email, req)
+				res.send('Activation link sent. Check your email for further instructions!')
+			})
 		})(req, res, next)
+		
 	})
 	app.post('/api/resendactivation', (req, res) => {
 		let userEmail = req.body.email

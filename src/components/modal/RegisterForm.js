@@ -7,6 +7,8 @@ import { validEmail } from '../../utils/common'
 function RegisterForm({ active }) {
 	const [email, setEmail] = useState('')
 	const [password, setPassword] = useState('')
+	const [accountName, setName] = useState('')
+	const [companyName, setCompanyName] = useState('')
 	const { addToast } = useToasts()
 	const { toggleLogin, toggleModal, toggleRegister } = modalStore
 	const closeHandler = () => {
@@ -19,9 +21,9 @@ function RegisterForm({ active }) {
 	}
 	const register = async e => {
 		e.preventDefault()
-		if (password && validEmail(email)) {
+		if (password && validEmail(email) && accountName && companyName) {
 			try {
-				const { data } = await signUp(email, password)
+				const { data } = await signUp(email, password, accountName, companyName)
 				addToast(data, {appearance: 'success'})
 				toggleRegister()
 				toggleModal()
@@ -32,10 +34,14 @@ function RegisterForm({ active }) {
 	}
 	return (
 		<form className={'modal__form '+(!active && 'modal__form_hide')} >
-			<p className="p-modal">Email</p>
+			<div className="p-modal">Email</div>
 			<input type="text" className="query__save" value={email} onChange={e => setEmail(e.target.value)} />  
-			<p className="p-modal">Password</p>
+			<div className="p-modal">Password</div>
 			<input type="password" className="query__save" value={password} onChange={e => setPassword(e.target.value)} />  
+			<div className="p-modal">Name</div>
+			<input type="text" className="query__save" value={accountName} onChange={e => setName(e.target.value)} />  
+			<div className="p-modal">Company Name</div>
+			<input type="text" className="query__save" value={companyName} onChange={e => setCompanyName(e.target.value)} />  
 			<button className="button button_filled" onClick={register}>Sign Up</button>
 			<i className="handler handler__back fas fa-chevron-left" onClick={backHandler} />
 			<i className="handler handler__close fas fa-times" onClick={closeHandler} />
