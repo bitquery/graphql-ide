@@ -23,6 +23,12 @@
 .p-modal {
 	padding: 10px 0;
 	color: #555;
+	+.required {
+		position: absolute;
+		left: 0;
+		bottom: 0;
+		color: #d50000;
+	}
 }
 .flex {
 	display: flex;
@@ -419,7 +425,7 @@
 				height: 50px;
 				padding: 10px;
 				left: 10px;
-				top: 50%;
+				bottom: 0;
 				transform: translateY(-50%);
 			}
 			&__close {

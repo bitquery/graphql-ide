@@ -6,6 +6,7 @@ import { getQuery } from '../api/api'
 import {TabsStore, QueriesStore} from '../store/queriesStore'
 import handleState from '../utils/handleState'
 import useEventListener from '../utils/useEventListener'
+import logo from '../assets/images/bitquery_logo_w.png'
 
 const TabsComponent = observer(() => {
 	const history = useHistory()
@@ -79,6 +80,13 @@ const TabsComponent = observer(() => {
 	return (
 		<div className="tabs">
 			<ul className="nav nav-tabs" >
+				<a href="https://bitquery.io" className="topBar__logo">
+					<img 
+						className="topBar__logo__img" 
+						src={logo}
+						alt="logo"
+					/>
+				</a>
 				{
 					tabs.map((tab, i) => (
 						<li 

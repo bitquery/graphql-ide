@@ -21,7 +21,7 @@ function RegisterForm({ active }) {
 	}
 	const register = async e => {
 		e.preventDefault()
-		if (password && validEmail(email) && accountName && companyName) {
+		if (password && validEmail(email) && accountName) {
 			try {
 				const { data } = await signUp(email, password, accountName, companyName)
 				addToast(data, {appearance: 'success'})
@@ -34,12 +34,21 @@ function RegisterForm({ active }) {
 	}
 	return (
 		<form className={'modal__form '+(!active && 'modal__form_hide')} >
-			<div className="p-modal">Email</div>
+			<div style={{'display': 'flex', 'width': '100%', 'justifyContent': 'center', 'position': 'relative'}}>
+				<div className="p-modal">Email (used for login)</div>
+				{!email && <div className="required">*required</div>}
+			</div>
 			<input type="text" className="query__save" value={email} onChange={e => setEmail(e.target.value)} />  
-			<div className="p-modal">Password</div>
+			<div style={{'display': 'flex', 'width': '100%', 'justifyContent': 'center', 'position': 'relative'}}>
+				<div className="p-modal">Password</div>
+				{!password && <div className="required">*required</div>}
+			</div>
 			<input type="password" className="query__save" value={password} onChange={e => setPassword(e.target.value)} />  
-			<div className="p-modal">Name</div>
-			<input type="text" className="query__save" value={accountName} onChange={e => setName(e.target.value)} />  
+			<div style={{'display': 'flex', 'width': '100%', 'justifyContent': 'center', 'position': 'relative'}}>
+				<div className="p-modal">Name</div>
+				{!accountName && <div className="required">*required</div>}
+			</div>
+			<input type="text" className="query__save" value={accountName} onChange={e => setName((e.target.value).trim())} />  
 			<div className="p-modal">Company Name</div>
 			<input type="text" className="query__save" value={companyName} onChange={e => setCompanyName(e.target.value)} />  
 			<button className="button button_filled" onClick={register}>Sign Up</button>

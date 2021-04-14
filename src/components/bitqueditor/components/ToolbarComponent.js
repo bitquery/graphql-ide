@@ -4,7 +4,6 @@ import modalStore from '../../../store/modalStore'
 import { useToasts } from 'react-toast-notifications'
 import { parse as parseGql } from 'graphql/language'
 import { print } from 'graphql'
-import logo from '../../../assets/images/bitquery_logo_w.png'
 import React from 'react'
 
 const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOpen, toggleDocExplorer }) => {
@@ -59,13 +58,6 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 					className="gallery__toggle fas fa-angle-double-right" 
 					onClick={toggleSideBar}
 				/>}
-				<div className="topBar__logo">
-					<img 
-						className="topBar__logo__img" 
-						src={logo}
-						alt="logo"
-					/>
-				</div>
 				{(!currentQuery.id || !currentQuery.saved) && <button 
 					className="topBar__button" 
 					onClick={saveHandle}
