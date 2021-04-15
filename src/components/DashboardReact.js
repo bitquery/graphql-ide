@@ -1,15 +1,19 @@
 import React from "react";
+import { observer } from 'mobx-react'
+import { toJS } from 'mobx'
 import RGL, { WidthProvider } from "react-grid-layout";
 import _ from "lodash";
 import { getDashboardQueries, setDashboard } from '../api/api'
 import { getValueFrom } from '../utils/common'
+import { TabsStore, QueriesStore } from '../store/queriesStore'
 const ReactGridLayout = WidthProvider(RGL);
 const originalLayout = getFromLS("layout") || [];
 
 /**
  * This layout demonstrates how to use a grid with a dynamic number of elements.
  */
-export default class AddRemoveLayout extends React.PureComponent {
+const AddRemoveLayout = observer(
+class AddRemoveLayout extends React.PureComponent {
   static defaultProps = {
     className: "layout",
     rowHeight: 100,
@@ -24,14 +28,14 @@ export default class AddRemoveLayout extends React.PureComponent {
 	    layout: [],
       items: [],
       queries: [],
-      newCounter: originalLayout.length
+      newCounter: 0
     };
 
 	  this.onLayoutChange = this.onLayoutChange.bind(this);
     this.onAddItem = this.onAddItem.bind(this);
   }
   componentDidMount() {
-    getDashboardQueries('dashboard').then(res => {
+    /* getDashboardQueries('dashboard').then(res => {
       this.setState({
         dashboard_id: res.data.dashboard_id,
         layout: res.data.layout,
@@ -46,7 +50,22 @@ export default class AddRemoveLayout extends React.PureComponent {
         }))
         this.qrh(data)
       })
-    })
+    }) */
+    console.log('mounted')
+    if (QueriesStore.currentQuery.layout) {
+      this.setState({
+        // Add a new item. It must have a unique key!
+        items: this.state.items.concat({
+          i: "n" + this.state.newCounter,
+          x: (this.state.items.length * 2) % (this.state.cols || 12),
+          y: Infinity, // puts it at the bottom
+          w: 2,
+          h: 2
+        }),
+        // Increment the counter to ensure key is always unique.
+        newCounter: this.state.newCounter + 1
+      }, () => this.qrh(QueriesStore.currentQuery));
+    }
     window.addEventListener('query-request', this.qrh)
     return () => {
       window.removeEventListener('query-request', this.qrh)
@@ -54,7 +73,9 @@ export default class AddRemoveLayout extends React.PureComponent {
   }
 
   qrh = e => {
+    console.log('ololo')
     const query = e.detail ? e.detail : e
+    const cfg = typeof query.config === 'string' ? JSON.parse(query.config) : query.config
     if (this.state.items.length > 0) {
       let indexx = this.props.plugins.map(plugin => plugin.id).indexOf(query.widget_id)
       const WidgetComponent = indexx>=0 ? this.props.plugins[indexx] : this.props.plugins[0]
@@ -85,7 +106,7 @@ export default class AddRemoveLayout extends React.PureComponent {
       this.setState(prevState => ({
         widget_ids: [...prevState.widget_ids, query.widget_number]
       }))
-      WidgetComponent.renderer(dataSource, JSON.parse(query.config), query.i || this.state.items[this.state.items.length-1].i)
+      WidgetComponent.renderer(dataSource, cfg, `n${this.state.items.length-1}`)
       this.setState(prevState => ({
         queries: [...prevState.queries, query]
       }))
@@ -162,7 +183,10 @@ export default class AddRemoveLayout extends React.PureComponent {
       newItems[k].i = `n${newItems[k].i.split('')[1]--}`
     }
     console.log(newItems)
-    this.setState({items: newItems});
+    this.setState({
+      items: newItems,
+      newCounter: this.state.newCounter - 1
+    });
     // this.setState({ items: _.reject(this.state.items, { i: i }) });
 
   }
@@ -184,7 +208,10 @@ export default class AddRemoveLayout extends React.PureComponent {
 
   render() {
     return (
-      <div>
+      <div className={'graphiql__wrapper ' + 
+          (TabsStore.currentTab === TabsStore.tabs[this.props.number].id ? 'graphiql__wrapper_active' : '')
+        }
+      > 
         <button onClick={()=>setDashboard(this.state)}>Save</button>
         <ReactGridLayout
           onLayoutChange={this.onLayoutChange}
@@ -199,7 +226,7 @@ export default class AddRemoveLayout extends React.PureComponent {
       </div>
     );
   }
-}
+})
 
 function getFromLS(key) {
 	let ls = {};
@@ -227,3 +254,5 @@ function getFromLS(key) {
 if (process.env.STATIC_EXAMPLES === true) {
   import("../test-hook.jsx").then(fn => fn.default(AddRemoveLayout));
 }
+
+export default AddRemoveLayout

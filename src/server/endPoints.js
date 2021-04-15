@@ -106,7 +106,7 @@ module.exports = function(app, passport, db) {
 		transporter.sendMail(message)
 	}
 
-	app.get('/api/dashboardsquery/:url', (req, res) => {
+	/* app.get('/api/dashboardsquery/:url', (req, res) => {
 		db.query('SELECT * from dashboards where url = ?', [req.params.url], (err, rslt) => {
 			let dashboardqueries = []
 			const widget_ids = JSON.parse(rslt[0].widget_ids)
@@ -117,7 +117,6 @@ module.exports = function(app, passport, db) {
 				ON a.query_id = b.id
 				WHERE a.id = ?`, [id], (err, result) => {
 					dashboardqueries.push(result[0])
-					// if (id === widget_ids[widget_ids.length-1]) {
 					if (idx === widget_ids.length - 1) {
 						res.send({
 							queries: dashboardqueries,
@@ -127,7 +126,6 @@ module.exports = function(app, passport, db) {
 					}
 				})
 			})
-			// res.send(JSON.parse(result[0].widget_ids))
 		})
 	})
 
@@ -150,7 +148,7 @@ module.exports = function(app, passport, db) {
 			if (err) console.log(err)
 			response.sendStatus(200)	
 		})	
-	})
+	}) */
 
 	app.post('/api/regenerate', (req, res) => {
 		db.query('update api_keys set active=false, updated_at=CURRENT_TIMESTAMP where user_id=? and active=true',

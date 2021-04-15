@@ -49,6 +49,8 @@ const QueriesComponent = observer(function QueriesComponent({ queries }) {
 				onClick={()=>{history.push(queryUrl(baseQuery.url));handleClick(baseQuery)}}
 			> 
 				<div className="gallery__query__wrapper flex">
+					<i class="fas fa-th"></i>
+					<i class="fas fa-chart-bar"></i>
 					<Link to={queryUrl(baseQuery.url)} onClick={() => handleClick(baseQuery)}> 
 						{isSaved(baseQuery) ? baseQuery.name : `*${baseQuery.name}`}
 					</Link>

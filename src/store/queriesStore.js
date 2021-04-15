@@ -39,6 +39,7 @@ class User {
 }
 
 class Queries {
+	dashboardView = false
 	defaultWidget = 'json.widget'
 	currentVariables = ''
 	showGallery = true
@@ -58,6 +59,7 @@ class Queries {
 	
 	constructor() {
 		makeObservable(this, {
+			dashboardView: observable,
 			currentVariables: observable,
 			queryJustSaved: observable,
 			dashboardQuery: observable,
@@ -69,6 +71,7 @@ class Queries {
 			query: observable,
 			queryParams: computed,
 			queryNumber: computed,
+			toggleDashboardView: action,
 			setCurrentVariables: action,
 			setDashboardQuery : action,
 			setCurrentQuery: action,
@@ -101,6 +104,7 @@ class Queries {
 			endpoint_url: this.currentQuery.endpoint_url && this.currentQuery.endpoint_url
 		}
 	}
+	toggleDashboardView = () => this.dashboardView = !this.dashboardView
 	setSchema = schema => this.schema = schema
 	setMobile = (mobile) => this.isMobile = mobile
 	setQuery = (params, id) => {

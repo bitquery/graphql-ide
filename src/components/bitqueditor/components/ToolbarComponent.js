@@ -7,9 +7,9 @@ import { print } from 'graphql'
 import logo from '../../../assets/images/bitquery_logo_w.png'
 import React from 'react'
 
-const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOpen, toggleDocExplorer }) => {
+const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOpen, toggleDocExplorer}) => {
 	const { currentQuery, queryParams, saveQuery, updateQuery, 
-		showSideBar, toggleSideBar } = QueriesStore
+		showSideBar, toggleSideBar, setQuery, toggleDashboardView } = QueriesStore
 	const { index } = TabsStore
 	const { user }  = UserStore
 	const { toggleModal, toggleEditDialog } = modalStore
@@ -28,6 +28,17 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 		} else {
 			addToast('Login required to save or share queries', {appearance: 'error'})
 		}
+	}
+	const addToDashboard = () => {
+		toggleDashboardView()
+		setQuery({
+			...currentQuery,
+			widget_ids: currentQuery.widget_number,
+			layout: [{w: 6, h: 2, x: 0, y: 0, moved: false, static: false}],
+			name: 'New Dashboard',
+			arguments: currentQuery.variables,
+		})
+		// window.dispatchEvent(new CustomEvent('query-request', {...currentQuery, layout: [{w: 6, h: 2, x: 0, y: 0, i: "n0", moved: false, static: false}], name: 'New Dashboard'}))
 	}
 	const prettifyQuery = () => {
 		const editor = queryEditor.current.getEditor()
@@ -78,7 +89,11 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 				>
 					Prettify
 				</button>
-				
+				<button className="topBar__button"
+					onClick={addToDashboard}
+				>
+					Add to dashboard
+				</button>
 				<input 
 					className="endpointURL"
 					type="text" 
