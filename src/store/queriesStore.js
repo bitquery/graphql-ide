@@ -134,6 +134,8 @@ class Queries {
 			TabsStore.renameCurrentTab(params.name)
 		}
 		if (params.description) this.query[index].description = params.description || this.query[index].description
+		if (params.widget_number) this.query[index].widget_number = params.widget_number
+		if (params.layout) this.query[index].layout = [...params.layout]
 		this.query[index].id = id || id===null ? id : this.query[index].id
 		this.query[index].saved = false
 		if (params.saved) this.query[index].saved = params.saved

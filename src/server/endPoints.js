@@ -127,9 +127,9 @@ module.exports = function(app, passport, db) {
 				})
 			})
 		})
-	})
+	}) */
 
-	app.post('/api/savedashboard', (req, response) => {
+	/* app.post('/api/savedashboard', (req, response) => {
 		req.body.dashboard_id ?
 		db.query('update dashboards set widget_ids=?, layout=? WHERE id = ?', 
 		[
@@ -148,7 +148,36 @@ module.exports = function(app, passport, db) {
 			if (err) console.log(err)
 			response.sendStatus(200)	
 		})	
-	}) */
+	})  */
+	app.post('/api/savedashboard', (req, response) => {
+		req.body.dashboard_id ?
+		db.query('update dashboards set widget_ids=?, layout=? WHERE id = ?', 
+		[
+			JSON.stringify(req.body.widget_ids),
+			JSON.stringify(req.body.layout),
+			req.body.dashboard_id
+		], (err, res) => {
+			if (err) console.log(err)
+			response.sendStatus(200)	
+		}) :
+		db.query('insert into right_dashboards SET ?', {
+			// widget_ids: JSON.stringify(req.body.widget_ids),
+			url: 'aaaaa', //random url,
+			layout: JSON.stringify(req.body.layout),
+			name: 'saved dashboard',
+			description: 'description'
+		}, (err, res) => {
+			if (err) console.log(err)
+			// console.log(res.insertId)
+			req.body.widget_ids.forEach(widget_id => {
+				db.query('insert into queries_to_dashboards SET ?', {
+					dashboard_id: res.insertId,
+					widget_id
+				})
+			})
+			response.sendStatus(200)
+		})	
+	}) 
 
 	app.post('/api/regenerate', (req, res) => {
 		db.query('update api_keys set active=false, updated_at=CURRENT_TIMESTAMP where user_id=? and active=true',
@@ -271,7 +300,7 @@ module.exports = function(app, passport, db) {
 	})
 	app.get('/api/getquery/:url', (req, res) => {
 		let sql = `
-			SELECT queries.*, widgets.widget_id, widgets.config, widgets.displayed_data FROM queries
+			SELECT queries.*, widgets.id as widget_number, widgets.widget_id, widgets.config, widgets.displayed_data FROM queries
 			LEFT JOIN widgets 
 			ON widgets.query_id=queries.id
 			WHERE queries.url=?
@@ -291,7 +320,7 @@ module.exports = function(app, passport, db) {
 		if (checkActive) checkActive = 'Account activated!'
 		db.query(`
 			SELECT a.*, COUNT(b.id) as number,
-			w.widget_id, w.config, w.displayed_data FROM queries a
+			w.id as widget_number, w.widget_id, w.config, w.displayed_data FROM queries a
 			LEFT JOIN query_logs b
 			ON a.id=b.id
 			LEFT JOIN (

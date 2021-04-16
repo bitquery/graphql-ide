@@ -62,8 +62,6 @@ class AddRemoveLayout extends React.PureComponent {
           w: 2,
           h: 2
         }),
-        // Increment the counter to ensure key is always unique.
-        newCounter: this.state.newCounter + 1
       }, () => this.qrh(QueriesStore.currentQuery));
     }
     window.addEventListener('query-request', this.qrh)
@@ -103,25 +101,28 @@ class AddRemoveLayout extends React.PureComponent {
         }
       }
       console.log(WidgetComponent.id, this.state.items[this.state.items.length-1].id)
-      this.setState(prevState => ({
-        widget_ids: [...prevState.widget_ids, query.widget_number]
-      }))
-      WidgetComponent.renderer(dataSource, cfg, `n${this.state.items.length-1}`)
-      this.setState(prevState => ({
-        queries: [...prevState.queries, query]
-      }))
+      this.setState({
+        widget_ids: [...this.state.widget_ids, query.widget_number],
+        queries: [...this.state.queries, query],
+        items: this.state.newCounter ? this.state.items.concat({
+          i: "n" + this.state.newCounter,
+          x: (this.state.items.length * 2) % (this.state.cols || 12),
+          y: Infinity, // puts it at the bottom
+          w: 2,
+          h: 2
+        }) : this.state.items,
+        newCounter: this.state.newCounter + 1
+      }, () => {
+                  QueriesStore.updateQuery({
+                    widget_number: this.state.widget_ids,
+                    layout: this.state.items,
+                  }, TabsStore.index)
+                  WidgetComponent.renderer(dataSource, cfg, `n${this.state.items.length-1}`)
+              }
+      )
+      
     }
   }
-
-  /* componentDidUpdate(prevProps, prevState) {
-	 if (prevState.items.length !== this.state.items.length &&
-		prevState.items.length < this.state.items.length) {
-      window.addEventListener('query-request', this.qrh)
-      return () => {
-        window.removeEventListener('query-request', this.qrh)
-      }
-	}
-  } */
 
   createElement(el) {
     const removeStyle = {
@@ -193,7 +194,7 @@ class AddRemoveLayout extends React.PureComponent {
 
   onDrop = (layout, layoutItem, _event) => {
 	console.log("adding", "n" + this.state.newCounter);
-    this.setState({
+    /* this.setState({
       items: this.state.items.concat({
         i: "n" + this.state.newCounter,
         x: (this.state.items.length * 2) % (this.state.cols || 12),
@@ -202,7 +203,7 @@ class AddRemoveLayout extends React.PureComponent {
         h: 2
       }),
       newCounter: this.state.newCounter + 1
-    });
+    }); */
     alert(`Dropped element props:\n${JSON.stringify(layoutItem, ['x', 'y', 'w', 'h'], 2)}`);
   };
 
