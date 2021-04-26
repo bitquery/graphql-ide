@@ -71,10 +71,12 @@ class AddRemoveLayout extends React.PureComponent {
   }
 
   qrh = e => {
+    if (QueriesStore.currentQuery.layout && (TabsStore.currentTab === TabsStore.tabs[this.props.number].id)) {
     console.log('ololo')
     const query = e.detail ? e.detail : e
+    console.log(query)
     const cfg = typeof query.config === 'string' ? JSON.parse(query.config) : query.config
-    if (this.state.items.length > 0) {
+    if (this.state.items.length > 0 && query.widget_id !== 'json.widget' &&query.widget_id) {
       let indexx = this.props.plugins.map(plugin => plugin.id).indexOf(query.widget_id)
       const WidgetComponent = indexx>=0 ? this.props.plugins[indexx] : this.props.plugins[0]
       const dataSource = {
@@ -121,7 +123,7 @@ class AddRemoveLayout extends React.PureComponent {
               }
       )
       
-    }
+    }}
   }
 
   createElement(el) {

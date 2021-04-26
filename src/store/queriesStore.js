@@ -213,9 +213,11 @@ class Tabs {
 	jsonMode = false
 	codeMode = false
 	viewMode = true
+	dbid = 0
 
 	constructor() {
 		makeObservable(this, {
+			dbid: observable,
 			tabs: observable,
 			id: observable,
 			currentTab: observable,
@@ -223,6 +225,7 @@ class Tabs {
 			codeMode: observable,
 			viewMode: observable,
 			index: computed,
+			setDbid: action,
 			toggleMode: action,
 			switchTab: action,
 			incID: action,
@@ -254,10 +257,12 @@ class Tabs {
 				break;
 		}
 	}
+	setDbid = () => this.dbid = this.currentTab
 	incID = () => {
 		this.id = this.id + 1
 	}
-	switchTab = tabID => {
+	switchTab = tabID => {	//tabID - id, not index or serial number
+		console.log('tabID - ', tabID)
 		this.currentTab = tabID
 		let id = this.index
 		QueriesStore.setCurrentQuery(id)
@@ -273,6 +278,7 @@ class Tabs {
 			id: this.id
 		})
 		this.switchTab(this.id)
+		// QueriesStore.setCurrentQuery(this.index)
 	}
 	removeTab = (index) => {
 		this.tabs.length !==1 ? this.tabs.splice(index, 1) : console.log('xvatit')

@@ -10,7 +10,7 @@ import React from 'react'
 const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOpen, toggleDocExplorer}) => {
 	const { currentQuery, queryParams, saveQuery, updateQuery, 
 		showSideBar, toggleSideBar, setQuery, toggleDashboardView } = QueriesStore
-	const { index } = TabsStore
+	const { index, dbid, setDbid, switchTab, currentTab } = TabsStore
 	const { user }  = UserStore
 	const { toggleModal, toggleEditDialog } = modalStore
 	const { addToast } = useToasts()
@@ -30,16 +30,31 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 		}
 	}
 	const addToDashboard = () => {
-		toggleDashboardView()
-		setQuery({
-			...currentQuery,
-			widget_ids: currentQuery.widget_number,
-			id: null,
-			layout: [{w: 6, h: 2, x: 0, y: 0, moved: false, static: false}],
-			name: 'New Dashboard',
-			arguments: currentQuery.variables,
-		})
-		// window.dispatchEvent(new CustomEvent('query-request', {...currentQuery, layout: [{w: 6, h: 2, x: 0, y: 0, i: "n0", moved: false, static: false}], name: 'New Dashboard'}))
+		if (!dbid) {
+			setQuery({
+				...currentQuery,
+				widget_ids: currentQuery.widget_number,
+				id: null,
+				layout: [{w: 6, h: 2, x: 0, y: 0, moved: false, static: false}],
+				name: 'New Dashboard',
+				arguments: currentQuery.variables,
+			})
+			setDbid()
+		} else {
+			switchTab(dbid)
+			/* window.dispatchEvent(new CustomEvent('query-request', {
+				...currentQuery, 
+				// layout: [{w: 6, h: 2, x: 0, y: 0, i: "n0", moved: false, static: false}], 
+				// name: 'New Dashboard',
+				arguments: currentQuery.variables
+			})) */
+			window.dispatchEvent(new CustomEvent('query-request',  {detail : {
+				...currentQuery, 
+				// layout: [{w: 6, h: 2, x: 0, y: 0, i: "n0", moved: false, static: false}], 
+				// name: 'New Dashboard',
+				arguments: currentQuery.variables
+			}}))
+		}
 	}
 	const prettifyQuery = () => {
 		const editor = queryEditor.current.getEditor()
