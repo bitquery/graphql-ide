@@ -51,8 +51,8 @@ class AddRemoveLayout extends React.PureComponent {
         this.qrh(data)
       })
     }) */
-    console.log('mounted')
-    if (QueriesStore.currentQuery.layout) {
+    if (QueriesStore.currentQuery.layout && (TabsStore.currentTab === TabsStore.tabs[this.props.number].id) && !this.state.items.length ) {
+      console.log('mounted')
       this.setState({
         // Add a new item. It must have a unique key!
         items: this.state.items.concat({
@@ -209,9 +209,7 @@ class AddRemoveLayout extends React.PureComponent {
 
   render() {
     return (
-      <div className={'graphiql__wrapper ' + 
-          (TabsStore.currentTab === TabsStore.tabs[this.props.number].id ? 'graphiql__wrapper_active' : '')
-        }
+      <div className={'dashboard ' + (((TabsStore.currentTab === TabsStore.tabs[this.props.number].id) && QueriesStore.currentQuery.layout) ? 'active' : '')}
       > 
         <button onClick={()=>setDashboard(this.state)}>Save</button>
         <ReactGridLayout

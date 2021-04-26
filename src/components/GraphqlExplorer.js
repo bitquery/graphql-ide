@@ -17,10 +17,7 @@ export const GraphqlExplorer = observer(() => {
 	const plugins = useMemo(()=> [JsonPlugin, ...vegaPlugins, ...graphPlugins, ...timeChartPlugins], [])
 	return (
 		tabs.map((tab, i) => (
-			!currentQuery.layout ? 
-			<EditorInstance number={i} key={tab.id} /> :
-			(currentTab === tabs[i].id) ? 
-				<DashboardReact number={i} key={tab.id} plugins={plugins} /> : null
-		))
-	)
+			
+			<EditorInstance number={i} key={tab.id} /> 
+		)))
 })

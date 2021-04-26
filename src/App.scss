@@ -401,6 +401,12 @@
 		border-bottom: 1px solid #aaa;
 	}
 }
+.dashboard {
+	display: none;
+	&.active {
+		display: block;
+	}
+}
 .modal {
 	display: flex;
 	flex-direction: column;

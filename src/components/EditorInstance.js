@@ -336,7 +336,7 @@ ${dependencies}
 				docExplorerOpen={docExplorerOpen}
 				toggleDocExplorer={toggleDocExplorer}
 			/>
-			<div className="over-wrapper"  ref={overwrap}>
+			<div className={'over-wrapper ' + (!currentQuery.layout ? 'active' : '')}  ref={overwrap}>
 				<ReactTooltip 
 					place="top"
 					border={false}
@@ -439,6 +439,7 @@ ${dependencies}
 				</div>
 				{docExplorerOpen && <DocExplorer schema={schema} />}
 			</div>
+			<DashboardReact plugins={plugins} number={number} id={number} />
 		</div> 
 	)
 })
