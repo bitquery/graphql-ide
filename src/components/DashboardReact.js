@@ -71,7 +71,8 @@ class AddRemoveLayout extends React.PureComponent {
   }
 
   qrh = e => {
-    if (QueriesStore.currentQuery.layout && (TabsStore.currentTab === TabsStore.tabs[this.props.number].id)) {
+    if (QueriesStore.currentQuery.layout 
+    && (TabsStore.currentTab === TabsStore.tabs[this.props.number].id)) {
     console.log('ololo')
     const query = e.detail ? e.detail : e
     console.log(query)

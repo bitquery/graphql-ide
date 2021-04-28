@@ -15,7 +15,13 @@ const QueriesComponent = observer(function QueriesComponent({ queries }) {
 	const showDescription = (i1, i2) => i1===i2 ? true : false
 	const handleClick = (queryFromGallery) => {
 		if (query.map(query => query.id).indexOf(queryFromGallery.id) === -1) {
-			setQuery({...queryFromGallery, variables: queryFromGallery.arguments}, queryFromGallery.id)
+			let data = {...queryFromGallery, variables: queryFromGallery.arguments}
+			if ('widget_ids' in queryFromGallery) {
+				let widget_ids = queryFromGallery.widget_ids.split(',')
+				let dbqueries = queries.queries.filter(query => query.widget_number && widget_ids.includes((query.widget_number).toString()))
+				data = {...data, dbqueries}
+			}
+			setQuery(data, queryFromGallery.id)
 		} else {
 			let tabID = query.map(query => query.id).indexOf(queryFromGallery.id)
 			switchTab(tabs[tabID].id)
@@ -49,8 +55,7 @@ const QueriesComponent = observer(function QueriesComponent({ queries }) {
 				onClick={()=>{history.push(queryUrl(baseQuery.url));handleClick(baseQuery)}}
 			> 
 				<div className="gallery__query__wrapper flex">
-					<i class="fas fa-th"></i>
-					<i class="fas fa-chart-bar"></i>
+					{baseQuery.layout ? <i class="fas fa-th"></i> : <i class="fas fa-chart-bar"></i>}
 					<Link to={queryUrl(baseQuery.url)} onClick={() => handleClick(baseQuery)}> 
 						{isSaved(baseQuery) ? baseQuery.name : `*${baseQuery.name}`}
 					</Link>

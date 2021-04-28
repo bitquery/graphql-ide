@@ -149,6 +149,29 @@ module.exports = function(app, passport, db) {
 			response.sendStatus(200)	
 		})	
 	})  */
+	app.get('/api/getwidget/:ids', (req, response) => {
+		let  widgets = []
+		req.params.ids.split(',').forEach(id => {
+			db.query(`SELECT a.*, b.displayed_data, b.widget_id, b.config, b.id as widget_number 
+			FROM queries a
+			LEFT JOIN (
+						SELECT * FROM widgets
+						WHERE id IN (
+									SELECT MAX(id) AS id
+									FROM widgets 
+									GROUP BY query_id)
+					  ) b 
+			ON a.id=b.query_id
+			WHERE b.id=?
+			AND a.deleted=false`, [id], (err, res) => {
+				if (err) console.log(err)
+				widgets.push(res)
+				widgets.length === req.params.ids.split(',').length 
+					&& response.send(widgets)
+			})
+		})
+	})
+
 	app.post('/api/savedashboard', (req, response) => {
 		req.body.dashboard_id ?
 		db.query('update dashboards set widget_ids=?, layout=? WHERE id = ?', 
@@ -341,19 +364,29 @@ module.exports = function(app, passport, db) {
 	})
 	app.get('/api/getmyqueries', (req, res) => {
 		db.query(`
-			SELECT a.*, b.displayed_data, b.widget_id, b.config, b.id AS widget_number 
-			FROM queries a
+		(SELECT a.*, b.displayed_data, b.widget_id as widget_ids, b.config, null as layout, b.id as widget_number
+		FROM queries a
+		LEFT JOIN (
+					SELECT * FROM widgets
+					WHERE id IN (
+								SELECT MAX(id) AS id
+								FROM widgets 
+								GROUP BY query_id)
+				) b 
+		ON a.id=b.query_id
+		WHERE a.account_id=?
+		AND a.deleted=false)
+		UNION
+		(	SELECT rd.id, rd.account_id, null as query, null as arguments, 
+			rd.url, rd.name, rd.description , rd.published, rd.created_at , 
+			rd.deleted , rd.updated_at , null as endpoint_url, 
+			null as displayed_data, qtd.widget_id as widget_ids, null as config, rd.layout, null as widget_number
+			FROM right_dashboards rd
 			LEFT JOIN (
-						SELECT * FROM widgets
-						WHERE id IN (
-									SELECT MAX(id) AS id
-									FROM widgets 
-									GROUP BY query_id)
-					) b 
-			ON a.id=b.query_id
-			WHERE a.account_id=?
-			AND a.deleted=false
-			ORDER BY a.updated_at DESC`, [req.session.passport.user], (err, queries) => {
+				SELECT dashboard_id, GROUP_CONCAT(widget_id SEPARATOR ',') as widget_id 
+				FROM queries_to_dashboards  
+			) qtd
+			ON qtd.dashboard_id = rd.id ) ORDER BY updated_at DESC`, [req.session.passport.user], (err, queries) => {
 				if (err) console.log(err)
 				res.send(queries)
 		})
