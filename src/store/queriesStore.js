@@ -213,10 +213,12 @@ class Tabs {
 	jsonMode = false
 	codeMode = false
 	viewMode = true
-	dbid = 0
+	dbid = null
+	
 
 	constructor() {
 		makeObservable(this, {
+			dashid: computed,
 			dbid: observable,
 			tabs: observable,
 			id: observable,
@@ -235,6 +237,13 @@ class Tabs {
 		})
 	}
 
+	get dashid() {
+		let id = null
+		QueriesStore.query.forEach((query, i) => {
+			if (query.layout) id = this.tabs[i].id
+		})
+		return id
+	}
 	get index() {
 		return this.tabs.map(tab=>tab.id).indexOf(this.currentTab)
 	}
@@ -257,7 +266,7 @@ class Tabs {
 				break;
 		}
 	}
-	setDbid = () => this.dbid = this.currentTab
+	setDbid = (close) => this.dbid = close ? null : this.currentTab
 	incID = () => {
 		this.id = this.id + 1
 	}

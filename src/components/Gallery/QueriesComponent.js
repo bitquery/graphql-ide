@@ -16,7 +16,7 @@ const QueriesComponent = observer(function QueriesComponent({ queries }) {
 	const handleClick = (queryFromGallery) => {
 		if (query.map(query => query.id).indexOf(queryFromGallery.id) === -1) {
 			let data = {...queryFromGallery, variables: queryFromGallery.arguments}
-			if ('widget_ids' in queryFromGallery) {
+			if (queryFromGallery.widget_ids) {
 				let widget_ids = queryFromGallery.widget_ids.split(',')
 				let dbqueries = queries.queries.filter(query => query.widget_number && widget_ids.includes((query.widget_number).toString()))
 				data = {...data, dbqueries}
@@ -55,7 +55,7 @@ const QueriesComponent = observer(function QueriesComponent({ queries }) {
 				onClick={()=>{history.push(queryUrl(baseQuery.url));handleClick(baseQuery)}}
 			> 
 				<div className="gallery__query__wrapper flex">
-					{baseQuery.layout ? <i class="fas fa-th"></i> : <i class="fas fa-chart-bar"></i>}
+					{baseQuery.layout ? <i className="fas fa-th"></i> : <i className="fas fa-chart-bar"></i>}
 					<Link to={queryUrl(baseQuery.url)} onClick={() => handleClick(baseQuery)}> 
 						{isSaved(baseQuery) ? baseQuery.name : `*${baseQuery.name}`}
 					</Link>

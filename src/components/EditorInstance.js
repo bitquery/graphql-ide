@@ -328,7 +328,6 @@ ${dependencies}
 				(currentTab === tabs[number].id ? 'graphiql__wrapper_active' : '')
 				+ (!showSideBar ? ' graphiql__wrapper_wide' : '')
 			}
-			key={number}
 		>
 			<ToolbarComponent 
 				queryEditor={queryEditor}
@@ -439,7 +438,7 @@ ${dependencies}
 				</div>
 				{docExplorerOpen && <DocExplorer schema={schema} />}
 			</div>
-			<DashboardReact plugins={plugins} number={number} id={number} />
+			<DashboardReact plugins={plugins} number={number} id={number} query={query[index]} />
 		</div> 
 	)
 })

@@ -364,7 +364,7 @@ module.exports = function(app, passport, db) {
 	})
 	app.get('/api/getmyqueries', (req, res) => {
 		db.query(`
-		(SELECT a.*, b.displayed_data, b.widget_id as widget_ids, b.config, null as layout, b.id as widget_number
+		(SELECT a.*, b.displayed_data, b.widget_id, null as widget_ids, b.config, null as layout, b.id as widget_number
 		FROM queries a
 		LEFT JOIN (
 					SELECT * FROM widgets
@@ -380,7 +380,7 @@ module.exports = function(app, passport, db) {
 		(	SELECT rd.id, rd.account_id, null as query, null as arguments, 
 			rd.url, rd.name, rd.description , rd.published, rd.created_at , 
 			rd.deleted , rd.updated_at , null as endpoint_url, 
-			null as displayed_data, qtd.widget_id as widget_ids, null as config, rd.layout, null as widget_number
+			null as displayed_data, null as widget_id ,qtd.widget_id as widget_ids, null as config, rd.layout, null as widget_number
 			FROM right_dashboards rd
 			LEFT JOIN (
 				SELECT dashboard_id, GROUP_CONCAT(widget_id SEPARATOR ',') as widget_id 

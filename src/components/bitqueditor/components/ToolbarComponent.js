@@ -10,7 +10,7 @@ import React from 'react'
 const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOpen, toggleDocExplorer}) => {
 	const { currentQuery, queryParams, saveQuery, updateQuery, 
 		showSideBar, toggleSideBar, setQuery, toggleDashboardView } = QueriesStore
-	const { index, dbid, setDbid, switchTab, currentTab } = TabsStore
+	const { index, dbid, setDbid, switchTab, currentTab, dashid } = TabsStore
 	const { user }  = UserStore
 	const { toggleModal, toggleEditDialog } = modalStore
 	const { addToast } = useToasts()
@@ -30,7 +30,7 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 		}
 	}
 	const addToDashboard = () => {
-		if (!dbid) {
+		if (dashid === null) {
 			setQuery({
 				...currentQuery,
 				widget_ids: currentQuery.widget_number,
@@ -39,9 +39,10 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 				name: 'New Dashboard',
 				arguments: currentQuery.variables,
 			})
-			setDbid()
+			// setDbid()
 		} else {
-			switchTab(dbid)
+			// switchTab(dbid)
+			switchTab(dashid)
 			/* window.dispatchEvent(new CustomEvent('query-request', {
 				...currentQuery, 
 				// layout: [{w: 6, h: 2, x: 0, y: 0, i: "n0", moved: false, static: false}], 
@@ -110,12 +111,12 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 				>
 					Add to dashboard
 				</button>
-				<input 
+				{!currentQuery.layout && <input 
 					className="endpointURL"
 					type="text" 
 					value={currentQuery.endpoint_url}
 					onChange={handleInputURLChange}
-				/>
+				/>}
 				{!docExplorerOpen ? 
 				<button
 					className="docExplorerShow"
