@@ -188,7 +188,8 @@ module.exports = function(app, passport, db) {
 			url: 'aaaaa', //random url,
 			layout: JSON.stringify(req.body.layout),
 			name: 'saved dashboard',
-			description: 'description'
+			description: 'description',
+			account_id: req.session.passport.user
 		}, (err, res) => {
 			if (err) console.log(err)
 			// console.log(res.insertId)
@@ -384,7 +385,8 @@ module.exports = function(app, passport, db) {
 			FROM right_dashboards rd
 			LEFT JOIN (
 				SELECT dashboard_id, GROUP_CONCAT(widget_id SEPARATOR ',') as widget_id 
-				FROM queries_to_dashboards  
+				FROM queries_to_dashboards
+				GROUP BY dashboard_id
 			) qtd
 			ON qtd.dashboard_id = rd.id ) ORDER BY updated_at DESC`, [req.session.passport.user], (err, queries) => {
 				if (err) console.log(err)

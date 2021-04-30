@@ -28,51 +28,46 @@ class AddRemoveLayout extends React.PureComponent {
 	    layout: [],
       items: [],
       queries: [],
-      newCounter: 0
+      newCounter: 1
     };
 
 	  this.onLayoutChange = this.onLayoutChange.bind(this);
     this.onAddItem = this.onAddItem.bind(this);
   }
   componentDidMount() {
-    /* getDashboardQueries('dashboard').then(res => {
-      this.setState({
-        dashboard_id: res.data.dashboard_id,
-        layout: res.data.layout,
-        items: res.data.layout.length ? 
-        res.data.layout.map(layout => layout) :
-        []
-      })
-      res.data.queries.forEach((query, i) => {
-        const data = {...query, i: `n${i}`}
-        this.setState(prevState => ({
-          queries: [...prevState.queries, query]
-        }))
-        this.qrh(data)
-      })
-    }) */
-    if (QueriesStore.currentQuery.layout && (TabsStore.currentTab === TabsStore.tabs[this.props.number].id) && !this.state.items.length ) {
-      console.log('mounted')
-      this.setState({
-        // Add a new item. It must have a unique key!
-        items: this.state.items.concat({
-          i: "n" + this.state.newCounter,
-          x: (this.state.items.length * 2) % (this.state.cols || 12),
-          y: Infinity, // puts it at the bottom
-          w: 2,
-          h: 2
-        }),
-      }, () => this.qrh(QueriesStore.currentQuery));
-    }
-    window.addEventListener('query-request', this.qrh)
-    return () => {
-      window.removeEventListener('query-request', this.qrh)
+    if (TabsStore.currentTab === TabsStore.tabs[this.props.number].id) {
+      if (QueriesStore.currentQuery.dbqueries) {
+        this.setState({
+          items: JSON.parse(QueriesStore.currentQuery.layout),
+        }, () => {
+          QueriesStore.currentQuery.dbqueries.forEach((query, i) => {
+            this.qrh(query, this.state.items[i].i)
+          })
+        })
+      }
+      else if (QueriesStore.currentQuery.layout &&  !this.state.items.length ) {
+        console.log('mounted')
+        this.setState({
+          // Add a new item. It must have a unique key!
+          items: this.state.items.concat({
+            i: "n" + this.state.newCounter,
+            x: (this.state.items.length * 2) % (this.state.cols || 12),
+            y: Infinity, // puts it at the bottom
+            w: 2,
+            h: 2
+          }),
+        }, () => this.qrh(QueriesStore.currentQuery))
+      }
+      window.addEventListener('query-request', this.qrh)
+      return () => {
+        window.removeEventListener('query-request', this.qrh)
+      }
     }
   }
 
-  qrh = e => {
-    if (QueriesStore.currentQuery.layout 
-    && (TabsStore.currentTab === TabsStore.tabs[this.props.number].id)) {
+  qrh = (e, id) => {
+    if (
+    (TabsStore.currentTab === TabsStore.tabs[this.props.number].id)) {
     console.log('ololo')
     const query = e.detail ? e.detail : e
     console.log(query)
@@ -105,22 +100,23 @@ class AddRemoveLayout extends React.PureComponent {
       }
       console.log(WidgetComponent.id, this.state.items[this.state.items.length-1].id)
       this.setState({
-        widget_ids: [...this.state.widget_ids, query.widget_number],
-        queries: [...this.state.queries, query],
-        items: this.state.newCounter ? this.state.items.concat({
+        // widget_ids: [...this.state.widget_ids, query.widget_number],
+        widget_ids: id ? QueriesStore.currentQuery.widget_ids.split(',') : [...this.state.widget_ids, query.widget_number],
+        items: !id ? this.state.items.concat({
           i: "n" + this.state.newCounter,
           x: (this.state.items.length * 2) % (this.state.cols || 12),
           y: Infinity, // puts it at the bottom
           w: 2,
           h: 2
         }) : this.state.items,
-        newCounter: this.state.newCounter + 1
+        newCounter: this.state.newCounter + 1 
       }, () => {
                   QueriesStore.updateQuery({
                     widget_number: this.state.widget_ids,
                     layout: this.state.items,
                   }, TabsStore.index)
-                  WidgetComponent.renderer(dataSource, cfg, `n${this.state.items.length-1}`)
+                  console.log('counter = ', this.state.newCounter)
+                  WidgetComponent.renderer(dataSource, cfg, id || `n${this.state.items.length-1}`)
               }
       )
       
