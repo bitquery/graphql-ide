@@ -364,7 +364,7 @@ ${dependencies}
 						ref={workspace} 
 						onMouseDown={workspaceResizer}
 				>
-					<GraphqlEditor 
+					{!currentQuery.layout && <GraphqlEditor 
 						schema={schema}
 						query={query[number].query}
 						number={number}
@@ -377,7 +377,7 @@ ${dependencies}
 							ref1: queryEditor,
 							ref2: variablesEditor
 						}}
-					/>
+					/>}
 					<div className="workspace__sizechanger"/>
 					<WidgetEditorControls 
 						model={queryTypes}

@@ -6,8 +6,8 @@ import _ from "lodash";
 import { getDashboardQueries, setDashboard } from '../api/api'
 import { getValueFrom } from '../utils/common'
 import { TabsStore, QueriesStore } from '../store/queriesStore'
+import { generateLink } from '../utils/common'
 const ReactGridLayout = WidthProvider(RGL);
-const originalLayout = getFromLS("layout") || [];
 
 /**
  * This layout demonstrates how to use a grid with a dynamic number of elements.
@@ -28,15 +28,15 @@ class AddRemoveLayout extends React.PureComponent {
 	    layout: [],
       items: [],
       queries: [],
-      newCounter: 1
+      newCounter: 1,
+      currentId: ''
     };
-
-	  this.onLayoutChange = this.onLayoutChange.bind(this);
-    this.onAddItem = this.onAddItem.bind(this);
   }
   componentDidMount() {
+    //load from gallery
     if (TabsStore.currentTab === TabsStore.tabs[this.props.number].id) {
       if (QueriesStore.currentQuery.dbqueries) {
+        console.log('dbquery')
         this.setState({
           items: JSON.parse(QueriesStore.currentQuery.layout),
         }, () => {
@@ -45,18 +45,20 @@ class AddRemoveLayout extends React.PureComponent {
           })
         })
       }
+      //from "Add widget" button or onDrop 
       else if (QueriesStore.currentQuery.layout &&  !this.state.items.length ) {
         console.log('mounted')
+        let currentId = "n" + generateLink()
         this.setState({
           // Add a new item. It must have a unique key!
           items: this.state.items.concat({
-            i: "n" + this.state.newCounter,
+            i: currentId,
             x: (this.state.items.length * 2) % (this.state.cols || 12),
             y: Infinity, // puts it at the bottom
             w: 2,
-            h: 2
+            h: 2,
           }),
-        }, () => this.qrh(QueriesStore.currentQuery))
+        }, () => this.qrh(QueriesStore.currentQuery, currentId))
       }
       window.addEventListener('query-request', this.qrh)
       return () => {
@@ -72,14 +74,14 @@ class AddRemoveLayout extends React.PureComponent {
     const query = e.detail ? e.detail : e
     console.log(query)
     const cfg = typeof query.config === 'string' ? JSON.parse(query.config) : query.config
-    if (this.state.items.length > 0 && query.widget_id !== 'json.widget' &&query.widget_id) {
+    if (query.widget_id !== 'json.widget' &&query.widget_id) {
       let indexx = this.props.plugins.map(plugin => plugin.id).indexOf(query.widget_id)
       const WidgetComponent = indexx>=0 ? this.props.plugins[indexx] : this.props.plugins[0]
       const dataSource = {
         query: query.query,
         variables: JSON.parse(query.arguments),
         displayed_data: query.displayed_data,
-        key: process.env.REACT_APP_IDE_GUEST_API_KEY,
+        key: 'BQYszZIuPSqM0E5UdhNVRIj7qvHTuGSL',
         setupData: (json) => ('data' in json) ? getValueFrom(json.data, query.displayed_data) : null,
         fetcher: function() {
           let keyHeader = {'X-API-KEY': this.key}
@@ -98,12 +100,13 @@ class AddRemoveLayout extends React.PureComponent {
           )
         }
       }
-      console.log(WidgetComponent.id, this.state.items[this.state.items.length-1].id)
+      // console.log(WidgetComponent.id, this.state.items[this.state.items.length-1].id)
+      let currentId = "n" + generateLink()
       this.setState({
         // widget_ids: [...this.state.widget_ids, query.widget_number],
-        widget_ids: id ? QueriesStore.currentQuery.widget_ids.split(',') : [...this.state.widget_ids, query.widget_number],
+        widget_ids: typeof QueriesStore.currentQuery.widget_ids === 'string' ? QueriesStore.currentQuery.widget_ids.split(',') : [...this.state.widget_ids, query.widget_number],
         items: !id ? this.state.items.concat({
-          i: "n" + this.state.newCounter,
+          i: currentId,
           x: (this.state.items.length * 2) % (this.state.cols || 12),
           y: Infinity, // puts it at the bottom
           w: 2,
@@ -115,8 +118,7 @@ class AddRemoveLayout extends React.PureComponent {
                     widget_number: this.state.widget_ids,
                     layout: this.state.items,
                   }, TabsStore.index)
-                  console.log('counter = ', this.state.newCounter)
-                  WidgetComponent.renderer(dataSource, cfg, id || `n${this.state.items.length-1}`)
+                  WidgetComponent.renderer(dataSource, cfg, id || currentId)
               }
       )
       
@@ -148,63 +150,17 @@ class AddRemoveLayout extends React.PureComponent {
     );
   }
 
-  onAddItem() {
-    /*eslint no-console: 0*/
-    console.log("adding", "n" + this.state.newCounter);
-    this.setState({
-      // Add a new item. It must have a unique key!
-      items: this.state.items.concat({
-        i: "n" + this.state.newCounter,
-        x: (this.state.items.length * 2) % (this.state.cols || 12),
-        y: Infinity, // puts it at the bottom
-        w: 2,
-        h: 2
-      }),
-      // Increment the counter to ensure key is always unique.
-      newCounter: this.state.newCounter + 1
-    });
-  }
-
-  // We're using the cols coming back from this to calculate where to add new items.
-
-  onLayoutChange(layout) {
-	  saveToLS("layout", layout);
-    this.setState({ layout });
-    //this.props.onLayoutChange(layout); // updates status display
-  }
-
   onRemoveItem(i) {
     console.log("removing", i);
-    const index = i[1]
-    let newItems = [...this.state.items]
-    newItems.splice(index, 1)
-    for (let k = index; k < newItems.length; k++) {
-      console.log(newItems)
-      newItems[k].i = `n${newItems[k].i.split('')[1]--}`
-    }
-    console.log(newItems)
-    this.setState({
-      items: newItems,
-      newCounter: this.state.newCounter - 1
+    const index = this.state.items.map(item => item.i).indexOf(i)
+    const widget_ids = [...this.state.widget_ids]
+    widget_ids.splice(index, 1)
+    this.setState({ 
+      items: _.reject(this.state.items, { i: i }),
+      widget_ids
     });
-    // this.setState({ items: _.reject(this.state.items, { i: i }) });
 
   }
-
-  onDrop = (layout, layoutItem, _event) => {
-	console.log("adding", "n" + this.state.newCounter);
-    /* this.setState({
-      items: this.state.items.concat({
-        i: "n" + this.state.newCounter,
-        x: (this.state.items.length * 2) % (this.state.cols || 12),
-        y: Infinity, // puts it at the bottom
-        w: 2,
-        h: 2
-      }),
-      newCounter: this.state.newCounter + 1
-    }); */
-    alert(`Dropped element props:\n${JSON.stringify(layoutItem, ['x', 'y', 'w', 'h'], 2)}`);
-  };
 
   render() {
     return (
@@ -212,7 +168,7 @@ class AddRemoveLayout extends React.PureComponent {
       > 
         <button onClick={()=>setDashboard(this.state)}>Save</button>
         <ReactGridLayout
-          onLayoutChange={this.onLayoutChange}
+          onLayoutChange={(layout)=>this.setState({ layout })}
           {...this.props}
           onDrop={this.onDrop}
           isDroppable={true}
@@ -225,29 +181,6 @@ class AddRemoveLayout extends React.PureComponent {
     );
   }
 })
-
-function getFromLS(key) {
-	let ls = {};
-	if (global.localStorage) {
-	  try {
-		ls = JSON.parse(global.localStorage.getItem("rgl-7")) || {};
-	  } catch (e) {
-		/*Ignore*/
-	  }
-	}
-	return ls[key];
-  }
-  
-  function saveToLS(key, value) {
-	if (global.localStorage) {
-	  global.localStorage.setItem(
-		"rgl-7",
-		JSON.stringify({
-		  [key]: value
-		})
-	  );
-	}
-  }
 
 if (process.env.STATIC_EXAMPLES === true) {
   import("../test-hook.jsx").then(fn => fn.default(AddRemoveLayout));
