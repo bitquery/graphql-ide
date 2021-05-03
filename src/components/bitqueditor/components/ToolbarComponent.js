@@ -39,20 +39,10 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 				name: 'New Dashboard',
 				arguments: currentQuery.variables,
 			})
-			// setDbid()
 		} else {
-			// switchTab(dbid)
 			switchTab(dashid)
-			/* window.dispatchEvent(new CustomEvent('query-request', {
-				...currentQuery, 
-				// layout: [{w: 6, h: 2, x: 0, y: 0, i: "n0", moved: false, static: false}], 
-				// name: 'New Dashboard',
-				arguments: currentQuery.variables
-			})) */
 			window.dispatchEvent(new CustomEvent('query-request',  {detail : {
 				...currentQuery, 
-				// layout: [{w: 6, h: 2, x: 0, y: 0, i: "n0", moved: false, static: false}], 
-				// name: 'New Dashboard',
 				arguments: currentQuery.variables
 			}}))
 		}

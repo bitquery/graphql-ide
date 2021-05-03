@@ -2,7 +2,7 @@ import { observer } from 'mobx-react-lite'
 import React, { useEffect, useState } from 'react'
 import { useCallback } from 'react'
 import { useHistory, useRouteMatch } from 'react-router-dom'
-import { getQuery } from '../api/api'
+import { getQuery, getWidget } from '../api/api'
 import {TabsStore, QueriesStore} from '../store/queriesStore'
 import handleState from '../utils/handleState'
 import useEventListener from '../utils/useEventListener'
@@ -24,13 +24,20 @@ const TabsComponent = observer(() => {
 	useEffect(() => {
 		async function updateTabs() {
 			if (match) {
-				const { data } = await getQuery(match.params.queryurl)
+				const { data } = await getWidget(match.params.queryurl)
 				if (typeof data === 'object') {
 					if (query.map(query=>query.id).indexOf(data.id) === -1) {
 						setQuery({...data, variables: data.arguments}, data.id)
 						setQueryName({[currentTab]: data.name})
 					}
-				} 
+				}
+				/* const { data } = await getQuery(match.params.queryurl)
+				if (typeof data === 'object') {
+					if (query.map(query=>query.id).indexOf(data.id) === -1) {
+						setQuery({...data, variables: data.arguments}, data.id)
+						setQueryName({[currentTab]: data.name})
+					}
+				}  */
 			}
 		}
 		updateTabs()

@@ -149,6 +149,25 @@ module.exports = function(app, passport, db) {
 			response.sendStatus(200)	
 		})	
 	})  */
+	app.get('/api/getw/:url', (req, response) => {
+		db.query(`SELECT rd.id, rd.account_id, null as query, null as arguments, 
+			rd.url, rd.name, rd.description , rd.published, rd.created_at , 
+			rd.deleted , rd.updated_at , null as endpoint_url, 
+			null as displayed_data, null as widget_id ,qtd.widget_id as widget_ids, null as config, rd.layout, null as widget_number 
+			FROM right_dashboards rd
+			LEFT JOIN (
+				SELECT dashboard_id, GROUP_CONCAT(widget_id SEPARATOR ',') as widget_id 
+				FROM queries_to_dashboards 
+				GROUP BY dashboard_id
+			) qtd
+			ON qtd.dashboard_id = rd.id
+			WHERE rd.url = ?`, [req.params.url], (err, result) => {
+				if (err) console.log(err)
+				console.log(result)
+				response.send(result[0])
+			})
+	})
+
 	app.get('/api/getwidget/:ids', (req, response) => {
 		let  widgets = []
 		req.params.ids.split(',').forEach(id => {
@@ -165,7 +184,7 @@ module.exports = function(app, passport, db) {
 			WHERE b.id=?
 			AND a.deleted=false`, [id], (err, res) => {
 				if (err) console.log(err)
-				widgets.push(res)
+				widgets.push(res[0])
 				widgets.length === req.params.ids.split(',').length 
 					&& response.send(widgets)
 			})
@@ -173,12 +192,12 @@ module.exports = function(app, passport, db) {
 	})
 
 	app.post('/api/savedashboard', (req, response) => {
-		req.body.dashboard_id ?
+		req.body.id ?
 		db.query('update dashboards set widget_ids=?, layout=? WHERE id = ?', 
 		[
 			JSON.stringify(req.body.widget_ids),
 			JSON.stringify(req.body.layout),
-			req.body.dashboard_id
+			req.body.id
 		], (err, res) => {
 			if (err) console.log(err)
 			response.sendStatus(200)	

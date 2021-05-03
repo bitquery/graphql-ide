@@ -7,6 +7,7 @@ import { getDashboardQueries, setDashboard } from '../api/api'
 import { getValueFrom } from '../utils/common'
 import { TabsStore, QueriesStore } from '../store/queriesStore'
 import { generateLink } from '../utils/common'
+import { getQueryForDashboard } from '../api/api'
 const ReactGridLayout = WidthProvider(RGL);
 
 /**
@@ -32,17 +33,30 @@ class AddRemoveLayout extends React.PureComponent {
       currentId: ''
     };
   }
-  componentDidMount() {
+  async componentDidMount() {
     //load from gallery
     if (TabsStore.currentTab === TabsStore.tabs[this.props.number].id) {
+      if (QueriesStore.currentQuery.id && QueriesStore.currentQuery.layout) {
+        console.log('db load')
+        const { data } = await getQueryForDashboard(QueriesStore.currentQuery.widget_ids)
+        console.log(data)
+        this.setState({
+          items: JSON.parse(QueriesStore.currentQuery.layout),
+        }, () => {
+          for (let i=0; i<data.length; i++) {
+            this.qrh(data[i], this.state.items[i].i)
+          }
+        })
+
+      }
       if (QueriesStore.currentQuery.dbqueries) {
         console.log('dbquery')
         this.setState({
           items: JSON.parse(QueriesStore.currentQuery.layout),
         }, () => {
-          QueriesStore.currentQuery.dbqueries.forEach((query, i) => {
-            this.qrh(query, this.state.items[i].i)
-          })
+          for (let i=0; i<QueriesStore.currentQuery.dbqueries.length; i++) {
+            this.qrh(QueriesStore.currentQuery.dbqueries[i], this.state.items[i].i)
+          }
         })
       }
       //from "Add widget" button or onDrop 
@@ -166,7 +180,7 @@ class AddRemoveLayout extends React.PureComponent {
     return (
       <div className={'dashboard ' + (((TabsStore.currentTab === TabsStore.tabs[this.props.number].id) && QueriesStore.currentQuery.layout) ? 'active' : '')}
       > 
-        <button onClick={()=>setDashboard(this.state)}>Save</button>
+        <button onClick={()=>setDashboard({...this.state, id: QueriesStore.currentQuery.id})}>Save</button>
         <ReactGridLayout
           onLayoutChange={(layout)=>this.setState({ layout })}
           {...this.props}
