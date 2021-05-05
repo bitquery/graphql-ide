@@ -3,6 +3,7 @@ const crypto = require('crypto')
 const bcrypt = require('bcrypt')
 const fs = require('fs')
 const path = require('path')
+const _ = require('lodash')
 
 module.exports = function(app, passport, db) {
 
@@ -158,12 +159,25 @@ module.exports = function(app, passport, db) {
 	})
 
 	app.post('/api/savedashboard', (req, response) => {
-		console.log(req.body)
 		req.body.id ?
 		db.query(`update right_dashboards set ? WHERE id = ${req.body.id}`, {
 			layout: JSON.stringify(req.body.layout)
 		}, (err, res) => {
 			if (err) console.log(err)
+			db.query(`DELETE FROM queries_to_dashboards 
+				WHERE dashboard_id=?`, [req.body.id], (err, result) => {
+					if (err) console.log(err)
+					req.body.widget_ids.forEach((id, i) => {
+						db.query(`INSERT INTO queries_to_dashboards SET ?`, {
+							dashboard_id: req.body.id,
+							widget_id: id,
+							query_index: req.body.dashboard_item_indexes[i]
+						}, (err, _) => {
+							if (err) console.log(err)
+
+						})
+					})
+				})
 			response.sendStatus(200)	
 		}) :
 		db.query('insert into right_dashboards SET ?', {

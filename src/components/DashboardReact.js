@@ -42,29 +42,26 @@ class AddRemoveLayout extends React.PureComponent {
         console.log('db load')
         const { data } = await getQueryForDashboard(QueriesStore.currentQuery.widget_ids, QueriesStore.currentQuery.id)
         console.log(data)
-
+        let dashboard_item_indexes = []
+        let widget_ids = []
+        for (let i=0; i<data.length; i++) {
+          dashboard_item_indexes.push(data[i].query_index)          
+          widget_ids.push(data[i].widget_number)
+        }
         this.setState({
           items: JSON.parse(QueriesStore.currentQuery.layout),
+          dashboard_item_indexes,
+          widget_ids
         }, () => {
           for (let i=0; i<data.length; i++) {
             this.qrh(data[i], data[i].query_index)
           }
         })
       }
-      //from "Add widget" button or onDrop 
+      //from "Add widget" button
       else if (QueriesStore.currentQuery.layout &&  !this.state.items.length ) {
         console.log('mounted')
-        let currentId = "n" + generateLink()
-        this.setState({
-          // Add a new item. It must have a unique key!
-          items: this.state.items.concat({
-            i: currentId,
-            x: (this.state.items.length * 2) % (this.state.cols || 12),
-            y: Infinity, // puts it at the bottom
-            w: 2,
-            h: 2,
-          }),
-        }, () => this.qrh(QueriesStore.currentQuery, currentId))
+        this.qrh(QueriesStore.currentQuery)
       }
       window.addEventListener('query-request', this.qrh)
       return () => {
@@ -74,6 +71,7 @@ class AddRemoveLayout extends React.PureComponent {
   }
 
   qrh = (e, id) => {
+    
     if (
     (TabsStore.currentTab === TabsStore.tabs[this.props.number].id)) {
     console.log('ololo')
@@ -106,33 +104,28 @@ class AddRemoveLayout extends React.PureComponent {
           )
         }
       }
-      // console.log(WidgetComponent.id, this.state.items[this.state.items.length-1].id)
       let currentId = "n" + generateLink()
-      const dbii = id || currentId
-      console.log(dbii)
-      const dbarr = this.state.dashboard_item_indexes.concat(dbii)
-      this.setState({
-        // widget_ids: [...this.state.widget_ids, query.widget_number],
-        widget_ids: typeof QueriesStore.currentQuery.widget_ids === 'string' ? QueriesStore.currentQuery.widget_ids.split(',') : [...this.state.widget_ids, query.widget_number],
-        // dashboard_item_indexes: dbarr,
-        items: !id ? this.state.items.concat({
-          i: currentId,
-          x: (this.state.items.length * 2) % (this.state.cols || 12),
-          y: Infinity, // puts it at the bottom
-          w: 2,
-          h: 2
-        }) : this.state.items,
-        newCounter: this.state.newCounter + 1 
-      }, () => {
-                  QueriesStore.updateQuery({
-                    widget_number: this.state.widget_ids,
-                    dashboard_item_indexes: this.state.dashboard_item_indexes,
-                    layout: this.state.items,
-                  }, TabsStore.index)
-                  WidgetComponent.renderer(dataSource, cfg, id || currentId)
-              }
-      )
-      
+      const updateAndRender = () => {
+        QueriesStore.updateQuery({
+          widget_number: this.state.widget_ids,
+          dashboard_item_indexes: this.state.dashboard_item_indexes,
+          layout: this.state.items,
+        }, TabsStore.index)
+        WidgetComponent.renderer(dataSource, cfg, id || currentId)
+      }
+      if (!id) {
+        this.setState({
+          widget_ids: [...this.state.widget_ids, query.widget_number],
+          dashboard_item_indexes: [...this.state.dashboard_item_indexes, currentId],
+          items: this.state.items.concat({
+            i: currentId,
+            x: (this.state.items.length * 2) % (this.state.cols || 12),
+            y: Infinity, // puts it at the bottom
+            w: 2,
+            h: 2
+          })
+        }, () => updateAndRender())
+      } else { updateAndRender() }
     }}
   }
 
@@ -172,7 +165,11 @@ class AddRemoveLayout extends React.PureComponent {
       items: _.reject(this.state.items, { i: i }),
       widget_ids,
       dashboard_item_indexes
-    });
+    }, () => QueriesStore.updateQuery({
+      widget_number: this.state.widget_ids,
+      dashboard_item_indexes: this.state.dashboard_item_indexes,
+      layout: this.state.items,
+    }, TabsStore.index));
 
   }
 
