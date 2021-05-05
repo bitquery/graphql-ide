@@ -30,14 +30,15 @@ const TabsComponent = observer(() => {
 						setQuery({...data, variables: data.arguments}, data.id)
 						setQueryName({[currentTab]: data.name})
 					}
+				} else {
+					const { data } = await getQuery(match.params.queryurl)
+					if (typeof data === 'object') {
+						if (query.map(query=>query.id).indexOf(data.id) === -1) {
+							setQuery({...data, variables: data.arguments}, data.id)
+							setQueryName({[currentTab]: data.name})
+						}
+					} 
 				}
-				/* const { data } = await getQuery(match.params.queryurl)
-				if (typeof data === 'object') {
-					if (query.map(query=>query.id).indexOf(data.id) === -1) {
-						setQuery({...data, variables: data.arguments}, data.id)
-						setQueryName({[currentTab]: data.name})
-					}
-				}  */
 			}
 		}
 		updateTabs()

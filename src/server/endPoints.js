@@ -106,49 +106,6 @@ module.exports = function(app, passport, db) {
 		transporter.sendMail(message)
 	}
 
-	/* app.get('/api/dashboardsquery/:url', (req, res) => {
-		db.query('SELECT * from dashboards where url = ?', [req.params.url], (err, rslt) => {
-			let dashboardqueries = []
-			const widget_ids = JSON.parse(rslt[0].widget_ids)
-			widget_ids.forEach((id, idx) => {
-				db.query(`SELECT a.displayed_data , a.widget_id, a.config, b.*, a.id AS widget_number 
-				FROM bitquery.widgets a
-				JOIN bitquery.queries b
-				ON a.query_id = b.id
-				WHERE a.id = ?`, [id], (err, result) => {
-					dashboardqueries.push(result[0])
-					if (idx === widget_ids.length - 1) {
-						res.send({
-							queries: dashboardqueries,
-							dashboard_id: rslt[0].id,
-							layout: JSON.parse(rslt[0].layout)
-						})		
-					}
-				})
-			})
-		})
-	}) */
-
-	/* app.post('/api/savedashboard', (req, response) => {
-		req.body.dashboard_id ?
-		db.query('update dashboards set widget_ids=?, layout=? WHERE id = ?', 
-		[
-			JSON.stringify(req.body.widget_ids),
-			JSON.stringify(req.body.layout),
-			req.body.dashboard_id
-		], (err, res) => {
-			if (err) console.log(err)
-			response.sendStatus(200)	
-		}) :
-		db.query('insert into dashboards SET ?', {
-			widget_ids: JSON.stringify(req.body.widget_ids),
-			url: 'aaaaa', //random url,
-			layout: JSON.stringify(req.body.layout)
-		}, (err, res) => {
-			if (err) console.log(err)
-			response.sendStatus(200)	
-		})	
-	})  */
 	app.get('/api/getw/:url', (req, response) => {
 		db.query(`SELECT rd.id, rd.account_id, null as query, null as arguments, 
 			rd.url, rd.name, rd.description , rd.published, rd.created_at , 
@@ -163,16 +120,25 @@ module.exports = function(app, passport, db) {
 			ON qtd.dashboard_id = rd.id
 			WHERE rd.url = ?`, [req.params.url], (err, result) => {
 				if (err) console.log(err)
-				console.log(result)
 				response.send(result[0])
 			})
 	})
 
-	app.get('/api/getwidget/:ids', (req, response) => {
+	app.post('/api/getwidget', (req, response) => {
 		let  widgets = []
-		req.params.ids.split(',').forEach(id => {
-			db.query(`SELECT a.*, b.displayed_data, b.widget_id, b.config, b.id as widget_number 
+		console.log(req.body.ids)
+		req.body.ids.split(',').forEach(id => {
+			db.query(`SELECT a.*, b.displayed_data,
+			b.widget_id, b.config,
+			b.id as widget_number,
+			r.dashboard_id as dbid,
+			r.query_index
 			FROM queries a
+			LEFT JOIN (
+				SELECT * 
+				FROM queries_to_dashboards 
+			) r
+			ON r.dashboard_id = ? AND r.widget_id = ?
 			LEFT JOIN (
 						SELECT * FROM widgets
 						WHERE id IN (
@@ -182,28 +148,25 @@ module.exports = function(app, passport, db) {
 					  ) b 
 			ON a.id=b.query_id
 			WHERE b.id=?
-			AND a.deleted=false`, [id], (err, res) => {
+			AND a.deleted=false`, [req.body.dbid, id, id], (err, res) => {
 				if (err) console.log(err)
 				widgets.push(res[0])
-				widgets.length === req.params.ids.split(',').length 
+				widgets.length === req.body.ids.split(',').length 
 					&& response.send(widgets)
 			})
 		})
 	})
 
 	app.post('/api/savedashboard', (req, response) => {
+		console.log(req.body)
 		req.body.id ?
-		db.query('update dashboards set widget_ids=?, layout=? WHERE id = ?', 
-		[
-			JSON.stringify(req.body.widget_ids),
-			JSON.stringify(req.body.layout),
-			req.body.id
-		], (err, res) => {
+		db.query(`update right_dashboards set ? WHERE id = ${req.body.id}`, {
+			layout: JSON.stringify(req.body.layout)
+		}, (err, res) => {
 			if (err) console.log(err)
 			response.sendStatus(200)	
 		}) :
 		db.query('insert into right_dashboards SET ?', {
-			// widget_ids: JSON.stringify(req.body.widget_ids),
 			url: 'aaaaa', //random url,
 			layout: JSON.stringify(req.body.layout),
 			name: 'saved dashboard',
@@ -211,11 +174,13 @@ module.exports = function(app, passport, db) {
 			account_id: req.session.passport.user
 		}, (err, res) => {
 			if (err) console.log(err)
-			// console.log(res.insertId)
-			req.body.widget_ids.forEach(widget_id => {
+			req.body.widget_ids.forEach((widget_id, i)=> {
 				db.query('insert into queries_to_dashboards SET ?', {
 					dashboard_id: res.insertId,
+					query_index: req.body.dashboard_item_indexes[i],
 					widget_id
+				}, (err, result) => {
+					if (err) console.log(err)
 				})
 			})
 			response.sendStatus(200)
