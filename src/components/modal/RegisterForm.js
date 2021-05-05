@@ -3,12 +3,14 @@ import { signUp } from '../../api/api'
 import { useToasts } from 'react-toast-notifications'
 import modalStore from '../../store/modalStore'
 import { validEmail } from '../../utils/common'
+import ReCAPTCHA from "react-google-recaptcha"
 
 function RegisterForm({ active }) {
 	const [email, setEmail] = useState('')
 	const [password, setPassword] = useState('')
 	const [accountName, setName] = useState('')
 	const [companyName, setCompanyName] = useState('')
+	const [captcha, setCaptcha] = useState('')
 	const { addToast } = useToasts()
 	const { toggleLogin, toggleModal, toggleRegister } = modalStore
 	const closeHandler = () => {
@@ -19,9 +21,13 @@ function RegisterForm({ active }) {
 		toggleRegister()
 		toggleLogin()		
 	}
+	function onChange(value) {
+		console.log("Captcha value:", value)
+		setCaptcha(value)
+	}
 	const register = async e => {
 		e.preventDefault()
-		if (password && validEmail(email) && accountName) {
+		if (password && validEmail(email) && accountName && captcha) {
 			try {
 				const { data } = await signUp(email, password, accountName, companyName)
 				addToast(data, {appearance: 'success'})
@@ -50,8 +56,12 @@ function RegisterForm({ active }) {
 			</div>
 			<input type="text" className="query__save" value={accountName} onChange={e => setName((e.target.value).trim())} />  
 			<div className="p-modal">Company Name</div>
-			<input type="text" className="query__save" value={companyName} onChange={e => setCompanyName(e.target.value)} />  
-			<button className="button button_filled" onClick={register}>Sign Up</button>
+			<input type="text" className="query__save mb-3" value={companyName} onChange={e => setCompanyName(e.target.value)} />
+			<ReCAPTCHA
+				sitekey="6LfZXscaAAAAAPTYeT0IbcFE1-2v-MlJ3aAj5SaY"
+				onChange={onChange}
+			/>  
+			<button className="button button_filled mt-3" onClick={register}>Sign Up</button>
 			<i className="handler handler__back fas fa-chevron-left" onClick={backHandler} />
 			<i className="handler handler__close fas fa-times" onClick={closeHandler} />
 		</form>
