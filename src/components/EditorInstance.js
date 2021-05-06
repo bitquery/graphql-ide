@@ -31,6 +31,9 @@ import { getIntrospectionQuery, buildClientSchema } from 'graphql'
 import useDebounce from '../utils/useDebounce'
 import WidgetView from './bitqueditor/components/WidgetView'
 import { getCheckoutCode } from '../api/api'
+import DashBoard from './DashBoard'
+import DashboardReact from './DashboardReact'
+
 
 const EditorInstance = observer(function EditorInstance({number})  {
 	const { tabs, currentTab, index, jsonMode, codeMode, viewMode } = TabsStore
@@ -54,11 +57,11 @@ const EditorInstance = observer(function EditorInstance({number})  {
 	const widgetDisplay = useRef(null)
 
 	
-	const setupExecButtonPosition = () => {
+	/* const setupExecButtonPosition = () => {
 		let execButt = workspace.current.offsetWidth / overwrap.current.offsetWidth
 		executeButton.current.setAttribute('style', `left: calc(${execButt*100}% - 25px);`)
 		window.dispatchEvent(new Event('resize'))
-	}
+	} */
 	useEffect(() => {
 		dataModel && setDataModel('')
 		if (queryTypes && currentQuery.displayed_data) {
@@ -87,13 +90,13 @@ const EditorInstance = observer(function EditorInstance({number})  {
 			const rightSize = editorWidth - leftSize
 			let flex = leftSize / rightSize
 			if (flex >= 0 && isFinite(flex)) workspace.current.setAttribute('style', `flex: ${flex} 1 0%;`)
-			setupExecButtonPosition()
+			// setupExecButtonPosition()
 		}
 		overwrap.current.addEventListener('mousemove', onMouseMove);
     	overwrap.current.addEventListener('mouseup', onMouseUp);
 	}
 	useEffect(() => {
-		setupExecButtonPosition()
+		// setupExecButtonPosition()
 	}, [docExplorerOpen])
 	const workspaceResizer = e => {
 		if (e.target && e.target.className && typeof e.target.className.indexOf === 'function') { 
@@ -191,6 +194,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 		}
 		fetcher({query: currentQuery.query, variables: currentQuery.variables}).then(data => {
 			data.json().then(json => {
+				console.log(getValueFrom(json.data, displayed_data))
 				setDataSource({
 					data: ('data' in json) ? json.data : null,
 					displayed_data: displayed_data || '',
@@ -324,7 +328,6 @@ ${dependencies}
 				(currentTab === tabs[number].id ? 'graphiql__wrapper_active' : '')
 				+ (!showSideBar ? ' graphiql__wrapper_wide' : '')
 			}
-			key={number}
 		>
 			<ToolbarComponent 
 				queryEditor={queryEditor}
@@ -332,7 +335,7 @@ ${dependencies}
 				docExplorerOpen={docExplorerOpen}
 				toggleDocExplorer={toggleDocExplorer}
 			/>
-			<div className="over-wrapper"  ref={overwrap}>
+			<div className={'over-wrapper ' + (!currentQuery.layout ? 'active' : '')}  ref={overwrap}>
 				<ReactTooltip 
 					place="top"
 					border={false}
@@ -361,7 +364,7 @@ ${dependencies}
 						ref={workspace} 
 						onMouseDown={workspaceResizer}
 				>
-					<GraphqlEditor 
+					{!currentQuery.layout && <GraphqlEditor 
 						schema={schema}
 						query={query[number].query}
 						number={number}
@@ -374,7 +377,7 @@ ${dependencies}
 							ref1: queryEditor,
 							ref2: variablesEditor
 						}}
-					/>
+					/>}
 					<div className="workspace__sizechanger"/>
 					<WidgetEditorControls 
 						model={queryTypes}
@@ -435,6 +438,7 @@ ${dependencies}
 				</div>
 				{docExplorerOpen && <DocExplorer schema={schema} />}
 			</div>
+			<DashboardReact plugins={plugins} number={number} id={number} query={query[index]} />
 		</div> 
 	)
 })

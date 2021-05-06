@@ -1,6 +1,6 @@
 import { makeObservable, observable, action, computed } from "mobx"
 import axios from 'axios'
-import { getUser, regenerateKey } from "../api/api"
+import { getUser, regenerateKey, setDashboard } from "../api/api"
 
 class User {
 	user = null
@@ -39,6 +39,7 @@ class User {
 }
 
 class Queries {
+	dashboardView = false
 	defaultWidget = 'json.widget'
 	currentVariables = ''
 	showGallery = true
@@ -53,12 +54,15 @@ class Queries {
 		endpoint_url: 'https://graphql.bitquery.io',
 		id: null
 	}
+	dashboardQuery = this.currentQuery
 	query = [this.currentQuery]
 	
 	constructor() {
 		makeObservable(this, {
+			dashboardView: observable,
 			currentVariables: observable,
 			queryJustSaved: observable,
+			dashboardQuery: observable,
 			currentQuery: observable,
 			showGallery: observable,
 			showSideBar: observable,
@@ -67,7 +71,9 @@ class Queries {
 			query: observable,
 			queryParams: computed,
 			queryNumber: computed,
+			toggleDashboardView: action,
 			setCurrentVariables: action,
+			setDashboardQuery : action,
 			setCurrentQuery: action,
 			toggleGallery: action,
 			toggleSideBar: action,
@@ -98,6 +104,7 @@ class Queries {
 			endpoint_url: this.currentQuery.endpoint_url && this.currentQuery.endpoint_url
 		}
 	}
+	toggleDashboardView = () => this.dashboardView = !this.dashboardView
 	setSchema = schema => this.schema = schema
 	setMobile = (mobile) => this.isMobile = mobile
 	setQuery = (params, id) => {
@@ -108,6 +115,8 @@ class Queries {
 		if (this.query[this.query.length-1].config && typeof this.query[this.query.length-1].config === 'string') {
 			this.query[this.query.length-1].config = JSON.parse(this.query[this.query.length-1].config)
 		}
+		if (!this.query[this.query.length-1].endpoint_url) 
+			this.query[this.query.length-1].endpoint_url = 'https://graphql.bitquery.io'
 		TabsStore.addNewTab(params.name)
 	}
 	updateQuery = (params, index, id) => {
@@ -129,6 +138,9 @@ class Queries {
 			TabsStore.renameCurrentTab(params.name)
 		}
 		if (params.description) this.query[index].description = params.description || this.query[index].description
+		if (params.widget_ids) this.query[index].widget_ids = params.widget_ids
+		if (params.dashboard_item_indexes) this.query[index].dashboard_item_indexes = params.dashboard_item_indexes
+		if (params.layout) {console.log(params.layout);  this.query[index].layout = params.layout}
 		this.query[index].id = id || id===null ? id : this.query[index].id
 		this.query[index].saved = false
 		if (params.saved) this.query[index].saved = params.saved
@@ -154,6 +166,12 @@ class Queries {
 			: TabsStore.toggleMode('view')
 		document.title = this.currentQuery.name || 'New Query'
 	}
+	setDashboardQuery = (params, id) => {
+		this.dashboardQuery = {...params, id}
+		if (this.dashboardQuery.config && typeof this.dashboardQuery.config === 'string') {
+			this.dashboardQuery.config = JSON.parse(this.dashboardQuery.config)
+		}
+	}
 	setCurrentVariables = variables => {
 		this.currentVariables = variables
 	}
@@ -162,9 +180,11 @@ class Queries {
 	}
 	saveQuery = async params => {
 		try {
-			const { data } = await axios.post('/api/addquery', { 
-				params
-			})
+			const { data } = !this.currentQuery.layout
+				? await axios.post('/api/addquery', { 
+					params
+				})
+				: await setDashboard(params)
 			let id = TabsStore.tabs.map(tab => tab.id).indexOf(TabsStore.currentTab)
 			this.updateQuery(params, id, data.id)
 			console.log(data)
@@ -200,10 +220,14 @@ class Tabs {
 	currentTab = 0
 	jsonMode = true
 	codeMode = false
-	viewMode = false
+	viewMode = true
+	dbid = null
+	
 
 	constructor() {
 		makeObservable(this, {
+			dashid: computed,
+			dbid: observable,
 			tabs: observable,
 			id: observable,
 			currentTab: observable,
@@ -211,6 +235,7 @@ class Tabs {
 			codeMode: observable,
 			viewMode: observable,
 			index: computed,
+			setDbid: action,
 			toggleMode: action,
 			switchTab: action,
 			incID: action,
@@ -220,6 +245,13 @@ class Tabs {
 		})
 	}
 
+	get dashid() {
+		let id = null
+		QueriesStore.query.forEach((query, i) => {
+			if (query.layout) id = this.tabs[i].id
+		})
+		return id
+	}
 	get index() {
 		return this.tabs.map(tab=>tab.id).indexOf(this.currentTab)
 	}
@@ -242,10 +274,12 @@ class Tabs {
 				break;
 		}
 	}
+	setDbid = (close) => this.dbid = close ? null : this.currentTab
 	incID = () => {
 		this.id = this.id + 1
 	}
-	switchTab = tabID => {
+	switchTab = tabID => {	//tabID - id, not index or serial number
+		console.log('tabID - ', tabID)
 		this.currentTab = tabID
 		let id = this.index
 		QueriesStore.setCurrentQuery(id)
@@ -261,6 +295,7 @@ class Tabs {
 			id: this.id
 		})
 		this.switchTab(this.id)
+		// QueriesStore.setCurrentQuery(this.index)
 	}
 	removeTab = (index) => {
 		this.tabs.length !==1 ? this.tabs.splice(index, 1) : console.log('xvatit')

@@ -276,7 +276,10 @@ div.CodeMirror span.CodeMirror-matchingbracket {
 }
 .over-wrapper {
   position: relative;
-  display: flex;
+  display: none;
+  &.active {
+    display: flex;
+  }
   // flex: 1 1 100%;
   height: calc(100% - #{$top-bar-height});
 }

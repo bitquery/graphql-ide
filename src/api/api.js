@@ -30,3 +30,12 @@ export const deleteQuery = id => axios.post('/api/deletequery',
 export const getCheckoutCode = source => axios.get('/api/js', {
 	params: { source: `../../${source}` }
 })
+
+export const getDashboardQueries = url => axios.get(`/api/dashboardsquery/${url}`)
+
+export const setDashboard = data => axios.post('/api/savedashboard', data)
+
+export const getWidget = url => axios.get(`/api/getw/${url}`)
+
+// export const getQueryForDashboard = ids => axios.get(`/api/getwidget/${ids}`)
+export const getQueryForDashboard = (ids, dbid) => axios.post(`/api/getwidget`, {ids, dbid})

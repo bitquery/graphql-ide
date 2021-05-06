@@ -6,10 +6,10 @@ import { parse as parseGql } from 'graphql/language'
 import { print } from 'graphql'
 import React from 'react'
 
-const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOpen, toggleDocExplorer }) => {
+const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOpen, toggleDocExplorer}) => {
 	const { currentQuery, queryParams, saveQuery, updateQuery, 
-		showSideBar, toggleSideBar } = QueriesStore
-	const { index } = TabsStore
+		showSideBar, toggleSideBar, setQuery, toggleDashboardView } = QueriesStore
+	const { index, dbid, setDbid, switchTab, currentTab, dashid } = TabsStore
 	const { user }  = UserStore
 	const { toggleModal, toggleEditDialog } = modalStore
 	const { addToast } = useToasts()
@@ -22,11 +22,23 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 				toggleEditDialog()
 				toggleModal()
 			} else if (!currentQuery.saved) {
-				saveQuery(queryParams)
+				saveQuery(currentQuery)
 			}
 		} else {
 			addToast('Login required to save or share queries', {appearance: 'error'})
 		}
+	}
+	const addToDashboard = () => {
+		
+		setQuery({
+			...currentQuery,
+			widget_ids: currentQuery.widget_number,
+			id: null,
+			layout: [{w: 6, h: 2, x: 0, y: 0, moved: false, static: false}],
+			name: 'New Dashboard',
+			arguments: currentQuery.variables,
+		})
+		
 	}
 	const prettifyQuery = () => {
 		const editor = queryEditor.current.getEditor()
@@ -65,25 +77,29 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 				>
 					Save
 				</button>}
-				<button className="topBar__button"
+				{!currentQuery.layout && <button className="topBar__button"
 					onClick={prettifyQuery}
 				>
 					Prettify
-				</button>
-				
-				<input 
+				</button>}
+				{!currentQuery.layout && <button className="topBar__button"
+					onClick={addToDashboard}
+				>
+					Create dashboard
+				</button>}
+				{!currentQuery.layout && <input 
 					className="endpointURL"
 					type="text" 
 					value={currentQuery.endpoint_url}
 					onChange={handleInputURLChange}
-				/>
-				{!docExplorerOpen ? 
+				/>}
+				{!docExplorerOpen ? currentQuery.layout ? <></> : 
 				<button
 					className="docExplorerShow"
 					onClick={() => toggleDocExplorer(prev => !prev)}
 					aria-label="Open Documentation Explorer">
-					{'Docs'}
-				</button> : 
+					Docs
+				</button> : currentQuery.layout ? <></> :
 				<div className="doc-explorer-title-bar">
 					<div className="doc-explorer-title">
 						Documentation Explorer

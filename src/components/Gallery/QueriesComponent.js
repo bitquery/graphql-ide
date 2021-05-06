@@ -1,22 +1,35 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link, useHistory } from 'react-router-dom'
 import { TabsStore, QueriesStore } from '../../store/queriesStore'
 import { observer } from 'mobx-react-lite'
 import QueriesControls from './QueriesControls'
 
+
 const QueriesComponent = observer(function QueriesComponent({ queries }) {
+	
+	
 	let history = useHistory()
 	const [hoverElementIndex, setHoverElementIndex] = useState(false)
 	const { switchTab, tabs } = TabsStore
-	const { setQuery, query, currentQuery } = QueriesStore
+	const { setQuery, setDashboardQuery, query, currentQuery } = QueriesStore
 	const showDescription = (i1, i2) => i1===i2 ? true : false
 	const handleClick = (queryFromGallery) => {
 		if (query.map(query => query.id).indexOf(queryFromGallery.id) === -1) {
-			setQuery({...queryFromGallery, variables: queryFromGallery.arguments}, queryFromGallery.id)
+			let data = {...queryFromGallery, variables: queryFromGallery.arguments}
+			if (queryFromGallery.widget_ids) {
+				let widget_ids = queryFromGallery.widget_ids.split(',')
+				let dbqueries = queries.queries.filter(query => query.widget_number && widget_ids.includes((query.widget_number).toString()))
+				data = {...data, dbqueries}
+			}
+			setQuery(data, queryFromGallery.id)
 		} else {
 			let tabID = query.map(query => query.id).indexOf(queryFromGallery.id)
 			switchTab(tabs[tabID].id)
 		}
+	}
+	const dragEnd = (queryFromGallery) => {
+		setDashboardQuery({...queryFromGallery, variables: queryFromGallery.arguments}, queryFromGallery.id)
+		window.dispatchEvent(new CustomEvent('query-request', {detail: queryFromGallery}))
 	}
 	const queryUrl = queryUrl => queryUrl ? `${process.env.REACT_APP_IDE_URL}/${queryUrl}` : `${process.env.REACT_APP_IDE_URL}`
 	const queryIsOpen = (queryFromGallery) => 
@@ -32,12 +45,17 @@ const QueriesComponent = observer(function QueriesComponent({ queries }) {
 	
 	return (
 		('queries'in queries) && queries.queries.map((baseQuery, index) => (
-			<li className="list-group-item" key={index}
+			<li className="list-group-item grid-stack-item droppable-element" key={index}
 				onMouseEnter={() => setHoverElementIndex(index)}
 				onMouseLeave={() => setHoverElementIndex(-1)}
+				onDragEnd={() => dragEnd(baseQuery)}
+				draggable={true}
+				unselectable="on"
+				onDragStart={e => e.dataTransfer.setData("text/plain", "")}
 				onClick={()=>{history.push(queryUrl(baseQuery.url));handleClick(baseQuery)}}
 			> 
 				<div className="gallery__query__wrapper flex">
+					{baseQuery.layout ? <i className="fas fa-th"></i> : <i className="fas fa-chart-bar"></i>}
 					<Link to={queryUrl(baseQuery.url)} onClick={() => handleClick(baseQuery)}> 
 						{isSaved(baseQuery) ? baseQuery.name : `*${baseQuery.name}`}
 					</Link>
