@@ -82,7 +82,7 @@ class AddRemoveLayout extends React.PureComponent {
     const query = e.detail ? e.detail : e
     console.log(query)
     const cfg = typeof query.config === 'string' ? JSON.parse(query.config) : query.config
-    if (query.widget_id !== 'json.widget' &&query.widget_id) {
+    if (query.widget_id !== 'json.widget' &&query.widget_id && !this.state.widget_ids.includes(query.widget_number)) {
       let indexx = this.props.plugins.map(plugin => plugin.id).indexOf(query.widget_id)
       const WidgetComponent = indexx>=0 ? this.props.plugins[indexx] : this.props.plugins[0]
       const dataSource = {
