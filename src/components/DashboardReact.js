@@ -65,6 +65,7 @@ class AddRemoveLayout extends React.PureComponent {
       //from "Add widget" button
       else if (QueriesStore.currentQuery.layout &&  !this.state.items.length ) {
         console.log('mounted')
+        this.setState({ saved: false })
         this.qrh(QueriesStore.currentQuery)
       }
       window.addEventListener('query-request', this.qrh)
@@ -80,9 +81,10 @@ class AddRemoveLayout extends React.PureComponent {
     (TabsStore.currentTab === TabsStore.tabs[this.props.number].id)) {
     console.log('ololo')
     const query = e.detail ? e.detail : e
+    const repeatProtector = this.state.saved ? true : !this.state.widget_ids.includes(query.widget_number)
     console.log(query)
     const cfg = typeof query.config === 'string' ? JSON.parse(query.config) : query.config
-    if (query.widget_id !== 'json.widget' &&query.widget_id) {
+    if (query.widget_id !== 'json.widget' &&query.widget_id && repeatProtector) {
       let indexx = this.props.plugins.map(plugin => plugin.id).indexOf(query.widget_id)
       const WidgetComponent = indexx>=0 ? this.props.plugins[indexx] : this.props.plugins[0]
       const dataSource = {
