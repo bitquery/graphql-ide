@@ -165,7 +165,7 @@ module.exports = function(app, passport, db) {
 			name: req.body.name,
 			url: req.body.url,
 			description: req.body.description,
-			published: req.body.published,
+			published: req.body.url ? true : false,
 			deleted: req.body.deleted
 		}, (err, res) => {
 			if (err) console.log(err)
@@ -190,7 +190,7 @@ module.exports = function(app, passport, db) {
 			name: req.body.name,
 			description: req.body.description,
 			url: req.body.url,
-			published: req.body.published,
+			published: req.body.url ? true : false,
 			deleted: req.body.deleted,
 			account_id: req.session.passport.user
 		}, (err, res) => {
@@ -348,22 +348,35 @@ module.exports = function(app, passport, db) {
 		req.session.active = null
 		if (checkActive) checkActive = 'Account activated!'
 		db.query(`
-			SELECT a.*, COUNT(b.id) as number,
-			w.id as widget_number, w.widget_id, w.config, w.displayed_data FROM queries a
-			LEFT JOIN query_logs b
-			ON a.id=b.id
-			LEFT JOIN (
-						SELECT * FROM widgets
-						WHERE id IN (
-									SELECT MAX(id) AS id
-									FROM widgets 
-									GROUP BY query_id)
-					) w 
-			ON w.query_id=a.id
-			WHERE a.published=true
-			AND a.deleted=false
-			GROUP BY a.id  
-			ORDER BY number DESC`, (err, queries) => {
+		(SELECT a.*, COUNT(b.id) as number, w.id as widget_number,
+		w.widget_id, null as widget_ids, null as layout, w.config, w.displayed_data FROM queries a
+		LEFT JOIN query_logs b
+		ON a.id=b.id
+		LEFT JOIN (
+					SELECT * FROM widgets
+					WHERE id IN (
+								SELECT MAX(id) AS id
+								FROM widgets 
+								GROUP BY query_id)
+				  ) w 
+		ON w.query_id=a.id
+		WHERE a.published=true
+		AND a.deleted=false
+		GROUP BY a.id )
+		UNION
+		(	SELECT rd.id, rd.account_id, null as query, null as arguments, 
+		rd.url, rd.name, rd.description , rd.published, rd.created_at , 
+		rd.deleted , rd.updated_at , null as endpoint_url,
+		null as number, null as widget_number,
+		null as widget_id, qtd.widget_id as widget_ids, rd.layout, null as displayed_data, null as config
+		FROM right_dashboards rd
+		LEFT JOIN (
+						SELECT dashboard_id, GROUP_CONCAT(widget_id SEPARATOR ',') as widget_id 
+						FROM queries_to_dashboards
+						GROUP BY dashboard_id
+					) qtd
+		ON qtd.dashboard_id = rd.id
+		WHERE rd.published=true) ORDER BY number DESC`, (err, queries) => {
 				if (err) console.log(err)
 				res.send({queries: queries, msg: checkActive})
 			})
