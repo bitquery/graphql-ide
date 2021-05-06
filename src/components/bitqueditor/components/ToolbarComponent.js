@@ -29,16 +29,16 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 		}
 	}
 	const addToDashboard = () => {
-		
 		setQuery({
 			...currentQuery,
+			url: null,
+			description: '',
 			widget_ids: currentQuery.widget_number,
 			id: null,
 			layout: [{w: 6, h: 2, x: 0, y: 0, moved: false, static: false}],
 			name: 'New Dashboard',
 			arguments: currentQuery.variables,
 		})
-		
 	}
 	const prettifyQuery = () => {
 		const editor = queryEditor.current.getEditor()

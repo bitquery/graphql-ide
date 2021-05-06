@@ -112,7 +112,7 @@ module.exports = function(app, passport, db) {
 			rd.url, rd.name, rd.description , rd.published, rd.created_at , 
 			rd.deleted , rd.updated_at , null as endpoint_url, 
 			null as displayed_data, null as widget_id ,qtd.widget_id as widget_ids, null as config, rd.layout, null as widget_number 
-			FROM right_dashboards rd
+			FROM dashboards rd
 			LEFT JOIN (
 				SELECT dashboard_id, GROUP_CONCAT(widget_id SEPARATOR ',') as widget_id 
 				FROM queries_to_dashboards 
@@ -160,13 +160,14 @@ module.exports = function(app, passport, db) {
 
 	app.post('/api/savedashboard', (req, response) => {
 		req.body.id ?
-		db.query(`update right_dashboards set ? WHERE id = ${req.body.id}`, {
+		db.query(`update dashboards set ? WHERE id = ${req.body.id}`, {
 			layout: JSON.stringify(req.body.layout),
 			name: req.body.name,
 			url: req.body.url,
 			description: req.body.description,
 			published: req.body.url ? true : false,
-			deleted: req.body.deleted
+			deleted: req.body.deleted,
+			updated_at: new Date()
 		}, (err, res) => {
 			if (err) console.log(err)
 			db.query(`DELETE FROM queries_to_dashboards 
@@ -185,7 +186,7 @@ module.exports = function(app, passport, db) {
 				})
 			response.sendStatus(200)	
 		}) :
-		db.query('insert into right_dashboards SET ?', {
+		db.query('insert into dashboards SET ?', {
 			layout: JSON.stringify(req.body.layout),
 			name: req.body.name,
 			description: req.body.description,
@@ -378,7 +379,7 @@ module.exports = function(app, passport, db) {
 		rd.deleted , rd.updated_at , null as endpoint_url,
 		null as number, null as widget_number,
 		null as widget_id, qtd.widget_id as widget_ids, rd.layout, null as displayed_data, null as config
-		FROM right_dashboards rd
+		FROM dashboards rd
 		LEFT JOIN (
 						SELECT dashboard_id, GROUP_CONCAT(widget_id SEPARATOR ',') as widget_id 
 						FROM queries_to_dashboards
@@ -409,7 +410,7 @@ module.exports = function(app, passport, db) {
 			rd.url, rd.name, rd.description , rd.published, rd.created_at , 
 			rd.deleted , rd.updated_at , null as endpoint_url, 
 			null as displayed_data, null as widget_id ,qtd.widget_id as widget_ids, null as config, rd.layout, null as widget_number
-			FROM right_dashboards rd
+			FROM dashboards rd
 			LEFT JOIN (
 				SELECT dashboard_id, GROUP_CONCAT(widget_id SEPARATOR ',') as widget_id 
 				FROM queries_to_dashboards
