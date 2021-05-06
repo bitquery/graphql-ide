@@ -2,10 +2,10 @@ import axios from 'axios'
 import { observer } from 'mobx-react-lite'
 import React, { useEffect, useState } from 'react'
 import { UserStore, QueriesStore, TabsStore } from '../store/queriesStore'
-import QueriesComponent from './QueriesComponent'
+import QueriesComponent from './Gallery/QueriesComponent'
 import { useToasts } from 'react-toast-notifications'
-import QueryBuilder from './QueryBuilder/index'
-import { makeDefaultArg, getDefaultScalarArgValue } from "./Explorer/CustomArgs"
+import QueryBuilder from './Gallery/QueryBuilder/index'
+import { makeDefaultArg, getDefaultScalarArgValue } from "./Gallery/QueryBuilder/CustomArgs"
 
 const GalleryComponent = observer(function GalleryComponent() {
 	const [allQueries, setAllQueries] = useState([])
@@ -95,10 +95,10 @@ const GalleryComponent = observer(function GalleryComponent() {
 			<div className="gallery__header flex flex-col">
 				<i className="gallery__close fas fa-angle-double-left" onClick={toggleSideBar} />
 					<ul className="nav nav-tabs">
-						{user && <li className="nav-item" onClick={() => {toggleQueries(!showAllQueries); toggleBuilder(false);}} >
+						{user && <li className="nav-item" onClick={() => {toggleQueries(false); toggleBuilder(false);}} >
 							<a className={"nav-link " + ((!showAllQueries && !showBuilder) && 'active')} href="# ">Private</a>
 						</li>}
-						<li className="nav-item" onClick={() => {toggleQueries(!showAllQueries); toggleBuilder(false);}}>
+						<li className="nav-item" onClick={() => {toggleQueries(true); toggleBuilder(false);}}>
 							<a className={"nav-link " + ((showAllQueries && !showBuilder) && 'active')} href="# ">{user ? 'Shared' : 'Queries'}</a>
 						</li>
 						<li className="nav-item" onClick={() => toggleBuilder(true)}>

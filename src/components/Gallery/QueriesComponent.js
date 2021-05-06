@@ -1,11 +1,10 @@
 import React, { useState } from 'react'
-import { Link, useHistory, useRouteMatch } from 'react-router-dom'
-import { TabsStore, QueriesStore } from '../store/queriesStore'
+import { Link, useHistory } from 'react-router-dom'
+import { TabsStore, QueriesStore } from '../../store/queriesStore'
 import { observer } from 'mobx-react-lite'
 import QueriesControls from './QueriesControls'
 
 const QueriesComponent = observer(function QueriesComponent({ queries }) {
-	const { url } = useRouteMatch()
 	let history = useHistory()
 	const [hoverElementIndex, setHoverElementIndex] = useState(false)
 	const { switchTab, tabs } = TabsStore
@@ -19,7 +18,7 @@ const QueriesComponent = observer(function QueriesComponent({ queries }) {
 			switchTab(tabs[tabID].id)
 		}
 	}
-	const queryUrl = queryUrl => queryUrl ? `${url}/${queryUrl}` : `${url}`
+	const queryUrl = queryUrl => queryUrl ? `${process.env.REACT_APP_IDE_URL}/${queryUrl}` : `${process.env.REACT_APP_IDE_URL}`
 	const queryIsOpen = (queryFromGallery) => 
 		queryFromGallery.id === currentQuery.id ? true : false	
 	const isSaved = baseQuery => {

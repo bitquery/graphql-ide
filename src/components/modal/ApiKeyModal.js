@@ -26,7 +26,7 @@ const ApiKeyModal = observer(function ApiKeyModal({ active }) {
 	return (
 		<div className={'modal__form '+(!active && 'modal__form_hide')} >
 			
-			<p className="mb-0 mt-3">API key must be included as HTTP header in every GraphQL request. Header name is X-API-KEY ( not case sensitive )</p>
+			<p className="mb-0 mt-3">API key must be included as HTTP header in every GraphQL request. Header name is X-API-KEY</p>
 			<div className="input-group mb-3 mt-3 flex-nowrap" style={{maxWidth: '500px'}}>
 				<div className="input-group-prepend">
     				<span className="input-group-text">API key</span>

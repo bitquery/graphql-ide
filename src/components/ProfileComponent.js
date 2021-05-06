@@ -3,7 +3,7 @@ import { logout } from '../api/api'
 import { observer } from 'mobx-react-lite'
 import ModalStore from '../store/modalStore'
 import { UserStore } from '../store/queriesStore'
-import UserIcon from './UserIcon'
+import UserIcon from './icons/UserIcon'
 import { Dropdown } from 'react-bootstrap'
 
 const Profile = observer(() => {
@@ -44,6 +44,8 @@ const Profile = observer(() => {
 		
 			<Dropdown.Menu>
 				<Dropdown.Item href="# " onClick={apiKeyHandler}>API Key</Dropdown.Item>
+				<Dropdown.Item href="https://graphql.bitquery.io/user/account">Profile</Dropdown.Item>
+				{ user.role === 'admin' &&  <Dropdown.Item href="https://graphql.bitquery.io/admin/accounts">Admin</Dropdown.Item>}
 				<Dropdown.Item href="# " onClick={changePasswordHadler}>Change password</Dropdown.Item>
 				<Dropdown.Item href="# "onClick={logOut}>Logout</Dropdown.Item>
 			</Dropdown.Menu>

@@ -2,12 +2,13 @@ import React from 'react'
 import './App.scss'
 import ModalWindow from './components/modal/ModalWindow'
 import ControlPanel from './components/ControlPanel'
-import { Route, Switch, useRouteMatch } from 'react-router-dom'
+import { Route, Switch } from 'react-router-dom'
 import ResetPassword from './pages/ResetPassword'
 import GalleryComponent from './components/GalleryComponent'
 import { useEffect } from 'react'
 import { QueriesStore } from './store/queriesStore'
 import { GraphqlExplorer } from './components/GraphqlExplorer'
+import { observer } from 'mobx-react-lite'
 
 if (process.env.NODE_ENV === 'development') {
 	require('@welldone-software/why-did-you-render')(React, {
@@ -19,8 +20,7 @@ if (process.env.NODE_ENV === 'development') {
 	});
   }
 
-function App() {
-	const { path } = useRouteMatch()
+const App = observer(function App() {
 	const { query, showSideBar } = QueriesStore
 	useEffect(() => {
 		const handleUnload = e => {
@@ -41,10 +41,10 @@ function App() {
 	return (
 		<div className="App">
 				<Switch>
-					<Route path={`${path}/reset`} >
+					<Route path={`${process.env.REACT_APP_IDE_URL}/reset`} >
 						<ResetPassword />
 					</Route>
-					<Route path={['/:queryurl', '/']} >
+					<Route path={[`${process.env.REACT_APP_IDE_URL}/:queryurl`, `${process.env.REACT_APP_IDE_URL}`]} >
 						<ModalWindow />
 						<ControlPanel />
 						<div className="content flex">
@@ -55,6 +55,6 @@ function App() {
 				</Switch>
 		</div>
 	)
-}
+})
 
 export default App;

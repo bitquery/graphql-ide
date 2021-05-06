@@ -22,6 +22,7 @@ class User {
 			const { data } = await getUser()
 			this.setUser(data.user[0])
 		} catch (error) {
+			this.setUser(undefined)
 			window.dispatchEvent(new Event('unauth'))
 			console.log(error.response.data)
 		}
@@ -69,6 +70,7 @@ class Queries {
 			setCurrentVariables: action,
 			setCurrentQuery: action,
 			toggleGallery: action,
+			toggleSideBar: action,
 			updateQuery: action,
 			removeQuery: action,
 			saveToggle: action,
@@ -112,7 +114,12 @@ class Queries {
 		if (params.query) this.query[index].query = params.query
 		if (params.variables) this.query[index].variables = params.variables
 		if (params.config) this.query[index].config = params.config
-		if (typeof params.widget_id === 'string') this.query[index].widget_id = params.widget_id
+		if (typeof params.widget_id === 'string') {
+			this.query[index].widget_id = params.widget_id
+			params.widget_id === this.defaultWidget 
+				? TabsStore.toggleMode('json') 
+				: TabsStore.toggleMode('view')
+		}
 		if (typeof params.displayed_data === 'string') this.query[index].displayed_data = params.displayed_data
 		if (params.account_id) this.query[index].account_id = params.account_id
 		if (params.endpoint_url) this.query[index].endpoint_url = params.endpoint_url
@@ -142,6 +149,9 @@ class Queries {
 	}
 	setCurrentQuery = (id) => {
 		this.currentQuery = {...this.query[id]}
+		this.currentQuery.widget_id === this.defaultWidget
+			? TabsStore.toggleMode('json')
+			: TabsStore.toggleMode('view')
 		document.title = this.currentQuery.name || 'New Query'
 	}
 	setCurrentVariables = variables => {
@@ -188,13 +198,20 @@ class Tabs {
 		}
 	]
 	currentTab = 0
+	jsonMode = true
+	codeMode = false
+	viewMode = false
 
 	constructor() {
 		makeObservable(this, {
 			tabs: observable,
 			id: observable,
 			currentTab: observable,
+			jsonMode: observable,
+			codeMode: observable,
+			viewMode: observable,
 			index: computed,
+			toggleMode: action,
 			switchTab: action,
 			incID: action,
 			removeTab: action,
@@ -205,6 +222,25 @@ class Tabs {
 
 	get index() {
 		return this.tabs.map(tab=>tab.id).indexOf(this.currentTab)
+	}
+	toggleMode = (mode) => {
+		switch (mode) {
+			case 'json':
+				this.jsonMode = true
+				this.codeMode = false
+				this.viewMode = false
+				break;
+			case 'code': 
+				this.jsonMode = false
+				this.codeMode = true
+				this.viewMode = false
+				break;
+			case 'view':
+				this.jsonMode = false
+				this.codeMode = false
+				this.viewMode = true
+				break;
+		}
 	}
 	incID = () => {
 		this.id = this.id + 1
@@ -218,6 +254,7 @@ class Tabs {
 		this.tabs[this.index].name = name
 	}
 	addNewTab = name => {
+		QueriesStore.setSchema(null)
 		this.incID()
 		this.tabs.push({
 			name: name,

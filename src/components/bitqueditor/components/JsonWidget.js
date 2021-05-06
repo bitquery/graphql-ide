@@ -1,10 +1,10 @@
-import React, { Component } from 'react';
+import React, { Component } from 'react'
 
 class JsonWidget extends Component {
 	viewer= null
 	_node= null
 
-	componentDidMount() {
+	async componentDidMount() {
 		const CodeMirror = require('codemirror');
 		require('codemirror/addon/fold/foldgutter');
 		require('codemirror/addon/fold/brace-fold');
@@ -12,15 +12,17 @@ class JsonWidget extends Component {
 		require('codemirror/addon/search/search');
 		require('codemirror/addon/search/searchcursor');
 		require('codemirror/addon/search/jump-to-line');
+		require('codemirror/mode/htmlmixed/htmlmixed')
 		require('codemirror/keymap/sublime');
 		require('codemirror-graphql/results/mode');
+		let value = this.props.mode === 'code' && await this.props.getCode()
 
 		this.viewer = CodeMirror(this._node, {
 			lineWrapping: true,
-			value: this.formatResult() || '',
+			value: value || this.formatResult() || '',
 			readOnly: true,
 			theme: 'graphiql',
-			mode: 'graphql-results',
+			mode: this.props.mode !== 'json' ? 'htmlmixed' : 'graphql-results',
 			keyMap: 'sublime',
 			foldGutter: {
 				minFoldSize: 4,
@@ -30,14 +32,29 @@ class JsonWidget extends Component {
 	}
 
 	shouldComponentUpdate(nextProps) {
-		return this.props.dataSource !== nextProps.dataSource;
+		return this.props.dataSource !== nextProps.dataSource || this.props.mode !== nextProps.mode;
 	}
 
-	componentDidUpdate() {
-	if (this.viewer) {
+	async componentDidUpdate(prevProps) {
+		const updateValue = () => {
 			const value = this.formatResult()
 			this.viewer.setValue(value || '')
+			this.viewer.setOption('mode', 'graphql-results')
 		}
+		if (this.viewer && !this.props.mode) {
+			updateValue()
+		}
+		if (this.props.mode !== prevProps.mode) {
+			if (this.props.mode === 'code') {
+				const value = await this.props.getCode()
+				this.viewer.setValue(value)
+				this.viewer.setOption('mode', 'htmlmixed')
+			} else {
+				updateValue()
+			}
+		}
+		const value = this.formatResult()
+		this.viewer.setValue(value || '')
 	}
 
 	componentWillUnmount() {

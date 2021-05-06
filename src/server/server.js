@@ -7,7 +7,7 @@ const mysql = require('mysql')
 const dbconfig = require('./databaseConfig')
 const db = mysql.createPool({
 	...dbconfig.connection,
-	'connectionLimit': 10,
+	'connectionLimit': 100,
 	'database': dbconfig.database
 })
 const app = express()
@@ -25,6 +25,7 @@ app.use(cookieSession({
 }))
 app.use(passport.initialize());
 app.use(passport.session());
+app.enable('trust proxy');
 
 require('./passport')(passport, db)
 require('./endPoints')(app, passport, db)
@@ -57,7 +58,7 @@ if (process.env.NODE_ENV==='production') {
 					} else {
 						data = replaceData(data, {
 							title: result[0].name,
-							description: result[0].description
+							description: result[0].description ? result[0].description : defaultmeta.description
 						})
 						res.send(data)
 					}

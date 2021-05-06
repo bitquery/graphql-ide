@@ -30,7 +30,6 @@ const customStyles = {
 		overflow: 'auto',
 		display: 'flex',
 		flexDirection: 'column',
-		maxHeight: '500px',
 		minWidth: '450px',
 		width: '40%',
 		backgroundColor: '#f0f0f0',

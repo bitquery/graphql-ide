@@ -6,18 +6,20 @@ import { getQuery } from '../api/api'
 import {TabsStore, QueriesStore} from '../store/queriesStore'
 import handleState from '../utils/handleState'
 import useEventListener from '../utils/useEventListener'
+import logo from '../assets/images/bitquery_logo_w.png'
 
 const TabsComponent = observer(() => {
 	const history = useHistory()
-	const { url } = useRouteMatch()
 	const { tabs, currentTab, switchTab, index } = TabsStore
-	const match = useRouteMatch(`${url}/:queryurl`)
+	const match = useRouteMatch(`${process.env.REACT_APP_IDE_URL}/:queryurl`)
 	const { setQuery, removeQuery, query, updateQuery, currentQuery } = QueriesStore
 	const [editTabName, setEditTabName] = useState(false)
 	const [queryName, setQueryName] = useState({})
 
 	useEffect(() => {
-		currentQuery.url ? history.push(`${url}/${currentQuery.url}`) : history.push(`${url}`)
+		currentQuery.url 
+			? history.push(`${process.env.REACT_APP_IDE_URL}/${currentQuery.url}`) 
+			: history.push(`${process.env.REACT_APP_IDE_URL}`)
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [currentQuery.url])
 	useEffect(() => {
@@ -55,7 +57,7 @@ const TabsComponent = observer(() => {
 	const switchTabHandler = (tabid) => {
 		switchTab(tabid)
 		let id = tabs.map(tab => tab.id).indexOf(tabid)
-		query[id].url ? history.push(`${url}/${query[id].url}`) : history.push(`${url}`)
+		query[id].url ? history.push(`${process.env.REACT_APP_IDE_URL}/${query[id].url}`) : history.push(`${process.env.REACT_APP_IDE_URL}`)
 		setEditTabName(false)
 	}
 	const addNewTabHandler = () => {
@@ -78,6 +80,13 @@ const TabsComponent = observer(() => {
 	return (
 		<div className="tabs">
 			<ul className="nav nav-tabs" >
+				<a href="https://bitquery.io" className="topBar__logo">
+					<img 
+						className="topBar__logo__img" 
+						src={logo}
+						alt="logo"
+					/>
+				</a>
 				{
 					tabs.map((tab, i) => (
 						<li 

@@ -1,6 +1,8 @@
 const transporter = require('./mailer')
 const crypto = require('crypto')
 const bcrypt = require('bcrypt')
+const fs = require('fs')
+const path = require('path')
 
 module.exports = function(app, passport, db) {
 
@@ -99,7 +101,7 @@ module.exports = function(app, passport, db) {
 			to: userEmail,
 			subject: 'Account activations',
 			text: 'Plaintext version of the message',
-			html: `<p>To activate your account follow this <a href="${req.protocol}://${req.get('Host')}/api/activate?code=${code}">link</a> </p>`
+			html: `<p>To activate your account follow this <a href="${process.env.IDE_URL}/api/activate?code=${code}">link</a> </p>`
 		}
 		transporter.sendMail(message)
 	}
@@ -143,9 +145,17 @@ module.exports = function(app, passport, db) {
 				return res.status(400).send("user already exist")
 			}
 			console.log("you are in ............")
-			sendActivationLink(user[0].id, user[0].email, req)
-			res.send('Activation link sent. Check your email for further instructions!')
+			db.query('UPDATE accounts SET name=?, company_name=? WHERE email=?', [
+				req.body.accountName,
+				req.body.companyName,
+				req.body.email
+			], (err, _) => {
+				if (err) console.log(err)
+				sendActivationLink(user[0].id, user[0].email, req)
+				res.send('Activation link sent. Check your email for further instructions!')
+			})
 		})(req, res, next)
+		
 	})
 	app.post('/api/resendactivation', (req, res) => {
 		let userEmail = req.body.email
@@ -214,7 +224,8 @@ module.exports = function(app, passport, db) {
 						email: user[0].email,
 						active: user[0].active,
 						updated_at: user[0].updated_at,
-						created_at: user[0].created_at
+						created_at: user[0].created_at,
+						role: user[0].role
 					}]
 					res.send({user: userSend})
 				} else {
@@ -302,6 +313,15 @@ module.exports = function(app, passport, db) {
 		})
 	})
 
+	app.get('/api/js', (req, res) => {
+		const filePath = path.resolve(__dirname, req.query.source)
+		fs.readFile(filePath, 'utf8', (err, data) => {
+			if (err) console.log(err)
+			let js = data.match(/async function[^{]+\{([\s\S]*)\}/)[0]
+			res.send(js)
+		})
+	})
+
 	app.post('/api/forgot', (req, res) => {
 		let token = crypto.randomBytes(20).toString('hex')
 		db.query(`update accounts set reset_token = ? where email = ?`, [token, req.body.email], (err, result) => {
@@ -313,11 +333,11 @@ module.exports = function(app, passport, db) {
 					subject: 'Account password reset',
 					text: 'You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n' +
 						'Please click on the following link, or paste this into your browser to complete the process:\n\n' +
-						req.protocol + '://' + req.get('Host') + '/api/reset/' + token + '\n\n' +
+						process.env.IDE_URL + '/api/reset/' + token + '\n\n' +
 						'If you did not request this, please ignore this email and your password will remain unchanged.\n',
 				}
 				transporter.sendMail(message)
-				res.send('An e-mail has been sent to ' + req.params.email + ' with further instructions.')
+				res.send('An e-mail has been sent to ' + req.body.email + ' with further instructions.')
 			} else {
 				res.send('There is no such account with this email')
 			}

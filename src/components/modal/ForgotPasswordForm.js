@@ -21,6 +21,7 @@ function ResetPassword({active}) {
 		if (validEmail(email)) {
 			try {
 				const { data } = await axios.post('/api/forgot', { email })
+				closeHandler()
 				addToast(data, { appearance: 'success' })
 			} catch (e) {
 				addToast(e.response.data, { appearance: 'error' })

@@ -2,10 +2,12 @@ import axios from 'axios'
 axios.defaults.withCredentials = true
 axios.defaults.credentials = 'include'
 
-export const signUp = (email, password) => 
+export const signUp = (email, password, accountName, companyName) => 
 	axios.post('/api/signup', {
 		email,
-		password
+		password,
+		accountName,
+		companyName
 	})
 
 export const login = (email, password) => 
@@ -25,3 +27,6 @@ export const getQuery = url => axios.get(`/api/getquery/${url}`)
 export const deleteQuery = id => axios.post('/api/deletequery', 
 	{ id }  
 )
+export const getCheckoutCode = source => axios.get('/api/js', {
+	params: { source: `../../${source}` }
+})

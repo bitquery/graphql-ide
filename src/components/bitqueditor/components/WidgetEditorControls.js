@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react'
-import WidgetSelect from './bitqueditor/components/WidgetSelect'
-import DisplayedData from './bitqueditor/components/DisplayedData'
+import WidgetSelect from './WidgetSelect'
+import DisplayedData from './DisplayedData'
+import { QueriesStore, TabsStore } from '../../../store/queriesStore'
 import { observer } from 'mobx-react-lite'
-import { QueriesStore, TabsStore } from '../store/queriesStore'
 
 const WidgetEditorControls = observer(
 	function WidgetEditorControls({model, name, plugins, setDataSource, dataSource, number}) {
+	const { currentQuery, defaultWidget } = QueriesStore
+	const { toggleMode, jsonMode, codeMode, viewMode } = TabsStore
 	const [dataWidgets, setDataWidgets] = useState([]) 
 	const [dataIndexInModel, setDataIndexInModel] = useState(0)
 	const { updateQuery } = QueriesStore
@@ -60,8 +62,30 @@ const WidgetEditorControls = observer(
 					/>
 				</ul>
 			</div>
-			{dataSource?.displayed_data &&
-				<button className="topBar__button" onClick={generalJson}>General JSON</button>}
+			{(('widget_id' in currentQuery) && currentQuery.widget_id !== defaultWidget) && 
+				<div className="btn-group btn-group-toggle" data-toggle="buttons">
+					<label className={"btn btn-secondary topBar__button "+(viewMode && 'active')}>
+						<input type="radio" name="options" 
+							id="option1" autoComplete="off" 
+							defaultChecked={true}
+							onClick={()=>toggleMode('view')}
+						/> View
+					</label>
+					<label className={"btn btn-secondary topBar__button "+(jsonMode && 'active')}>
+						<input type="radio" name="options" 
+							id="option2" autoComplete="off" 
+							defaultChecked={false}
+							onClick={()=>toggleMode('json')}
+						/> JSON
+					</label>
+					<label className={"btn btn-secondary topBar__button "+(codeMode && 'active')}>
+						<input type="radio" name="options" 
+							id="option3" autoComplete="off"
+							defaultChecked={false}
+							onClick={()=>toggleMode('code')}
+						/> JS
+					</label>
+				</div>}
 		</nav>
 	)
 })
