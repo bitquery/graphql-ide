@@ -40,7 +40,8 @@ function EditDialog({active}) {
 	}
 	const saveHandler = async (e) => {
 		e.preventDefault()
-		let params = queryParams
+		// let params = queryParams
+		let params = {...currentQuery}
 		let data = null
 		if (name) {
 			params.name = name

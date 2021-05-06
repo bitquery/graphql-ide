@@ -127,7 +127,7 @@ module.exports = function(app, passport, db) {
 
 	app.post('/api/getwidget', (req, response) => {
 		let  widgets = []
-		console.log(req.body.ids)
+		console.log(req.body)
 		req.body.ids.split(',').forEach(id => {
 			db.query(`SELECT a.*, b.displayed_data,
 			b.widget_id, b.config,
@@ -161,7 +161,9 @@ module.exports = function(app, passport, db) {
 	app.post('/api/savedashboard', (req, response) => {
 		req.body.id ?
 		db.query(`update right_dashboards set ? WHERE id = ${req.body.id}`, {
-			layout: JSON.stringify(req.body.layout)
+			layout: JSON.stringify(req.body.layout),
+			name: req.body.name,
+			description: req.body.description,
 		}, (err, res) => {
 			if (err) console.log(err)
 			db.query(`DELETE FROM queries_to_dashboards 
@@ -183,8 +185,8 @@ module.exports = function(app, passport, db) {
 		db.query('insert into right_dashboards SET ?', {
 			url: 'aaaaa', //random url,
 			layout: JSON.stringify(req.body.layout),
-			name: 'saved dashboard',
-			description: 'description',
+			name: req.body.name,
+			description: req.body.description,
 			account_id: req.session.passport.user
 		}, (err, res) => {
 			if (err) console.log(err)

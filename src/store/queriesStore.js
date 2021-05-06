@@ -1,6 +1,6 @@
 import { makeObservable, observable, action, computed } from "mobx"
 import axios from 'axios'
-import { getUser, regenerateKey } from "../api/api"
+import { getUser, regenerateKey, setDashboard } from "../api/api"
 
 class User {
 	user = null
@@ -115,6 +115,8 @@ class Queries {
 		if (this.query[this.query.length-1].config && typeof this.query[this.query.length-1].config === 'string') {
 			this.query[this.query.length-1].config = JSON.parse(this.query[this.query.length-1].config)
 		}
+		if (!this.query[this.query.length-1].endpoint_url) 
+			this.query[this.query.length-1].endpoint_url = 'https://graphql.bitquery.io'
 		TabsStore.addNewTab(params.name)
 	}
 	updateQuery = (params, index, id) => {
@@ -134,9 +136,9 @@ class Queries {
 			TabsStore.renameCurrentTab(params.name)
 		}
 		if (params.description) this.query[index].description = params.description || this.query[index].description
-		if (params.widget_number) this.query[index].widget_number = params.widget_number
+		if (params.widget_ids) this.query[index].widget_ids = params.widget_ids
 		if (params.dashboard_item_indexes) this.query[index].dashboard_item_indexes = params.dashboard_item_indexes
-		if (params.layout) this.query[index].layout = [...params.layout]
+		if (params.layout) {console.log(params.layout);  this.query[index].layout = params.layout}
 		this.query[index].id = id || id===null ? id : this.query[index].id
 		this.query[index].saved = false
 		if (params.saved) this.query[index].saved = params.saved
@@ -175,11 +177,14 @@ class Queries {
 	}
 	saveQuery = async params => {
 		try {
-			const { data } = await axios.post('/api/addquery', { 
-				params
-			})
+			console.log(params)
+			const { data } = !this.currentQuery.layout
+				? await axios.post('/api/addquery', { 
+					params
+				})
+				: await setDashboard(params)
 			let id = TabsStore.tabs.map(tab => tab.id).indexOf(TabsStore.currentTab)
-			this.updateQuery(params, id, data.id)
+			// this.updateQuery(params, id, data.id)
 			console.log(data)
 			this.queryJustSaved = !this.queryJustSaved
 			this.query[id].saved = true

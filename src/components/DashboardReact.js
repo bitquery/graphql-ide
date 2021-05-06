@@ -41,15 +41,17 @@ class AddRemoveLayout extends React.PureComponent {
       if (QueriesStore.currentQuery.id && QueriesStore.currentQuery.layout) {
         console.log('db load')
         const { data } = await getQueryForDashboard(QueriesStore.currentQuery.widget_ids, QueriesStore.currentQuery.id)
-        console.log(data)
+        const layout= JSON.parse(QueriesStore.currentQuery.layout)
+        const layoutindexes = layout.map(i => i.i)
         let dashboard_item_indexes = []
         let widget_ids = []
         for (let i=0; i<data.length; i++) {
-          dashboard_item_indexes.push(data[i].query_index)          
-          widget_ids.push(data[i].widget_number)
+          const position = layoutindexes.indexOf(data[i].query_index)
+          dashboard_item_indexes[position] = data[i].query_index
+          widget_ids[position] = data[i].widget_number
         }
         this.setState({
-          items: JSON.parse(QueriesStore.currentQuery.layout),
+          items: layout,
           dashboard_item_indexes,
           widget_ids
         }, () => {
@@ -107,9 +109,8 @@ class AddRemoveLayout extends React.PureComponent {
       let currentId = "n" + generateLink()
       const updateAndRender = () => {
         QueriesStore.updateQuery({
-          widget_number: this.state.widget_ids,
+          widget_ids: this.state.widget_ids,
           dashboard_item_indexes: this.state.dashboard_item_indexes,
-          layout: this.state.items,
         }, TabsStore.index)
         WidgetComponent.renderer(dataSource, cfg, id || currentId)
       }
@@ -158,28 +159,33 @@ class AddRemoveLayout extends React.PureComponent {
     console.log("removing", i);
     const index = this.state.items.map(item => item.i).indexOf(i)
     const widget_ids = [...this.state.widget_ids]
-    const dashboard_item_indexes = [...this.state.dashboard_item_indexes]
+    let dashboard_item_indexes = [...this.state.dashboard_item_indexes]
+    dashboard_item_indexes = dashboard_item_indexes.filter(index => index !== i)
     widget_ids.splice(index, 1)
-    dashboard_item_indexes.splice(index, 1)
+    // dashboard_item_indexes.splice(index, 1)
     this.setState({ 
       items: _.reject(this.state.items, { i: i }),
       widget_ids,
       dashboard_item_indexes
     }, () => QueriesStore.updateQuery({
-      widget_number: this.state.widget_ids,
+      widget_ids: this.state.widget_ids,
       dashboard_item_indexes: this.state.dashboard_item_indexes,
-      layout: this.state.items,
     }, TabsStore.index));
 
+  }
+
+  onLayoutChange(layout) {
+    console.log(layout)
+    this.setState({ layout })
+    QueriesStore.updateQuery({ layout: layout.layout }, TabsStore.index)
   }
 
   render() {
     return (
       <div className={'dashboard ' + (((TabsStore.currentTab === TabsStore.tabs[this.props.number].id) && QueriesStore.currentQuery.layout) ? 'active' : '')}
       > 
-        <button onClick={()=>setDashboard({...this.state, id: QueriesStore.currentQuery.id})}>Save</button>
         <ReactGridLayout
-          onLayoutChange={(layout)=>this.setState({ layout })}
+          onLayoutChange={(layout)=>this.onLayoutChange({ layout })}
           {...this.props}
           onDrop={this.onDrop}
           isDroppable={true}

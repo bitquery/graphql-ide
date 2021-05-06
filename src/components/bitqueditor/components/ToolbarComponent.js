@@ -23,7 +23,7 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 				toggleEditDialog()
 				toggleModal()
 			} else if (!currentQuery.saved) {
-				saveQuery(queryParams)
+				saveQuery(currentQuery)
 			}
 		} else {
 			addToast('Login required to save or share queries', {appearance: 'error'})
