@@ -163,7 +163,10 @@ module.exports = function(app, passport, db) {
 		db.query(`update right_dashboards set ? WHERE id = ${req.body.id}`, {
 			layout: JSON.stringify(req.body.layout),
 			name: req.body.name,
+			url: req.body.url,
 			description: req.body.description,
+			published: req.body.published,
+			deleted: req.body.deleted
 		}, (err, res) => {
 			if (err) console.log(err)
 			db.query(`DELETE FROM queries_to_dashboards 
@@ -183,10 +186,12 @@ module.exports = function(app, passport, db) {
 			response.sendStatus(200)	
 		}) :
 		db.query('insert into right_dashboards SET ?', {
-			url: 'aaaaa', //random url,
 			layout: JSON.stringify(req.body.layout),
 			name: req.body.name,
 			description: req.body.description,
+			url: req.body.url,
+			published: req.body.published,
+			deleted: req.body.deleted,
 			account_id: req.session.passport.user
 		}, (err, res) => {
 			if (err) console.log(err)

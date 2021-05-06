@@ -30,22 +30,16 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 		}
 	}
 	const addToDashboard = () => {
-		if (dashid === null) {
-			setQuery({
-				...currentQuery,
-				widget_ids: currentQuery.widget_number,
-				id: null,
-				layout: [{w: 6, h: 2, x: 0, y: 0, moved: false, static: false}],
-				name: 'New Dashboard',
-				arguments: currentQuery.variables,
-			})
-		} else {
-			switchTab(dashid)
-			window.dispatchEvent(new CustomEvent('query-request',  {detail : {
-				...currentQuery, 
-				arguments: currentQuery.variables
-			}}))
-		}
+		
+		setQuery({
+			...currentQuery,
+			widget_ids: currentQuery.widget_number,
+			id: null,
+			layout: [{w: 6, h: 2, x: 0, y: 0, moved: false, static: false}],
+			name: 'New Dashboard',
+			arguments: currentQuery.variables,
+		})
+		
 	}
 	const prettifyQuery = () => {
 		const editor = queryEditor.current.getEditor()
@@ -91,29 +85,29 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 				>
 					Save
 				</button>}
-				<button className="topBar__button"
+				{!currentQuery.layout && <button className="topBar__button"
 					onClick={prettifyQuery}
 				>
 					Prettify
-				</button>
-				<button className="topBar__button"
+				</button>}
+				{!currentQuery.layout && <button className="topBar__button"
 					onClick={addToDashboard}
 				>
-					Add to dashboard
-				</button>
+					Create dashboard
+				</button>}
 				{!currentQuery.layout && <input 
 					className="endpointURL"
 					type="text" 
 					value={currentQuery.endpoint_url}
 					onChange={handleInputURLChange}
 				/>}
-				{!docExplorerOpen ? 
+				{!docExplorerOpen ? currentQuery.layout ? <></> : 
 				<button
 					className="docExplorerShow"
 					onClick={() => toggleDocExplorer(prev => !prev)}
 					aria-label="Open Documentation Explorer">
-					{'Docs'}
-				</button> : 
+					Docs
+				</button> : currentQuery.layout ? <></> :
 				<div className="doc-explorer-title-bar">
 					<div className="doc-explorer-title">
 						Documentation Explorer

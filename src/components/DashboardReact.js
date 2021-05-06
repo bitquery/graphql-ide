@@ -31,7 +31,8 @@ class AddRemoveLayout extends React.PureComponent {
       items: [],
       queries: [],
       newCounter: 1,
-      currentId: ''
+      currentId: '',
+      saved: true
     };
   }
   async componentDidMount() {
@@ -58,6 +59,7 @@ class AddRemoveLayout extends React.PureComponent {
           for (let i=0; i<data.length; i++) {
             this.qrh(data[i], data[i].query_index)
           }
+          this.setState({ saved: false })
         })
       }
       //from "Add widget" button
@@ -111,6 +113,7 @@ class AddRemoveLayout extends React.PureComponent {
         QueriesStore.updateQuery({
           widget_ids: this.state.widget_ids,
           dashboard_item_indexes: this.state.dashboard_item_indexes,
+          saved: this.state.saved
         }, TabsStore.index)
         WidgetComponent.renderer(dataSource, cfg, id || currentId)
       }
@@ -170,6 +173,7 @@ class AddRemoveLayout extends React.PureComponent {
     }, () => QueriesStore.updateQuery({
       widget_ids: this.state.widget_ids,
       dashboard_item_indexes: this.state.dashboard_item_indexes,
+      saved: this.state.saved
     }, TabsStore.index));
 
   }
@@ -177,7 +181,10 @@ class AddRemoveLayout extends React.PureComponent {
   onLayoutChange(layout) {
     console.log(layout)
     this.setState({ layout })
-    QueriesStore.updateQuery({ layout: layout.layout }, TabsStore.index)
+    QueriesStore.updateQuery({
+      layout: layout.layout,
+      saved: this.state.saved
+    }, TabsStore.index)
   }
 
   render() {
