@@ -15,6 +15,10 @@
 	/* min-width: 300px !important;
 	min-height: 300px !important; */
 }
+.react-grid-item {
+	display: flex;
+	flex-direction: column;
+}
 .App {
 	height: 100vh;
 	display: flex;
