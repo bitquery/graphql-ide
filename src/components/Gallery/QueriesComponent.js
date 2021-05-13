@@ -3,6 +3,7 @@ import { Link, useHistory } from 'react-router-dom'
 import { TabsStore, QueriesStore } from '../../store/queriesStore'
 import { observer } from 'mobx-react-lite'
 import QueriesControls from './QueriesControls'
+import LinkComponent from './LinkComponent'
 
 
 const QueriesComponent = observer(function QueriesComponent({ queries }) {
@@ -56,9 +57,10 @@ const QueriesComponent = observer(function QueriesComponent({ queries }) {
 			> 
 				<div className="gallery__query__wrapper flex">
 					{baseQuery.layout ? <i className="fas fa-th"></i> : <i className="fas fa-chart-bar"></i>}
-					<Link to={queryUrl(baseQuery.url)} onClick={() => handleClick(baseQuery)}> 
+					{/* <Link to={queryUrl(baseQuery.url)} onClick={() => handleClick(baseQuery)}> 
 						{isSaved(baseQuery) ? baseQuery.name : `*${baseQuery.name}`}
-					</Link>
+					</Link> */}
+					<LinkComponent propquery={baseQuery} />
 				</div>
 				{ 
 					(showDescription(hoverElementIndex, index) || queryIsOpen(baseQuery)) && 

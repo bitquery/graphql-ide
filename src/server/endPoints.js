@@ -23,12 +23,17 @@ module.exports = function(app, passport, db) {
 			return next()
 		}
 	}
-	const addWidgetConfig = (res, db, params) => {
+	const addWidgetConfig = (res, db, params, widget_id) => {
 		db.query('INSERT INTO widgets SET ?', params, (err, result) => {
 			if (err) {
 				console.log(err)
 				res.send({err})
 			} else {
+				widget_id && db.query(`update queries_to_dashboards set ? where widget_id=${widget_id}`, {
+					widget_id: result.insertId
+				}, (err, _) => {
+					if (err) console.log(err)
+				})
 				let msg = params.url ? 'Query shared!' : 'Query saved!'
 				result && res.send({msg, id: params.query_id})
 			}
@@ -77,7 +82,7 @@ module.exports = function(app, passport, db) {
 					widget_id: req.body.params.widget_id,
 					config: JSON.stringify(req.body.params.config)
 				}
-				addWidgetConfig(res, db, newParam)
+				addWidgetConfig(res, db, newParam, req.body.params.widget_number)
 			})
 		}
 	}
@@ -129,6 +134,7 @@ module.exports = function(app, passport, db) {
 		let  widgets = []
 		console.log(req.body)
 		req.body.ids.split(',').forEach(id => {
+			console.log('id id - ', id)
 			db.query(`SELECT a.*, b.displayed_data,
 			b.widget_id, b.config,
 			b.id as widget_number,
@@ -192,7 +198,7 @@ module.exports = function(app, passport, db) {
 			description: req.body.description,
 			url: req.body.url,
 			published: req.body.url ? true : false,
-			deleted: req.body.deleted,
+			deleted: req.body.deleted || false,
 			account_id: req.session.passport.user
 		}, (err, res) => {
 			if (err) console.log(err)
@@ -416,7 +422,8 @@ module.exports = function(app, passport, db) {
 				FROM queries_to_dashboards
 				GROUP BY dashboard_id
 			) qtd
-			ON qtd.dashboard_id = rd.id ) ORDER BY updated_at DESC`, [req.session.passport.user], (err, queries) => {
+			ON qtd.dashboard_id = rd.id
+			WHERE rd.account_id = ? ) ORDER BY updated_at DESC`, [req.session.passport.user, req.session.passport.user], (err, queries) => {
 				if (err) console.log(err)
 				res.send(queries)
 		})

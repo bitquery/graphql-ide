@@ -8,6 +8,9 @@ import { getValueFrom } from '../utils/common'
 import { TabsStore, QueriesStore } from '../store/queriesStore'
 import { generateLink } from '../utils/common'
 import { getQueryForDashboard } from '../api/api'
+import Loader from "react-loader-spinner"
+import { Link } from 'react-router-dom'
+import LinkComponent from './Gallery/LinkComponent'
 const ReactGridLayout = WidthProvider(RGL);
 
 /**
@@ -46,15 +49,18 @@ class AddRemoveLayout extends React.PureComponent {
         const layoutindexes = layout.map(i => i.i)
         let dashboard_item_indexes = []
         let widget_ids = []
+        let queries = []
         for (let i=0; i<data.length; i++) {
           const position = layoutindexes.indexOf(data[i].query_index)
           dashboard_item_indexes[position] = data[i].query_index
           widget_ids[position] = data[i].widget_number
+          queries[position] = data[i]
         }
         this.setState({
           items: layout,
           dashboard_item_indexes,
-          widget_ids
+          widget_ids,
+          queries
         }, () => {
           for (let i=0; i<data.length; i++) {
             this.qrh(data[i], data[i].query_index)
@@ -81,6 +87,7 @@ class AddRemoveLayout extends React.PureComponent {
     (TabsStore.currentTab === TabsStore.tabs[this.props.number].id)) {
     console.log('ololo')
     const query = e.detail ? e.detail : e
+    // query.id && this.setState({queries: [...this.state.queries, query]})
     const repeatProtector = this.state.saved ? true : !this.state.widget_ids.includes(query.widget_number)
     console.log(query)
     const cfg = typeof query.config === 'string' ? JSON.parse(query.config) : query.config
@@ -123,6 +130,7 @@ class AddRemoveLayout extends React.PureComponent {
         this.setState({
           widget_ids: [...this.state.widget_ids, query.widget_number],
           dashboard_item_indexes: [...this.state.dashboard_item_indexes, currentId],
+          queries: query.id ? [...this.state.queries, query] : [...this.state.queries],
           items: this.state.items.concat({
             i: currentId,
             x: (this.state.items.length * 2) % (this.state.cols || 12),
@@ -134,8 +142,8 @@ class AddRemoveLayout extends React.PureComponent {
       } else { updateAndRender() }
     }}
   }
-
-  createElement(el) {
+  queryUrl = queryUrl => queryUrl ? `${process.env.REACT_APP_IDE_URL}/${queryUrl}` : `${process.env.REACT_APP_IDE_URL}`
+  createElement(el, index) {
     const removeStyle = {
       position: "absolute",
       right: "2px",
@@ -145,17 +153,28 @@ class AddRemoveLayout extends React.PureComponent {
     const i = el.add ? "+" : el.i;
     return (
       <div key={i} data-grid={el}>
+        {/* <Link to={this.queryUrl(this.state.queries[index].url)}>
+          {this.state.queries[index].name}
+        </Link> */}
+        <LinkComponent propquery={this.state.queries[index]}></LinkComponent>
         <div 
-          style={{'width': '100%', 'height': '100%', 'overflowY': 'hidden'}} 
-          id={el.i} 
-        />
-            <span
-              className="remove"
-              style={removeStyle}
-              onClick={this.onRemoveItem.bind(this, i)}
-            >
-              x
-            </span>
+          className="item-container"
+          id={el.i}
+        >
+          <Loader
+                  type="Oval"
+                  color="#3d77b6"
+                  height={25}
+                  width={25}
+          />
+        </div>
+        <span
+          className="remove"
+          style={removeStyle}
+          onClick={this.onRemoveItem.bind(this, i)}
+        >
+          x
+        </span>
       </div>
     );
   }
@@ -165,11 +184,14 @@ class AddRemoveLayout extends React.PureComponent {
     const index = this.state.items.map(item => item.i).indexOf(i)
     const widget_ids = [...this.state.widget_ids]
     let dashboard_item_indexes = [...this.state.dashboard_item_indexes]
+    const queries = [...this.state.queries]
     dashboard_item_indexes = dashboard_item_indexes.filter(index => index !== i)
+    queries.splice(index, 1)
     widget_ids.splice(index, 1)
     // dashboard_item_indexes.splice(index, 1)
     this.setState({ 
       items: _.reject(this.state.items, { i: i }),
+      queries,
       widget_ids,
       dashboard_item_indexes
     }, () => QueriesStore.updateQuery({
@@ -201,7 +223,8 @@ class AddRemoveLayout extends React.PureComponent {
           onResize={()=>window.dispatchEvent(new Event('resize'))}
           onResizeStop={()=>window.dispatchEvent(new Event('resize'))}
         >
-          {_.map(this.state.items, el => this.createElement(el))}
+          {/* {_.map(this.state.items, el => this.createElement(el))} */}
+          {this.state.items.map((el, i) => this.createElement(el, i))}
         </ReactGridLayout>
       </div>
     );

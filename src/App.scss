@@ -7,9 +7,6 @@
 	width: 100%;
 	height: 100% !important;
 }
-.react-grid-item {
-	background-color: #0B7FC7;
-}
 .grid-stack-item-content { 
 	background-color: #18BC9C; 
 	/* width: 500px !important;
@@ -687,7 +684,15 @@
   .enum-value {
 	color: #0B7FC7;
   }
-  
+  .item-container {
+	  border: 1px solid #dfdfdf;
+	  width: 100%;
+	  height: 100%;
+	  overflow-y: hidden;
+	  display: flex;
+	  justify-content: center;
+	  align-items: center;
+  }
   .arg-name {
 	color: #8B2BB9;
   }
