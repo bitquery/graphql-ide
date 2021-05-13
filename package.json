@@ -54,7 +54,7 @@
     "vega": "^5.19.1",
     "vega-embed": "^6.15.1",
     "vega-lite": "^4.17.0",
-    "vega-widgets": "^2.0.0"
+    "vega-widgets": "^2.0.2"
   },
   "scripts": {
     "createdb": "node ./src/server/createDatabase.js",
