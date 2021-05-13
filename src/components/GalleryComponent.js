@@ -101,9 +101,9 @@ const GalleryComponent = observer(function GalleryComponent() {
 						<li className="nav-item" onClick={() => {toggleQueries(true); toggleBuilder(false);}}>
 							<a className={"nav-link " + ((showAllQueries && !showBuilder) && 'active')} href="# ">{user ? 'Shared' : 'Queries'}</a>
 						</li>
-						<li className="nav-item" onClick={() => toggleBuilder(true)}>
+						{!currentQuery.layout && <li className="nav-item" onClick={() => toggleBuilder(true)}>
 							<a className={"nav-link " + (showBuilder && 'active')} href="# ">Builder</a>
-						</li>
+						</li>}
 					</ul>
 				
 			</div>
