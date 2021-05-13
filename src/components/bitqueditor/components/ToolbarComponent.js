@@ -77,6 +77,13 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 				>
 					Save
 				</button>}
+				{currentQuery.layout && 
+					<div 
+						className="grid-stack-item droppable-element"
+						draggable={true}
+						unselectable="on"
+						onDragStart={e => e.dataTransfer.setData("text/plain", "text block")}
+					>Text Block</div>}
 				{!currentQuery.layout && <button className="topBar__button"
 					onClick={prettifyQuery}
 				>

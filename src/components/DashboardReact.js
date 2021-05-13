@@ -37,6 +37,7 @@ class AddRemoveLayout extends React.PureComponent {
       currentId: '',
       saved: true
     };
+    this.onDrop = this.onDrop.bind(this)
   }
   async componentDidMount() {
     
@@ -142,7 +143,6 @@ class AddRemoveLayout extends React.PureComponent {
       } else { updateAndRender() }
     }}
   }
-  queryUrl = queryUrl => queryUrl ? `${process.env.REACT_APP_IDE_URL}/${queryUrl}` : `${process.env.REACT_APP_IDE_URL}`
   createElement(el, index) {
     const removeStyle = {
       position: "absolute",
@@ -151,11 +151,7 @@ class AddRemoveLayout extends React.PureComponent {
       cursor: "pointer"
     };
     const i = el.add ? "+" : el.i;
-    return (
-      <div key={i} data-grid={el}>
-        {/* <Link to={this.queryUrl(this.state.queries[index].url)}>
-          {this.state.queries[index].name}
-        </Link> */}
+    const element = el.i === 'textblock' ? (<textarea></textarea>) : (<>
         <LinkComponent propquery={this.state.queries[index]}></LinkComponent>
         <div 
           className="item-container"
@@ -175,8 +171,13 @@ class AddRemoveLayout extends React.PureComponent {
         >
           x
         </span>
+        </>
+    )
+    return (
+      <div key={i} data-grid={el}>
+        {element}
       </div>
-    );
+    )
   }
 
   onRemoveItem(i) {
@@ -188,7 +189,6 @@ class AddRemoveLayout extends React.PureComponent {
     dashboard_item_indexes = dashboard_item_indexes.filter(index => index !== i)
     queries.splice(index, 1)
     widget_ids.splice(index, 1)
-    // dashboard_item_indexes.splice(index, 1)
     this.setState({ 
       items: _.reject(this.state.items, { i: i }),
       queries,
@@ -211,6 +211,19 @@ class AddRemoveLayout extends React.PureComponent {
     }, TabsStore.index)
   }
 
+  onDrop(_, __, event) {
+    let blockType = event.dataTransfer.getData('text/plain')
+    this.setState({
+      items: this.state.items.concat({
+        i: 'textblock',
+        x: (this.state.items.length * 2) % (this.state.cols || 12),
+        y: Infinity, // puts it at the bottom
+        w: 2,
+        h: 2
+      })
+    })
+  }
+
   render() {
     return (
       <div className={'dashboard ' + (((TabsStore.currentTab === TabsStore.tabs[this.props.number].id) && QueriesStore.currentQuery.layout) ? 'active' : '')}
@@ -223,7 +236,6 @@ class AddRemoveLayout extends React.PureComponent {
           onResize={()=>window.dispatchEvent(new Event('resize'))}
           onResizeStop={()=>window.dispatchEvent(new Event('resize'))}
         >
-          {/* {_.map(this.state.items, el => this.createElement(el))} */}
           {this.state.items.map((el, i) => this.createElement(el, i))}
         </ReactGridLayout>
       </div>
