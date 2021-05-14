@@ -3,6 +3,7 @@ const crypto = require('crypto')
 const bcrypt = require('bcrypt')
 const fs = require('fs')
 const path = require('path')
+const axios = require('axios')
 
 module.exports = function(app, passport, db) {
 
@@ -138,24 +139,41 @@ module.exports = function(app, passport, db) {
 		})(req, res, next)
 	})
 
-	app.post('/api/signup', (req, res, next) => {
-		passport.authenticate('local-signup', (err, user) => {
-			if(err) return next(err)
-			if (!user) {
-				return res.status(400).send("user already exist")
+	function verifyUser(value) {
+		const params = new URLSearchParams()
+		params.append('secret', process.env.CAPTCHA)
+		params.append('response', value)
+		const config = {
+			headers: {
+			  'Content-Type': 'application/x-www-form-urlencoded'
 			}
-			console.log("you are in ............")
-			db.query('UPDATE accounts SET name=?, company_name=? WHERE email=?', [
-				req.body.accountName,
-				req.body.companyName,
-				req.body.email
-			], (err, _) => {
-				if (err) console.log(err)
-				sendActivationLink(user[0].id, user[0].email, req)
-				res.send('Activation link sent. Check your email for further instructions!')
-			})
-		})(req, res, next)
-		
+		}
+		return axios.post('https://www.google.com/recaptcha/api/siteverify', params, config)
+	}
+
+	app.post('/api/signup', (req, res, next) => {
+		verifyUser(req.body.captcha).then(result => {
+			if (result.data.success) {
+				passport.authenticate('local-signup', (err, user) => {
+					if(err) return next(err)
+					if (!user) {
+						return res.status(400).send("user already exist")
+					}
+					console.log("you are in ............")
+					db.query('UPDATE accounts SET name=?, company_name=? WHERE email=?', [
+						req.body.accountName,
+						req.body.companyName,
+						req.body.email
+					], (err, _) => {
+						if (err) console.log(err)
+						sendActivationLink(user[0].id, user[0].email, req)
+						res.send('Activation link sent. Check your email for further instructions!')
+					})
+				})(req, res, next)
+			} else {
+				res.status(400).send('bad')
+			}
+		})
 	})
 	app.post('/api/resendactivation', (req, res) => {
 		let userEmail = req.body.email

@@ -22,14 +22,13 @@ function RegisterForm({ active }) {
 		toggleLogin()		
 	}
 	function onChange(value) {
-		console.log("Captcha value:", value)
 		setCaptcha(value)
 	}
 	const register = async e => {
 		e.preventDefault()
 		if (password && validEmail(email) && accountName && captcha) {
 			try {
-				const { data } = await signUp(email, password, accountName, companyName)
+				const { data } = await signUp(email, password, accountName, companyName, captcha)
 				addToast(data, {appearance: 'success'})
 				toggleRegister()
 				toggleModal()

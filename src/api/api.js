@@ -2,12 +2,13 @@ import axios from 'axios'
 axios.defaults.withCredentials = true
 axios.defaults.credentials = 'include'
 
-export const signUp = (email, password, accountName, companyName) => 
+export const signUp = (email, password, accountName, companyName, captcha) => 
 	axios.post('/api/signup', {
 		email,
 		password,
 		accountName,
-		companyName
+		companyName,
+		captcha
 	})
 
 export const login = (email, password) => 
