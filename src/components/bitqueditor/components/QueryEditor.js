@@ -60,7 +60,7 @@ export default class QueryEditor extends Component {
 	getEditor = () => this.editor
 	calculateWrapperHeight = () => {
 		const editorWrapper = document.getElementsByClassName('editor__wrapper')[this.number]
-		this.wrapperHeight = height_of(editorWrapper)
+		this.wrapperHeight = editorWrapper && height_of(editorWrapper)
 		const editorHeight = this.editor.getWrapperElement().offsetHeight
 		if ( editorHeight > this.wrapperHeight ) {
 			this.editor.setSize(null, `${this.wrapperHeight-45}px`)

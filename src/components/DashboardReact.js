@@ -27,6 +27,9 @@ class AddRemoveLayout extends React.PureComponent {
     super(props);
 
     this.state = {
+      isDraggable: false,
+      isResizable: false,
+      isRemovable: false,
       dashboard_id: null,
       widget_ids: [],
       dashboard_item_indexes: [],
@@ -38,6 +41,10 @@ class AddRemoveLayout extends React.PureComponent {
       saved: true
     };
     this.onDrop = this.onDrop.bind(this)
+    this.toggleStatic = this.toggleStatic.bind(this)
+    this.makeCustomizable = this.makeCustomizable.bind(this)
+    this.makeRemovable = this.makeRemovable.bind(this)
+    this.makeStatic = this.makeStatic.bind(this)
   }
   async componentDidMount() {
     console.log('dash mount')
@@ -152,18 +159,26 @@ class AddRemoveLayout extends React.PureComponent {
       top: 0,
       cursor: "pointer"
     };
+    const moveStyle = {
+      position: "absolute",
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      cursor: 'move',
+      width: '100%',
+      height: '100%',
+      opacity: .6,
+      'z-index': 9999
+    }
     const i = el.add ? "+" : el.i;
     const element = el.i === 'textblock' ? (<>
         <textarea></textarea>
-        <span
-          className="remove"
-          style={removeStyle}
-          onClick={this.onRemoveItem.bind(this, i)}
-        ></span>
+        
       </>) : (<>
         <LinkComponent propquery={this.state.queries[index]}></LinkComponent>
         <div 
           className="item-container"
+          data-interact={!this.state.isDraggable}
           id={el.i}
         >
           <Loader
@@ -173,18 +188,19 @@ class AddRemoveLayout extends React.PureComponent {
                   width={25}
           />
         </div>
-        <span
-          className="remove"
-          style={removeStyle}
-          onClick={this.onRemoveItem.bind(this, i)}
-        >
-          x
-        </span>
         </>
     )
     return (
-      <div key={i} data-grid={el}>
+      <div key={i} data-grid={el} onClick={()=>console.log('hello')}>
         {element}
+        {this.state.isRemovable && <span
+          className="remove"
+          style={removeStyle}
+          onClick={this.onRemoveItem.bind(this, i)}
+        >x</span>}
+        {this.state.isDraggable && <span style={moveStyle}> 
+          <i class="fas fa-arrows-alt fa-8x" ></i>
+        </span>}
       </div>
     )
   }
@@ -233,13 +249,54 @@ class AddRemoveLayout extends React.PureComponent {
     })
   }
 
+  toggleStatic() {
+     this.setState({
+       isDraggable: !this.state.isDraggable,
+       isResizable: !this.state.isResizable
+     })
+   }
+  makeCustomizable() {
+    this.setState({
+      isDraggable: true,
+      isResizable: true,
+      isRemovable: false
+    })
+  }
+  makeRemovable() {
+    this.setState({
+      isDraggable: false,
+      isResizable: false,
+      isRemovable: true
+    })
+  }
+  makeStatic() {
+    this.setState({
+      isDraggable: false,
+      isResizable: false,
+      isRemovable: false
+    })
+  }
+
   render() {
     return (
       <div className={'dashboard ' + (((TabsStore.currentTab === TabsStore.tabs[this.props.number].id) && QueriesStore.currentQuery.layout) ? 'active' : '')}
       > 
+        {this.state.items.length ? <>
+        <p>
+          Now dashboard is {
+            this.state.isDraggable && this.state.isResizable ? 'customizable'
+            : this.state.isRemovable ? 'removable' : 'static'
+          }
+        </p>
+        <button onClick={this.makeCustomizable}>make customizable (move and drag)</button>
+        <button onClick={this.makeRemovable}>make removable</button>
+        <button onClick={this.makeStatic}>make static</button></> : null}
         <ReactGridLayout
           onLayoutChange={(layout)=>this.onLayoutChange({ layout })}
+          onClick={()=>console.log('hello')}
           {...this.props}
+          isDraggable={this.state.isDraggable}
+          isResizable={this.state.isResizable}
           onDrop={this.onDrop}
           isDroppable={true}
           onResize={()=>window.dispatchEvent(new Event('resize'))}

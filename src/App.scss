@@ -15,6 +15,9 @@
 	/* min-width: 300px !important;
 	min-height: 300px !important; */
 }
+.react-grid-layout {
+	height: 100% !important;
+}
 .react-grid-item {
 	display: flex;
 	flex-direction: column;
@@ -437,6 +440,7 @@
 	display: none;
 	&.active {
 		display: block;
+		height: 100%;
 	}
 }
 .modal {

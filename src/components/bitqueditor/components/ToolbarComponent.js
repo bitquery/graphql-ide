@@ -4,7 +4,8 @@ import modalStore from '../../../store/modalStore'
 import { useToasts } from 'react-toast-notifications'
 import { parse as parseGql } from 'graphql/language'
 import { print } from 'graphql'
-import React from 'react'
+import React, { useState } from 'react'
+import { FormCheck } from 'react-bootstrap'
 
 const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOpen, toggleDocExplorer}) => {
 	const { currentQuery, queryParams, saveQuery, updateQuery, 
@@ -13,12 +14,15 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 	const { user }  = UserStore
 	const { toggleModal, toggleEditDialog } = modalStore
 	const { addToast } = useToasts()
+	const switches = ['dashboard', 'query editor']
+	const [thatType, setType] = useState(currentQuery.layout ? 1 : 0)
 	const handleInputURLChange = e => {
 		updateQuery({endpoint_url: e.target.value}, index)
 	}
 	const switchView = () => {
 		const layout = currentQuery.layout ? null : {}
 		updateQuery({ layout }, index)
+		setType(thatType ? 0 : 1)
 	}
 	const saveHandle = () => {
 		if (user) {
@@ -31,18 +35,6 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 		} else {
 			addToast('Login required to save or share queries', {appearance: 'error'})
 		}
-	}
-	const addToDashboard = () => {
-		setQuery({
-			...currentQuery,
-			url: null,
-			description: '',
-			widget_ids: currentQuery.widget_number,
-			id: null,
-			layout: [{w: 6, h: 2, x: 0, y: 0, moved: false, static: false}],
-			name: 'New Dashboard',
-			arguments: currentQuery.variables,
-		})
 	}
 	const prettifyQuery = () => {
 		const editor = queryEditor.current.getEditor()
@@ -74,14 +66,12 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 					className="gallery__toggle fas fa-angle-double-right" 
 					onClick={toggleSideBar}
 				/>}
-				{/* <div className="gallery__switch">
-						<input type="checkbox" id="switchview" />
-						<label htmlFor="switchview" className="flex gallery__switch__label">
-							<span className="myqueries">My queries</span>
-							<span className="allqueries">Published</span>
-						</label>
-				</div> */}
-				{!currentQuery.id && <input type="checkbox" onChange={switchView} />}
+				{!currentQuery.id && <FormCheck custom type="switch">
+					<FormCheck.Input checked={ thatType } />
+					<FormCheck.Label onClick={ switchView }>
+						{`Switch to ${switches[thatType]}`}
+					</FormCheck.Label>
+				</FormCheck>}
 				{(!currentQuery.id || !currentQuery.saved) && <button 
 					className="topBar__button" 
 					onClick={saveHandle}
@@ -94,6 +84,7 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 						className="grid-stack-item droppable-element"
 						draggable={true}
 						unselectable="on"
+						style={{border: '1px dashed #c0c0c0', padding: '3px'}}
 						onDragStart={e => e.dataTransfer.setData("text/plain", "text block")}
 					>Text Block</div>}
 				{!currentQuery.layout && <button className="topBar__button"
@@ -101,11 +92,6 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 				>
 					Prettify
 				</button>}
-				{/* {!currentQuery.layout && <button className="topBar__button"
-					onClick={addToDashboard}
-				>
-					Create dashboard
-				</button>} */}
 				{!currentQuery.layout && <input 
 					className="endpointURL"
 					type="text" 

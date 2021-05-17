@@ -56,7 +56,9 @@ const EditorInstance = observer(function EditorInstance({number})  {
 	const variablesEditor = useRef(null)
 	const widgetDisplay = useRef(null)
 
-	
+	useEffect(() => {
+		if (currentTab === tabs[number].id) window.dispatchEvent(new Event('resize'))
+	}, [currentTab, tabs, number])
 	const setupExecButtonPosition = () => {
 		let execButt = workspace.current.offsetWidth / overwrap.current.offsetWidth
 		executeButton.current.setAttribute('style', `left: calc(${execButt*100}% - 25px);`)
@@ -218,6 +220,10 @@ const EditorInstance = observer(function EditorInstance({number})  {
 		currentQuery.saved &&
 		number === index &&
 		schema) && getResult()
+		if (number === index && schema) {
+			let queryType = getQueryTypes(query[index].query)
+			setQueryTypes(queryType)
+		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [schema])
 	const editQueryHandler = useCallback(handleSubject => {
@@ -244,13 +250,6 @@ const EditorInstance = observer(function EditorInstance({number})  {
 		setAccordance(false)
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [user, schema, queryTypes, index])
-	useEffect(() => {
-		if (number === index && schema) {
-			let queryType = getQueryTypes(query[index].query)
-			setQueryTypes(queryType)
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [schema])
 	const setConfig = (config) => {
 		if (number === index) {
 			if (JSON.stringify(currentQuery.config) !== JSON.stringify(config)) {
