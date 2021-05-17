@@ -40,7 +40,7 @@ class AddRemoveLayout extends React.PureComponent {
     this.onDrop = this.onDrop.bind(this)
   }
   async componentDidMount() {
-    
+    console.log('dash mount')
     if (TabsStore.currentTab === TabsStore.tabs[this.props.number].id) {
       //load by link && load from gallery
       if (QueriesStore.currentQuery.id && QueriesStore.currentQuery.layout) {
@@ -74,6 +74,8 @@ class AddRemoveLayout extends React.PureComponent {
         console.log('mounted')
         this.setState({ saved: false })
         this.qrh(QueriesStore.currentQuery)
+      } else {
+        this.setState({ saved: false })
       }
       window.addEventListener('query-request', this.qrh)
       return () => {
@@ -151,7 +153,14 @@ class AddRemoveLayout extends React.PureComponent {
       cursor: "pointer"
     };
     const i = el.add ? "+" : el.i;
-    const element = el.i === 'textblock' ? (<textarea></textarea>) : (<>
+    const element = el.i === 'textblock' ? (<>
+        <textarea></textarea>
+        <span
+          className="remove"
+          style={removeStyle}
+          onClick={this.onRemoveItem.bind(this, i)}
+        ></span>
+      </>) : (<>
         <LinkComponent propquery={this.state.queries[index]}></LinkComponent>
         <div 
           className="item-container"
@@ -213,7 +222,7 @@ class AddRemoveLayout extends React.PureComponent {
 
   onDrop(_, __, event) {
     let blockType = event.dataTransfer.getData('text/plain')
-    this.setState({
+    blockType === 'text block' && this.setState({
       items: this.state.items.concat({
         i: 'textblock',
         x: (this.state.items.length * 2) % (this.state.cols || 12),

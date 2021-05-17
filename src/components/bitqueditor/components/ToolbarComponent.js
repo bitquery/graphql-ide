@@ -16,6 +16,10 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 	const handleInputURLChange = e => {
 		updateQuery({endpoint_url: e.target.value}, index)
 	}
+	const switchView = () => {
+		const layout = currentQuery.layout ? null : {}
+		updateQuery({ layout }, index)
+	}
 	const saveHandle = () => {
 		if (user) {
 			if (currentQuery.id === null) {
@@ -70,6 +74,14 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 					className="gallery__toggle fas fa-angle-double-right" 
 					onClick={toggleSideBar}
 				/>}
+				{/* <div className="gallery__switch">
+						<input type="checkbox" id="switchview" />
+						<label htmlFor="switchview" className="flex gallery__switch__label">
+							<span className="myqueries">My queries</span>
+							<span className="allqueries">Published</span>
+						</label>
+				</div> */}
+				{!currentQuery.id && <input type="checkbox" onChange={switchView} />}
 				{(!currentQuery.id || !currentQuery.saved) && <button 
 					className="topBar__button" 
 					onClick={saveHandle}
@@ -89,11 +101,11 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 				>
 					Prettify
 				</button>}
-				{!currentQuery.layout && <button className="topBar__button"
+				{/* {!currentQuery.layout && <button className="topBar__button"
 					onClick={addToDashboard}
 				>
 					Create dashboard
-				</button>}
+				</button>} */}
 				{!currentQuery.layout && <input 
 					className="endpointURL"
 					type="text" 

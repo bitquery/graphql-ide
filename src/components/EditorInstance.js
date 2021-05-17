@@ -57,11 +57,11 @@ const EditorInstance = observer(function EditorInstance({number})  {
 	const widgetDisplay = useRef(null)
 
 	
-	/* const setupExecButtonPosition = () => {
+	const setupExecButtonPosition = () => {
 		let execButt = workspace.current.offsetWidth / overwrap.current.offsetWidth
 		executeButton.current.setAttribute('style', `left: calc(${execButt*100}% - 25px);`)
 		window.dispatchEvent(new Event('resize'))
-	} */
+	}
 	useEffect(() => {
 		dataModel && setDataModel('')
 		if (queryTypes && currentQuery.displayed_data) {
@@ -90,13 +90,13 @@ const EditorInstance = observer(function EditorInstance({number})  {
 			const rightSize = editorWidth - leftSize
 			let flex = leftSize / rightSize
 			if (flex >= 0 && isFinite(flex)) workspace.current.setAttribute('style', `flex: ${flex} 1 0%;`)
-			// setupExecButtonPosition()
+			setupExecButtonPosition()
 		}
 		overwrap.current.addEventListener('mousemove', onMouseMove);
     	overwrap.current.addEventListener('mouseup', onMouseUp);
 	}
 	useEffect(() => {
-		// setupExecButtonPosition()
+		setupExecButtonPosition()
 	}, [docExplorerOpen])
 	const workspaceResizer = e => {
 		if (e.target && e.target.className && typeof e.target.className.indexOf === 'function') { 

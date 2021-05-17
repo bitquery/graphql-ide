@@ -140,7 +140,7 @@ class Queries {
 		if (params.description) this.query[index].description = params.description || this.query[index].description
 		if (params.widget_ids) this.query[index].widget_ids = params.widget_ids
 		if (params.dashboard_item_indexes) this.query[index].dashboard_item_indexes = params.dashboard_item_indexes
-		if (params.layout) {console.log(params.layout);  this.query[index].layout = params.layout}
+		if (params.layout || params.layout === null) this.query[index].layout = params.layout
 		this.query[index].id = id || id===null ? id : this.query[index].id
 		this.query[index].saved = false
 		if (params.saved) this.query[index].saved = params.saved
