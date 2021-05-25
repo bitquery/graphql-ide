@@ -45,7 +45,6 @@ const AddRemoveLayout = observer(
 			};
 			this.onDrop = this.onDrop.bind(this)
 			this.makeCustomizable = this.makeCustomizable.bind(this)
-			this.makeRemovable = this.makeRemovable.bind(this)
 			this.makeStatic = this.makeStatic.bind(this)
 			// this.qrh = this.qrh.bind(this)
 		}
@@ -222,7 +221,7 @@ const AddRemoveLayout = observer(
 							<Dropdown.Item>
 								<LinkComponent propquery={this.state.queries[index]} as={'menu'}></LinkComponent>
 							</Dropdown.Item>
-							<Dropdown.Item href="# ">Remove</Dropdown.Item>
+							<Dropdown.Item href="# " onClick={this.onRemoveItem.bind(this, i)}>Remove</Dropdown.Item>
 						</Dropdown.Menu>
 					</Dropdown>
 				</div>
@@ -242,11 +241,6 @@ const AddRemoveLayout = observer(
 			return (
 				<div key={i} data-grid={el} className={this.state.menuActive===index ? 'item_high' : ''}>
 					{element}
-					{this.state.isRemovable && <span
-						className="remove"
-						style={removeStyle}
-						onClick={this.onRemoveItem.bind(this, i)}
-					>x</span>}
 					{this.state.isDraggable && <span style={moveStyle}>
 						<i class="fas fa-arrows-alt fa-8x" ></i>
 					</span>}
@@ -307,13 +301,6 @@ const AddRemoveLayout = observer(
 				isRemovable: false
 			})
 		}
-		makeRemovable() {
-			this.setState({
-				isDraggable: false,
-				isResizable: false,
-				isRemovable: true
-			})
-		}
 		makeStatic() {
 			this.setState({
 				isDraggable: false,
@@ -334,7 +321,6 @@ const AddRemoveLayout = observer(
 							}
 						</p>
 						<button onClick={this.makeCustomizable}>make customizable (move and drag)</button>
-						<button onClick={this.makeRemovable}>make removable</button>
 						<button onClick={this.makeStatic}>make static</button></> : null}
 					<ReactGridLayout
 						onLayoutChange={(layout) => this.onLayoutChange({ layout })}
