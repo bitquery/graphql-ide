@@ -7,6 +7,7 @@ import {TabsStore, QueriesStore} from '../store/queriesStore'
 import handleState from '../utils/handleState'
 import useEventListener from '../utils/useEventListener'
 import logo from '../assets/images/bitquery_logo_w.png'
+import GraphqlIcon from './icons/GraphqlIcon'
 
 const TabsComponent = observer(() => {
 	const history = useHistory()
@@ -104,7 +105,7 @@ const TabsComponent = observer(() => {
 							<a href="# " className={'nav-link '+(currentTab === tab.id && 'active')} key={i}>
 								{query[i].layout ? <i className="fas fa-th"></i> 
 								: query[i].widget_id==='json.widget' || !query[i].widget_id 
-								? <i class="fab fa-js-square"></i> 
+								? <GraphqlIcon fill={'#000000'} width={'16px'} height={'16px'}/>
 								: <i className="fas fa-chart-bar"></i>}
 								{
 								(editTabName && currentTab === tab.id) 

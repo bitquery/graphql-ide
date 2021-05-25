@@ -2,6 +2,22 @@
 	font-family: 'Nunito';
 	src: url('./assets/fonts/Nunito-Regular.ttf') format('truetype')
 }
+.icon {
+	margin-right: 0.5rem;
+}
+.cursor-pointer {
+	cursor: pointer;
+}
+.item_high {
+	z-index: 9999;
+}
+.dashboard__item__menu {
+	.dropdown-toggle {
+		&::after {
+			content: none;
+		}
+	}
+}
 .grid-stack { 
 	background: #FAFAD2; 
 	width: 100%;

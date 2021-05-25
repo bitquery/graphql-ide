@@ -1,10 +1,11 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useHistory } from 'react-router-dom'
 import { TabsStore, QueriesStore } from '../../store/queriesStore'
 
-function LinkComponent({ propquery }) {
+function LinkComponent({ propquery, as }) {
 	const { switchTab, tabs } = TabsStore
 	const { setQuery, query } = QueriesStore
+	const history = useHistory()
 	const queryUrl = queryUrl => queryUrl ? `${process.env.REACT_APP_IDE_URL}/${queryUrl}` : `${process.env.REACT_APP_IDE_URL}`
 	const isSaved = baseQuery => {
 		for (let i =0; i<query.length; i++) {
@@ -24,8 +25,20 @@ function LinkComponent({ propquery }) {
 			switchTab(tabs[tabID].id)
 		}
 	}
+	const menu = (props) => {
+		return (
+			<div onClick={() => {props.onClick(); history.push(props.to)}}>
+				Open query
+			</div>
+		)
+	}
+	const props = {
+		to: queryUrl(propquery.url),
+		onClick: () => handleClick(propquery)
+	}
+	if (as === 'menu') props.component = menu
     return (
-        <Link to={queryUrl(propquery.url)} onClick={() => handleClick(propquery)}> 
+        <Link {...props}> 
             {isSaved(propquery) ? propquery.name : `*${propquery.name}`}
         </Link>
     )

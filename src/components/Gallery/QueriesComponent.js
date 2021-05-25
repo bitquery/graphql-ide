@@ -4,6 +4,7 @@ import { TabsStore, QueriesStore } from '../../store/queriesStore'
 import { observer } from 'mobx-react-lite'
 import QueriesControls from './QueriesControls'
 import LinkComponent from './LinkComponent'
+import GraphqlIcon from '../icons/GraphqlIcon'
 
 
 const QueriesComponent = observer(function QueriesComponent({ queries }) {
@@ -58,7 +59,7 @@ const QueriesComponent = observer(function QueriesComponent({ queries }) {
 				<div className="gallery__query__wrapper flex">
 					{baseQuery.layout ? <i className="fas fa-th"></i> 
 					: baseQuery.widget_id==='json.widget' || !baseQuery.widget_id 
-					? <i class="fab fa-js-square"></i> 
+					? <GraphqlIcon fill={'#000000'} width={'16px'} height={'16px'}/> 
 					: <i className="fas fa-chart-bar"></i>}
 					<LinkComponent propquery={baseQuery} />
 				</div>
