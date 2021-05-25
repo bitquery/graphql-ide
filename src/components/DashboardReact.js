@@ -22,6 +22,7 @@ const AddRemoveLayout = observer(
 		static defaultProps = {
 			className: "layout",
 			rowHeight: 100,
+			resizeHandles: ['sw', 'nw', 'se', 'ne']
 			// verticalCompact: false
 		};
 
@@ -212,10 +213,10 @@ const AddRemoveLayout = observer(
 
 			</>) : (<>
 				<div class="flex justify-content-between cursor-pointer">
-					<LinkComponent propquery={this.state.queries[index]}></LinkComponent>
+					{/* <LinkComponent propquery={this.state.queries[index]}></LinkComponent> */}
 					<Dropdown className={'dashboard__item__menu'} onToggle={ isOpen => isOpen && this.setState({menuActive: index}) }>
 						<Dropdown.Toggle id="dropdown-basic" as={'span'} >
-							<i class="fas fa-ellipsis-h"></i>
+							<i className="fas fa-ellipsis-h"></i>
 						</Dropdown.Toggle>
 						<Dropdown.Menu>
 							<Dropdown.Item>
@@ -241,9 +242,7 @@ const AddRemoveLayout = observer(
 			return (
 				<div key={i} data-grid={el} className={this.state.menuActive===index ? 'item_high' : ''}>
 					{element}
-					{this.state.isDraggable && <span style={moveStyle}>
-						<i class="fas fa-arrows-alt fa-8x" ></i>
-					</span>}
+					{this.state.isDraggable && <span style={moveStyle} />}
 				</div>
 			)
 		}
