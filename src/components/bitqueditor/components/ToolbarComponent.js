@@ -85,7 +85,7 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 						draggable={true}
 						unselectable="on"
 						style={{border: '1px dashed #c0c0c0', padding: '3px'}}
-						onDragStart={e => e.dataTransfer.setData("text/plain", "text block")}
+						onDragStart={e => e.dataTransfer.setData("text/plain", "block.content")}
 					>Text Block</div>}
 				{!currentQuery.layout && <button className="topBar__button"
 					onClick={prettifyQuery}

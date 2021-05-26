@@ -11,11 +11,23 @@
 .item_high {
 	z-index: 9999;
 }
+.oyh {
+	overflow-y: hidden;
+}
 .dashboard__item__menu {
 	.dropdown-toggle {
 		&::after {
 			content: none;
 		}
+	}
+}
+.block__content {
+	display: flex;
+	overflow-y: scroll;
+	flex: 1;
+	> .CodeMirror.cm-s-graphiql {
+		overflow: hidden;
+		height: auto;
 	}
 }
 .grid-stack { 
@@ -33,6 +45,24 @@
 }
 .react-grid-layout {
 	height: 100% !important;
+	.react-grid-item > .react-resizable-handle.react-resizable-handle {
+		&-sw {
+			bottom: -5px;
+			left: -5px;
+		}
+		&-nw {
+			top: -5px;
+			left: -5px;
+		}
+		&-se {
+			bottom: -5px;
+			right: -5px;
+		}
+		&-ne {
+			top: -5px;
+			right: -5px;
+		}
+	}
 }
 .react-grid-item {
 	display: flex;
@@ -455,6 +485,7 @@
 .dashboard {
 	display: none;
 	&.active {
+		overflow-y: scroll;
 		display: block;
 		height: 100%;
 	}

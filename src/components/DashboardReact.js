@@ -1,9 +1,7 @@
 import React from "react";
 import { observer } from 'mobx-react'
-import { toJS } from 'mobx'
 import RGL, { WidthProvider } from "react-grid-layout";
 import _ from "lodash";
-import { getDashboardQueries, setDashboard } from '../api/api'
 import { getValueFrom } from '../utils/common'
 import { TabsStore, QueriesStore } from '../store/queriesStore'
 import { generateLink } from '../utils/common'
@@ -12,6 +10,7 @@ import Loader from "react-loader-spinner"
 import { withRouter, Link } from 'react-router-dom'
 import LinkComponent from './Gallery/LinkComponent'
 import { Dropdown } from 'react-bootstrap'
+import { ContentBlock } from './ContentBlock'
 const ReactGridLayout = WidthProvider(RGL);
 
 /**
@@ -22,9 +21,11 @@ const AddRemoveLayout = observer(
 		static defaultProps = {
 			className: "layout",
 			rowHeight: 100,
-			resizeHandles: ['sw', 'nw', 'se', 'ne']
+			resizeHandles: ['sw', 'nw', 'se', 'ne'],
 			// verticalCompact: false
 		};
+
+		blockContentNumber = -1
 
 		constructor(props) {
 			super(props);
@@ -95,9 +96,10 @@ const AddRemoveLayout = observer(
 		}
 
 		qrh = (e, id) => {
-			if (TabsStore.currentTab === TabsStore.tabs[this.props.number].id) {
+			if (TabsStore.currentTab === TabsStore.tabs[this.props.number]?.id) {
+				
 				const query = e.detail ? e.detail : e
-				if (query.widget_id === 'text') {
+				if (query.widget_id === 'block.content') {
 					//add text block with content/empty
 					/* if (!id) {
 						this.setState({
@@ -115,11 +117,18 @@ const AddRemoveLayout = observer(
 					} else { 
 						updateAndRender()
 					} */
+					/* this.setState({
+						widget_ids: [...this.state.widget_ids, this.blockContentNumber],
+						dashboard_item_indexes: [...this.dashboard_item_indexes, ]
+					}) */
 					if (!id) {
+						const blockContentIndex = 'ctn' + generateLink()
 						this.setState({
+							widget_ids: [...this.state.widget_ids, this.blockContentNumber],
+							dashboard_item_indexes: [...this.state.dashboard_item_indexes, blockContentIndex],
 							queries: [...this.state.queries, query],
 							items: this.state.items.concat({
-							  i: 'n' + generateLink(),
+							  i: blockContentIndex,
 							  x: (this.state.items.length * 2) % (this.state.cols || 12),
 							  y: Infinity, // puts it at the bottom
 							  w: 2,
@@ -189,6 +198,9 @@ const AddRemoveLayout = observer(
 			}}
 		}
 		queryUrl = queryUrl => queryUrl ? `${process.env.REACT_APP_IDE_URL}/${queryUrl}` : `${process.env.REACT_APP_IDE_URL}`
+		onEditBlockContent(content) {
+			console.log(content)
+		}
 		createElement(el, index) {
 			const removeStyle = {
 				position: "absolute",
@@ -206,26 +218,8 @@ const AddRemoveLayout = observer(
 				height: '100%',
 				opacity: .6,
 			}
-			//href={this.queryUrl(this.state.queries[index].url)}
 			const i = el.add ? "+" : el.i;
-			const element = this.state.queries[index].widget_id === 'text' ? (<>
-				<textarea></textarea>
-
-			</>) : (<>
-				<div class="flex justify-content-between cursor-pointer">
-					{/* <LinkComponent propquery={this.state.queries[index]}></LinkComponent> */}
-					<Dropdown className={'dashboard__item__menu'} onToggle={ isOpen => isOpen && this.setState({menuActive: index}) }>
-						<Dropdown.Toggle id="dropdown-basic" as={'span'} >
-							<i className="fas fa-ellipsis-h"></i>
-						</Dropdown.Toggle>
-						<Dropdown.Menu>
-							<Dropdown.Item>
-								<LinkComponent propquery={this.state.queries[index]} as={'menu'}></LinkComponent>
-							</Dropdown.Item>
-							<Dropdown.Item href="# " onClick={this.onRemoveItem.bind(this, i)}>Remove</Dropdown.Item>
-						</Dropdown.Menu>
-					</Dropdown>
-				</div>
+			const element = this.state.queries[index].widget_id === 'block.content' ? (<ContentBlock onEdit={this.onEditBlockContent}/>) : (<>
 				<div
 					className="item-container"
 					id={el.i}
@@ -241,6 +235,20 @@ const AddRemoveLayout = observer(
 			)
 			return (
 				<div key={i} data-grid={el} className={this.state.menuActive===index ? 'item_high' : ''}>
+					<div className="flex justify-content-between">
+					<div>{this.state.queries[index].name}</div>
+					<Dropdown className={'dashboard__item__menu cursor-pointer item_high'} onToggle={ isOpen => isOpen && this.setState({menuActive: index}) }>
+						<Dropdown.Toggle id="dropdown-basic" as={'span'} >
+							<i className="fas fa-ellipsis-h"></i>
+						</Dropdown.Toggle>
+						<Dropdown.Menu>
+							{this.state.queries[index].query && <Dropdown.Item>
+								<LinkComponent propquery={this.state.queries[index]} as={'menu'}></LinkComponent>
+							</Dropdown.Item>}
+							<Dropdown.Item href="# " onClick={this.onRemoveItem.bind(this, i)}>Remove</Dropdown.Item>
+						</Dropdown.Menu>
+					</Dropdown>
+					</div>
 					{element}
 					{this.state.isDraggable && <span style={moveStyle} />}
 				</div>
@@ -290,7 +298,7 @@ const AddRemoveLayout = observer(
 				h: 2
 			  })
 			}) */
-			blockType === 'text block' && this.qrh({ widget_id: 'text' })
+			blockType === 'block.content' && this.qrh({ widget_id: 'block.content' })
 		}
 
 		makeCustomizable() {
