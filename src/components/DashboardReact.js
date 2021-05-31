@@ -38,6 +38,7 @@ const AddRemoveLayout = observer(
 				dashboard_id: null,
 				widget_ids: [],
 				dashboard_item_indexes: [],
+				content: [],
 				layout: [],
 				items: [],
 				queries: [],
@@ -48,10 +49,23 @@ const AddRemoveLayout = observer(
 			this.onDrop = this.onDrop.bind(this)
 			this.makeCustomizable = this.makeCustomizable.bind(this)
 			this.makeStatic = this.makeStatic.bind(this)
-			// this.qrh = this.qrh.bind(this)
+			this.onEditBlockContent = this.onEditBlockContent.bind(this)
+			this.qrh = this.qrh.bind(this)
 		}
 		async componentDidMount() {
 			console.log('dash mount')
+			const queryString = window.location.search
+			const urlParams = new URLSearchParams(queryString)
+			const entries = urlParams.entries()
+			let args = {}
+			if (entries) {
+				for (const entry of entries) {
+					args[entry[0]] = entry[1]
+				}
+				console.log(args)
+			}
+			
+			//------------------------------------
 			if (TabsStore.currentTab === TabsStore.tabs[this.props.number].id) {
 				//load by link && load from gallery
 				if (QueriesStore.currentQuery.id && QueriesStore.currentQuery.layout) {
@@ -62,18 +76,24 @@ const AddRemoveLayout = observer(
 					let dashboard_item_indexes = []
 					let widget_ids = []
 					let queries = []
+					let content = []
 					for (let i = 0; i < data.length; i++) {
 						const position = layoutindexes.indexOf(data[i].query_index)
 						dashboard_item_indexes[position] = data[i].query_index
 						widget_ids[position] = data[i].widget_number
 						queries[position] = data[i]
+						const cfg = JSON.parse(data[i].config)
+						if (cfg.content) content[position] = cfg.content
 					}
 					this.setState({
 						items: layout,
 						dashboard_item_indexes,
 						widget_ids,
-						queries
+						queries,
+						content
 					}, () => {
+						//replace variables from url params
+						//if (Object.keys(args).length) updatedData = {...data[i], arguments: args}
 						for (let i = 0; i < data.length; i++) {
 							this.qrh(data[i], data[i].query_index)
 						}
@@ -121,7 +141,7 @@ const AddRemoveLayout = observer(
 						widget_ids: [...this.state.widget_ids, this.blockContentNumber],
 						dashboard_item_indexes: [...this.dashboard_item_indexes, ]
 					}) */
-					if (!id) {
+					if (!query.dashboard_id) {
 						const blockContentIndex = 'ctn' + generateLink()
 						this.setState({
 							widget_ids: [...this.state.widget_ids, this.blockContentNumber],
@@ -134,8 +154,13 @@ const AddRemoveLayout = observer(
 							  w: 2,
 							  h: 2
 							})
-						  }) 
+						  }, () => QueriesStore.updateQuery({
+							widget_ids: this.state.widget_ids,
+							dashboard_item_indexes: this.state.dashboard_item_indexes,
+							saved: this.state.saved
+						}, TabsStore.index)) 
 					} else {
+
 						//process text block with content or empty from base
 					}
 				} else {
@@ -198,8 +223,13 @@ const AddRemoveLayout = observer(
 			}}
 		}
 		queryUrl = queryUrl => queryUrl ? `${process.env.REACT_APP_IDE_URL}/${queryUrl}` : `${process.env.REACT_APP_IDE_URL}`
-		onEditBlockContent(content) {
-			console.log(content)
+		onEditBlockContent({content}, index) {
+			console.log(content, index)
+			const queries = [...this.state.queries]
+			queries[index].content = content
+			const workContent = [...this.state.content]
+			workContent[index] = content
+			this.setState({ queries, content: workContent }, () => QueriesStore.updateQuery({ content: workContent }, TabsStore.index))
 		}
 		createElement(el, index) {
 			const removeStyle = {
@@ -219,7 +249,7 @@ const AddRemoveLayout = observer(
 				opacity: .6,
 			}
 			const i = el.add ? "+" : el.i;
-			const element = this.state.queries[index].widget_id === 'block.content' ? (<ContentBlock onEdit={this.onEditBlockContent}/>) : (<>
+			const element = this.state.queries[index].widget_id === 'block.content' ? (<ContentBlock value={this.state.content[index]} onEdit={content=>this.onEditBlockContent(content, index)}/>) : (<>
 				<div
 					className="item-container"
 					id={el.i}

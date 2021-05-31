@@ -131,36 +131,16 @@ module.exports = function(app, passport, db) {
 	})
 
 	app.post('/api/getwidget', (req, response) => {
-		let  widgets = []
 		console.log(req.body)
-		req.body.ids.split(',').forEach(id => {
-			console.log('id id - ', id)
-			db.query(`SELECT a.*, b.displayed_data,
-			b.widget_id, b.config,
-			b.id as widget_number,
-			r.dashboard_id as dbid,
-			r.query_index
-			FROM queries a
-			LEFT JOIN (
-				SELECT * 
-				FROM queries_to_dashboards 
-			) r
-			ON r.dashboard_id = ? AND r.widget_id = ?
-			LEFT JOIN (
-						SELECT * FROM widgets
-						WHERE id IN (
-									SELECT MAX(id) AS id
-									FROM widgets 
-									GROUP BY query_id)
-					  ) b 
-			ON a.id=b.query_id
-			WHERE b.id=?
-			AND a.deleted=false`, [req.body.dbid, id, id], (err, res) => {
-				if (err) console.log(err)
-				widgets.push(res[0])
-				widgets.length === req.body.ids.split(',').length 
-					&& response.send(widgets)
-			})
+		db.query(`SELECT a.dashboard_id , a.widget_id as widget_number, a.query_index, b.*, q.*
+		FROM bitquery.queries_to_dashboards a
+		LEFT JOIN (SELECT * FROM bitquery.widgets) b
+		ON a.widget_id = b.id
+		LEFT JOIN (SELECT * FROM bitquery.queries) q
+		ON q.id=b.query_id
+		WHERE dashboard_id = ?`, [req.body.dbid], (err, res) => {
+			if (err) console.log(err)
+			response.send(res)
 		})
 	})
 
@@ -203,13 +183,31 @@ module.exports = function(app, passport, db) {
 		}, (err, res) => {
 			if (err) console.log(err)
 			req.body.widget_ids.forEach((widget_id, i)=> {
-				db.query('insert into queries_to_dashboards SET ?', {
-					dashboard_id: res.insertId,
-					query_index: req.body.dashboard_item_indexes[i],
-					widget_id
-				}, (err, result) => {
-					if (err) console.log(err)
-				})
+				if (widget_id === -1) {
+					db.query(`insert into widgets SET ?`, {
+						displayed_data: null,
+						query_id: null,
+						widget_id: 'block.content',
+						config: JSON.stringify({content: req.body.content[i]})
+					}, (err, result) => {
+						if (err) console.log(err)
+						db.query('insert into queries_to_dashboards SET ?', {
+							dashboard_id: res.insertId,
+							query_index: req.body.dashboard_item_indexes[i],
+							widget_id: result.insertId
+						}, (err, result) => {
+							if (err) console.log(err)
+						})
+					})
+				} else {
+					db.query('insert into queries_to_dashboards SET ?', {
+						dashboard_id: res.insertId,
+						query_index: req.body.dashboard_item_indexes[i],
+						widget_id
+					}, (err, result) => {
+						if (err) console.log(err)
+					})
+				}
 			})
 			response.sendStatus(200)
 		})	
