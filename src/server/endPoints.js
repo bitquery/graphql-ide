@@ -145,6 +145,8 @@ module.exports = function(app, passport, db) {
 	})
 
 	app.post('/api/savedashboard', (req, response) => {
+		/* console.log(req.body)
+		response.send(200) */
 		req.body.id ?
 		db.query(`update dashboards set ? WHERE id = ${req.body.id}`, {
 			layout: JSON.stringify(req.body.layout),
@@ -155,8 +157,54 @@ module.exports = function(app, passport, db) {
 			deleted: req.body.deleted,
 			updated_at: new Date()
 		}, (err, res) => {
-			if (err) console.log(err)
-			db.query(`DELETE FROM queries_to_dashboards 
+			if (req.body.content.length) {
+				let widget_ids = [...req.body.widget_ids]
+				db.query(`DELETE FROM queries_to_dashboards 
+					WHERE dashboard_id=?`, [req.body.id], (err, result) => {
+						if (err) console.log(err)
+						widget_ids.forEach((widget_id, i) => {
+							if (widget_id === -1) {
+								db.query(`insert into widgets SET ?`, {
+									displayed_data: null,
+									query_id: null,
+									widget_id: 'block.content',
+									config: JSON.stringify({content: req.body.content[i]})
+								}, (err, result) => {
+									if (err) console.log(err)
+									widget_ids[i] = result.insertId
+									db.query(`INSERT INTO queries_to_dashboards SET ?`, {
+										dashboard_id: req.body.id,
+										widget_id: result.insertId,
+										query_index: req.body.dashboard_item_indexes[i]
+										}, (err, _) => {
+											if (err) console.log(err)
+									})
+								})
+							} else {
+								req.body.content[i] ? db.query(`update widgets set ? WHERE id = ${widget_id}`, 
+								{config: JSON.stringify({content: req.body.content[i]})},
+								(err, result) => {
+									if (err) console.log(err)
+									db.query(`INSERT INTO queries_to_dashboards SET ?`, {
+										dashboard_id: req.body.id,
+										widget_id: widget_id,
+										query_index: req.body.dashboard_item_indexes[i]
+										}, (err, _) => {
+											if (err) console.log(err)
+									})
+								}) : db.query(`INSERT INTO queries_to_dashboards SET ?`, {
+									dashboard_id: req.body.id,
+									widget_id: widget_id,
+									query_index: req.body.dashboard_item_indexes[i]
+									}, (err, _) => {
+										if (err) console.log(err)
+								})
+							}
+						})
+					response.sendStatus(200)
+				})
+			} else {
+				db.query(`DELETE FROM queries_to_dashboards 
 				WHERE dashboard_id=?`, [req.body.id], (err, result) => {
 					if (err) console.log(err)
 					req.body.widget_ids.forEach((id, i) => {
@@ -169,8 +217,9 @@ module.exports = function(app, passport, db) {
 
 						})
 					})
+					response.sendStatus(200)
 				})
-			response.sendStatus(200)	
+			}
 		}) :
 		db.query('insert into dashboards SET ?', {
 			layout: JSON.stringify(req.body.layout),
@@ -203,7 +252,7 @@ module.exports = function(app, passport, db) {
 					db.query('insert into queries_to_dashboards SET ?', {
 						dashboard_id: res.insertId,
 						query_index: req.body.dashboard_item_indexes[i],
-						widget_id
+						widget_id: widget_id
 					}, (err, result) => {
 						if (err) console.log(err)
 					})

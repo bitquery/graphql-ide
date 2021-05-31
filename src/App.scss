@@ -25,6 +25,7 @@
 	display: flex;
 	overflow-y: scroll;
 	flex: 1;
+	border: 1px solid #dfdfdf;
 	> .CodeMirror.cm-s-graphiql {
 		overflow: hidden;
 		height: auto;

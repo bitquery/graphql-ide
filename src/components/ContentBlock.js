@@ -14,7 +14,6 @@ export class ContentBlock extends Component {
 		require('codemirror/addon/comment/comment');
 		require('codemirror/addon/edit/matchbrackets');
 		require('codemirror/addon/edit/closebrackets');
-		require('codemirror/addon/fold/foldgutter');
 		require('codemirror/addon/fold/brace-fold');
 		require('codemirror/addon/search/search');
 		require('codemirror/addon/search/searchcursor');
@@ -25,7 +24,6 @@ export class ContentBlock extends Component {
 		require('codemirror/mode/gfm/gfm')
 		const editor = (this.editor = CodeMirror(this._node, {
 			value: this.props.value || '',
-			lineNumbers: true,
 			tabSize: 2,
 			mode: 'gfm',
 			theme: 'graphiql',
@@ -33,20 +31,7 @@ export class ContentBlock extends Component {
 			autoCloseBrackets: true,
 			matchBrackets: true,
 			showCursorWhenSelecting: true,
-			readOnly: false,
-			foldGutter: {
-				minFoldSize: 4,
-			},
-			gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter'],
-			extraKeys: {
-				'Ctrl-Space': () =>
-					editor.showHint({ completeSingle: true, container: this._node }),
-				'Ctrl-Enter': () => {
-					if (this.props.onRunQuery) {
-						this.props.onRunQuery()
-					}
-				},
-			}
+			readOnly: false
 		}))
         if (editor) {
 			editor.on('change', this._onEdit)
@@ -84,17 +69,13 @@ export class ContentBlock extends Component {
 	}
     render() {
         return (
-            <>
-				<section
-					className="block__content"
-					aria-label="Content block"
-					ref={node => {
-						this._node = node
-					}}
-				/>
-				<div className="handle"
-				/>
-			</>
+			<section
+				className="block__content"
+				aria-label="Content block"
+				ref={node => {
+					this._node = node
+				}}
+			/>
         )
     }
 }
