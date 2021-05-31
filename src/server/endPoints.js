@@ -258,7 +258,7 @@ module.exports = function(app, passport, db) {
 					})
 				}
 			})
-			response.sendStatus(200)
+			response.send({msg: 'Dashboard saved!', id: res.insertId})
 		})	
 	}) 
 
