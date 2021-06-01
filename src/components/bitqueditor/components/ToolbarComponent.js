@@ -6,6 +6,8 @@ import { parse as parseGql } from 'graphql/language'
 import { print } from 'graphql'
 import React, { useState } from 'react'
 import { FormCheck } from 'react-bootstrap'
+import ToggleGroupEditor from '../../ToggleGroupEditor'
+
 
 const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOpen, toggleDocExplorer}) => {
 	const { currentQuery, queryParams, saveQuery, updateQuery, 
@@ -66,12 +68,7 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 					className="gallery__toggle fas fa-angle-double-right" 
 					onClick={toggleSideBar}
 				/>}
-				{!currentQuery.id && <FormCheck custom type="switch">
-					<FormCheck.Input checked={ thatType } />
-					<FormCheck.Label onClick={ switchView }>
-						{`Switch to ${switches[thatType]}`}
-					</FormCheck.Label>
-				</FormCheck>}
+				{!currentQuery.id && <ToggleGroupEditor switchView={switchView} />}
 				{(!currentQuery.id || !currentQuery.saved) && <button 
 					className="topBar__button" 
 					onClick={saveHandle}
