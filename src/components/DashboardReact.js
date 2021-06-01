@@ -54,19 +54,18 @@ const AddRemoveLayout = observer(
 		}
 		async componentDidMount() {
 			console.log('dash mount')
-			const queryString = window.location.search
-			const urlParams = new URLSearchParams(queryString)
-			const entries = urlParams.entries()
-			let args = {}
-			if (entries) {
-				for (const entry of entries) {
-					args[entry[0]] = entry[1]
-				}
-				console.log(args)
-			}
-			
-			//------------------------------------
 			if (TabsStore.currentTab === TabsStore.tabs[this.props.number].id) {
+				//------------------------------------
+				const queryString = window.location.search
+				const urlParams = new URLSearchParams(queryString)
+				const entries = urlParams.entries()
+				let args = {}
+				if (entries) {
+					for (const entry of entries) {
+						args[entry[0]] = entry[1]
+					}
+					console.log(args)
+				}
 				//load by link && load from gallery
 				if (QueriesStore.currentQuery.id && QueriesStore.currentQuery.layout) {
 					console.log('db load')
@@ -82,6 +81,8 @@ const AddRemoveLayout = observer(
 						dashboard_item_indexes[position] = data[i].query_index
 						widget_ids[position] = data[i].widget_number
 						queries[position] = data[i]
+						if (Object.keys(args).length) queries[position].arguments = JSON.stringify(args)
+						console.log(queries[position])
 						const cfg = JSON.parse(data[i].config)
 						if (cfg.content) content[position] = cfg.content
 					}
