@@ -142,6 +142,8 @@ class Queries {
 		if (params.dashboard_item_indexes) this.query[index].dashboard_item_indexes = params.dashboard_item_indexes
 		if (params.layout || params.layout === null) this.query[index].layout = params.layout
 		if (params.content) this.query[index].content = params.content
+		if ('isDraggable' in params) this.query[index].isDraggable = params.isDraggable
+		if ('isResizable' in params) this.query[index].isResizable = params.isResizable
 		this.query[index].id = id || id===null ? id : this.query[index].id
 		this.query[index].saved = false
 		if (params.saved) this.query[index].saved = params.saved
@@ -208,6 +210,7 @@ class Queries {
 			console.log(e)
 		}
 	}
+	
 }
 
 class Tabs {

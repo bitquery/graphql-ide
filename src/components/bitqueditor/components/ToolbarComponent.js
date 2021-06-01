@@ -16,15 +16,18 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 	const { user }  = UserStore
 	const { toggleModal, toggleEditDialog } = modalStore
 	const { addToast } = useToasts()
-	const switches = ['dashboard', 'query editor']
-	const [thatType, setType] = useState(currentQuery.layout ? 1 : 0)
+	const switches = ['off', 'on']
+	const [thatType, setType] = useState(false)
 	const handleInputURLChange = e => {
 		updateQuery({endpoint_url: e.target.value}, index)
 	}
 	const switchView = () => {
 		const layout = currentQuery.layout ? null : {}
-		updateQuery({ layout }, index)
-		setType(thatType ? 0 : 1)
+		updateQuery({ layout, isDraggable: false, isResizable: false }, index)
+	}
+	const switchMode = () => {
+		setType(!thatType)
+		updateQuery({isDraggable: !currentQuery.isDraggable, isResizable: !currentQuery.isResizable}, index)
 	}
 	const saveHandle = () => {
 		if (user) {
@@ -69,6 +72,12 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 					onClick={toggleSideBar}
 				/>}
 				{!currentQuery.id && <ToggleGroupEditor switchView={switchView} />}
+				{currentQuery.layout && <FormCheck custom type="switch" className="ml-2 mr-2">
+					<FormCheck.Input checked={ thatType } />
+					<FormCheck.Label onClick={ switchMode }>
+						{`Edit mode ${thatType ? 'on' : 'off'}`}
+					</FormCheck.Label>
+				</FormCheck>}
 				{(!currentQuery.id || !currentQuery.saved) && <button 
 					className="topBar__button" 
 					onClick={saveHandle}

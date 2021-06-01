@@ -7,7 +7,6 @@ import { TabsStore, QueriesStore } from '../store/queriesStore'
 import { generateLink } from '../utils/common'
 import { getQueryForDashboard } from '../api/api'
 import Loader from "react-loader-spinner"
-import { withRouter, Link } from 'react-router-dom'
 import LinkComponent from './Gallery/LinkComponent'
 import { Dropdown } from 'react-bootstrap'
 import { ContentBlock } from './ContentBlock'
@@ -32,9 +31,6 @@ const AddRemoveLayout = observer(
 
 			this.state = {
 				menuActive: null,
-				isDraggable: false,
-				isResizable: false,
-				isRemovable: false,
 				dashboard_id: null,
 				widget_ids: [],
 				dashboard_item_indexes: [],
@@ -47,8 +43,6 @@ const AddRemoveLayout = observer(
 				saved: true
 			};
 			this.onDrop = this.onDrop.bind(this)
-			this.makeCustomizable = this.makeCustomizable.bind(this)
-			this.makeStatic = this.makeStatic.bind(this)
 			this.onEditBlockContent = this.onEditBlockContent.bind(this)
 			this.qrh = this.qrh.bind(this)
 		}
@@ -82,7 +76,6 @@ const AddRemoveLayout = observer(
 						widget_ids[position] = data[i].widget_number
 						queries[position] = data[i]
 						if (Object.keys(args).length) queries[position].arguments = JSON.stringify(args)
-						console.log(queries[position])
 						const cfg = JSON.parse(data[i].config)
 						if (cfg.content) content[position] = cfg.content
 					}
@@ -122,7 +115,6 @@ const AddRemoveLayout = observer(
 				const query = e.detail ? e.detail : e
 				console.log('ololo')
 				const repeatProtector = this.state.saved ? true : !this.state.widget_ids.includes(query.widget_number)
-				console.log(query)
 				const cfg = typeof query.config === 'string' ? JSON.parse(query.config) : query.config
 				if (query.widget_id !== 'json.widget' && query.widget_id && repeatProtector) {
 					let indexx = this.props.plugins.map(plugin => plugin.id).indexOf(query.widget_id)
@@ -180,7 +172,6 @@ const AddRemoveLayout = observer(
 		}
 		queryUrl = queryUrl => queryUrl ? `${process.env.REACT_APP_IDE_URL}/${queryUrl}` : `${process.env.REACT_APP_IDE_URL}`
 		onEditBlockContent({content}, index) {
-			console.log(content, index)
 			const queries = [...this.state.queries]
 			queries[index].content = content
 			const workContent = [...this.state.content]
@@ -232,7 +223,7 @@ const AddRemoveLayout = observer(
 					</Dropdown>
 					</div>
 					{element}
-					{this.state.isDraggable && <span style={moveStyle} />}
+					{QueriesStore.currentQuery.isDraggable && <span style={moveStyle} />}
 				</div>
 			)
 		}
@@ -273,40 +264,15 @@ const AddRemoveLayout = observer(
 			blockType === 'block.content' && this.qrh({ widget_id: 'block.content' })
 		}
 
-		makeCustomizable() {
-			this.setState({
-				isDraggable: true,
-				isResizable: true,
-				isRemovable: false
-			})
-		}
-		makeStatic() {
-			this.setState({
-				isDraggable: false,
-				isResizable: false,
-				isRemovable: false
-			})
-		}
-
 		render() {
 			return (
 				<div className={'dashboard ' + (((TabsStore.currentTab === TabsStore.tabs[this.props.number].id) && QueriesStore.currentQuery.layout) ? 'active' : '')}
 				>
-					{this.state.items.length ? <>
-						<p>
-							Now dashboard is {
-								this.state.isDraggable && this.state.isResizable ? 'customizable'
-									: this.state.isRemovable ? 'removable' : 'static'
-							}
-						</p>
-						<button onClick={this.makeCustomizable}>make customizable (move and drag)</button>
-						<button onClick={this.makeStatic}>make static</button></> : null}
 					<ReactGridLayout
 						onLayoutChange={(layout) => this.onLayoutChange({ layout })}
-						onClick={() => console.log('hello')}
 						{...this.props}
-						isDraggable={this.state.isDraggable}
-						isResizable={this.state.isResizable}
+						isDraggable={QueriesStore.currentQuery.isDraggable}
+						isResizable={QueriesStore.currentQuery.isResizable}
 						onDrop={this.onDrop}
 						isDroppable={true}
 						onResize={() => window.dispatchEvent(new Event('resize'))}
