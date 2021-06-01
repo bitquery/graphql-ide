@@ -17,12 +17,12 @@ const TabsComponent = observer(() => {
 	const [editTabName, setEditTabName] = useState(false)
 	const [queryName, setQueryName] = useState({})
 
-	useEffect(() => {
+	/* useEffect(() => {
 		currentQuery.url 
 			? history.push(`${process.env.REACT_APP_IDE_URL}/${currentQuery.url}`) 
 			: history.push(`${process.env.REACT_APP_IDE_URL}`)
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [currentQuery.url])
+	}, [currentQuery.url]) */
 	useEffect(() => {
 		async function updateTabs() {
 			if (match) {

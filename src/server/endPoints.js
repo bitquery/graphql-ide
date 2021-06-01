@@ -134,7 +134,11 @@ module.exports = function(app, passport, db) {
 		console.log(req.body)
 		db.query(`SELECT a.dashboard_id , a.widget_id as widget_number, a.query_index, b.*, q.*
 		FROM bitquery.queries_to_dashboards a
-		LEFT JOIN (SELECT * FROM bitquery.widgets) b
+		LEFT JOIN (SELECT * FROM bitquery.widgets
+			WHERE id IN (
+						SELECT MAX(id) AS id
+						FROM bitquery.widgets 
+						GROUP BY query_id)) b
 		ON a.widget_id = b.id
 		LEFT JOIN (SELECT * FROM bitquery.queries) q
 		ON q.id=b.query_id
