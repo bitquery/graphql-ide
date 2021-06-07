@@ -21,6 +21,10 @@
 		}
 	}
 }
+.md__render {
+	height: 100%;
+	overflow-y: scroll;
+}
 .block__content {
 	display: flex;
 	overflow-y: scroll;

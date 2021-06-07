@@ -10,6 +10,7 @@ import Loader from "react-loader-spinner"
 import LinkComponent from './Gallery/LinkComponent'
 import { Dropdown } from 'react-bootstrap'
 import { ContentBlock } from './ContentBlock'
+import micromark from 'micromark'
 const ReactGridLayout = WidthProvider(RGL);
 
 /**
@@ -76,7 +77,10 @@ const AddRemoveLayout = observer(
 						widget_ids[position] = data[i].widget_number
 						queries[position] = data[i]
 						if (Object.keys(args).length) queries[position].arguments = JSON.stringify(args)
+						console.log(data[i])
+						console.log(data[i].config)
 						const cfg = JSON.parse(data[i].config)
+						console.log(cfg)
 						if (cfg.content) content[position] = cfg.content
 					}
 					this.setState({
@@ -172,6 +176,8 @@ const AddRemoveLayout = observer(
 		}
 		queryUrl = queryUrl => queryUrl ? `${process.env.REACT_APP_IDE_URL}/${queryUrl}` : `${process.env.REACT_APP_IDE_URL}`
 		onEditBlockContent({content}, index) {
+			console.log(content)
+			console.log(micromark(content))
 			const queries = [...this.state.queries]
 			queries[index].content = content
 			const workContent = [...this.state.content]
@@ -190,22 +196,32 @@ const AddRemoveLayout = observer(
 				opacity: .6,
 			}
 			const i = el.add ? "+" : el.i;
+			const parsedMD = {__html: micromark(this.state.content[index] || '')}
+			const elementMarkUp = QueriesStore.currentQuery.isDraggable ?
+				(<ContentBlock 
+					editMode={QueriesStore.currentQuery.isDraggable} 
+					value={this.state.content[index]} 
+					onEdit={content=>this.onEditBlockContent(content, index)}
+				/>) : 
+				(<section 
+					className="md__render"
+					dangerouslySetInnerHTML={parsedMD}
+				/>)
 			const element = this.state.queries[index].widget_id === 'block.content' 
-			? (<ContentBlock value={this.state.content[index]} onEdit={content=>this.onEditBlockContent(content, index)}/>) 
-			: (<>
-				<div
-					className="item-container"
-					id={el.i}
-				>
-					<Loader
-						type="Oval"
-						color="#3d77b6"
-						height={25}
-						width={25}
-					/>
-				</div>
-			</>
-			)
+				? elementMarkUp
+				: (<>
+					<div
+						className="item-container"
+						id={el.i}
+					>
+						<Loader
+							type="Oval"
+							color="#3d77b6"
+							height={25}
+							width={25}
+						/>
+					</div>
+				</>)
 			return (
 				<div key={i} data-grid={el} className={this.state.menuActive===index ? 'item_high' : ''}>
 					<div className="flex justify-content-between">

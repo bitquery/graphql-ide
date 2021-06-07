@@ -27,6 +27,7 @@
     "http-proxy-middleware": "^0.19.1",
     "lodash": "^4.17.21",
     "markdown-it": "^12.0.6",
+    "micromark": "^2.11.4",
     "mobx": "^6.3.2",
     "mobx-react": "^7.2.0",
     "mobx-react-lite": "^3.2.0",
