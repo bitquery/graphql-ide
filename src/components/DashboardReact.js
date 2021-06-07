@@ -226,17 +226,18 @@ const AddRemoveLayout = observer(
 				<div key={i} data-grid={el} className={this.state.menuActive===index ? 'item_high' : ''}>
 					<div className="flex justify-content-between">
 					<div>{this.state.queries[index].name}</div>
-					<Dropdown className={'dashboard__item__menu cursor-pointer item_high'} onToggle={ isOpen => isOpen && this.setState({menuActive: index}) }>
-						<Dropdown.Toggle id="dropdown-basic" as={'span'} >
-							<i className="fas fa-ellipsis-h"></i>
-						</Dropdown.Toggle>
-						<Dropdown.Menu>
-							{this.state.queries[index].query && <Dropdown.Item>
-								<LinkComponent propquery={this.state.queries[index]} as={'menu'}></LinkComponent>
-							</Dropdown.Item>}
-							<Dropdown.Item href="# " onClick={this.onRemoveItem.bind(this, i)}>Remove</Dropdown.Item>
-						</Dropdown.Menu>
-					</Dropdown>
+					{(this.state.queries[index].widget_id !=='block.content' || QueriesStore.currentQuery.isDraggable) &&
+						<Dropdown className={'dashboard__item__menu cursor-pointer item_high'} onToggle={ isOpen => isOpen && this.setState({menuActive: index}) }>
+							<Dropdown.Toggle id="dropdown-basic" as={'span'} >
+								<i className="fas fa-ellipsis-h"></i>
+							</Dropdown.Toggle>
+							<Dropdown.Menu>
+								{this.state.queries[index].query && <Dropdown.Item>
+									<LinkComponent propquery={this.state.queries[index]} as={'menu'}></LinkComponent>
+								</Dropdown.Item>}
+								{QueriesStore.currentQuery.isDraggable && <Dropdown.Item href="# " onClick={this.onRemoveItem.bind(this, i)}>Remove</Dropdown.Item>}
+							</Dropdown.Menu>
+						</Dropdown>}
 					</div>
 					{element}
 					{QueriesStore.currentQuery.isDraggable && <span style={moveStyle} />}
