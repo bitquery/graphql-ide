@@ -71,7 +71,7 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 					className="gallery__toggle fas fa-angle-double-right" 
 					onClick={toggleSideBar}
 				/>}
-				{!currentQuery.id && <ToggleGroupEditor switchView={switchView} />}
+				{!currentQuery.id && <ToggleGroupEditor number={currentTab} isQuery={!currentQuery.layout} switchView={switchView} />}
 				{currentQuery.layout && <FormCheck custom type="switch" className="ml-2 mr-2">
 					<FormCheck.Input checked={ thatType } />
 					<FormCheck.Label onClick={ switchMode }>

@@ -1,34 +1,17 @@
-import React, { useState } from 'react'
-import { ToggleButtonGroup, ToggleButton, ButtonGroup } from 'react-bootstrap'
+import React from 'react'
+import { Form } from 'react-bootstrap'
 
-function ToggleGroupEditor({ switchView }) {
-    const [radioValue, setRadioValue] = useState('1');
-
-    const radios = [
-        { name: 'Query Editor', value: '1' },
-        { name: 'Dashboard', value: '2' },
-    ]
+function ToggleGroupEditor({ switchView, isQuery, number }) {
     const handleChange = e => {
-        setRadioValue(e.currentTarget.value)
         switchView()
     }
-
   return (
-    <ButtonGroup toggle>
-        {radios.map((radio, idx) => (
-            <ToggleButton
-                key={idx}
-                type="radio"
-                variant={radioValue===radio.value ? 'primary' : 'link'}
-                name="radio"
-                value={radio.value}
-                checked={radioValue === radio.value}
-                onChange={handleChange}
-            >
-                {radio.name}
-            </ToggleButton>
-        ))}
-    </ButtonGroup>
+    <Form>
+        <div key={`inline-radio-${number}`}>
+            <Form.Check inline label="Query Editor" name="group1" type={'radio'} id={`inline-radio-1`} checked={isQuery} onChange={handleChange} />
+            <Form.Check inline label="Dashboard" name="group1" type={'radio'} id={`inline-radio-2`} checked={!isQuery} onChange={handleChange} />
+        </div>
+    </Form>
   )
 }
 

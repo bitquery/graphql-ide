@@ -287,8 +287,8 @@ const AddRemoveLayout = observer(
 					<ReactGridLayout
 						onLayoutChange={(layout) => this.onLayoutChange({ layout })}
 						{...this.props}
-						isDraggable={QueriesStore.currentQuery.isDraggable}
-						isResizable={QueriesStore.currentQuery.isResizable}
+						isDraggable={QueriesStore.currentQuery.isDraggable || false}
+						isResizable={QueriesStore.currentQuery.isResizable || false}
 						onDrop={this.onDrop}
 						isDroppable={true}
 						onResize={() => window.dispatchEvent(new Event('resize'))}
