@@ -1,3 +1,4 @@
+**/.DS_Store
 # Logs
 logs
 *.log
@@ -51,6 +52,7 @@ typings/
 .npm
 
 # Optional eslint cache
+.eslintrc.json
 .eslintcache
 
 # Microbundle cache

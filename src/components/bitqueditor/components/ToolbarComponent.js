@@ -58,7 +58,7 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 					className="gallery__toggle fas fa-angle-double-right" 
 					onClick={toggleSideBar}
 				/>}
-				{(!currentQuery.id || !currentQuery.saved) && <button 
+				{ ((currentQuery.id && user?.id === currentQuery.account_id && !currentQuery.saved) || currentQuery.id === null) && <button 
 					className="topBar__button" 
 					onClick={saveHandle}
 					disabled={currentQuery.saved}
