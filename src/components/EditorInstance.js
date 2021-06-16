@@ -5,6 +5,7 @@ import ReactTooltip from 'react-tooltip'
 import PlayIcon from './icons/PlayIcon.js'
 import { generateLink } from '../utils/common'
 import { vegaPlugins } from 'vega-widgets'
+import { tablePlugin } from '../tableWidget/index'
 import { graphPlugins } from '@bitquery/ide-graph'
 import { timeChartPlugins } from '@bitquery/ide-charts'
 import './bitqueditor/App.scss'
@@ -172,7 +173,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 		return typesMap
 	}
 
-	const plugins = useMemo(()=> [JsonPlugin, ...vegaPlugins, ...graphPlugins, ...timeChartPlugins], [])
+	const plugins = useMemo(()=> [JsonPlugin,  ...vegaPlugins, ...graphPlugins, ...timeChartPlugins, tablePlugin], [])
 	let indexx = plugins.map(plugin => plugin.id).indexOf(currentQuery.widget_id)
 	const WidgetComponent = indexx>=0 ? plugins[indexx] : plugins[0]
 
