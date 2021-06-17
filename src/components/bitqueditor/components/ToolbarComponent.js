@@ -19,7 +19,7 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 	const [mode, setMode] = useState(false)
 	const [dashboardOwner,setOwner] = useState(false)
 	useEffect(() => {
-		if (currentQuery.layout && (currentQuery.account_id === user?.id) || !currentQuery.id) {
+		if ((currentQuery.layout && (currentQuery.account_id === user?.id) || !currentQuery.id) || !currentQuery.layout) {
 			setOwner(true)
 			toggleSideBar(true)
 		} else {
@@ -86,7 +86,7 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 				onClick={()=>toggleSideBar(!showSideBar)}
 			/>}
 			{!currentQuery.id && <ToggleGroupEditor number={currentTab} isQuery={!currentQuery.layout} switchView={switchView} />}
-			{dashboardOwner && !(!currentQuery.id || !currentQuery.saved) && 
+			{dashboardOwner && !(!currentQuery.id || !currentQuery.saved) && currentQuery.layout &&
 				<button type="button" className="topBar__button" onClick={switchMode}>Edit</button>}
 			{(!currentQuery.id || !currentQuery.saved) && <button 
 				className="topBar__button" 
@@ -95,8 +95,8 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 			>
 				Save
 			</button>}
-			{!currentQuery.saved && <button type="button" className="topBar__button" onClick={cancelHandle}>Cancel</button>}
-			{dashboardOwner &&
+			{!currentQuery.saved && currentQuery.layout && <button type="button" className="topBar__button" onClick={cancelHandle}>Cancel</button>}
+			{dashboardOwner && currentQuery.layout &&
 				<div 
 					className="grid-stack-item droppable-element"
 					draggable={true}

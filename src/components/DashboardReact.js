@@ -132,11 +132,11 @@ const AddRemoveLayout = observer(
 			if (TabsStore.currentTab === TabsStore.tabs[this.props.number]?.id) {
 				this.setState({
 					items: this.state.initialItems,
+					layout: this.state.initialItems,
 					dashboard_item_indexes: this.state.initial_dashboard_item_indexes,
 					widget_ids: this.state.initialWidget_ids,
 					queries: this.state.initialQueries,
-					content: this.state.initialContent,
-					saved: true
+					content: this.state.initialContent
 				}, () => QueriesStore.updateQuery({saved: true}, TabsStore.index))
 			}
 		}
@@ -144,6 +144,7 @@ const AddRemoveLayout = observer(
 			if (TabsStore.currentTab === TabsStore.tabs[this.props.number]?.id) {
 				this.setState({
 					initialItems: this.state.items,
+					layout: this.state.items,
 					initial_dashboard_item_indexes: this.state.dashboard_item_indexes,
 					initialWidget_ids: this.state.widget_ids,
 					initialQueries: this.state.queries,
@@ -152,7 +153,7 @@ const AddRemoveLayout = observer(
 			}
 		}
 		qrh = (e, id) => {
-			if (TabsStore.currentTab === TabsStore.tabs[this.props.number]?.id && (QueriesStore.currentQuery.isDraggable || this.state.saved)) {
+			if (TabsStore.currentTab === TabsStore.tabs[this.props.number]?.id && (QueriesStore.currentQuery.isDraggable || this.state.saved) || (QueriesStore.currentQuery.layout && !QueriesStore.currentQuery.id)) {
 				
 				const query = e.detail ? e.detail : e
 				console.log('ololo')
@@ -329,10 +330,11 @@ const AddRemoveLayout = observer(
 					<ReactGridLayout
 						onLayoutChange={(layout) => this.onLayoutChange({ layout })}
 						{...this.props}
-						isDraggable={QueriesStore.currentQuery.isDraggable || false}
-						isResizable={QueriesStore.currentQuery.isResizable || false}
+						layout={this.state.layout.layout}
+						isDraggable={QueriesStore.currentQuery.isDraggable || (QueriesStore.currentQuery.layout && !QueriesStore.currentQuery.id) || false}
+						isResizable={QueriesStore.currentQuery.isResizable || (QueriesStore.currentQuery.layout && !QueriesStore.currentQuery.id) || false}
 						onDrop={this.onDrop}
-						isDroppable={QueriesStore.currentQuery.isDraggable || false}
+						isDroppable={QueriesStore.currentQuery.isDraggable || (QueriesStore.currentQuery.layout && !QueriesStore.currentQuery.id) || false}
 						onResize={() => window.dispatchEvent(new Event('resize'))}
 						onResizeStop={() => window.dispatchEvent(new Event('resize'))}
 					>

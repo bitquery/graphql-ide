@@ -23,11 +23,11 @@
 }
 .md__render {
 	height: 100%;
-	overflow-y: scroll;
+	overflow-y: auto;
 }
 .block__content {
 	display: flex;
-	overflow-y: scroll;
+	overflow-y: hidden;
 	flex: 1;
 	border: 1px solid #dfdfdf;
 	> .CodeMirror.cm-s-graphiql {

@@ -189,7 +189,7 @@ class Queries {
 				})
 				: await setDashboard(params)
 			let id = TabsStore.tabs.map(tab => tab.id).indexOf(TabsStore.currentTab)
-			this.updateQuery(params, id, data.id)
+			this.updateQuery({...params, account_id: UserStore.user.id}, id, data.id)
 			console.log(data)
 			this.queryJustSaved = !this.queryJustSaved
 			this.query[id].saved = true

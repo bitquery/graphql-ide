@@ -70,6 +70,7 @@ export class ContentBlock extends Component {
     render() {
         return (
 			<section
+				onMouseDown={e=>e.stopPropagation()}
 				className="block__content"
 				aria-label="Content block"
 				ref={node => {
