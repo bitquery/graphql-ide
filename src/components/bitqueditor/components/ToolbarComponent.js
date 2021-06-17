@@ -4,20 +4,29 @@ import modalStore from '../../../store/modalStore'
 import { useToasts } from 'react-toast-notifications'
 import { parse as parseGql } from 'graphql/language'
 import { print } from 'graphql'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { FormCheck } from 'react-bootstrap'
 import ToggleGroupEditor from '../../ToggleGroupEditor'
 
 
 const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOpen, toggleDocExplorer}) => {
-	const { currentQuery, queryParams, saveQuery, updateQuery, 
-		showSideBar, toggleSideBar, setQuery, toggleDashboardView } = QueriesStore
-	const { index, dbid, setDbid, switchTab, currentTab, dashid } = TabsStore
+	const { currentQuery, saveQuery, updateQuery, 
+		showSideBar, toggleSideBar } = QueriesStore
+	const { index, currentTab } = TabsStore
 	const { user }  = UserStore
 	const { toggleModal, toggleEditDialog } = modalStore
 	const { addToast } = useToasts()
-	const switches = ['off', 'on']
 	const [thatType, setType] = useState(false)
+	const [dashboardOwner,setOwner] = useState(false)
+	useEffect(() => {
+		if (currentQuery.layout && (currentQuery.account_id === user?.id) || !currentQuery.id) {
+			setOwner(true)
+			toggleSideBar(true)
+		} else {
+			setOwner(false)
+			toggleSideBar(false)
+		}
+	}, [user, JSON.stringify(currentQuery)])
 	const handleInputURLChange = e => {
 		updateQuery({endpoint_url: e.target.value}, index)
 	}
@@ -64,70 +73,69 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 		} catch {
 		}
 	}
-	return (
-		<div className="topBarWrap">
-			<div className="topBar">
-				{!showSideBar && <i 
-					className="gallery__toggle fas fa-angle-double-right" 
-					onClick={toggleSideBar}
-				/>}
-				{!currentQuery.id && <ToggleGroupEditor number={currentTab} isQuery={!currentQuery.layout} switchView={switchView} />}
-				{currentQuery.layout && <FormCheck custom type="switch" className="ml-2 mr-2">
-					<FormCheck.Input checked={ thatType } />
-					<FormCheck.Label onClick={ switchMode }>
-						{`Edit mode ${thatType ? 'on' : 'off'}`}
-					</FormCheck.Label>
-				</FormCheck>}
-				{(!currentQuery.id || !currentQuery.saved) && <button 
-					className="topBar__button" 
-					onClick={saveHandle}
-					disabled={currentQuery.saved}
-				>
-					Save
-				</button>}
-				{currentQuery.layout && 
-					<div 
-						className="grid-stack-item droppable-element"
-						draggable={true}
-						unselectable="on"
-						style={{border: '1px dashed #c0c0c0', padding: '3px'}}
-						onDragStart={e => e.dataTransfer.setData("text/plain", "block.content")}
-					>Text Block</div>}
-				{!currentQuery.layout && <button className="topBar__button"
-					onClick={prettifyQuery}
-				>
-					Prettify
-				</button>}
-				{!currentQuery.layout && <input 
-					className="endpointURL"
-					type="text" 
-					value={currentQuery.endpoint_url}
-					onChange={handleInputURLChange}
-				/>}
-				{!docExplorerOpen ? currentQuery.layout ? <></> : 
-				<button
-					className="docExplorerShow"
-					onClick={() => toggleDocExplorer(prev => !prev)}
-					aria-label="Open Documentation Explorer">
-					Docs
-				</button> : currentQuery.layout ? <></> :
-				<div className="doc-explorer-title-bar">
-					<div className="doc-explorer-title">
-						Documentation Explorer
-					</div>
-					<div className="doc-explorer-rhs">
-						<button 
-							className="docExplorerHide" 
-							aria-label="Close Documentation Explorer"
-							onClick={() => toggleDocExplorer(prev => !prev)}
-						>
-							{'\u2715'}
-						</button>
-					</div>
-				</div>}
-			</div>
+	const toolbar = !dashboardOwner ? null : <div className="topBarWrap">
+		<div className="topBar">
+			{!showSideBar && <i 
+				className="gallery__toggle fas fa-angle-double-right" 
+				onClick={()=>toggleSideBar(!showSideBar)}
+			/>}
+			{!currentQuery.id && <ToggleGroupEditor number={currentTab} isQuery={!currentQuery.layout} switchView={switchView} />}
+			{dashboardOwner && <FormCheck custom type="switch" className="ml-2 mr-2">
+				<FormCheck.Input checked={ thatType } />
+				<FormCheck.Label onClick={ switchMode }>
+					{`Edit mode ${thatType ? 'on' : 'off'}`}
+				</FormCheck.Label>
+			</FormCheck>}
+			{(!currentQuery.id || !currentQuery.saved) && <button 
+				className="topBar__button" 
+				onClick={saveHandle}
+				disabled={currentQuery.saved}
+			>
+				Save
+			</button>}
+			{dashboardOwner &&
+				<div 
+					className="grid-stack-item droppable-element"
+					draggable={true}
+					unselectable="on"
+					style={{border: '1px dashed #c0c0c0', padding: '3px'}}
+					onDragStart={e => e.dataTransfer.setData("text/plain", "block.content")}
+				>Text Block</div>}
+			{!currentQuery.layout && <button className="topBar__button"
+				onClick={prettifyQuery}
+			>
+				Prettify
+			</button>}
+			{!currentQuery.layout && <input 
+				className="endpointURL"
+				type="text" 
+				value={currentQuery.endpoint_url}
+				onChange={handleInputURLChange}
+			/>}
+			{!docExplorerOpen ? currentQuery.layout ? <></> : 
+			<button
+				className="docExplorerShow"
+				onClick={() => toggleDocExplorer(prev => !prev)}
+				aria-label="Open Documentation Explorer">
+				Docs
+			</button> : currentQuery.layout ? <></> :
+			<div className="doc-explorer-title-bar">
+				<div className="doc-explorer-title">
+					Documentation Explorer
+				</div>
+				<div className="doc-explorer-rhs">
+					<button 
+						className="docExplorerHide" 
+						aria-label="Close Documentation Explorer"
+						onClick={() => toggleDocExplorer(prev => !prev)}
+					>
+						{'\u2715'}
+					</button>
+				</div>
+			</div>}
 		</div>
-	)
+	</div>
+	return toolbar
 })
 
 export default ToolbarComponent

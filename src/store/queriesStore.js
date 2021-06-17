@@ -159,8 +159,8 @@ class Queries {
 	toggleGallery = () => {
 		this.showGallery = !this.showGallery
 	}
-	toggleSideBar = () => {
-		this.showSideBar = !this.showSideBar
+	toggleSideBar = state => {
+		this.showSideBar = state
 	}
 	setCurrentQuery = (id) => {
 		this.currentQuery = {...this.query[id]}
