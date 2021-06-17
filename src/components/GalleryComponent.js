@@ -10,6 +10,7 @@ import { makeDefaultArg, getDefaultScalarArgValue } from "./Gallery/QueryBuilder
 const GalleryComponent = observer(function GalleryComponent() {
 	const [allQueries, setAllQueries] = useState([])
 	const [myQueries, setMyQueries] = useState([])
+	const [dashboardQueries, setDashboardQueries] = useState([])
 	const [showAllQueries, toggleQueries] = useState(true)
 	const [showBuilder, toggleBuilder] = useState(false)
 	const { showGallery, currentQuery, 
@@ -52,6 +53,10 @@ const GalleryComponent = observer(function GalleryComponent() {
 					const { data } = await axios.get('/api/getmyqueries')
 					if (data.length !== myQueries.length) {
 						setMyQueries({queries: data})
+						let dashboardQueries = [...data]
+						dashboardQueries = dashboardQueries.filter(query => !query.layout && query.widget_id !== 'json.widget' && query.widget_id)
+						console.log(dashboardQueries)
+						setDashboardQueries({queries: dashboardQueries})
 					}
 				} catch (e) {
 					console.log(e)
@@ -77,6 +82,11 @@ const GalleryComponent = observer(function GalleryComponent() {
 				getDefaultScalarArgValue={getDefaultScalarArgValue}
 				makeDefaultArg={makeDefaultArg}
 			/>
+	)} else if (currentQuery.layout) {
+		component = (
+			<ul className="list-group">
+				<QueriesComponent queries={dashboardQueries} />
+			</ul>
 	)} else if (showAllQueries) {
 		component = (
 			<ul className="list-group">
@@ -93,14 +103,14 @@ const GalleryComponent = observer(function GalleryComponent() {
 		<div className={'gallery flex flex-col active'}>
 			{!showGallery &&<i className="open fas fa-angle-double-right" onClick={toggleGallery} />}
 			<div className="gallery__header flex flex-col">
-				<i className="gallery__close fas fa-angle-double-left" onClick={toggleSideBar} />
+				<i className="gallery__close fas fa-angle-double-left" onClick={()=>toggleSideBar(false)} />
 					<ul className="nav nav-tabs">
-						{user && <li className="nav-item" onClick={() => {toggleQueries(false); toggleBuilder(false);}} >
+						{user && !currentQuery.layout && <li className="nav-item" onClick={() => {toggleQueries(false); toggleBuilder(false);}} >
 							<a className={"nav-link " + ((!showAllQueries && !showBuilder) && 'active')} href="# ">Private</a>
 						</li>}
-						<li className="nav-item" onClick={() => {toggleQueries(true); toggleBuilder(false);}}>
+						{!currentQuery.layout && <li className="nav-item" onClick={() => {toggleQueries(true); toggleBuilder(false);}}>
 							<a className={"nav-link " + ((showAllQueries && !showBuilder) && 'active')} href="# ">{user ? 'Shared' : 'Queries'}</a>
-						</li>
+						</li>}
 						{!currentQuery.layout && <li className="nav-item" onClick={() => toggleBuilder(true)}>
 							<a className={"nav-link " + (showBuilder && 'active')} href="# ">Builder</a>
 						</li>}
