@@ -114,7 +114,7 @@ const AddRemoveLayout = observer(
 		}
 
 		qrh = (e, id) => {
-			if (TabsStore.currentTab === TabsStore.tabs[this.props.number]?.id) {
+			if (TabsStore.currentTab === TabsStore.tabs[this.props.number]?.id && (QueriesStore.currentQuery.isDraggable || this.state.saved)) {
 				
 				const query = e.detail ? e.detail : e
 				console.log('ololo')
@@ -194,6 +194,9 @@ const AddRemoveLayout = observer(
 				width: '100%',
 				height: '100%',
 				opacity: .6,
+			}
+			if (this.state.queries[index].widget_id === 'block.content') {
+				moveStyle.height = '24px'
 			}
 			const i = el.add ? "+" : el.i;
 			const parsedMD = {__html: micromark(this.state.content[index] || '')}
@@ -291,7 +294,7 @@ const AddRemoveLayout = observer(
 						isDraggable={QueriesStore.currentQuery.isDraggable || false}
 						isResizable={QueriesStore.currentQuery.isResizable || false}
 						onDrop={this.onDrop}
-						isDroppable={true}
+						isDroppable={QueriesStore.currentQuery.isDraggable || false}
 						onResize={() => window.dispatchEvent(new Event('resize'))}
 						onResizeStop={() => window.dispatchEvent(new Event('resize'))}
 					>

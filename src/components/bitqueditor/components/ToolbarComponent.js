@@ -44,7 +44,9 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 				toggleEditDialog()
 				toggleModal()
 			} else if (!currentQuery.saved) {
-				saveQuery(currentQuery)
+				!currentQuery.layout ? saveQuery(currentQuery) 
+					: saveQuery({...currentQuery, isDraggable: !currentQuery.isDraggable, isResizable: !currentQuery.isResizable})
+				currentQuery.layout && setType(!thatType)
 			}
 		} else {
 			addToast('Login required to save or share queries', {appearance: 'error'})
@@ -80,12 +82,8 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 				onClick={()=>toggleSideBar(!showSideBar)}
 			/>}
 			{!currentQuery.id && <ToggleGroupEditor number={currentTab} isQuery={!currentQuery.layout} switchView={switchView} />}
-			{dashboardOwner && <FormCheck custom type="switch" className="ml-2 mr-2">
-				<FormCheck.Input checked={ thatType } />
-				<FormCheck.Label onClick={ switchMode }>
-					{`Edit mode ${thatType ? 'on' : 'off'}`}
-				</FormCheck.Label>
-			</FormCheck>}
+			{dashboardOwner && !(!currentQuery.id || !currentQuery.saved) && 
+				<button type="button" className="topBar__button" onClick={switchMode}>Edit</button>}
 			{(!currentQuery.id || !currentQuery.saved) && <button 
 				className="topBar__button" 
 				onClick={saveHandle}
@@ -93,6 +91,7 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 			>
 				Save
 			</button>}
+			{<button type="button" className="topBar__button">Cancel</button>}
 			{dashboardOwner &&
 				<div 
 					className="grid-stack-item droppable-element"
