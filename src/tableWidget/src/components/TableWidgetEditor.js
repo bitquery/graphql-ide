@@ -3,57 +3,38 @@ import { useFirstUpdate } from '../utils/useFirstUpdate'
 import WidgetOptions from '../WidgetOptions'
 
 function TableWidgetEditor({model, config, setConfig, displayedData}) {
-	const xFunc = key => {if (model[key].typeInfo) {
+	const condition = key => {if (model[key].typeInfo) {
 		return true
 	}}
-	const yFunc = key => {if (model[key].typeInfo) {
-		return (model[key].typeInfo.toString().includes('Int')
-			||model[key].typeInfo.toString().includes('Float'))
-			&&!model[key].typeInfo.toString().includes('Int!')
-	}}
-	const [xAxis, setXAxis] = useState('')
-	const [yAxis, setYAxis] = useState('')
-	const [sample, setSample] = useState('')
-    const [columnsNumber, setColumnsNumber] = useState(config.length || 1)
-    const [columns, setColumns] = useState([{
-        /* field: 'field1',
-        title: 'title1' */
-    }])
+
+    const [columnsNumber, setColumnsNumber] = useState(1)
+    const [columns, setColumns] = useState([])
 	
 	//set options if query has config, only on mount
 	useEffect(() => {
-		/* if (!xAxis && config) {
+		if (!columns.length && config) {
 			if (Object.keys(config).length) {
-				if ('encoding' in config) {
-					if ('x' in config.encoding) {
-						setXAxis(`${displayedData}.${config.encoding.x.field}`)
-					}
-					if ('y' in config.encoding) {
-						setYAxis(`${displayedData}.${config.encoding.y.field}`)
-					}
-					if ('transform' in config) {
-						setSample(config.transform[0].sample)
-					}
+				if ('columns' in config) {
+					setColumns(config.columns)
+					setColumnsNumber(config.columns.length)
+					setConfig({columns: config.columns})
 				}
 			}
-		}  */
+		}
 	}, [])
-	//every time since first update when xAxis, yAxis or displayedData changed, set config
+	//every time since first update when options changed, set config
 	useFirstUpdate(() => {
-		// if (model && xAxis && yAxis && xAxis.includes(displayedData)) {
-			/* let fieldX = xAxis.replace(`${displayedData}.`, '')
-			let fieldY = yAxis.replace(`${displayedData}.`, '') */
-
 			let cfg = {
 				columns
 			}
 			setConfig(cfg)
-		// }
 	}, [JSON.stringify(columns), displayedData])
+
     const updateColumns = (value, i) => {
         console.log(value, i)
         let newColumns = [...columns]
-        newColumns[i] = {field: value.replace(`${displayedData}.`, ''), title: value}
+        newColumns[i-1] = {field: value.replace(`${displayedData}.`, ''), title: value}
+		console.log(newColumns, value, i)
         setColumns(newColumns)
     }
 	
@@ -73,9 +54,9 @@ function TableWidgetEditor({model, config, setConfig, displayedData}) {
                 {[...Array(columnsNumber).keys()].map(i => i+1).map(i => 
                     <WidgetOptions 
                         key={i}
-                        value={columns[i]?.field || ''}
+                        value={columns[i-1]?.field || ''}
                         setValue={updateColumns}
-                        condition={xFunc}
+                        condition={condition}
                         title={i}
                         model={model}
                     />)}

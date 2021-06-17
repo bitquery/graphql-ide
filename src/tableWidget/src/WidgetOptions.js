@@ -6,7 +6,7 @@ function WidgetOptions({model, condition, value, setValue, title}) {
 		if (model) {
 			let list = Object.keys(model).filter(condition)
 			if (!value) setValue(list[0])
-			if (value !== optionValue) setValue(optionValue)
+			if (value !== optionValue) setValue(value)
 		}
 	}, [JSON.stringify(model)])
 	const onChange = e => {

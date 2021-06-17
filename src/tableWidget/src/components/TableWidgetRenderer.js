@@ -1,5 +1,6 @@
-import $ from 'jquery'
-import bootstrapTable from 'bootstrap-table'
+import Tabulator from "tabulator-tables"; 
+import "tabulator-tables/dist/css/tabulator.min.css"; 
+
 export default async function tableWidgetRenderer(ds, config, el) {
 	let values = undefined
 	if (!ds.values) {
@@ -10,23 +11,14 @@ export default async function tableWidgetRenderer(ds, config, el) {
 		values = ds.values
 	}
 	let cfg = {
-		pagination: true,
-        search: true,
-        sorting: true,
+		layout:"fitDataFill",
+		layout:"fitDataTable",
 		...config,
-		data: values
+		data: values,
 	}
     console.log(cfg)
 	try {
-		el &&
-            $(function() {
-                $(`#${el}`).empty().bootstrapTable({
-                    pagination: true,
-                    search: true,
-                    sorting: true,
-                    ...cfg
-                })
-            })
+		el && new Tabulator(`#${el}`, cfg)
 	} catch (error) {
 		console.log(error)
 	}
