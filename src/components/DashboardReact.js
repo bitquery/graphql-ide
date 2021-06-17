@@ -34,11 +34,17 @@ const AddRemoveLayout = observer(
 				menuActive: null,
 				dashboard_id: null,
 				widget_ids: [],
+				initialWidget_ids: [],
 				dashboard_item_indexes: [],
+				initial_dashboard_item_indexes: [],
 				content: [],
 				layout: [],
+				initialItems: [],
+				initialLayout: [],
+				initialContent: [],
 				items: [],
 				queries: [],
+				initialQueries: [],
 				newCounter: 1,
 				currentId: '',
 				saved: true
@@ -88,7 +94,12 @@ const AddRemoveLayout = observer(
 						dashboard_item_indexes,
 						widget_ids,
 						queries,
-						content
+						content,
+						initialItems: layout,
+						initial_dashboard_item_indexes: dashboard_item_indexes,
+						initialWidget_ids: widget_ids,
+						initialQueries: queries,
+						initialContent: content,
 					}, () => {
 						//replace variables from url params
 						//if (Object.keys(args).length) updatedData = {...data[i], arguments: args}
@@ -99,20 +110,47 @@ const AddRemoveLayout = observer(
 					})
 				}
 				//from "Add widget" button
-				else if (QueriesStore.currentQuery.layout && !this.state.items.length) {
+				/* else if (QueriesStore.currentQuery.layout && !this.state.items.length) {
 					console.log('mounted')
 					this.setState({ saved: false })
 					this.qrh(QueriesStore.currentQuery)
-				} else {
+				}  */else {
 					this.setState({ saved: false })
 				}
 				window.addEventListener('query-request', this.qrh)
+				window.addEventListener('setInitialDashboard', this.setInitialDashboard)
+				window.addEventListener('updateInitialDashboard', this.updateInitialDashboard)
 				return () => {
 					window.removeEventListener('query-request', this.qrh)
+					window.removeEventListener('setInitialDashboard', this.setInitialDashboard)
+					window.removeEventListener('updateInitialDashboard', this.updateInitialDashboard)
 				}
 			}
 		}
 
+		setInitialDashboard = () => {
+			if (TabsStore.currentTab === TabsStore.tabs[this.props.number]?.id) {
+				this.setState({
+					items: this.state.initialItems,
+					dashboard_item_indexes: this.state.initial_dashboard_item_indexes,
+					widget_ids: this.state.initialWidget_ids,
+					queries: this.state.initialQueries,
+					content: this.state.initialContent,
+					saved: true
+				}, () => QueriesStore.updateQuery({saved: true}, TabsStore.index))
+			}
+		}
+		updateInitialDashboard = () => {
+			if (TabsStore.currentTab === TabsStore.tabs[this.props.number]?.id) {
+				this.setState({
+					initialItems: this.state.items,
+					initial_dashboard_item_indexes: this.state.dashboard_item_indexes,
+					initialWidget_ids: this.state.widget_ids,
+					initialQueries: this.state.queries,
+					initialContent: this.state.content
+				}, () => QueriesStore.updateQuery({saved: true}, TabsStore.index))
+			}
+		}
 		qrh = (e, id) => {
 			if (TabsStore.currentTab === TabsStore.tabs[this.props.number]?.id && (QueriesStore.currentQuery.isDraggable || this.state.saved)) {
 				

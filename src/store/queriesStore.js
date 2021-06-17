@@ -194,6 +194,7 @@ class Queries {
 			this.queryJustSaved = !this.queryJustSaved
 			this.query[id].saved = true
 			this.setCurrentQuery(id)
+			this.currentQuery.layout && window.dispatchEvent(new Event('updateInitialDashboard'))
 			return data
 		} catch (e) {
 			console.log(e.response)

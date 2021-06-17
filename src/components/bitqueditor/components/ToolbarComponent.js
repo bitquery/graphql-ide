@@ -16,7 +16,7 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 	const { user }  = UserStore
 	const { toggleModal, toggleEditDialog } = modalStore
 	const { addToast } = useToasts()
-	const [thatType, setType] = useState(false)
+	const [mode, setMode] = useState(false)
 	const [dashboardOwner,setOwner] = useState(false)
 	useEffect(() => {
 		if (currentQuery.layout && (currentQuery.account_id === user?.id) || !currentQuery.id) {
@@ -35,7 +35,7 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 		updateQuery({ layout, isDraggable: false, isResizable: false }, index)
 	}
 	const switchMode = () => {
-		setType(!thatType)
+		setMode(!mode)
 		updateQuery({isDraggable: !currentQuery.isDraggable, isResizable: !currentQuery.isResizable}, index)
 	}
 	const saveHandle = () => {
@@ -46,7 +46,7 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 			} else if (!currentQuery.saved) {
 				!currentQuery.layout ? saveQuery(currentQuery) 
 					: saveQuery({...currentQuery, isDraggable: !currentQuery.isDraggable, isResizable: !currentQuery.isResizable})
-				currentQuery.layout && setType(!thatType)
+				currentQuery.layout && setMode(!mode)
 			}
 		} else {
 			addToast('Login required to save or share queries', {appearance: 'error'})
@@ -75,6 +75,10 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 		} catch {
 		}
 	}
+	const cancelHandle = () => {
+		switchMode()
+		window.dispatchEvent(new Event('setInitialDashboard'))
+	}
 	const toolbar = !dashboardOwner ? null : <div className="topBarWrap">
 		<div className="topBar">
 			{!showSideBar && <i 
@@ -91,7 +95,7 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 			>
 				Save
 			</button>}
-			{<button type="button" className="topBar__button">Cancel</button>}
+			{!currentQuery.saved && <button type="button" className="topBar__button" onClick={cancelHandle}>Cancel</button>}
 			{dashboardOwner &&
 				<div 
 					className="grid-stack-item droppable-element"
