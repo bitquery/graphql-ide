@@ -132,10 +132,14 @@ const EditorInstance = observer(function EditorInstance({number})  {
 		let typesMap = {}
 		const queryNodes = []
 		let depth = 0
+		let checkpoint = 0
 		let visitor = {
 			enter(node ) {
 				typeInfo.enter(node)
 				if(node.kind === "Field") {
+					if (!depth && queryNodes.length) {
+						checkpoint = queryNodes.length
+					}
 					if (node.alias) {
 						queryNodes.push(node.alias.value)
 					} else {
@@ -145,6 +149,10 @@ const EditorInstance = observer(function EditorInstance({number})  {
 						let arr = queryNodes.filter(node=> node.split('.').length === depth)
 						let index = queryNodes.indexOf(arr[arr.length-1])
 						let depthLength = depth!==1 ? index : 0
+						if (checkpoint) {
+							depthLength += checkpoint
+							checkpoint = 0
+						}
 						queryNodes[queryNodes.length-1] = 
 							queryNodes[depthLength]+'.'+queryNodes[queryNodes.length-1]
 					}
