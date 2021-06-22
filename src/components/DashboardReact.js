@@ -156,18 +156,59 @@ const AddRemoveLayout = observer(
 			if (TabsStore.currentTab === TabsStore.tabs[this.props.number]?.id && (QueriesStore.currentQuery.isDraggable || this.state.saved) || (QueriesStore.currentQuery.layout && !QueriesStore.currentQuery.id)) {
 				
 				const query = e.detail ? e.detail : e
-				console.log('ololo')
+				console.log('ololo', query)
 				const repeatProtector = this.state.saved ? true : !this.state.widget_ids.includes(query.widget_number)
-				const cfg = typeof query.config === 'string' ? JSON.parse(query.config) : query.config
+				let cfg = typeof query.config === 'string' ? JSON.parse(query.config) : query.config
+				console.log(cfg)
 				if (query.widget_id !== 'json.widget' && query.widget_id && repeatProtector) {
 					let indexx = this.props.plugins.map(plugin => plugin.id).indexOf(query.widget_id)
 					const WidgetComponent = indexx >= 0 ? this.props.plugins[indexx] : this.props.plugins[0]
+					
 					const dataSource = {
 						query: query.query,
 						variables: query.arguments ? JSON.parse(query.arguments) : '',
 						displayed_data: query.displayed_data,
 						key: 'BQYszZIuPSqM0E5UdhNVRIj7qvHTuGSL',
-						setupData: (json) => ('data' in json) ? getValueFrom(json.data, query.displayed_data) : null,
+						// setupData: (json) => ('data' in json) ? getValueFrom(json.data, query.displayed_data) : null,
+						setupData: (json) => {
+							if ('data' in json) {
+								let columns = []
+								if (query.displayed_data === 'data' && query.widget_id === 'table.widget' ) {
+									let config = []
+									// let columns = []
+									const isObject = value => typeof value === 'object' && value !== null && !Array.isArray(value)
+									Object.keys(json.data).forEach(network => {
+										let row = { network }
+										Object.keys(json.data[network]).forEach((stat, i , arr) => {
+											let dataNetworkStats = json.data[network][stat][0]
+											Object.keys(dataNetworkStats).forEach(prop => {
+												if (isObject(dataNetworkStats[prop])) {
+													Object.keys(dataNetworkStats[prop]).forEach(nextprop => {
+														let property = { [`${stat}${prop}${nextprop}`] : dataNetworkStats[prop][nextprop] }
+														row = {...row, ...property}
+													})
+												} else {
+													let property = { [`${stat}${prop}`] : dataNetworkStats[prop] }
+													row = {...row, ...property}
+												}
+												
+											})
+										})
+										columns.push(row)
+									})
+									Object.keys(columns[0]).forEach(prop => {
+										let rowconfig = {title: prop, field: prop}
+										config.push(rowconfig)
+									})
+									return columns
+									// setConfig(cfg)
+								} else {
+									return getValueFrom(json.data, query.displayed_data)
+								}
+							} else {
+								return null
+							}
+						},
 						fetcher: function () {
 							let keyHeader = { 'X-API-KEY': this.key }
 							return fetch(
@@ -185,6 +226,7 @@ const AddRemoveLayout = observer(
 							)
 						}
 					}
+					console.log(cfg)
 					let currentId = query.widget_id === 'block.content' ? "ctn" + generateLink() : "n" + generateLink()
 					const updateAndRender = () => {
 						QueriesStore.updateQuery({

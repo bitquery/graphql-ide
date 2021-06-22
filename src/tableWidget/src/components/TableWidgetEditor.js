@@ -3,15 +3,16 @@ import { useFirstUpdate } from '../utils/useFirstUpdate'
 import WidgetOptions from '../WidgetOptions'
 
 function TableWidgetEditor({model, config, setConfig, displayedData}) {
-	const condition = key => {if (model[key].typeInfo) {
+	const condition = key => /* {if (model[key].typeInfo) { 
 		return true
-	}}
-
+	}} */
+	true
     const [columnsNumber, setColumnsNumber] = useState(1)
     const [columns, setColumns] = useState([])
 	
 	//set options if query has config, only on mount
 	useEffect(() => {
+		console.log(model)
 		if (!columns.length && config) {
 			if (Object.keys(config).length) {
 				if ('columns' in config) {
@@ -28,6 +29,7 @@ function TableWidgetEditor({model, config, setConfig, displayedData}) {
 				columns
 			}
 			setConfig(cfg)
+			
 	}, [JSON.stringify(columns), displayedData])
 
     const updateColumns = (value, i) => {

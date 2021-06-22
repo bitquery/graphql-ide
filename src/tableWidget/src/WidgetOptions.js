@@ -26,9 +26,8 @@ function WidgetOptions({model, condition, value, setValue, title}) {
 					? Object.keys(model).map((node, i)=>condition(node)
 						? <option key={i} value={node}>{node}</option>
 						: null
-					) : value 
-						? <option value={value}>{value}</option>
-						: null
+					) : <option value={value}>{value}</option>
+						
 				}
 			</select>
 		</div>

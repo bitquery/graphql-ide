@@ -67,7 +67,15 @@ const EditorInstance = observer(function EditorInstance({number})  {
 	}
 	useEffect(() => {
 		dataModel && setDataModel('')
+		// currentQuery.displayed_data === 'data' && setDataModel(queryTypes)
+		
 		if (queryTypes && currentQuery.displayed_data) {
+			if ('data' in queryTypes) {
+				for (let node in queryTypes) {
+					setDataModel(prev => {return {...prev, [node]: queryTypes[node]}})
+				}
+				return
+			}
 			for (let node in queryTypes) {
 				node.includes(currentQuery.displayed_data) &&
 					setDataModel(prev => {return {...prev, [node]: queryTypes[node]}})
@@ -133,6 +141,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 		const queryNodes = []
 		let depth = 0
 		let checkpoint = 0
+		let queryLength = 0
 		let visitor = {
 			enter(node ) {
 				typeInfo.enter(node)
@@ -171,6 +180,11 @@ const EditorInstance = observer(function EditorInstance({number})  {
 					let index = queryNodes.indexOf(arr[arr.length-1])
 					depth--
 					typesMap[queryNodes[index]] = node
+					//-------
+					if (queryLength <= 1) {
+						if (queryNodes[index].includes('.')) queryLength += 1
+						if (queryLength > 1) typesMap = {data: {typeInfo: 's'}, ...typesMap}
+					}
 				}
 				typeInfo.leave(node)
 			}
@@ -189,6 +203,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 		ReactTooltip.hide(executeButton.current)
 		setLoading(true)
 		let queryType = getQueryTypes(currentQuery.query)
+		console.log(queryType)
 		if (JSON.stringify(queryType) !== JSON.stringify(queryTypes)) {
 			setQueryTypes(queryType)
 		}
@@ -205,11 +220,52 @@ const EditorInstance = observer(function EditorInstance({number})  {
 		}
 		fetcher({query: currentQuery.query, variables: currentQuery.variables}).then(data => {
 			data.json().then(json => {
+				let columns = []
 				// console.log(getValueFrom(json.data, displayed_data))
+				if (displayed_data === 'data') {
+					let config = []
+					// let columns = []
+					const isObject = value => typeof value === 'object' && value !== null && !Array.isArray(value)
+					Object.keys(json.data).forEach(network => {
+						console.log(network)
+						let row = { network }
+						console.log(row)
+						Object.keys(json.data[network]).forEach((stat, i , arr) => {
+							console.log(stat)
+							let dataNetworkStats = json.data[network][stat][0]
+							console.log(dataNetworkStats, 'here')
+							console.log(row)
+							Object.keys(dataNetworkStats).forEach(prop => {
+								if (isObject(dataNetworkStats[prop])) {
+									Object.keys(dataNetworkStats[prop]).forEach(nextprop => {
+										let property = { [`${stat}${prop}${nextprop}`] : dataNetworkStats[prop][nextprop] }
+										row = {...row, ...property}
+									})
+								} else {
+									let property = { [`${stat}${prop}`] : dataNetworkStats[prop] }
+									row = {...row, ...property}
+								}
+								
+							})
+						})
+						columns.push(row)
+					})
+					console.log(columns)
+
+					Object.keys(columns[0]).forEach(prop => {
+						let rowconfig = {title: prop, field: prop}
+						config.push(rowconfig)
+					})
+					console.log(config)
+					let cfg = {
+						columns: [...config],
+					}
+					setConfig(cfg)
+				}
 				setDataSource({
 					data: ('data' in json) ? json.data : null,
 					displayed_data: displayed_data || '',
-					values: ('data' in json) ? (currentQuery.displayed_data) ? getValueFrom(json.data, displayed_data) : json.data : null,
+					values: ('data' in json) ? (currentQuery.displayed_data) ? columns.length ? columns : getValueFrom(json.data, displayed_data) : json.data : null,
 					error: ('errors' in json) ? json.errors : null,
 					query: toJS(currentQuery.query), 
 					variables: toJS(currentQuery.variables)

@@ -11,8 +11,8 @@ class TablePlugin {
     }
     supportsModel(model) {
         for (let key in model) {
-			return model[key].typeInfo.toString()[0]==='[' 
-				&& model[key].typeInfo.toString().slice(-2, -1)!=='0'
+			return (model[key].typeInfo.toString()[0]==='[' 
+				&& model[key].typeInfo.toString().slice(-2, -1)!=='0') || key === 'data'
 		}
     }
 }
