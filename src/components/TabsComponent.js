@@ -16,14 +16,19 @@ const TabsComponent = observer(() => {
 	const { setQuery, removeQuery, query, updateQuery, currentQuery } = QueriesStore
 	const [editTabName, setEditTabName] = useState(false)
 	const [queryName, setQueryName] = useState({})
+	const [x,setx] = useState(0)
 
-	/* useEffect(() => {
-		currentQuery.url 
-			? history.push(`${process.env.REACT_APP_IDE_URL}/${currentQuery.url}`) 
-			: history.push(`${process.env.REACT_APP_IDE_URL}`)
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [currentQuery.url]) */
 	useEffect(() => {
+		x <=1 && setx(x => x + 1)
+		if (x > 1) {
+			currentQuery.url
+				? history.push(`${process.env.REACT_APP_IDE_URL}/${currentQuery.url}`) 
+				: history.push(`${process.env.REACT_APP_IDE_URL}`)
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [currentQuery.url])
+	useEffect(() => {
+		if (!match) setx(2)
 		async function updateTabs() {
 			if (match) {
 				const { data } = await getWidget(match.params.queryurl)
