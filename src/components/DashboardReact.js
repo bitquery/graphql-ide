@@ -101,20 +101,13 @@ const AddRemoveLayout = observer(
 						initialQueries: queries,
 						initialContent: content,
 					}, () => {
-						//replace variables from url params
-						//if (Object.keys(args).length) updatedData = {...data[i], arguments: args}
 						for (let i = 0; i < data.length; i++) {
 							this.qrh(data[i], data[i].query_index)
 						}
 						this.setState({ saved: false })
 					})
 				}
-				//from "Add widget" button
-				/* else if (QueriesStore.currentQuery.layout && !this.state.items.length) {
-					console.log('mounted')
-					this.setState({ saved: false })
-					this.qrh(QueriesStore.currentQuery)
-				}  */else {
+				else {
 					this.setState({ saved: false })
 				}
 				window.addEventListener('query-request', this.qrh)
@@ -169,13 +162,11 @@ const AddRemoveLayout = observer(
 						variables: query.arguments ? JSON.parse(query.arguments) : '',
 						displayed_data: query.displayed_data,
 						key: 'BQYszZIuPSqM0E5UdhNVRIj7qvHTuGSL',
-						// setupData: (json) => ('data' in json) ? getValueFrom(json.data, query.displayed_data) : null,
 						setupData: (json) => {
 							if ('data' in json) {
 								let columns = []
 								if (query.displayed_data === 'data' && query.widget_id === 'table.widget' ) {
 									let config = []
-									// let columns = []
 									const isObject = value => typeof value === 'object' && value !== null && !Array.isArray(value)
 									Object.keys(json.data).forEach(network => {
 										let row = { network }
@@ -201,7 +192,6 @@ const AddRemoveLayout = observer(
 										config.push(rowconfig)
 									})
 									return columns
-									// setConfig(cfg)
 								} else {
 									return getValueFrom(json.data, query.displayed_data)
 								}

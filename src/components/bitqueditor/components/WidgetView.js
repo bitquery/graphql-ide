@@ -5,8 +5,9 @@ function WidgetView({ el, config, dataSource, displayedData, children, renderFun
 		if (dataSource && config && displayedData && dataSource.data) {
 			typeof renderFunc === 'function' && renderFunc(dataSource, config, el)
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [JSON.stringify(config), JSON.stringify(dataSource), displayedData, renderFunc])
-	if (!dataSource) return (<div></div>)
+	if (!dataSource || !displayedData) return (<div></div>)
 	return (
 		<>
 			{children}

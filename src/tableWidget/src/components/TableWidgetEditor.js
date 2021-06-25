@@ -3,41 +3,36 @@ import { useFirstUpdate } from '../utils/useFirstUpdate'
 import WidgetOptions from '../WidgetOptions'
 
 function TableWidgetEditor({model, config, setConfig, displayedData}) {
-	const condition = key => /* {if (model[key].typeInfo) { 
+	const condition = key => {if (model[key].typeInfo) { 
 		return true
-	}} */
-	true
+	}}
     const [columnsNumber, setColumnsNumber] = useState(1)
     const [columns, setColumns] = useState([])
+	let ignore = false
 	
 	//set options if query has config, only on mount
 	useEffect(() => {
-		console.log(model)
-		if (!columns.length && config) {
-			if (Object.keys(config).length) {
-				if ('columns' in config) {
-					setColumns(config.columns)
-					setColumnsNumber(config.columns.length)
-					setConfig({columns: config.columns})
-				}
-			}
+		if (config && config.columns && config.columns.length) {
+			setColumns(config.columns)
+			setColumnsNumber(config.columns.length)
 		}
 	}, [])
-	//every time since first update when options changed, set config
-	useFirstUpdate(() => {
-			let cfg = {
-				columns
-			}
-			setConfig(cfg)
-			
-	}, [JSON.stringify(columns), displayedData])
+	useEffect(() => {
+		if (!ignore) {
+			setColumns(config.columns)
+			setColumnsNumber(config.columns.length)
+			setConfig(config)
+		}
+	}, [JSON.stringify(config)])
 
     const updateColumns = (value, i) => {
-        console.log(value, i)
+		console.log('why update')
+		ignore = true
         let newColumns = [...columns]
         newColumns[i-1] = {field: value.replace(`${displayedData}.`, ''), title: value}
-		console.log(newColumns, value, i)
         setColumns(newColumns)
+		setConfig({columns: newColumns})
+		ignore = false
     }
 	
 	return (
@@ -56,7 +51,7 @@ function TableWidgetEditor({model, config, setConfig, displayedData}) {
                 {[...Array(columnsNumber).keys()].map(i => i+1).map(i => 
                     <WidgetOptions 
                         key={i}
-                        value={columns[i-1]?.field || ''}
+                        value={columns[i-1]?.title || ''}
                         setValue={updateColumns}
                         condition={condition}
                         title={i}

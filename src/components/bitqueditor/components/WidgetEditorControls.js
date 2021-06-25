@@ -10,8 +10,6 @@ const WidgetEditorControls = observer(
 	const { toggleMode, jsonMode, codeMode, viewMode } = TabsStore
 	const [dataWidgets, setDataWidgets] = useState([]) 
 	const [dataIndexInModel, setDataIndexInModel] = useState(0)
-	const { updateQuery } = QueriesStore
-	const { index } = TabsStore
 	useEffect(() => {
 		let info = []
 		let insert = null
@@ -27,13 +25,13 @@ const WidgetEditorControls = observer(
 		console.log(info)
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [JSON.stringify(model)])
-	const generalJson = () => {
+	/* const generalJson = () => {
 		console.log(model)
 		updateQuery({
 			displayed_data: Object.keys(model).filter(key => !key.includes('.'))[0],
 			widget_id: plugins[0].id
 		}, index)
-	}
+	} */
 	return (
 		<nav className="navbar navbar-expand-lg navbar-light bg-light">
 			<a className="navbar-brand" href="# ">Display</a>

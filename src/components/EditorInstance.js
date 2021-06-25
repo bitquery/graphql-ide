@@ -32,12 +32,11 @@ import { getIntrospectionQuery, buildClientSchema } from 'graphql'
 import useDebounce from '../utils/useDebounce'
 import WidgetView from './bitqueditor/components/WidgetView'
 import { getCheckoutCode } from '../api/api'
-import DashBoard from './DashBoard'
 import DashboardReact from './DashboardReact'
 
 
 const EditorInstance = observer(function EditorInstance({number})  {
-	const { tabs, currentTab, index, jsonMode, codeMode, viewMode } = TabsStore
+	const { tabs, currentTab, index, jsonMode, codeMode } = TabsStore
 	const { user }  = UserStore
 	const { query, updateQuery, currentQuery, isMobile,
 		setMobile, showSideBar, schema, setSchema } = QueriesStore
@@ -221,20 +220,13 @@ const EditorInstance = observer(function EditorInstance({number})  {
 		fetcher({query: currentQuery.query, variables: currentQuery.variables}).then(data => {
 			data.json().then(json => {
 				let columns = []
-				// console.log(getValueFrom(json.data, displayed_data))
 				if (displayed_data === 'data') {
 					let config = []
-					// let columns = []
 					const isObject = value => typeof value === 'object' && value !== null && !Array.isArray(value)
 					Object.keys(json.data).forEach(network => {
-						console.log(network)
 						let row = { network }
-						console.log(row)
 						Object.keys(json.data[network]).forEach((stat, i , arr) => {
-							console.log(stat)
 							let dataNetworkStats = json.data[network][stat][0]
-							console.log(dataNetworkStats, 'here')
-							console.log(row)
 							Object.keys(dataNetworkStats).forEach(prop => {
 								if (isObject(dataNetworkStats[prop])) {
 									Object.keys(dataNetworkStats[prop]).forEach(nextprop => {
@@ -250,13 +242,10 @@ const EditorInstance = observer(function EditorInstance({number})  {
 						})
 						columns.push(row)
 					})
-					console.log(columns)
-
 					Object.keys(columns[0]).forEach(prop => {
 						let rowconfig = {title: prop, field: prop}
 						config.push(rowconfig)
 					})
-					console.log(config)
 					let cfg = {
 						columns: [...config],
 					}
@@ -384,6 +373,7 @@ ${dependencies}
 	${renderFunc}(ds, config, '${id}')
 </script>
 		`
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [WidgetComponent.id, JSON.stringify(currentQuery), user])
 
 	return (

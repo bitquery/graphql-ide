@@ -5,7 +5,6 @@ import { useToasts } from 'react-toast-notifications'
 import { parse as parseGql } from 'graphql/language'
 import { print } from 'graphql'
 import React, { useState, useEffect } from 'react'
-import { FormCheck } from 'react-bootstrap'
 import ToggleGroupEditor from '../../ToggleGroupEditor'
 
 
@@ -19,13 +18,14 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 	const [mode, setMode] = useState(false)
 	const [dashboardOwner,setOwner] = useState(false)
 	useEffect(() => {
-		if ((currentQuery.layout && (currentQuery.account_id === user?.id) || !currentQuery.id) || !currentQuery.layout) {
+		if (((currentQuery.layout && (currentQuery.account_id === user?.id)) || !currentQuery.id) || !currentQuery.layout) {
 			setOwner(true)
 			toggleSideBar(true)
 		} else {
 			setOwner(false)
 			toggleSideBar(false)
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [user, JSON.stringify(currentQuery)])
 	const handleInputURLChange = e => {
 		updateQuery({endpoint_url: e.target.value}, index)

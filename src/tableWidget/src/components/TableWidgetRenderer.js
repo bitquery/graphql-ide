@@ -10,7 +10,6 @@ export default async function tableWidgetRenderer(ds, config, el) {
 		values = ds.setupData(json)
 	} else {
 		values = ds.values
-		console.log(values)
 	}
 	cfg = {
 		layout:"fitDataFill",
@@ -18,8 +17,6 @@ export default async function tableWidgetRenderer(ds, config, el) {
 		...config,
 		data: values,
 	}
-	console.log(config)
-    console.log(cfg)
 	try {
 		el && new Tabulator(`#${el}`, cfg)
 	} catch (error) {
