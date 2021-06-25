@@ -15,7 +15,7 @@ const TabsComponent = observer(() => {
 	const match = useRouteMatch(`${process.env.REACT_APP_IDE_URL}/:queryurl`)
 	const { setQuery, removeQuery, query, updateQuery, currentQuery } = QueriesStore
 	const [editTabName, setEditTabName] = useState(false)
-	const [queryName, setQueryName] = useState({})
+	const [queryName, setQueryName] = useState({[currentTab]: currentQuery.name})
 	const [x,setx] = useState(0)
 
 	useEffect(() => {
