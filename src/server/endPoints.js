@@ -338,10 +338,15 @@ module.exports = function(app, passport, db) {
 	})
 
 	app.post('/api/deletequery', (req, res) => {
-		db.query(`UPDATE queries SET deleted=?, updated_at=CURRENT_TIMESTAMP where id=?`, [true, req.body.id], (err, _) => {
-			if (err) console.log(err)
-			res.send('Query deleted')
-		})
+		req.body.layout 
+			? db.query(`UPDATE dashboards SET deleted=?, updated_at=CURRENT_TIMESTAMP where id=?`, [true, req.body.id], (err, _) => {
+				if (err) console.log(err)
+				res.send('Dashboard deleted')
+			})
+			: db.query(`UPDATE queries SET deleted=?, updated_at=CURRENT_TIMESTAMP where id=?`, [true, req.body.id], (err, _) => {
+				if (err) console.log(err)
+				res.send('Query deleted')
+			})
 	})
 
 	app.post('/api/addquerylog', (req, response) => {
@@ -470,7 +475,8 @@ module.exports = function(app, passport, db) {
 				GROUP BY dashboard_id
 			) qtd
 			ON qtd.dashboard_id = rd.id
-			WHERE rd.account_id = ? ) ORDER BY updated_at DESC`, [req.session.passport.user, req.session.passport.user], (err, queries) => {
+			WHERE rd.account_id = ?
+			AND rd.deleted = false ) ORDER BY updated_at DESC`, [req.session.passport.user, req.session.passport.user], (err, queries) => {
 				if (err) console.log(err)
 				res.send(queries)
 		})

@@ -69,7 +69,7 @@ function EditDialog({active}) {
 		deleteHandler)
 	}
 	const deleteHandler = async () => {
-		const data = await deleteQuery(currentQuery.id)
+		const data = await deleteQuery(currentQuery.id, currentQuery.layout)
 		saveToggle()
 		closeHandler()
 		let id = query.map(query=>query.id).indexOf(currentQuery.id)

@@ -24,8 +24,8 @@ export const regenerateKey = key => axios.post('/api/regenerate', {key})
 
 export const getQuery = url => axios.get(`/api/getquery/${url}`)
 
-export const deleteQuery = id => axios.post('/api/deletequery', 
-	{ id }  
+export const deleteQuery = (id, layout) => axios.post('/api/deletequery', 
+	{ id, layout }  
 )
 export const getCheckoutCode = source => axios.get('/api/js', {
 	params: { source: `../../${source}` }
