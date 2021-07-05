@@ -54,7 +54,7 @@ function EditDialog({active}) {
 				setQueryUrl('')
 			}
 			if (description) params.description = description
-			data = await saveQuery(params)
+			data = await saveQuery({...params, isDraggable: false, isResizable: false})
 			if (data.status !== 400) {
 				renameCurrentTab(name)
 				data.msg && addToast(data.msg, {appearance: 'success'})

@@ -32,7 +32,7 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 	}
 	const switchView = () => {
 		const layout = currentQuery.layout ? null : {}
-		updateQuery({ layout, isDraggable: false, isResizable: false, name: !currentQuery.layout ? 'New Dashboard' : 'New Query' }, index)
+		updateQuery({ layout, isDraggable: true, isResizable: true, name: !currentQuery.layout ? 'New Dashboard' : 'New Query' }, index)
 	}
 	const switchMode = () => {
 		setMode(!mode)
@@ -45,7 +45,7 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 				toggleModal()
 			} else if (!currentQuery.saved) {
 				!currentQuery.layout ? saveQuery(currentQuery) 
-					: saveQuery({...currentQuery, isDraggable: !currentQuery.isDraggable, isResizable: !currentQuery.isResizable})
+					: saveQuery({...currentQuery, isDraggable: false, isResizable: false})
 				currentQuery.layout && setMode(!mode)
 			}
 		} else {
