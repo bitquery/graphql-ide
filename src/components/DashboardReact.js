@@ -95,6 +95,7 @@ const AddRemoveLayout = observer(
 						widget_ids,
 						queries,
 						content,
+						initialLayout: layout,
 						initialItems: layout,
 						initial_dashboard_item_indexes: dashboard_item_indexes,
 						initialWidget_ids: widget_ids,
@@ -125,7 +126,7 @@ const AddRemoveLayout = observer(
 			if (TabsStore.currentTab === TabsStore.tabs[this.props.number]?.id) {
 				this.setState({
 					items: this.state.initialItems,
-					layout: this.state.initialLayout,
+					layout: {layout: this.state.initialLayout},
 					dashboard_item_indexes: this.state.initial_dashboard_item_indexes,
 					widget_ids: this.state.initialWidget_ids,
 					queries: this.state.initialQueries,
@@ -135,10 +136,10 @@ const AddRemoveLayout = observer(
 		}
 		updateInitialDashboard = () => {
 			if (TabsStore.currentTab === TabsStore.tabs[this.props.number]?.id) {
+				console.log('update initial dashboard', this.state.layout.layout)
 				this.setState({
 					initialItems: this.state.layout.layout,
-					layout: this.state.layout,
-					initialLayout: this.state.layout,
+					initialLayout: this.state.layout.layout,
 					initial_dashboard_item_indexes: this.state.dashboard_item_indexes,
 					initialWidget_ids: this.state.widget_ids,
 					initialQueries: this.state.queries,
