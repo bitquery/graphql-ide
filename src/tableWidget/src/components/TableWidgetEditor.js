@@ -4,7 +4,11 @@ import WidgetOptions from '../WidgetOptions'
 
 function TableWidgetEditor({model, config, setConfig, displayedData}) {
 	const condition = key => {if (model[key].typeInfo) { 
-		return true
+		return (
+			model[key].typeInfo.toString()[0]==='[' || 
+			model[key].typeInfo.toString()==='Date' || 
+			!key.includes('.')
+		) ? false : true
 	}}
     const [columnsNumber, setColumnsNumber] = useState(1)
     const [columns, setColumns] = useState([])
@@ -22,10 +26,16 @@ function TableWidgetEditor({model, config, setConfig, displayedData}) {
 			if (config && config.columns && config.columns.length) {
 				setColumns(config.columns)
 				setColumnsNumber(config.columns.length)
-				setConfig(config)
 			}
 		}
 	}, [JSON.stringify(config)])
+	useEffect(() => {
+		if (columnsNumber < columns.length) {
+			let updColumns = [...columns]
+			updColumns.pop()
+			setConfig({columns: updColumns})
+		}
+	}, [columnsNumber])
 
     const updateColumns = (value, i) => {
 		console.log('why update')
