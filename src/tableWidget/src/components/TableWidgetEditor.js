@@ -19,9 +19,11 @@ function TableWidgetEditor({model, config, setConfig, displayedData}) {
 	}, [])
 	useEffect(() => {
 		if (!ignore) {
-			setColumns(config.columns)
-			setColumnsNumber(config.columns.length)
-			setConfig(config)
+			if (config && config.columns && config.columns.length) {
+				setColumns(config.columns)
+				setColumnsNumber(config.columns.length)
+				setConfig(config)
+			}
 		}
 	}, [JSON.stringify(config)])
 
