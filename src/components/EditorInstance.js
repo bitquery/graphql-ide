@@ -33,6 +33,7 @@ import useDebounce from '../utils/useDebounce'
 import WidgetView from './bitqueditor/components/WidgetView'
 import { getCheckoutCode } from '../api/api'
 import DashboardReact from './DashboardReact'
+import { flattenData } from './flattenData.js'
 
 
 const EditorInstance = observer(function EditorInstance({number})  {
@@ -222,26 +223,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 				let columns = []
 				if (displayed_data === 'data') {
 					let config = []
-					const isObject = value => typeof value === 'object' && value !== null && !Array.isArray(value)
-					Object.keys(json.data).forEach(network => {
-						let row = { network }
-						Object.keys(json.data[network]).forEach((stat, i , arr) => {
-							let dataNetworkStats = json.data[network][stat][0]
-							Object.keys(dataNetworkStats).forEach(prop => {
-								if (isObject(dataNetworkStats[prop])) {
-									Object.keys(dataNetworkStats[prop]).forEach(nextprop => {
-										let property = { [`${stat}${prop}${nextprop}`] : dataNetworkStats[prop][nextprop] }
-										row = {...row, ...property}
-									})
-								} else {
-									let property = { [`${stat}${prop}`] : dataNetworkStats[prop] }
-									row = {...row, ...property}
-								}
-								
-							})
-						})
-						columns.push(row)
-					})
+					columns = flattenData(json.data)
 					Object.keys(columns[0]).forEach(prop => {
 						let rowconfig = {title: prop, field: prop}
 						config.push(rowconfig)
