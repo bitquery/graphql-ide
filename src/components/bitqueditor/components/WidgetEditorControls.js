@@ -34,32 +34,21 @@ const WidgetEditorControls = observer(
 	} */
 	return (
 		<nav className="navbar navbar-expand-lg navbar-light bg-light">
-			<a className="navbar-brand" href="# ">Display</a>
-			<div className="collapse navbar-collapse" id="navbarSupportedContent">
-				<ul className="navbar-nav mr-auto">
-					<DisplayedData 
-						model={model}
-						number={number}
-						dataWidgets={dataWidgets}
-						setDataIndexInModel={setDataIndexInModel}
-						plugins={plugins}
-						dataSource={dataSource}
-						setDataSource={setDataSource}
-					/>
-					
-				</ul>
-			</div>
-			<a className="navbar-brand" href="# ">Using</a>
-			<div className="collapse navbar-collapse" id="navbarSupportedContent">
-				<ul className="navbar-nav mr-auto">
-					<WidgetSelect 
-						name={name}
-						dataWidgets={dataWidgets}
-						dataIndexInModel={dataIndexInModel}
-						plugins={plugins} 
-					/>
-				</ul>
-			</div>
+			<DisplayedData 
+				model={model}
+				number={number}
+				dataWidgets={dataWidgets}
+				setDataIndexInModel={setDataIndexInModel}
+				plugins={plugins}
+				dataSource={dataSource}
+				setDataSource={setDataSource}
+			/>
+			<WidgetSelect 
+				name={name}
+				dataWidgets={dataWidgets}
+				dataIndexInModel={dataIndexInModel}
+				plugins={plugins} 
+			/>
 			{(('widget_id' in currentQuery) && currentQuery.widget_id !== defaultWidget) && 
 				<div className="btn-group btn-group-toggle" data-toggle="buttons">
 					<label className={"btn btn-secondary topBar__button "+(viewMode && 'active')}>

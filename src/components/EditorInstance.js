@@ -221,7 +221,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 		fetcher({query: currentQuery.query, variables: currentQuery.variables}).then(data => {
 			data.json().then(json => {
 				let columns = []
-				if (displayed_data === 'data') {
+				if (displayed_data === 'data') {   //move this to values prop of dataSource
 					let config = []
 					columns = flattenData(json.data)
 					Object.keys(columns[0]).forEach(prop => {
