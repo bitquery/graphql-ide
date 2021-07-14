@@ -287,7 +287,7 @@ const AddRemoveLayout = observer(
 				? elementMarkUp
 				: (<>
 					<div
-						className="item-container"
+						className="item-container table-striped"
 						id={el.i}
 					>
 						<Loader

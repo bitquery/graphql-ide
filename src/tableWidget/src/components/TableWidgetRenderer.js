@@ -1,5 +1,5 @@
 import Tabulator from "tabulator-tables"; 
-import "tabulator-tables/dist/css/tabulator.min.css"; 
+import "tabulator-tables/dist/css/bootstrap/tabulator_bootstrap4.min.css";
 
 export default async function tableWidgetRenderer(ds, config, el) {
 	let values = undefined
@@ -12,8 +12,8 @@ export default async function tableWidgetRenderer(ds, config, el) {
 		values = ds.values
 	}
 	cfg = {
-		layout:"fitDataFill",
-		layout:"fitDataTable",
+		height: '100%',
+		layout: 'fitColumns',
 		...config,
 		data: values,
 	}

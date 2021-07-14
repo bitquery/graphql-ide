@@ -780,6 +780,9 @@
 	  display: flex;
 	  justify-content: center;
 	  align-items: center;
+	  &.tabulator {
+		  display: block;
+	  }
   }
   .arg-name {
 	color: #8B2BB9;
