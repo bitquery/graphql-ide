@@ -24,19 +24,25 @@ module.exports = function(app, passport, db) {
 		}
 	}
 	const addWidgetConfig = (res, db, params, widget_id) => {
-		db.query('INSERT INTO widgets SET ?', params, (err, result) => {
+		db.query(`UPDATE widgets SET active = FALSE WHERE query_id=${params.query_id}`, (err, _) => {
 			if (err) {
 				console.log(err)
-				res.send({err})
-			} else {
-				widget_id && db.query(`update queries_to_dashboards set ? where widget_id=${widget_id}`, {
-					widget_id: result.insertId
-				}, (err, _) => {
-					if (err) console.log(err)
-				})
-				let msg = params.url ? 'Query shared!' : 'Query saved!'
-				result && res.send({msg, id: params.query_id})
 			}
+			db.query('INSERT INTO widgets SET ?', {...params, active: true}, (err, result) => {
+				if (err) {
+					console.log(err)
+					res.send({err})
+				} else {
+					widget_id && db.query(`update queries_to_dashboards set ? where widget_id=${widget_id}`, {
+						widget_id: result.insertId
+					}, (err, _) => {
+						if (err) console.log(err)
+					})
+					let msg = params.url ? 'Query shared!' : 'Query saved!'
+					result && res.send({msg, id: params.query_id})
+				}
+			})
+
 		})
 	}
 	const handleAddQuery = (req, res, db) => {
@@ -422,10 +428,7 @@ module.exports = function(app, passport, db) {
 		ON a.id=b.id
 		LEFT JOIN (
 					SELECT * FROM widgets
-					WHERE id IN (
-								SELECT MAX(id) AS id
-								FROM widgets 
-								GROUP BY query_id)
+					WHERE active = TRUE
 				  ) w 
 		ON w.query_id=a.id
 		WHERE a.published=true
@@ -455,10 +458,7 @@ module.exports = function(app, passport, db) {
 		FROM queries a
 		LEFT JOIN (
 					SELECT * FROM widgets
-					WHERE id IN (
-								SELECT MAX(id) AS id
-								FROM widgets 
-								GROUP BY query_id)
+					WHERE active = TRUE
 				) b 
 		ON a.id=b.query_id
 		WHERE a.account_id=?

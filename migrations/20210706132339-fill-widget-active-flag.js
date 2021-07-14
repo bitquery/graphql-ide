@@ -15,7 +15,10 @@ exports.setup = function(options, seedLink) {
 };
 
 exports.up = function(db) {
-  return runSql(`UPDATE widgets`)
+  return db.runSql(`UPDATE widgets AS s1
+    LEFT OUTER JOIN widgets AS s2
+      ON s1.query_id = s2.query_id AND s1.id < s2.id
+    SET s1.active = 1 WHERE s2.query_id IS NULL;`, err => console.log(err))
 };
 
 exports.down = function(db) {
