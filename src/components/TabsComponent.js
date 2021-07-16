@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { useCallback } from 'react'
 import { useHistory, useRouteMatch } from 'react-router-dom'
 import { getQuery, getWidget } from '../api/api'
-import {TabsStore, QueriesStore} from '../store/queriesStore'
+import {TabsStore, QueriesStore, UserStore} from '../store/queriesStore'
 import handleState from '../utils/handleState'
 import useEventListener from '../utils/useEventListener'
 import logo from '../assets/images/bitquery_logo_w.png'
@@ -11,6 +11,7 @@ import GraphqlIcon from './icons/GraphqlIcon'
 
 const TabsComponent = observer(() => {
 	const history = useHistory()
+	const { user } = UserStore
 	const { tabs, currentTab, switchTab, index } = TabsStore
 	const match = useRouteMatch(`${process.env.REACT_APP_IDE_URL}/:queryurl`)
 	const { setQuery, removeQuery, query, updateQuery, currentQuery, isLoaded, setIsLoaded } = QueriesStore
@@ -88,7 +89,8 @@ const TabsComponent = observer(() => {
 	}
 	const updateIfNeeded = () => {
 		if (editTabName && queryName[currentTab] && queryName[currentTab].length) {
-			queryName[currentTab]!==query[index].name && updateQuery({name: queryName[currentTab]}, index)
+			let newID = currentQuery.account_id === user?.id ? currentQuery.id : null
+			queryName[currentTab]!==query[index].name && updateQuery({name: queryName[currentTab]}, index, newID)
 		}
 	}
 	const renameQueryHandler = () => {
