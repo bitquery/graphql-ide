@@ -85,7 +85,8 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 				className="gallery__toggle fas fa-angle-double-right" 
 				onClick={()=>toggleSideBar(!showSideBar)}
 			/>}
-			{!currentQuery.id && <ToggleGroupEditor number={currentTab} isQuery={!currentQuery.layout} switchView={switchView} />}
+			{(!currentQuery.id && (currentQuery.account_id === user?.id || !currentQuery.account_id)) 
+				&& <ToggleGroupEditor number={currentTab} isQuery={!currentQuery.layout} switchView={switchView} />}
 			{dashboardOwner && !(!currentQuery.id || !currentQuery.saved) && currentQuery.layout &&
 				<button type="button" className="topBar__button" onClick={switchMode}>Edit</button>}
 			{(!currentQuery.id || !currentQuery.saved) && <button 

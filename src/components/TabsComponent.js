@@ -38,8 +38,6 @@ const TabsComponent = observer(() => {
 				if (typeof data === 'object') {
 					if (query.map(query=>query.id).indexOf(data.id) === -1) {
 						updateQuery({...data, variables: data.arguments, config: JSON.parse(data.config), saved: true}, index, data.id)
-						// setQuery({...data, variables: data.arguments, saved: true}, data.id)
-						// removeQuery(0)
 						setQueryName({[currentTab]: data.name})
 						setIsLoaded()
 					}
@@ -48,8 +46,6 @@ const TabsComponent = observer(() => {
 					if (typeof data === 'object') {
 						if (query.map(query=>query.id).indexOf(data.id) === -1) {
 							updateQuery({...data, variables: data.arguments, config: JSON.parse(data.config), saved: true}, index, data.id)
-							// setQuery({...data, variables: data.arguments, saved: true}, data.id)
-							// removeQuery(0)
 							setQueryName({[currentTab]: data.name})
 							setIsLoaded()
 						}
