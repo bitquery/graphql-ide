@@ -65,7 +65,6 @@ class Queries {
 			queryJustSaved: observable,
 			dashboardQuery: observable,
 			currentQuery: observable,
-			showGallery: observable,
 			showSideBar: observable,
 			isMobile: observable,
 			isLoaded: observable,
@@ -77,7 +76,6 @@ class Queries {
 			setCurrentVariables: action,
 			setDashboardQuery : action,
 			setCurrentQuery: action,
-			toggleGallery: action,
 			toggleSideBar: action,
 			setIsLoaded: action,
 			updateQuery: action,
@@ -160,11 +158,9 @@ class Queries {
 		})
 		TabsStore.removeTab(index)
 	}
-	toggleGallery = () => {
-		this.showGallery = !this.showGallery
-	}
 	toggleSideBar = state => {
 		this.showSideBar = state
+		setTimeout(() => window.dispatchEvent(new Event('resize')), 0)
 	}
 	setCurrentQuery = (id) => {
 		this.currentQuery = {...this.query[id]}

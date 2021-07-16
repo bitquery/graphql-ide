@@ -13,8 +13,8 @@ const GalleryComponent = observer(function GalleryComponent() {
 	const [dashboardQueries, setDashboardQueries] = useState([])
 	const [showAllQueries, toggleQueries] = useState(true)
 	const [showBuilder, toggleBuilder] = useState(false)
-	const { showGallery, currentQuery, 
-		toggleSideBar, toggleGallery, 
+	const { currentQuery, showSideBar,
+		toggleSideBar, 
 		queryJustSaved, updateQuery, schema } = QueriesStore
 	const { index } = TabsStore
 	const { user } = UserStore
@@ -77,7 +77,7 @@ const GalleryComponent = observer(function GalleryComponent() {
 				query={currentQuery.query}
 				onEdit={query=>updateQuery({query}, index)}
 				explorerIsOpen={showBuilder}
-				onToggleExplorer={toggleGallery}
+				onToggleExplorer={toggleSideBar}
 				onToggleSideBar={toggleSideBar}
 				getDefaultScalarArgValue={getDefaultScalarArgValue}
 				makeDefaultArg={makeDefaultArg}
@@ -101,7 +101,7 @@ const GalleryComponent = observer(function GalleryComponent() {
 
 	return (
 		<div className={'gallery flex flex-col active'}>
-			{!showGallery &&<i className="open fas fa-angle-double-right" onClick={toggleGallery} />}
+			{!showSideBar &&<i className="open fas fa-angle-double-right" onClick={()=>toggleSideBar(true)} />}
 			<div className="gallery__header flex flex-col">
 				<i className="gallery__close fas fa-angle-double-left" onClick={()=>toggleSideBar(false)} />
 					<ul className="nav nav-tabs">
