@@ -40,7 +40,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 	const { tabs, currentTab, index, jsonMode, codeMode } = TabsStore
 	const { user }  = UserStore
 	const { query, updateQuery, currentQuery, isMobile,
-		setMobile, showSideBar, schema, setSchema } = QueriesStore
+		setMobile, showSideBar, schema, setSchema, isLoaded } = QueriesStore
 	const [docExplorerOpen, toggleDocExplorer] = useState(false)
 	const [_variableToType, _setVariableToType] = useState(null)
 	const [loading, setLoading] = useState(false)
@@ -289,6 +289,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 	const setConfig = (config) => {
 		if (number === index) {
 			if (JSON.stringify(currentQuery.config) !== JSON.stringify(config)) {
+				console.log(config)
 				updateQuery({config}, index)
 				console.log('setconfig')
 			}
@@ -423,7 +424,7 @@ ${dependencies}
 						plugins={plugins}
 						number={number}
 					/>
-					{currentQuery.displayed_data ? <WidgetComponent.editor 
+					{(currentQuery.displayed_data && isLoaded) ? <WidgetComponent.editor 
 						model={dataModel}
 						displayedData={toJS(query[index].displayed_data)}
 						config={toJS(query[index].config)}
@@ -474,7 +475,7 @@ ${dependencies}
 				</div>
 				{docExplorerOpen && <DocExplorer schema={schema} />}
 			</div>
-			<DashboardReact plugins={plugins} number={number} id={number} query={query[index]} />
+			{isLoaded && <DashboardReact plugins={plugins} number={number} id={number} query={query[index]} />}
 		</div> 
 	)
 })

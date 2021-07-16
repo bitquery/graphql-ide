@@ -10,7 +10,7 @@ import ToggleGroupEditor from '../../ToggleGroupEditor'
 
 const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOpen, toggleDocExplorer}) => {
 	const { currentQuery, saveQuery, updateQuery, 
-		showSideBar, toggleSideBar } = QueriesStore
+		showSideBar, toggleSideBar, isLoaded } = QueriesStore
 	const { index, currentTab } = TabsStore
 	const { user }  = UserStore
 	const { toggleModal, toggleEditDialog } = modalStore
@@ -79,7 +79,7 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 		switchMode()
 		window.dispatchEvent(new Event('setInitialDashboard'))
 	}
-	const toolbar = !dashboardOwner ? null : <div className="topBarWrap">
+	const toolbar = (!dashboardOwner && !isLoaded) ? null : <div className="topBarWrap">
 		<div className="topBar">
 			{!showSideBar && <i 
 				className="gallery__toggle fas fa-angle-double-right" 

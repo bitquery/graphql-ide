@@ -13,10 +13,11 @@ const TabsComponent = observer(() => {
 	const history = useHistory()
 	const { tabs, currentTab, switchTab, index } = TabsStore
 	const match = useRouteMatch(`${process.env.REACT_APP_IDE_URL}/:queryurl`)
-	const { setQuery, removeQuery, query, updateQuery, currentQuery } = QueriesStore
+	const { setQuery, removeQuery, query, updateQuery, currentQuery, isLoaded, setIsLoaded } = QueriesStore
 	const [editTabName, setEditTabName] = useState(false)
 	const [queryName, setQueryName] = useState({[currentTab]: currentQuery.name})
 	const [x,setx] = useState(0)
+	const [loaded, setLoaded] = useState(false)
 
 	useEffect(() => {
 		x <=1 && setx(x => x + 1)
@@ -28,27 +29,35 @@ const TabsComponent = observer(() => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [currentQuery.url])
 	useEffect(() => {
-		if (!match) setx(2)
-		async function updateTabs() {
-			if (match) {
+		if (!match) {
+			setx(2)
+			setIsLoaded()
+		} else {
+			async function updateTabs() {
 				const { data } = await getWidget(match.params.queryurl)
 				if (typeof data === 'object') {
 					if (query.map(query=>query.id).indexOf(data.id) === -1) {
-						setQuery({...data, variables: data.arguments}, data.id)
+						updateQuery({...data, variables: data.arguments, config: JSON.parse(data.config), saved: true}, index, data.id)
+						// setQuery({...data, variables: data.arguments, saved: true}, data.id)
+						// removeQuery(0)
 						setQueryName({[currentTab]: data.name})
+						setIsLoaded()
 					}
 				} else {
 					const { data } = await getQuery(match.params.queryurl)
 					if (typeof data === 'object') {
 						if (query.map(query=>query.id).indexOf(data.id) === -1) {
-							setQuery({...data, variables: data.arguments}, data.id)
+							updateQuery({...data, variables: data.arguments, config: JSON.parse(data.config), saved: true}, index, data.id)
+							// setQuery({...data, variables: data.arguments, saved: true}, data.id)
+							// removeQuery(0)
 							setQueryName({[currentTab]: data.name})
+							setIsLoaded()
 						}
 					} 
 				}
 			}
+			updateTabs()
 		}
-		updateTabs()
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 	const editTabNameHandler = useCallback(({key}) => {
@@ -91,7 +100,7 @@ const TabsComponent = observer(() => {
 		updateIfNeeded()
 	}
 
-	return (
+	return isLoaded ? (
 		<div className="tabs">
 			<ul className="nav nav-tabs" >
 				<a href="https://bitquery.io" className="topBar__logo">
@@ -140,7 +149,17 @@ const TabsComponent = observer(() => {
 				><a href="# " className="nav-link"><i className="tab__add fas fa-plus"/></a></li>
 			</ul>
 		</div>
-	)
+	) : <div className="tabs">
+		<ul className="nav nav-tabs" >
+				<a href="https://bitquery.io" className="topBar__logo">
+					<img 
+						className="topBar__logo__img" 
+						src={logo}
+						alt="logo"
+					/>
+				</a>
+			</ul>
+	</div>
 })
 
 export default TabsComponent
