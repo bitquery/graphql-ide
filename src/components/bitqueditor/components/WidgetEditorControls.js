@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import WidgetSelect from './WidgetSelect'
 import DisplayedData from './DisplayedData'
+import ResponseDataType from './ResponseDataType'
 import { QueriesStore, TabsStore } from '../../../store/queriesStore'
 import { observer } from 'mobx-react-lite'
 
@@ -34,6 +35,7 @@ const WidgetEditorControls = observer(
 	} */
 	return (
 		<nav className="navbar navbar-expand-lg navbar-light bg-light">
+			<ResponseDataType />
 			<DisplayedData 
 				model={model}
 				number={number}
