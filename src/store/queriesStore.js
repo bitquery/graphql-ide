@@ -51,6 +51,7 @@ class Queries {
 	currentQuery = {
 		query: '',
 		variables: '{}',
+		data_type: 'response',
 		config: {},
 		endpoint_url: 'https://graphql.bitquery.io',
 		id: null
@@ -99,6 +100,7 @@ class Queries {
 			config: this.currentQuery.config,
 			widget_id: this.currentQuery.widget_id,
 			displayed_data: this.currentQuery.displayed_data,
+			data_type: this.currentQuery.data_type,
 			name: this.currentQuery.name && this.currentQuery.name,
 			description: this.currentQuery.description && this.currentQuery.description,
 			url: this.currentQuery.url && this.currentQuery.url,
@@ -132,6 +134,7 @@ class Queries {
 				: TabsStore.toggleMode('view')
 		}
 		if (typeof params.displayed_data === 'string') this.query[index].displayed_data = params.displayed_data
+		if (params.data_type) this.query[index].data_type = params.data_type
 		if (params.account_id) this.query[index].account_id = params.account_id
 		if (params.endpoint_url) this.query[index].endpoint_url = params.endpoint_url
 		if (params.url || params.url===null) this.query[index].url = params.url

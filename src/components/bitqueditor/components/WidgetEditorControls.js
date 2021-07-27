@@ -35,7 +35,10 @@ const WidgetEditorControls = observer(
 	} */
 	return (
 		<nav className="navbar navbar-expand-lg navbar-light bg-light">
-			<ResponseDataType />
+			<ResponseDataType 
+				dataSource={dataSource}
+				setDataSource={setDataSource}
+			/>
 			<DisplayedData 
 				model={model}
 				number={number}

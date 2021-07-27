@@ -139,7 +139,9 @@ const EditorInstance = observer(function EditorInstance({number})  {
 		const typeInfo = new TypeInfo(schema)
 		let typesMap = {}
 		const queryNodes = []
+		let flattenNodes = []
 		let depth = 0
+		let stop = false
 		let checkpoint = 0
 		let queryLength = 0
 		let visitor = {
@@ -148,6 +150,12 @@ const EditorInstance = observer(function EditorInstance({number})  {
 				if(node.kind === "Field") {
 					if (!depth && queryNodes.length) {
 						checkpoint = queryNodes.length
+						if (currentQuery.data_type === 'flatten') {
+							flattenNodes = queryNodes.map(node => node.replace(queryNodes[0], 'data'))
+							console.log(flattenNodes)
+							stop = true
+							return visitor.BREAK
+						}
 					}
 					if (node.alias) {
 						queryNodes.push(node.alias.value)
@@ -178,11 +186,21 @@ const EditorInstance = observer(function EditorInstance({number})  {
 					let arr = queryNodes.filter(node=> node.split('.').length === depth)
 					let index = queryNodes.indexOf(arr[arr.length-1])
 					depth--
-					typesMap[queryNodes[index]] = node
+					if (queryNodes[index] !== undefined) {
+						typesMap[queryNodes[index]] = node
+						if (flattenNodes.length) {
+							typesMap[flattenNodes[index]] = node
+						}
+					} 
 					//-------
 					if (queryLength <= 1) {
 						if (queryNodes[index].includes('.')) queryLength += 1
-						if (queryLength > 1) typesMap = {data: {typeInfo: 's'}, ...typesMap}
+						if (queryLength > 1) typesMap = {data: {typeInfo: '[data]'}, ...typesMap}
+					}
+					if (!depth && queryNodes.length) {
+						if (currentQuery.data_type === 'flatten') {
+							return visitor.BREAK
+						}
 					}
 				}
 				typeInfo.leave(node)
@@ -191,18 +209,61 @@ const EditorInstance = observer(function EditorInstance({number})  {
 		try {
 			visit(parseGql(query), visitWithTypeInfo(typeInfo, visitor))
 		} catch (e) {}
+		console.log(stop)
+		console.log(typesMap)
+		let flattenModel = {}
+		if (stop) {
+			Object.keys(typesMap).forEach((key, i) => {
+				flattenModel[flattenNodes[i]] = typesMap[key]
+			})
+			/* for (const prop of typesMap) {
+				let i = 0
+				flattenModel[flattenNodes[i]] = typesMap[prop]
+			} */
+			return flattenModel 
+		}
 		return typesMap
+	}
+
+	const flattenModelSetup = (model) => {
+		console.log('fuck')
+		if (model) {
+			/* console.log('model')
+			console.log(Object.keys(model).filter(key => !key.includes('.')).length > 1)
+			if (Object.keys(model).filter(key => !key.includes('.')).length > 1) {
+				
+			} */
+
+		}
 	}
 
 	const plugins = useMemo(()=> [JsonPlugin,  ...vegaPlugins, ...graphPlugins, ...timeChartPlugins, tablePlugin], [])
 	let indexx = plugins.map(plugin => plugin.id).indexOf(currentQuery.widget_id)
 	const WidgetComponent = indexx>=0 ? plugins[indexx] : plugins[0]
 
+	/* useEffect(() => {
+		if (dataSource.data_type === 'flatten') {
+			let model = {data: {typeInfo: '[data]'}}
+			for (const property in dataSource.values[0]) {
+				model[`data.${property}`] = {typeInfo: typeof dataSource.values[0][property]}
+			}
+			if (JSON.stringify(model) !== JSON.stringify(queryTypes)) {
+				setQueryTypes(model)
+			}
+		} else {
+			let queryType = getQueryTypes(currentQuery.query)
+			if (JSON.stringify(queryType) !== JSON.stringify(queryTypes)) {
+				setQueryTypes(queryType)
+			}
+		}
+	}, [JSON.stringify(dataSource.values)]) */
+
 	const getResult = useCallback(() => {
 		ReactTooltip.hide(executeButton.current)
 		setLoading(true)
 		let queryType = getQueryTypes(currentQuery.query)
 		console.log(queryType)
+		flattenModelSetup(queryType)
 		if (JSON.stringify(queryType) !== JSON.stringify(queryTypes)) {
 			setQueryTypes(queryType)
 		}
@@ -232,10 +293,22 @@ const EditorInstance = observer(function EditorInstance({number})  {
 					}
 					setConfig(cfg)
 				}
+				let values = null
+				if ('data' in json) {
+					if (currentQuery.displayed_data) {
+						if (currentQuery.data_type === 'flatten') {
+							values = flattenData(json.data)
+						} else {
+							values = getValueFrom(json.data, displayed_data)
+						}
+					} else {
+						values = json.data
+					}
+				}
 				setDataSource({
 					data: ('data' in json) ? json.data : null,
 					displayed_data: displayed_data || '',
-					values: ('data' in json) ? (currentQuery.displayed_data) ? columns.length ? columns : getValueFrom(json.data, displayed_data) : json.data : null,
+					values,
 					error: ('errors' in json) ? json.errors : null,
 					query: toJS(currentQuery.query), 
 					variables: toJS(currentQuery.variables)

@@ -47,11 +47,13 @@ module.exports = function(app, passport, db) {
 	}
 	const handleAddQuery = (req, res, db) => {
 		let sql = `INSERT INTO queries SET ?`
-		let params = {...req.body.params}
-		delete params.executed
-		delete params.config
-		delete params.widget_id
-		delete params.displayed_data
+		let {executed,
+			config,
+			widget_id,
+			displayed_data,
+			isDraggable,
+			isResizable,
+			data_type, ...params} = req.body.params
 		params.id = null
 		params.published = params.url ? true : null
 		db.query(sql, params, (err, result) => {
@@ -61,6 +63,7 @@ module.exports = function(app, passport, db) {
 			}
 			let newParam = {
 				displayed_data: req.body.params.displayed_data,
+				data_type: req.body.params.data_type,
 				query_id: result.insertId,
 				widget_id : req.body.params.widget_id,
 				config: JSON.stringify(req.body.params.config)
@@ -73,12 +76,13 @@ module.exports = function(app, passport, db) {
 			let params = {
 				name: req.body.params.name && req.body.params.name,
 				description: req.body.params.description && req.body.params.description,
-				arguments: req.body.params.arguments && req.body.params.arguments,
+				arguments: req.body.params.arguments ? req.body.params.arguments : req.body.params.variables,
 				query: req.body.params.query && req.body.params.query,
 				url: req.body.params.url ? req.body.params.url : null,
 				endpoint_url: req.body.params.endpoint_url,
 				updated_at: new Date()
 			}
+			console.log(params)
 			params.published = params.url ? true : null
 			db.query(`UPDATE queries SET ? where id=${req.body.params.id}`, params, (err, _) => {
 				if (err) console.log(err)
@@ -403,7 +407,7 @@ module.exports = function(app, passport, db) {
 	})
 	app.get('/api/getquery/:url', (req, res) => {
 		let sql = `
-			SELECT queries.*, widgets.id as widget_number, widgets.widget_id, widgets.config, widgets.displayed_data FROM queries
+			SELECT queries.*, widgets.id as widget_number, widgets.widget_id, widgets.config, widgets.displayed_data, widgets.data_type FROM queries
 			LEFT JOIN widgets 
 			ON widgets.query_id=queries.id
 			WHERE queries.url=?
@@ -423,7 +427,7 @@ module.exports = function(app, passport, db) {
 		if (checkActive) checkActive = 'Account activated!'
 		db.query(`
 		(SELECT a.*, COUNT(b.id) as number, w.id as widget_number,
-		w.widget_id, null as widget_ids, null as layout, w.config, w.displayed_data FROM queries a
+		w.widget_id, null as widget_ids, null as layout, w.config, w.displayed_data, w.data_type FROM queries a
 		LEFT JOIN query_logs b
 		ON a.id=b.id
 		LEFT JOIN (
@@ -439,7 +443,7 @@ module.exports = function(app, passport, db) {
 		rd.url, rd.name, rd.description , rd.published, rd.created_at , 
 		rd.deleted , rd.updated_at , null as endpoint_url,
 		null as number, null as widget_number,
-		null as widget_id, qtd.widget_id as widget_ids, rd.layout, null as displayed_data, null as config
+		null as widget_id, qtd.widget_id as widget_ids, rd.layout, null as displayed_data, null as data_type, null as config
 		FROM dashboards rd
 		LEFT JOIN (
 						SELECT dashboard_id, GROUP_CONCAT(widget_id SEPARATOR ',') as widget_id 
@@ -454,7 +458,7 @@ module.exports = function(app, passport, db) {
 	})
 	app.get('/api/getmyqueries', (req, res) => {
 		db.query(`
-		(SELECT a.*, b.displayed_data, b.widget_id, null as widget_ids, b.config, null as layout, b.id as widget_number
+		(SELECT a.*, b.displayed_data, b.data_type, b.widget_id, null as widget_ids, b.config, null as layout, b.id as widget_number
 		FROM queries a
 		LEFT JOIN (
 					SELECT * FROM widgets
@@ -467,7 +471,7 @@ module.exports = function(app, passport, db) {
 		(	SELECT rd.id, rd.account_id, null as query, null as arguments, 
 			rd.url, rd.name, rd.description , rd.published, rd.created_at , 
 			rd.deleted , rd.updated_at , null as endpoint_url, 
-			null as displayed_data, null as widget_id ,qtd.widget_id as widget_ids, null as config, rd.layout, null as widget_number
+			null as displayed_data, null as data_type, null as widget_id ,qtd.widget_id as widget_ids, null as config, rd.layout, null as widget_number
 			FROM dashboards rd
 			LEFT JOIN (
 				SELECT dashboard_id, GROUP_CONCAT(widget_id SEPARATOR ',') as widget_id 
