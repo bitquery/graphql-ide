@@ -139,7 +139,6 @@ const EditorInstance = observer(function EditorInstance({number})  {
 		const typeInfo = new TypeInfo(schema)
 		let typesMap = {}
 		const queryNodes = []
-		let flattenNodes = []
 		let depth = 0
 		let stop = false
 		let checkpoint = 0
@@ -151,8 +150,6 @@ const EditorInstance = observer(function EditorInstance({number})  {
 					if (!depth && queryNodes.length) {
 						checkpoint = queryNodes.length
 						if (currentQuery.data_type === 'flatten') {
-							flattenNodes = queryNodes.map(node => node.replace(queryNodes[0], 'data'))
-							console.log(flattenNodes)
 							stop = true
 							return visitor.BREAK
 						}
@@ -188,9 +185,6 @@ const EditorInstance = observer(function EditorInstance({number})  {
 					depth--
 					if (queryNodes[index] !== undefined) {
 						typesMap[queryNodes[index]] = node
-						if (flattenNodes.length) {
-							typesMap[flattenNodes[index]] = node
-						}
 					} 
 					//-------
 					if (queryLength <= 1) {
@@ -209,61 +203,37 @@ const EditorInstance = observer(function EditorInstance({number})  {
 		try {
 			visit(parseGql(query), visitWithTypeInfo(typeInfo, visitor))
 		} catch (e) {}
-		console.log(stop)
-		console.log(typesMap)
-		let flattenModel = {}
 		if (stop) {
+			let flattenModel = {}
 			Object.keys(typesMap).forEach((key, i) => {
-				flattenModel[flattenNodes[i]] = typesMap[key]
+				console.log(key, typesMap[key].typeInfo.toString(), i)
+				if (key === 'data') {
+					flattenModel[key] = typesMap[key]
+				} else if ( ['Int', 'String'].some(value => typesMap[key].typeInfo.toString().includes(value)) ) { 
+					let flatKey = key.includes('data') ? key : `${key.replace( key.split('.')[0], '' ).replace('[0]', '')}`
+					const splittedKey = flatKey.split('.')
+					if (splittedKey.length > 3) {
+						flatKey = `${splittedKey[splittedKey.length-2]}${splittedKey[splittedKey.length-1]}`
+					}
+					flatKey = `data.${flatKey.replaceAll('.', '')}`
+					flattenModel[flatKey] = {typeInfo: typesMap[key].typeInfo.toString()}
+				}
 			})
-			/* for (const prop of typesMap) {
-				let i = 0
-				flattenModel[flattenNodes[i]] = typesMap[prop]
-			} */
+			flattenModel['data.network'] = {typeInfo: 'String'}
 			return flattenModel 
 		}
 		return typesMap
-	}
-
-	const flattenModelSetup = (model) => {
-		console.log('fuck')
-		if (model) {
-			/* console.log('model')
-			console.log(Object.keys(model).filter(key => !key.includes('.')).length > 1)
-			if (Object.keys(model).filter(key => !key.includes('.')).length > 1) {
-				
-			} */
-
-		}
 	}
 
 	const plugins = useMemo(()=> [JsonPlugin,  ...vegaPlugins, ...graphPlugins, ...timeChartPlugins, tablePlugin], [])
 	let indexx = plugins.map(plugin => plugin.id).indexOf(currentQuery.widget_id)
 	const WidgetComponent = indexx>=0 ? plugins[indexx] : plugins[0]
 
-	/* useEffect(() => {
-		if (dataSource.data_type === 'flatten') {
-			let model = {data: {typeInfo: '[data]'}}
-			for (const property in dataSource.values[0]) {
-				model[`data.${property}`] = {typeInfo: typeof dataSource.values[0][property]}
-			}
-			if (JSON.stringify(model) !== JSON.stringify(queryTypes)) {
-				setQueryTypes(model)
-			}
-		} else {
-			let queryType = getQueryTypes(currentQuery.query)
-			if (JSON.stringify(queryType) !== JSON.stringify(queryTypes)) {
-				setQueryTypes(queryType)
-			}
-		}
-	}, [JSON.stringify(dataSource.values)]) */
-
 	const getResult = useCallback(() => {
 		ReactTooltip.hide(executeButton.current)
 		setLoading(true)
 		let queryType = getQueryTypes(currentQuery.query)
 		console.log(queryType)
-		flattenModelSetup(queryType)
 		if (JSON.stringify(queryType) !== JSON.stringify(queryTypes)) {
 			setQueryTypes(queryType)
 		}
