@@ -41,7 +41,8 @@ function TableWidgetEditor({model, config, setConfig, displayedData}) {
 		console.log('why update')
 		ignore = true
         let newColumns = [...columns]
-        newColumns[i-1] = {field: value.replace(`${displayedData}.`, ''), title: value}
+		const field = value.replace(`${displayedData}.`, '')
+        newColumns[i-1] = {field, title: field}
         setColumns(newColumns)
 		setConfig({columns: newColumns})
 		ignore = false

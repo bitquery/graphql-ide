@@ -11,6 +11,7 @@ import LinkComponent from './Gallery/LinkComponent'
 import { Dropdown } from 'react-bootstrap'
 import { ContentBlock } from './ContentBlock'
 import micromark from 'micromark'
+import { flattenData } from "./flattenData";
 const ReactGridLayout = WidthProvider(RGL);
 
 /**
@@ -165,41 +166,19 @@ const AddRemoveLayout = observer(
 						displayed_data: query.displayed_data,
 						key: 'BQYszZIuPSqM0E5UdhNVRIj7qvHTuGSL',
 						setupData: (json) => {
+							let values = null
 							if ('data' in json) {
-								let columns = []
-								if (query.displayed_data === 'data' && query.widget_id === 'table.widget' ) {
-									let config = []
-									const isObject = value => typeof value === 'object' && value !== null && !Array.isArray(value)
-									Object.keys(json.data).forEach(network => {
-										let row = { network }
-										Object.keys(json.data[network]).forEach((stat, i , arr) => {
-											let dataNetworkStats = json.data[network][stat][0]
-											Object.keys(dataNetworkStats).forEach(prop => {
-												if (isObject(dataNetworkStats[prop])) {
-													Object.keys(dataNetworkStats[prop]).forEach(nextprop => {
-														let property = { [`${stat}${prop}${nextprop}`] : dataNetworkStats[prop][nextprop] }
-														row = {...row, ...property}
-													})
-												} else {
-													let property = { [`${stat}${prop}`] : dataNetworkStats[prop] }
-													row = {...row, ...property}
-												}
-												
-											})
-										})
-										columns.push(row)
-									})
-									Object.keys(columns[0]).forEach(prop => {
-										let rowconfig = {title: prop, field: prop}
-										config.push(rowconfig)
-									})
-									return columns
+								if (query.displayed_data) {
+									if (query.data_type === 'flatten') {
+										values = flattenData(json.data)
+									} else {
+										values = getValueFrom(json.data, query.displayed_data)
+									}
 								} else {
-									return getValueFrom(json.data, query.displayed_data)
+									values = json.data
 								}
-							} else {
-								return null
 							}
+							return values
 						},
 						fetcher: function () {
 							let keyHeader = { 'X-API-KEY': this.key }
@@ -218,7 +197,6 @@ const AddRemoveLayout = observer(
 							)
 						}
 					}
-					console.log(cfg)
 					let currentId = query.widget_id === 'block.content' ? "ctn" + generateLink() : "n" + generateLink()
 					const updateAndRender = () => {
 						QueriesStore.updateQuery({
@@ -227,6 +205,7 @@ const AddRemoveLayout = observer(
 							content: this.state.content,
 							saved: this.state.saved
 						}, TabsStore.index)
+						console.log(dataSource, cfg)
 						query.widget_id !== 'block.content' &&	WidgetComponent.renderer(dataSource, cfg, id || currentId)
 					}
 					if (!id) {
