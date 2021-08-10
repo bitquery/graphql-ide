@@ -24,6 +24,10 @@ export const regenerateKey = key => axios.post('/api/regenerate', {key})
 
 export const getQuery = url => axios.get(`/api/getquery/${url}`)
 
+export const getAllQueries = () => axios.get('/api/getqueries')
+
+export const getMyQueries = () => axios.get('/api/getmyqueries')
+
 export const deleteQuery = (id, layout) => axios.post('/api/deletequery', 
 	{ id, layout }  
 )

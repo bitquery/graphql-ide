@@ -1,10 +1,10 @@
-import axios from 'axios'
 import { observer } from 'mobx-react-lite'
 import React, { useEffect, useState } from 'react'
 import { UserStore, QueriesStore, TabsStore } from '../store/queriesStore'
 import QueriesComponent from './Gallery/QueriesComponent'
 import { useToasts } from 'react-toast-notifications'
 import QueryBuilder from './Gallery/QueryBuilder/index'
+import { getAllQueries, getMyQueries } from '../api/api'
 import { makeDefaultArg, getDefaultScalarArgValue } from "./Gallery/QueryBuilder/CustomArgs"
 
 const GalleryComponent = observer(function GalleryComponent() {
@@ -31,41 +31,23 @@ const GalleryComponent = observer(function GalleryComponent() {
 		window.addEventListener('unauth', handler)
 		return () => window.removeEventListener('unauth', handler)
 	}, [addToast])
+	
 	useEffect(() => {
 		const getQueries = async () => {
-			try {
-				const { data } = await axios.get('/api/getqueries')
-				if (data.queries.length !== allQueries.length) {
-					setAllQueries({queries: data.queries})
-				}
-				data.msg && addToast('Account activated!', {appearance: 'success'})
-			} catch (e) {
-				console.log(e)
+			let [data1, data2] = await Promise.all([getAllQueries(), getMyQueries()])
+			if (data1.data.queries.length !== allQueries.length) {
+				setAllQueries({queries: data1.data.queries})
 			}
+			data1.data.msg && addToast('Account activated!', {appearance: 'success'})
+			if (data2.data.length !== myQueries.length) {
+				setMyQueries({queries: data2.data})
+			}
+			let dashboardQueries = [...data1.data.queries, ...data2.data].filter(query => !query.layout && query.widget_id !== 'json.widget' && query.widget_id)
+			setDashboardQueries({queries: dashboardQueries})
 		}
 		getQueries()
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [queryJustSaved])
-	useEffect(() => {
-		if (user) {
-			const getMyQueries = async () => {
-				try {
-					const { data } = await axios.get('/api/getmyqueries')
-					if (data.length !== myQueries.length) {
-						setMyQueries({queries: data})
-						let dashboardQueries = [...data]
-						dashboardQueries = dashboardQueries.filter(query => !query.layout && query.widget_id !== 'json.widget' && query.widget_id)
-						console.log(dashboardQueries)
-						setDashboardQueries({queries: dashboardQueries})
-					}
-				} catch (e) {
-					console.log(e)
-				}
-			}
-			getMyQueries()
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [user, queryJustSaved])
+	
 	let component = null
 	if (showBuilder) {
 		component = (

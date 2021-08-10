@@ -79,7 +79,7 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 		switchMode()
 		window.dispatchEvent(new Event('setInitialDashboard'))
 	}
-	const toolbar = (!dashboardOwner && !isLoaded) ? null : <div className="topBarWrap">
+	const toolbar = (!dashboardOwner || !isLoaded) ? null : <div className="topBarWrap">
 		<div className="topBar">
 			{!showSideBar && <i 
 				className="gallery__toggle fas fa-angle-double-right" 
