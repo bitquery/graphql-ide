@@ -3,7 +3,7 @@ import React, { useEffect } from 'react'
 function WidgetOptions({model, condition, value, setValue, title}) {
 	let optionValue = ''
 	useEffect(() => {
-		if (model) {
+		if (model && value) {
 			console.log('here', value, optionValue)
 			let list = Object.keys(model).filter(condition)
 			if (!value) setValue(list[0], title)

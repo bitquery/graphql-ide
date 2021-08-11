@@ -46,7 +46,6 @@ const EditorInstance = observer(function EditorInstance({number})  {
 	const [loading, setLoading] = useState(false)
 	const [queryTypes, setQueryTypes] = useState('')
 	const [dataSource, setDataSource] = useState({})
-	const [dataModel, setDataModel] = useState('')
 	const [accordance, setAccordance] = useState(true)
 	const [checkoutCode, setCheckOutCode] = useState('')
 	const debouncedURL = useDebounce(currentQuery.endpoint_url, 500)
@@ -65,24 +64,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 		executeButton.current.setAttribute('style', `left: calc(${execButt*100}% - 25px);`)
 		window.dispatchEvent(new Event('resize'))
 	}
-	useEffect(() => {
-		dataModel && setDataModel('')
-		// currentQuery.displayed_data === 'data' && setDataModel(queryTypes)
-		
-		if (queryTypes && currentQuery.displayed_data) {
-			if ('data' in queryTypes) {
-				for (let node in queryTypes) {
-					setDataModel(prev => {return {...prev, [node]: queryTypes[node]}})
-				}
-				return
-			}
-			for (let node in queryTypes) {
-				node.includes(currentQuery.displayed_data) &&
-					setDataModel(prev => {return {...prev, [node]: queryTypes[node]}})
-			}
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [queryTypes, currentQuery.displayed_data])
+	
 	const handleResizer = e => {
 		if (e.target && e.target.tagName) { 
 			if (e.target.tagName === 'IMG') return 
@@ -136,6 +118,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
     	overwrap.current.addEventListener('mouseup', onMouseUp);
 	}
 	const getQueryTypes = (query) => {
+		console.log('get model')
 		const typeInfo = new TypeInfo(schema)
 		let typesMap = {}
 		const queryNodes = []
@@ -175,6 +158,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 						}
 					}
 					depth++
+					// console.log(typeInfo.getFieldDef().name, typeInfo.getType().toString())
 					return {...node, typeInfo: typeInfo.getType()}
 				}
 			},
@@ -224,6 +208,35 @@ const EditorInstance = observer(function EditorInstance({number})  {
 		}
 		return typesMap
 	}
+
+	useEffect(() => {
+		if (number === index && !currentQuery.saved) {
+			const model = getQueryTypes(query[index].query)
+			setQueryTypes(model)
+		}
+	}, [currentQuery.data_type,currentQuery.saved, dataSource.values])
+
+	/* const convertToFlattenModel = model => {
+		const typesMap = model
+		let flattenModel = {}
+		Object.keys(typesMap).forEach((key, i) => {
+			console.log(key, typesMap[key].typeInfo.toString(), i)
+			if (key === 'data') {
+				flattenModel[key] = typesMap[key]
+			} else if ( ['Int', 'String'].some(value => typesMap[key].typeInfo.toString().includes(value)) ) { 
+				let flatKey = key.includes('data') ? key : `${key.replace( key.split('.')[0], '' ).replace('[0]', '')}`
+				const splittedKey = flatKey.split('.')
+				if (splittedKey.length > 3) {
+					flatKey = `${splittedKey[splittedKey.length-2]}${splittedKey[splittedKey.length-1]}`
+				}
+				flatKey = `data.${flatKey.replaceAll('.', '')}`
+				flattenModel[flatKey] = {typeInfo: typesMap[key].typeInfo.toString()}
+			}
+		})
+		flattenModel['data.network'] = {typeInfo: 'String'}
+		return flattenModel 
+	} */
+
 
 	const plugins = useMemo(()=> [JsonPlugin,  ...vegaPlugins, ...graphPlugins, ...timeChartPlugins, tablePlugin], [])
 	let indexx = plugins.map(plugin => plugin.id).indexOf(currentQuery.widget_id)
@@ -278,17 +291,18 @@ const EditorInstance = observer(function EditorInstance({number})  {
 			ReactTooltip.hide(executeButton.current)
 		})
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [JSON.stringify(currentQuery), schema])
+	}, [JSON.stringify(currentQuery), schema, JSON.stringify(queryTypes)])
 	useEffect(() => {
+		number === index && console.log(!dataSource.values, !!currentQuery.query, !!currentQuery.saved, number === index, !!schema);
 		(!dataSource.values && 
 		currentQuery.query &&
 		currentQuery.saved &&
 		number === index &&
 		schema) && getResult()
-		if (number === index && schema) {
+		/* if (number === index && schema) {
 			let queryType = getQueryTypes(query[index].query)
 			setQueryTypes(queryType)
-		}
+		} */
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [schema])
 	const editQueryHandler = useCallback(handleSubject => {
@@ -454,7 +468,7 @@ ${dependencies}
 						number={number}
 					/>
 					{(currentQuery.displayed_data && isLoaded) ? <WidgetComponent.editor 
-						model={dataModel}
+						model={queryTypes}
 						displayedData={toJS(query[index].displayed_data)}
 						config={toJS(query[index].config)}
 						setConfig={setConfig} 
