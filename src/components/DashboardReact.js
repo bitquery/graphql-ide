@@ -3,7 +3,7 @@ import { observer } from 'mobx-react'
 import RGL, { WidthProvider } from "react-grid-layout";
 import _ from "lodash";
 import { getValueFrom } from '../utils/common'
-import { TabsStore, QueriesStore } from '../store/queriesStore'
+import { TabsStore, QueriesStore, UserStore } from '../store/queriesStore'
 import { generateLink } from '../utils/common'
 import { getQueryForDashboard } from '../api/api'
 import Loader from "react-loader-spinner"
@@ -164,7 +164,7 @@ const AddRemoveLayout = observer(
 						query: query.query,
 						variables: query.arguments ? JSON.parse(query.arguments) : '',
 						displayed_data: query.displayed_data,
-						key: 'BQYszZIuPSqM0E5UdhNVRIj7qvHTuGSL',
+						key: UserStore.user ? UserStore.user.key : process.env.REACT_APP_IDE_GUEST_API_KEY,
 						setupData: (json) => {
 							let values = null
 							if ('data' in json) {
