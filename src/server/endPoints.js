@@ -87,6 +87,7 @@ module.exports = function(app, passport, db) {
 			db.query(`UPDATE queries SET ? where id=${req.body.params.id}`, params, (err, _) => {
 				if (err) console.log(err)
 				let newParam = {
+					data_type: req.body.params.data_type,
 					displayed_data: req.body.params.displayed_data,
 					query_id: req.body.params.id,
 					widget_id: req.body.params.widget_id,

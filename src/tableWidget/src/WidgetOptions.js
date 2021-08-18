@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react'
 
-function WidgetOptions({model, condition, value, setValue, title}) {
+function WidgetOptions({model, condition, value, setValue, title, displayedData}) {
 	let optionValue = ''
 	useEffect(() => {
-		if (model && value) {
+		if (model) {
 			console.log('here', value, optionValue)
 			let list = Object.keys(model).filter(condition)
 			if (!value) setValue(list[0], title)
@@ -22,7 +22,7 @@ function WidgetOptions({model, condition, value, setValue, title}) {
 			>
 				{Object.keys(model).length 
 					? Object.keys(model).map((node, i)=>condition(node)
-						? <option key={i} value={node}>{node}</option>
+						? <option key={i} value={node.replace(`${displayedData}.`, '')}>{node.replace(`${displayedData}.`, '')}</option>
 						: null
 					) : <option value={value}>{value}</option>
 						

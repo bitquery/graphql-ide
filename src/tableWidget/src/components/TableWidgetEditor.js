@@ -21,30 +21,29 @@ function TableWidgetEditor({model, config, setConfig, displayedData}) {
 			setColumnsNumber(config.columns.length)
 		}
 	}, [])
-	useEffect(() => {
-		if (!ignore) {
-			if (config && config.columns && config.columns.length) {
-				setColumns(config.columns)
-				setColumnsNumber(config.columns.length)
-			}
-		}
-	}, [JSON.stringify(config)])
-	useEffect(() => {
-		if (columnsNumber < columns.length) {
-			let updColumns = [...columns]
-			updColumns.pop()
+	
+	const updateColumnsNumber = value => {
+		setColumnsNumber(value)
+		const defColumn = {field: columns[0].field, title: columns[0].title}
+		if (value > columns.length) {
+			const newColumnsNumber = value - columns.length
+			const additionalColumns = Array(newColumnsNumber).fill({...defColumn})
+			setColumns(prev => {return [...prev, ...additionalColumns]})
+			setConfig({columns: [...columns, ...additionalColumns]})
+		} else {
+			const diff = columns.length - value
+			const updColumns = [...columns]
+			updColumns.splice(-diff, diff)
 			setConfig({columns: updColumns})
 		}
-	}, [columnsNumber])
-
+	}
     const updateColumns = (value, i) => {
-		console.log('why update')
-		ignore = true
-        let newColumns = [...columns]
-		newColumns[i-1] = {field: value.replace(`${displayedData}.`, ''), title: value}
-        setColumns(newColumns)
-		setConfig({columns: newColumns})
-		ignore = false
+		if (value) {
+			let newColumns = [...columns]
+			newColumns[i-1] = {field: value.replace(`${displayedData}.`, ''), title: value.replace(`${displayedData}.`, '')}
+			setColumns(newColumns)
+			setConfig({columns: newColumns})
+		}
     }
 	
 	return (
@@ -55,7 +54,7 @@ function TableWidgetEditor({model, config, setConfig, displayedData}) {
                 <select 
                     className="custom-select" 
                     value={columnsNumber} 
-                    onChange={e=>setColumnsNumber(+e.target.value)}
+                    onChange={e=>updateColumnsNumber(+e.target.value)}
                 >
                     {[...Array(10).keys()].map(i => i+1).map(number => <option key={number} value={number}> {number} </option>)}
                 </select>
@@ -63,7 +62,8 @@ function TableWidgetEditor({model, config, setConfig, displayedData}) {
                 {[...Array(columnsNumber).keys()].map(i => i+1).map(i => 
                     <WidgetOptions 
                         key={i}
-                        value={columns[i-1]?.title || ''}
+						displayedData={displayedData}
+                        value={columns[i-1]?.title.replace(`${displayedData}.`, '') || ''}
                         setValue={updateColumns}
                         condition={condition}
                         title={i}
