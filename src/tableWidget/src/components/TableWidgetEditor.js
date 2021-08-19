@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react'
-import { useFirstUpdate } from '../utils/useFirstUpdate'
 import WidgetOptions from '../WidgetOptions'
 
 function TableWidgetEditor({model, config, setConfig, displayedData}) {
@@ -12,7 +11,6 @@ function TableWidgetEditor({model, config, setConfig, displayedData}) {
 	}}
     const [columnsNumber, setColumnsNumber] = useState(1)
     const [columns, setColumns] = useState([])
-	let ignore = false
 	
 	//set options if query has config, only on mount
 	useEffect(() => {
@@ -34,6 +32,7 @@ function TableWidgetEditor({model, config, setConfig, displayedData}) {
 			const diff = columns.length - value
 			const updColumns = [...columns]
 			updColumns.splice(-diff, diff)
+			setColumns(updColumns)
 			setConfig({columns: updColumns})
 		}
 	}
