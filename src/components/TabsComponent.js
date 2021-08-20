@@ -129,7 +129,7 @@ const TabsComponent = observer(() => {
 											/>
 											<i className="fas fa-check" onClick={renameQueryHandler}/>
 										</>
-									: 	<span className={currentTab === tab.id ? 'cursor-edit' : undefined}
+									: 	<span className={'nav-link-title ' + (currentTab === tab.id ? 'cursor-edit' : undefined)}
 											onClick={()=>currentTab === tab.id && renameQueryHandler(currentTab, i)}
 										>
 											{(('saved' in query[i]) && query[i].saved) || !('saved' in query[i]) 
@@ -144,7 +144,7 @@ const TabsComponent = observer(() => {
 				<li 
 					className="nav-item"
 					onClick={addNewTabHandler}
-				><a href="# " className="nav-link"><i className="tab__add fas fa-plus"/></a></li>
+				><a href="# " className="nav-link nav-link-add"><i className="tab__add fas fa-plus"/></a></li>
 			</ul>
 		</div>
 	) : <div className="tabs">

@@ -49,7 +49,9 @@ const QueriesComponent = observer(function QueriesComponent({ queries }) {
 	
 	return (
 		('queries'in queries) && queries.queries.map((baseQuery, index) => (
-			<li className="list-group-item grid-stack-item droppable-element" key={index}
+			<li className={'list-group-item grid-stack-item droppable-element ' + 
+				((showDescription(hoverElementIndex, index) || queryIsOpen(baseQuery)) && 'flex-col text-break')}
+				key={index}
 				onMouseEnter={() => setHoverElementIndex(index)}
 				onMouseLeave={() => setHoverElementIndex(-1)}
 				onDragEnd={() => dragEnd(baseQuery)}

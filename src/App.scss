@@ -2,9 +2,6 @@
 	font-family: 'Nunito';
 	src: url('./assets/fonts/Nunito-Regular.ttf') format('truetype')
 }
-.icon {
-	margin-right: 0.5rem;
-}
 .cursor-pointer {
 	cursor: pointer;
 }
@@ -204,6 +201,10 @@
 		}
 		.list-group {
 			overflow: auto;
+			&-item {
+				display: flex;
+				flex: 1 0 auto;
+			}
 			&-item:first-child {
 				border-top: 0;
 			}
@@ -228,12 +229,21 @@
 				}
 			}
 			&__wrapper {
-				justify-content: space-between;
+				width: 100%;
+				&>i {
+					margin-right: .5rem;
+				}
+				&>.icon {
+					margin-right: .5rem;
+				}
 				button {
 					opacity: 0;
 				}
 				a {
 					cursor: pointer;
+					max-width: 90%;
+					overflow: hidden;
+					text-overflow: ellipsis;
 				}
 			}
 			position: relative;
@@ -769,8 +779,27 @@
   .enum-value {
 	color: #0B7FC7;
   }
-  .nav-link>i:first-child {
-		margin-right: .5rem;
+  .nav-link {
+	  display: flex;
+	  align-items: center;
+	  &-add {
+		  height: 100%;
+	  }
+	  &-title {
+		display: inline-block;
+		max-width: 150px;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	  }
+	  &>i:not(:last-child) {
+		  margin-right: .5rem;
+	  }
+	  &>.icon:not(:last-child) {
+		  margin-right: .5rem;
+	  }
+  }
+  .nav-link>i:not(:last-child) {
+	  margin-right: .5rem;
   }
   .item-container {
 	  border: 1px solid #dfdfdf;
