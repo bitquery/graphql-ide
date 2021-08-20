@@ -55,7 +55,6 @@ const AddRemoveLayout = observer(
 			this.qrh = this.qrh.bind(this)
 		}
 		async componentDidMount() {
-			console.log('dash mount')
 			if (TabsStore.currentTab === TabsStore.tabs[this.props.number].id) {
 				//------------------------------------
 				const queryString = window.location.search
@@ -66,11 +65,9 @@ const AddRemoveLayout = observer(
 					for (const entry of entries) {
 						args[entry[0]] = entry[1]
 					}
-					console.log(args)
 				}
 				//load by link && load from gallery
 				if (QueriesStore.currentQuery.id && QueriesStore.currentQuery.layout) {
-					console.log('db load')
 					const { data } = await getQueryForDashboard(QueriesStore.currentQuery.widget_ids, QueriesStore.currentQuery.id)
 					const layout = JSON.parse(QueriesStore.currentQuery.layout)
 					const layoutindexes = layout.map(i => i.i)
@@ -83,11 +80,19 @@ const AddRemoveLayout = observer(
 						dashboard_item_indexes[position] = data[i].query_index
 						widget_ids[position] = data[i].widget_number
 						queries[position] = data[i]
-						if (Object.keys(args).length) queries[position].arguments = JSON.stringify(args)
-						console.log(data[i])
-						console.log(data[i].config)
+						let queryArguments = JSON.parse(queries[position].arguments)
+						if (Object.keys(args).length) {
+							for (const arg in args) {
+								Object.keys(queryArguments).forEach(queryArg => {
+									if (queryArg === arg) {
+										queryArguments[queryArg] = isNaN(+args[arg]) ? args[arg] : +args[arg]
+									}
+								})
+							}
+							queries[position].arguments = JSON.stringify(queryArguments)
+						}
+						// if (Object.keys(args).length) queries[position].arguments = JSON.stringify(args)
 						const cfg = JSON.parse(data[i].config)
-						console.log(cfg)
 						if (cfg.content) content[position] = cfg.content
 					}
 					this.setState({
@@ -137,7 +142,6 @@ const AddRemoveLayout = observer(
 		}
 		updateInitialDashboard = () => {
 			if (TabsStore.currentTab === TabsStore.tabs[this.props.number]?.id) {
-				console.log('update initial dashboard', this.state.layout.layout)
 				this.setState({
 					initialItems: this.state.layout.layout,
 					initialLayout: this.state.layout.layout,
@@ -152,10 +156,8 @@ const AddRemoveLayout = observer(
 			if (TabsStore.currentTab === TabsStore.tabs[this.props.number]?.id && (QueriesStore.currentQuery.isDraggable || this.state.saved) || (QueriesStore.currentQuery.layout && !QueriesStore.currentQuery.id)) {
 				
 				const query = e.detail ? e.detail : e
-				console.log('ololo', query)
 				const repeatProtector = this.state.saved ? true : !this.state.widget_ids.includes(query.widget_number)
 				let cfg = typeof query.config === 'string' ? JSON.parse(query.config) : query.config
-				console.log(cfg)
 				if (query.widget_id !== 'json.widget' && query.widget_id && repeatProtector) {
 					let indexx = this.props.plugins.map(plugin => plugin.id).indexOf(query.widget_id)
 					const WidgetComponent = indexx >= 0 ? this.props.plugins[indexx] : this.props.plugins[0]
@@ -205,7 +207,6 @@ const AddRemoveLayout = observer(
 							content: this.state.content,
 							saved: this.state.saved
 						}, TabsStore.index)
-						console.log(dataSource, cfg)
 						query.widget_id !== 'block.content' &&	WidgetComponent.renderer(dataSource, cfg, id || currentId)
 					}
 					if (!id) {
@@ -228,8 +229,6 @@ const AddRemoveLayout = observer(
 		}
 		queryUrl = queryUrl => queryUrl ? `${process.env.REACT_APP_IDE_URL}/${queryUrl}` : `${process.env.REACT_APP_IDE_URL}`
 		onEditBlockContent({content}, index) {
-			console.log(content)
-			console.log(micromark(content))
 			const queries = [...this.state.queries]
 			queries[index].content = content
 			const workContent = [...this.state.content]
@@ -301,7 +300,6 @@ const AddRemoveLayout = observer(
 		}
 
 		onRemoveItem(i) {
-			console.log("removing", i);
 			const index = this.state.items.map(item => item.i).indexOf(i)
 			const widget_ids = [...this.state.widget_ids]
 			let dashboard_item_indexes = [...this.state.dashboard_item_indexes]
@@ -323,7 +321,6 @@ const AddRemoveLayout = observer(
 		}
 
 		onLayoutChange(layout) {
-			console.log(layout)
 			this.setState({ layout })
 			QueriesStore.updateQuery({
 				layout: layout.layout,
