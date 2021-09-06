@@ -113,6 +113,7 @@ class Queries {
 	setMobile = (mobile) => this.isMobile = mobile
 	setQuery = (params, id) => {
 		this.query.push({ id: id ? id : null })
+		this.query[this.query.length-1].data_type = 'response'
 		if (this.query[this.query.length-1].id && !('saved' in params)) 
 			{this.query[this.query.length-1].saved = true}
 		this.query[this.query.length-1] = {...this.query[this.query.length-1], ...params}
