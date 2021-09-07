@@ -61,6 +61,7 @@ function TableWidgetEditor({model, config, setConfig, displayedData}) {
                 {[...Array(columnsNumber).keys()].map(i => i+1).map(i => 
                     <WidgetOptions 
                         key={i}
+						config={config}
 						displayedData={displayedData}
                         value={columns[i-1]?.title.replace(`${displayedData}.`, '') || ''}
                         setValue={updateColumns}

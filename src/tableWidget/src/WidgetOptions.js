@@ -1,10 +1,9 @@
 import React, { useEffect } from 'react'
 
-function WidgetOptions({model, condition, value, setValue, title, displayedData}) {
+function WidgetOptions({model, condition, value, setValue, title, displayedData, config}) {
 	let optionValue = ''
 	useEffect(() => {
-		if (model) {
-			console.log('here', value, optionValue)
+		if (model && !Object.keys(config).length) {
 			let list = Object.keys(model).filter(condition)
 			if (!value) setValue(list[0], title)
 			else if (value !== optionValue) setValue(value, title)
