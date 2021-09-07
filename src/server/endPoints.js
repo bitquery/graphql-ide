@@ -165,9 +165,10 @@ module.exports = function(app, passport, db) {
 			url: req.body.url,
 			description: req.body.description,
 			published: req.body.url ? true : false,
-			deleted: req.body.deleted,
+			deleted: req.body.deleted || 0,
 			updated_at: new Date()
 		}, (err, res) => {
+			if (err) console.log(err)
 			if (req.body.content.length) {
 				let widget_ids = [...req.body.widget_ids]
 				db.query(`DELETE FROM queries_to_dashboards 
