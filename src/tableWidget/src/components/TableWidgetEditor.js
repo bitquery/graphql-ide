@@ -36,13 +36,22 @@ function TableWidgetEditor({model, config, setConfig, displayedData}) {
 			setConfig({columns: updColumns})
 		}
 	}
-    const updateColumns = (value, i) => {
+    const updateColumns = ({value, title, link}, i) => {
+		console.log(title)
+		let newColumns = [...columns]
 		if (value) {
-			let newColumns = [...columns]
-			newColumns[i-1] = {field: value.replace(`${displayedData}.`, ''), title: value.replace(`${displayedData}.`, '')}
-			setColumns(newColumns)
-			setConfig({columns: newColumns})
+			newColumns[i-1] = {field: value.replace(`${displayedData}.`, ''), 
+				title: title || value.replace(`${displayedData}.`, '')}
+		} else if (title || title === '') {
+			newColumns[i-1].title = title
 		}
+		newColumns[i-1].titleFormatter = link ? 'link' : null
+		newColumns[i-1].titleFormatterParams = link ? {
+			url: link,
+			target:"_blank",
+		} : null
+		setColumns(newColumns)
+		setConfig({columns: newColumns})
     }
 	
 	return (
@@ -63,10 +72,12 @@ function TableWidgetEditor({model, config, setConfig, displayedData}) {
                         key={i}
 						config={config}
 						displayedData={displayedData}
-                        value={columns[i-1]?.title.replace(`${displayedData}.`, '') || ''}
+                        value={columns[i-1]?.field || ''}
                         setValue={updateColumns}
                         condition={condition}
                         title={i}
+						customTitle={columns[i-1]?.title}
+						columnLink={columns[i-1]?.titleFormatterParams?.url}
                         model={model}
                     />)}
 				

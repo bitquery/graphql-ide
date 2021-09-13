@@ -1,12 +1,12 @@
 import React, { useEffect } from 'react'
 
-function WidgetOptions({model, condition, value, setValue, title, displayedData, config}) {
+function WidgetOptions({model, condition, value, setValue, title, displayedData, config, customTitle, columnLink}) {
 	let optionValue = ''
 	useEffect(() => {
 		if (model && !Object.keys(config).length) {
 			let list = Object.keys(model).filter(condition)
-			if (!value) setValue(list[0], title)
-			else if (value !== optionValue) setValue(value, title)
+			if (!value) setValue({value: list[0]}, title)
+			else if (value !== optionValue) setValue({value}, title)
 		}
 	}, [JSON.stringify(model)])
 
@@ -16,7 +16,7 @@ function WidgetOptions({model, condition, value, setValue, title, displayedData,
 			<select 
 				className="custom-select" 
 				value={value} 
-				onChange={(e=>setValue(e.target.value, title))}
+				onChange={(e=>setValue({value: e.target.value}, title))}
 				ref={select => optionValue = select?.value}
 			>
 				{Object.keys(model).length 
@@ -27,6 +27,18 @@ function WidgetOptions({model, condition, value, setValue, title, displayedData,
 						
 				}
 			</select>
+			<input
+				type="text" className="form-control"
+				placeholder="Title"
+				value={customTitle}
+				onChange={e=>setValue({title: e.target.value}, title)}
+			/>
+			<input
+				type="text" class="form-control"
+				placeholder="Column link"
+				value={columnLink}
+				onChange={e=>setValue({link: e.target.value}, title)}
+			/>
 		</div>
 	)
 }
