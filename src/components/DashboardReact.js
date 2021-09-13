@@ -81,7 +81,8 @@ const AddRemoveLayout = observer(
 						widget_ids[position] = data[i].widget_number
 						queries[position] = data[i]
 						let queryArguments = JSON.parse(queries[position].arguments)
-						if (Object.keys(args).length) {
+						console.log(queryArguments)
+						if (Object.keys(args).length && queryArguments) {
 							for (const arg in args) {
 								Object.keys(queryArguments).forEach(queryArg => {
 									if (queryArg === arg) {
