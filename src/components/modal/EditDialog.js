@@ -4,7 +4,6 @@ import { useRouteMatch } from 'react-router-dom'
 import { useToasts } from 'react-toast-notifications'
 import modalStore from '../../store/modalStore'
 import { QueriesStore, TabsStore } from '../../store/queriesStore'
-import { generateLink } from '../../utils/common'
 import copy from 'copy-to-clipboard'
 import { deleteQuery } from '../../api/api'
 import { useEffect } from 'react'
@@ -30,7 +29,7 @@ function EditDialog({active}) {
 	}
 	useEffect(() => {
 		if (shared && !currentQuery.url) {
-			setQueryUrl(generateLink())
+			setQueryUrl(name.trim().replaceAll(' ', '-').replace(/[^a-zA-Z0-9-_]/g, ''))
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [shared])
