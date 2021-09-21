@@ -56,31 +56,30 @@ function TableWidgetEditor({model, config, setConfig, displayedData}) {
 	
 	return (
 		<div className="widget">
-			<div className="widget-editor">
-            <div className="widget-option"> 
-                <label>Number of columns</label>
-                <select 
-                    className="custom-select" 
-                    value={columnsNumber} 
-                    onChange={e=>updateColumnsNumber(+e.target.value)}
-                >
-                    {[...Array(10).keys()].map(i => i+1).map(number => <option key={number} value={number}> {number} </option>)}
-                </select>
-            </div>
-                {[...Array(columnsNumber).keys()].map(i => i+1).map(i => 
-                    <WidgetOptions 
-                        key={i}
+			<div className="table-widget-editor">
+				<div className="widget-option"> 
+					<label>Number of columns</label>
+					<select 
+						className="custom-select" 
+						value={columnsNumber} 
+						onChange={e=>updateColumnsNumber(+e.target.value)}
+					>
+						{[...Array(10).keys()].map(i => i+1).map(number => <option key={number} value={number}> {number} </option>)}
+					</select>
+				</div>
+				{[...Array(columnsNumber).keys()].map(i => i+1).map(i => 
+					<WidgetOptions 
+						key={i}
 						config={config}
 						displayedData={displayedData}
-                        value={columns[i-1]?.field || ''}
-                        setValue={updateColumns}
-                        condition={condition}
-                        title={i}
+						value={columns[i-1]?.field || ''}
+						setValue={updateColumns}
+						condition={condition}
+						title={i}
 						customTitle={columns[i-1]?.title}
 						columnLink={columns[i-1]?.titleFormatterParams?.url}
-                        model={model}
-                    />)}
-				
+						model={model}
+				/>)}
 			</div>
 		</div>
 	)

@@ -127,6 +127,19 @@ $top-bar-height: 44px;
     top: -44px;
   }
 }
+.table-widget-editor {
+  display: flex;
+  overflow: auto;
+  height: 100%;
+  width: 100%;
+  padding: 10px 10px 0;
+  .widget-option {
+    min-width: 200px;
+    * {
+      width: 100%;
+    }
+  }
+}
 .widget-editor {
   display: flex;
   flex-flow: column wrap;

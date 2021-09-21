@@ -14,7 +14,7 @@ function WidgetOptions({model, condition, value, setValue, title, displayedData,
 		<div className="widget-option"> 
 			<label>Column {title}</label>
 			<select 
-				className="custom-select" 
+				className="custom-select mb-1" 
 				value={value} 
 				onChange={(e=>setValue({value: e.target.value}, title))}
 				ref={select => optionValue = select?.value}
@@ -28,13 +28,13 @@ function WidgetOptions({model, condition, value, setValue, title, displayedData,
 				}
 			</select>
 			<input
-				type="text" className="form-control"
+				type="text" className="form-control mb-1"
 				placeholder="Title"
 				value={customTitle}
 				onChange={e=>setValue({title: e.target.value}, title)}
 			/>
 			<input
-				type="text" class="form-control"
+				type="text" class="form-control mb-1"
 				placeholder="Column link"
 				value={columnLink}
 				onChange={e=>setValue({link: e.target.value}, title)}
