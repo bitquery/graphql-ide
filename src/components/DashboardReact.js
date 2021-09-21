@@ -66,7 +66,7 @@ const AddRemoveLayout = observer(
 						args[entry[0]] = entry[1]
 					}
 				}
-				if ('javascript' in QueriesStore.currentQuery && 'preprocessing' in QueriesStore.currentQuery.javascript) {
+				if (QueriesStore.currentQuery.javascript && 'preprocessing' in QueriesStore.currentQuery.javascript) {
 					const preprocessing = new Function('args', QueriesStore.currentQuery.javascript.preprocessing)
 					preprocessing(args)
 				}

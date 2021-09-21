@@ -25,6 +25,7 @@ const QueriesComponent = observer(function QueriesComponent({ queries }) {
 			}
 			let newQuery = {...data}
 			if ('layout' in newQuery) newQuery = {...newQuery, isDraggable: false, isResizable: false}
+			if ('javascript' in newQuery) newQuery = {...newQuery, javascript: JSON.parse(newQuery.javascript)}
 			setQuery(newQuery, queryFromGallery.id)
 		} else {
 			let tabID = query.map(query => query.id).indexOf(queryFromGallery.id)

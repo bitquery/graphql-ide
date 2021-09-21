@@ -426,7 +426,7 @@ module.exports = function(app, passport, db) {
 		req.session.active = null
 		if (checkActive) checkActive = 'Account activated!'
 		db.query(`
-		(SELECT a.*, COUNT(b.id) as number, w.id as widget_number,
+		(SELECT a.*, COUNT(b.id) as number, w.id as widget_number, null as javascript,
 		w.widget_id, null as widget_ids, null as layout, w.config, w.displayed_data, w.data_type FROM queries a
 		LEFT JOIN query_logs b
 		ON a.id=b.id
@@ -442,7 +442,7 @@ module.exports = function(app, passport, db) {
 		(	SELECT rd.id, rd.account_id, null as query, null as arguments, 
 		rd.url, rd.name, rd.description , rd.published, rd.created_at , 
 		rd.deleted , rd.updated_at , null as endpoint_url,
-		null as number, null as widget_number,
+		null as number, null as widget_number, rd.javascript,
 		null as widget_id, qtd.widget_id as widget_ids, rd.layout, null as displayed_data, null as data_type, null as config
 		FROM dashboards rd
 		LEFT JOIN (
@@ -458,29 +458,29 @@ module.exports = function(app, passport, db) {
 	})
 	app.get('/api/getmyqueries', (req, res) => {
 		db.query(`
-		(SELECT a.*, b.displayed_data, b.data_type, b.widget_id, null as widget_ids, b.config, null as layout, b.id as widget_number
-		FROM queries a
-		LEFT JOIN (
-					SELECT * FROM widgets
-					WHERE active = TRUE
-				) b 
-		ON a.id=b.query_id
-		WHERE a.account_id=?
-		AND a.deleted=false)
-		UNION
-		(	SELECT rd.id, rd.account_id, null as query, null as arguments, 
-			rd.url, rd.name, rd.description , rd.published, rd.created_at , 
-			rd.deleted , rd.updated_at , null as endpoint_url, 
-			null as displayed_data, null as data_type, null as widget_id ,qtd.widget_id as widget_ids, null as config, rd.layout, null as widget_number
-			FROM dashboards rd
+		(SELECT a.*, null as javascript, b.displayed_data, b.data_type, b.widget_id, null as widget_ids, b.config, null as layout, b.id as widget_number
+			FROM queries a
 			LEFT JOIN (
-				SELECT dashboard_id, GROUP_CONCAT(widget_id SEPARATOR ',') as widget_id 
-				FROM queries_to_dashboards
-				GROUP BY dashboard_id
-			) qtd
-			ON qtd.dashboard_id = rd.id
-			WHERE rd.account_id = ?
-			AND rd.deleted = false ) ORDER BY updated_at DESC`, [req.session.passport.user, req.session.passport.user], (err, queries) => {
+						SELECT * FROM widgets
+						WHERE active = TRUE
+					) b 
+			ON a.id=b.query_id
+			WHERE a.account_id=?
+			AND a.deleted=false)
+			UNION
+			(	SELECT rd.id, rd.account_id, null as query, null as arguments, 
+				rd.url, rd.name, rd.description , rd.published, rd.created_at , 
+				rd.deleted , rd.updated_at , null as endpoint_url, rd.javascript,
+				null as displayed_data, null as data_type, null as widget_id ,qtd.widget_id as widget_ids, null as config, rd.layout, null as widget_number
+				FROM dashboards rd
+				LEFT JOIN (
+					SELECT dashboard_id, GROUP_CONCAT(widget_id SEPARATOR ',') as widget_id 
+					FROM queries_to_dashboards
+					GROUP BY dashboard_id
+				) qtd
+				ON qtd.dashboard_id = rd.id
+				WHERE rd.account_id = ?
+				AND rd.deleted = false ) ORDER BY updated_at DESC`, [req.session.passport.user, req.session.passport.user], (err, queries) => {
 				if (err) console.log(err)
 				res.send(queries)
 		})
