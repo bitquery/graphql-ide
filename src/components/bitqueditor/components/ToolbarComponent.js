@@ -13,10 +13,11 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 		showSideBar, toggleSideBar, isLoaded } = QueriesStore
 	const { index, currentTab } = TabsStore
 	const { user }  = UserStore
-	const { toggleModal, toggleEditDialog } = modalStore
+	const { toggleModal, toggleEditDialog, toggleDashboardSettings } = modalStore
 	const { addToast } = useToasts()
 	const [mode, setMode] = useState(false)
 	const [dashboardOwner,setOwner] = useState(false)
+	const isDashboardNotSaved = dashboardOwner && !(!currentQuery.id || !currentQuery.saved) && currentQuery.layout
 	useEffect(() => {
 		if (((currentQuery.layout && (currentQuery.account_id === user?.id)) || !currentQuery.id) || !currentQuery.layout) {
 			setOwner(true)
@@ -29,6 +30,10 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 	}, [user, JSON.stringify(currentQuery)])
 	const handleInputURLChange = e => {
 		updateQuery({endpoint_url: e.target.value}, index)
+	}
+	const openDashboardSettings = () => {
+		toggleDashboardSettings()
+		toggleModal()
 	}
 	const switchView = () => {
 		const layout = currentQuery.layout ? null : {}
@@ -87,8 +92,8 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 			/>}
 			{(!currentQuery.id && (currentQuery.account_id === user?.id || !currentQuery.account_id)) 
 				&& <ToggleGroupEditor number={currentTab} isQuery={!currentQuery.layout} switchView={switchView} />}
-			{dashboardOwner && !(!currentQuery.id || !currentQuery.saved) && currentQuery.layout &&
-				<button type="button" className="topBar__button" onClick={switchMode}>Edit</button>}
+			{dashboardOwner && !(!currentQuery.id || !currentQuery.saved) && currentQuery.layout 
+				&& <button type="button" className="topBar__button" onClick={switchMode}>Edit</button>}
 			{(!currentQuery.id || !currentQuery.saved) && <button 
 				className="topBar__button" 
 				onClick={saveHandle}
@@ -105,6 +110,8 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 					style={{border: '1px dashed #c0c0c0', padding: '3px'}}
 					onDragStart={e => e.dataTransfer.setData("text/plain", "block.content")}
 				>Text Block</div>}
+			{dashboardOwner && !(!currentQuery.id || currentQuery.saved) && currentQuery.layout 
+				&& <button type="button" className="topBar__button" onClick={openDashboardSettings}>Settings</button>}
 			{!currentQuery.layout && <button className="topBar__button"
 				onClick={prettifyQuery}
 			>

@@ -125,6 +125,7 @@ class Queries {
 		TabsStore.addNewTab(params.name)
 	}
 	updateQuery = (params, index, id) => {
+		console.log(params)
 		if (params.query) this.query[index].query = params.query
 		if (params.variables) this.query[index].variables = params.variables
 		if (params.config) this.query[index].config = params.config
@@ -143,6 +144,7 @@ class Queries {
 			this.query[index].name = params.name || this.query[index].name
 			TabsStore.renameCurrentTab(params.name)
 		}
+		if (params.javascript) this.query[index].javascript = params.javascript
 		if (params.description) this.query[index].description = params.description || this.query[index].description
 		if (params.widget_ids) this.query[index].widget_ids = params.widget_ids
 		if (params.dashboard_item_indexes) this.query[index].dashboard_item_indexes = params.dashboard_item_indexes

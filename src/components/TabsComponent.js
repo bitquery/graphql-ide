@@ -38,7 +38,7 @@ const TabsComponent = observer(() => {
 				const { data } = await getWidget(match.params.queryurl)
 				if (typeof data === 'object') {
 					if (query.map(query=>query.id).indexOf(data.id) === -1) {
-						updateQuery({...data, variables: data.arguments, config: JSON.parse(data.config), saved: true}, index, data.id)
+						updateQuery({...data, variables: data.arguments, config: JSON.parse(data.config), javascript: JSON.parse(data.javascript),  saved: true}, index, data.id)
 						setQueryName({[currentTab]: data.name})
 						setIsLoaded()
 					}

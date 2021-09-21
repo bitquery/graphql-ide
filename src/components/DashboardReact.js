@@ -30,7 +30,6 @@ const AddRemoveLayout = observer(
 
 		constructor(props) {
 			super(props);
-
 			this.state = {
 				menuActive: null,
 				dashboard_id: null,
@@ -54,6 +53,7 @@ const AddRemoveLayout = observer(
 			this.onEditBlockContent = this.onEditBlockContent.bind(this)
 			this.qrh = this.qrh.bind(this)
 		}
+
 		async componentDidMount() {
 			if (TabsStore.currentTab === TabsStore.tabs[this.props.number].id) {
 				//------------------------------------
@@ -66,6 +66,10 @@ const AddRemoveLayout = observer(
 						args[entry[0]] = entry[1]
 					}
 				}
+				if ('javascript' in QueriesStore.currentQuery && 'preprocessing' in QueriesStore.currentQuery.javascript) {
+					const preprocessing = new Function('args', QueriesStore.currentQuery.javascript.preprocessing)
+					preprocessing(args)
+				}
 				//load by link && load from gallery
 				if (QueriesStore.currentQuery.id && QueriesStore.currentQuery.layout) {
 					const { data } = await getQueryForDashboard(QueriesStore.currentQuery.widget_ids, QueriesStore.currentQuery.id)
@@ -76,6 +80,8 @@ const AddRemoveLayout = observer(
 					let queries = []
 					let content = []
 					for (let i = 0; i < data.length; i++) {
+						
+						console.log('argsis', args)
 						const position = layoutindexes.indexOf(data[i].query_index)
 						dashboard_item_indexes[position] = data[i].query_index
 						widget_ids[position] = data[i].widget_number
@@ -118,6 +124,10 @@ const AddRemoveLayout = observer(
 				else {
 					this.setState({ saved: false })
 				}
+				/* if ('javascript' in QueriesStore.currentQuery && 'postprocessing' in QueriesStore.currentQuery.javascript) {
+					const postprocessing = new Function('args', QueriesStore.currentQuery.javascript.postprocessing)
+					postprocessing(args)
+				} */
 				window.addEventListener('query-request', this.qrh)
 				window.addEventListener('setInitialDashboard', this.setInitialDashboard)
 				window.addEventListener('updateInitialDashboard', this.updateInitialDashboard)

@@ -9,6 +9,7 @@ import SaveQueryFrom from './SaveQueryForm'
 import modalStore from '../../store/modalStore'
 import ForgotPasswordForm from './ForgotPasswordForm'
 import ChangePasswordForm from './ChangePasswordForm'
+import DashbaordSettings from './DashbaordSettings'
 
 const customStyles = {
 	overlay: {
@@ -46,10 +47,10 @@ const ModalWindow = observer(() => {
 	const { 
 		registerIsOpen, loginIsOpen, modalIsOpen,
 		saveQueryIsOpen, editDialogIsOpen, apiKeyIsOpen,
-		forgotPasswordIsOpen, changePasswordIsOpen,
+		forgotPasswordIsOpen, changePasswordIsOpen, dashboardSettingsIsOpen,
 		toggleModal, toggleLogin, toggleRegister, 
 		toggleSaveQuery, toggleEditDialog, toggleApiKey,
-		toggleForgotPassword, toggleChangePassword 
+		toggleForgotPassword, toggleChangePassword, toggleDashboardSettings
 	} = modalStore
 	
 	const onRequestClose = () => {
@@ -61,6 +62,7 @@ const ModalWindow = observer(() => {
 		editDialogIsOpen && toggleEditDialog()
 		forgotPasswordIsOpen && toggleForgotPassword()
 		changePasswordIsOpen && toggleChangePassword()
+		dashboardSettingsIsOpen && toggleDashboardSettings()
 	}
     return (
 		<Modal
@@ -76,6 +78,7 @@ const ModalWindow = observer(() => {
 			<SaveQueryFrom  active={saveQueryIsOpen} />
 			<ChangePasswordForm active={changePasswordIsOpen} />
 			<ForgotPasswordForm active={forgotPasswordIsOpen} />
+			<DashbaordSettings active={dashboardSettingsIsOpen} />
 		</Modal>
     )
 })

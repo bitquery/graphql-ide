@@ -126,7 +126,7 @@ module.exports = function(app, passport, db) {
 	app.get('/api/getw/:url', (req, response) => {
 		db.query(`SELECT rd.id, rd.account_id, null as query, null as arguments, 
 			rd.url, rd.name, rd.description , rd.published, rd.created_at , 
-			rd.deleted , rd.updated_at , null as endpoint_url, 
+			rd.deleted, rd.javascript, rd.updated_at , null as endpoint_url, 
 			null as displayed_data, null as widget_id ,qtd.widget_id as widget_ids, null as config, rd.layout, null as widget_number 
 			FROM dashboards rd
 			LEFT JOIN (
@@ -158,16 +158,22 @@ module.exports = function(app, passport, db) {
 	app.post('/api/savedashboard', (req, response) => {
 		/* console.log(req.body)
 		response.send(200) */
-		req.body.id ?
-		db.query(`update dashboards set ? WHERE id = ${req.body.id}`, {
+		const params = {
 			layout: JSON.stringify(req.body.layout),
 			name: req.body.name,
 			url: req.body.url,
 			description: req.body.description,
 			published: req.body.url ? true : false,
-			deleted: req.body.deleted || 0,
-			updated_at: new Date()
-		}, (err, res) => {
+			deleted: req.body.deleted || 0
+		}
+		if (req.body.javascript) params.javascript = JSON.stringify(req.body.javascript)
+		if (req.body.id) {
+			params.updated_at = new Date()
+		} else {
+			params.account_id = req.session.passport.user
+		}
+		req.body.id ?
+		db.query(`update dashboards set ? WHERE id = ${req.body.id}`, params, (err, res) => {
 			if (err) console.log(err)
 			if (req.body.content.length) {
 				let widget_ids = [...req.body.widget_ids]
@@ -233,15 +239,7 @@ module.exports = function(app, passport, db) {
 				})
 			}
 		}) :
-		db.query('insert into dashboards SET ?', {
-			layout: JSON.stringify(req.body.layout),
-			name: req.body.name,
-			description: req.body.description,
-			url: req.body.url,
-			published: req.body.url ? true : false,
-			deleted: req.body.deleted || false,
-			account_id: req.session.passport.user
-		}, (err, res) => {
+		db.query('insert into dashboards SET ?', params, (err, res) => {
 			if (err) console.log(err)
 			req.body.widget_ids.forEach((widget_id, i)=> {
 				if (widget_id === -1) {
