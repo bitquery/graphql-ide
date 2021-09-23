@@ -5,8 +5,8 @@ import { QueriesStore, TabsStore } from '../../store/queriesStore'
 
 const DashbaordSettings = observer(function DashbaordSettings({active}) {
 	const { updateQuery, currentQuery } = QueriesStore
-	const [ prejs, setPreJS ] = useState(currentQuery.javascript.preprocessing || '')
-	const [ postjs, setPostJS ] = useState(currentQuery.javascript.postprocessing || '')
+	const [ prejs, setPreJS ] = useState(currentQuery.javascript?.preprocessing || '')
+	const [ postjs, setPostJS ] = useState(currentQuery.javascript?.postprocessing || '')
 	const { toggleModal, toggleDashboardSettings } = modalStore
 	const { index } = TabsStore
 	const closeHandler = e => {

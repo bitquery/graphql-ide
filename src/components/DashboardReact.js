@@ -31,12 +31,14 @@ const AddRemoveLayout = observer(
 		constructor(props) {
 			super(props);
 			this.state = {
+				arguments: {},
 				menuActive: null,
 				dashboard_id: null,
 				widget_ids: [],
 				initialWidget_ids: [],
 				dashboard_item_indexes: [],
 				initial_dashboard_item_indexes: [],
+				contentWithVariables: [],
 				content: [],
 				layout: [],
 				initialItems: [],
@@ -79,6 +81,7 @@ const AddRemoveLayout = observer(
 					let widget_ids = []
 					let queries = []
 					let content = []
+					let contentWithVariables = []
 					for (let i = 0; i < data.length; i++) {
 						
 						console.log('argsis', args)
@@ -87,27 +90,36 @@ const AddRemoveLayout = observer(
 						widget_ids[position] = data[i].widget_number
 						queries[position] = data[i]
 						let queryArguments = JSON.parse(queries[position].arguments)
+						const cfg = JSON.parse(data[i].config)
 						console.log(queryArguments)
-						if (Object.keys(args).length && queryArguments) {
+						if (Object.keys(args).length) {
 							for (const arg in args) {
-								Object.keys(queryArguments).forEach(queryArg => {
-									if (queryArg === arg) {
-										queryArguments[queryArg] = isNaN(+args[arg]) ? args[arg] : +args[arg]
-									}
-								})
+								console.log(cfg)
+								if (queryArguments) {
+									Object.keys(queryArguments).forEach(queryArg => {
+										if (queryArg === arg) {
+											queryArguments[queryArg] = isNaN(+args[arg]) ? args[arg] : +args[arg]
+										}
+									})
+								}
+								if (cfg.content) {
+									contentWithVariables[position] = contentWithVariables[position] 
+										? cfg.contentWithVariables[position].replaceAll(`$${arg}`, args[arg]) 
+										: cfg.content.replaceAll(`$${arg}`, args[arg])
+								}
 							}
 							queries[position].arguments = JSON.stringify(queryArguments)
 						}
-						// if (Object.keys(args).length) queries[position].arguments = JSON.stringify(args)
-						const cfg = JSON.parse(data[i].config)
 						if (cfg.content) content[position] = cfg.content
 					}
 					this.setState({
+						arguments: args,
 						items: layout,
 						dashboard_item_indexes,
 						widget_ids,
 						queries,
 						content,
+						contentWithVariables,
 						initialLayout: layout,
 						initialItems: layout,
 						initial_dashboard_item_indexes: dashboard_item_indexes,
@@ -244,7 +256,13 @@ const AddRemoveLayout = observer(
 			queries[index].content = content
 			const workContent = [...this.state.content]
 			workContent[index] = content
-			this.setState({ queries, content: workContent }, () => QueriesStore.updateQuery({ content: workContent }, TabsStore.index))
+			let contentWithVariables = []
+			if (Object.keys(this.state.arguments).length) {
+				for (const arg in this.state.arguments) {
+					contentWithVariables[index] = content.replaceAll(`$${arg}`, this.state.arguments[arg])
+				}
+			}
+			this.setState({ queries, content: workContent, contentWithVariables }, () => QueriesStore.updateQuery({ content: workContent }, TabsStore.index))
 		}
 		createElement(el, index) {
 			const moveStyle = {
@@ -261,11 +279,13 @@ const AddRemoveLayout = observer(
 				moveStyle.height = '24px'
 			}
 			const i = el.add ? "+" : el.i;
-			const parsedMD = {__html: micromark(this.state.content[index] || '')}
+			const parsedMD = (QueriesStore.currentQuery.isDraggable || !this.state.contentWithVariables.length)
+				? {__html: micromark(this.state.content[index] || '')} 
+				: {__html: micromark(this.state.contentWithVariables[index] || '')}
 			const elementMarkUp = QueriesStore.currentQuery.isDraggable ?
 				(<ContentBlock 
 					editMode={QueriesStore.currentQuery.isDraggable} 
-					value={this.state.content[index]} 
+					value={this.state.content[index]}
 					onEdit={content=>this.onEditBlockContent(content, index)}
 				/>) : 
 				(<section 
