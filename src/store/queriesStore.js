@@ -39,6 +39,7 @@ class User {
 }
 
 class Queries {
+	sharedQueries = []
 	dashboardView = false
 	defaultWidget = 'json.widget'
 	currentVariables = ''
@@ -61,6 +62,7 @@ class Queries {
 	
 	constructor() {
 		makeObservable(this, {
+			sharedQueries: observable,
 			dashboardView: observable,
 			currentVariables: observable,
 			queryJustSaved: observable,
@@ -76,6 +78,7 @@ class Queries {
 			toggleDashboardView: action,
 			setCurrentVariables: action,
 			setDashboardQuery : action,
+			setSharedQueires: action,
 			setCurrentQuery: action,
 			toggleSideBar: action,
 			setIsLoaded: action,
@@ -123,6 +126,9 @@ class Queries {
 		if (!this.query[this.query.length-1].endpoint_url) 
 			this.query[this.query.length-1].endpoint_url = 'https://graphql.bitquery.io'
 		TabsStore.addNewTab(params.name)
+	}
+	setSharedQueires = queries => {
+		this.sharedQueries = [...queries]
 	}
 	updateQuery = (params, index, id) => {
 		console.log(params)

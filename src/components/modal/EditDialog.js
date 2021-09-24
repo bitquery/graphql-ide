@@ -10,11 +10,12 @@ import { useEffect } from 'react'
 import ReactTooltip from 'react-tooltip'
 import ConfirmationWindow from '../modal/ConfirmationWindow'
 import { useRef } from 'react'
+import { observer } from 'mobx-react-lite'
 
-function EditDialog({active}) {
+const EditDialog = observer(function EditDialog({active}) {
 	const { addToast } = useToasts()
 	const { url } = useRouteMatch()
-	const { saveQuery, queryParams, currentQuery, 
+	const { saveQuery, queryParams, currentQuery, sharedQueries,
 		saveToggle, query, removeQuery } = QueriesStore
 	const [name, setName] = useState(currentQuery.name||'')
 	const [description, setDescription] = useState(currentQuery.description)
@@ -39,14 +40,22 @@ function EditDialog({active}) {
 	}
 	const saveHandler = async (e) => {
 		e.preventDefault()
-		// let params = queryParams
+		const fixWrongUrl = (queries, url) => {
+			const identicalUrl = queries.filter(query => query.url === url)
+			console.log(url, identicalUrl)
+			if (identicalUrl.length) {
+				return fixWrongUrl(queries ,url+'1')
+			} else {
+				return url
+			}
+		}
 		let params = currentQuery.layout ? {...currentQuery} : queryParams
 		let data = null
 		if (name) {
 			params.name = name
 			if (shared) {
 				if (!params.url) {
-					params.url = queryUrl
+					params.url = fixWrongUrl(sharedQueries, queryUrl)
 				}
 			} else {
 				params.url = null
@@ -160,6 +169,6 @@ function EditDialog({active}) {
 			</div>
 		</div>
 	)
-}
+})
 
 export default EditDialog

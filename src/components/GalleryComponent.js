@@ -14,7 +14,7 @@ const GalleryComponent = observer(function GalleryComponent() {
 	const [showAllQueries, toggleQueries] = useState(true)
 	const [showBuilder, toggleBuilder] = useState(false)
 	const { currentQuery, showSideBar,
-		toggleSideBar, 
+		toggleSideBar, setSharedQueires,
 		queryJustSaved, updateQuery, schema } = QueriesStore
 	const { index } = TabsStore
 	const { user } = UserStore
@@ -37,6 +37,7 @@ const GalleryComponent = observer(function GalleryComponent() {
 			let [data1, data2] = await Promise.all([getAllQueries(), getMyQueries()])
 			if (data1.data.queries.length !== allQueries.length) {
 				setAllQueries({queries: data1.data.queries})
+				setSharedQueires(data1.data.queries)
 			}
 			data1.data.msg && addToast('Account activated!', {appearance: 'success'})
 			if (data2.data.length !== myQueries.length) {
