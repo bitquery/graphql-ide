@@ -68,8 +68,9 @@ const AddRemoveLayout = observer(
 						args[entry[0]] = entry[1]
 					}
 				}
-				if (QueriesStore.currentQuery.javascript && 'preprocessing' in QueriesStore.currentQuery.javascript) {
-					const preprocessing = new Function('args', QueriesStore.currentQuery.javascript.preprocessing)
+				const javascript = typeof QueriesStore.currentQuery.javascript === 'string' ? JSON.parse(QueriesStore.currentQuery.javascript) : QueriesStore.currentQuery.javascript
+				if (javascript && 'preprocessing' in javascript) {
+					const preprocessing = new Function('args', javascript.preprocessing)
 					preprocessing(args)
 				}
 				//load by link && load from gallery
@@ -136,10 +137,6 @@ const AddRemoveLayout = observer(
 				else {
 					this.setState({ saved: false })
 				}
-				/* if ('javascript' in QueriesStore.currentQuery && 'postprocessing' in QueriesStore.currentQuery.javascript) {
-					const postprocessing = new Function('args', QueriesStore.currentQuery.javascript.postprocessing)
-					postprocessing(args)
-				} */
 				window.addEventListener('query-request', this.qrh)
 				window.addEventListener('setInitialDashboard', this.setInitialDashboard)
 				window.addEventListener('updateInitialDashboard', this.updateInitialDashboard)
@@ -176,9 +173,7 @@ const AddRemoveLayout = observer(
 			}
 		}
 		qrh = (e, id) => {
-			console.log('pognali ', this.props.number, TabsStore.currentTab, TabsStore.tabs[this.props.number]?.id, ' what')
 			if (TabsStore.currentTab === TabsStore.tabs[this.props.number]?.id && (QueriesStore.currentQuery.isDraggable || this.state.saved)) {
-				console.log('pognali ', this.props.number, TabsStore.currentTab, TabsStore.tabs[this.props.number]?.id) 
 				const query = e.detail ? e.detail : e
 				const repeatProtector = this.state.saved ? true : !this.state.widget_ids.includes(query.widget_number)
 				let cfg = typeof query.config === 'string' ? JSON.parse(query.config) : query.config
