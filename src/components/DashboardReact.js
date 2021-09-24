@@ -176,8 +176,9 @@ const AddRemoveLayout = observer(
 			}
 		}
 		qrh = (e, id) => {
-			if (TabsStore.currentTab === TabsStore.tabs[this.props.number]?.id && (QueriesStore.currentQuery.isDraggable || this.state.saved) || (QueriesStore.currentQuery.layout && !QueriesStore.currentQuery.id)) {
-				
+			console.log('pognali ', this.props.number, TabsStore.currentTab, TabsStore.tabs[this.props.number]?.id, ' what')
+			if (TabsStore.currentTab === TabsStore.tabs[this.props.number]?.id && (QueriesStore.currentQuery.isDraggable || this.state.saved)) {
+				console.log('pognali ', this.props.number, TabsStore.currentTab, TabsStore.tabs[this.props.number]?.id) 
 				const query = e.detail ? e.detail : e
 				const repeatProtector = this.state.saved ? true : !this.state.widget_ids.includes(query.widget_number)
 				let cfg = typeof query.config === 'string' ? JSON.parse(query.config) : query.config
@@ -335,6 +336,10 @@ const AddRemoveLayout = observer(
 			const widget_ids = [...this.state.widget_ids]
 			let dashboard_item_indexes = [...this.state.dashboard_item_indexes]
 			const queries = [...this.state.queries]
+			const content = [...this.state.content]
+			const contentWithVariables = [...this.state.contentWithVariables]
+			content.splice(index, 1)
+			contentWithVariables.splice(index,1)
 			dashboard_item_indexes = dashboard_item_indexes.filter(index => index !== i)
 			queries.splice(index, 1)
 			widget_ids.splice(index, 1)
@@ -342,6 +347,8 @@ const AddRemoveLayout = observer(
 				items: _.reject(this.state.items, { i: i }),
 				queries,
 				widget_ids,
+				content,
+				contentWithVariables,
 				dashboard_item_indexes
 			}, () => QueriesStore.updateQuery({
 				widget_ids: this.state.widget_ids,
@@ -366,7 +373,7 @@ const AddRemoveLayout = observer(
 
 		render() {
 			return (
-				<div className={'dashboard ' + (((TabsStore.currentTab === TabsStore.tabs[this.props.number].id) && QueriesStore.currentQuery.layout) ? 'active' : '')}
+				<div className={'dashboard ' + (((TabsStore.currentTab === TabsStore.tabs[this.props.number].id) && QueriesStore.currentQuery.layout) ? 'active' : '')} key={this.props.number}
 				>
 					<ReactGridLayout
 						onLayoutChange={(layout) => this.onLayoutChange({ layout })}
