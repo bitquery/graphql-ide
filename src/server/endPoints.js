@@ -241,7 +241,7 @@ module.exports = function(app, passport, db) {
 		}) :
 		db.query('insert into dashboards SET ?', params, (err, res) => {
 			if (err) console.log(err)
-			req.body.widget_ids.forEach((widget_id, i)=> {
+			req.body.widget_ids && req.body.widget_ids.forEach((widget_id, i)=> {
 				if (widget_id === -1) {
 					db.query(`insert into widgets SET ?`, {
 						displayed_data: null,

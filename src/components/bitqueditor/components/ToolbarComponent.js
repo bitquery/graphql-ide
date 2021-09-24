@@ -110,7 +110,7 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 					style={{border: '1px dashed #c0c0c0', padding: '3px'}}
 					onDragStart={e => e.dataTransfer.setData("text/plain", "block.content")}
 				>Text Block</div>}
-			{dashboardOwner && !(!currentQuery.id || currentQuery.saved) && currentQuery.layout 
+			{dashboardOwner && (!currentQuery.id || !currentQuery.saved) && currentQuery.layout 
 				&& <button type="button" className="topBar__button" onClick={openDashboardSettings}>Settings</button>}
 			{!currentQuery.layout && <button className="topBar__button"
 				onClick={prettifyQuery}
