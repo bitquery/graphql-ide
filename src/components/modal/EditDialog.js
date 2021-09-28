@@ -38,6 +38,10 @@ const EditDialog = observer(function EditDialog({active}) {
 		copy(`${window.location.protocol}//${window.location.host}${url}/${queryUrl}`)
 		addToast('Link Copied to clipboard', {appearance: 'success'})
 	}
+	const queryNameHandler = e => {
+		setName(e.target.value)
+		setQueryUrl(e.target.value.trim().replaceAll(' ', '-').replace(/[^a-zA-Z0-9-_]/g, ''))
+	}
 	const saveHandler = async (e) => {
 		e.preventDefault()
 		const fixWrongUrl = (queries, url) => {
@@ -98,7 +102,7 @@ const EditDialog = observer(function EditDialog({active}) {
 				<input type="text" className="query__save"  
 					style={{'marginBottom': '1rem'}}
 					ref={nameInput}
-					value={name==='New Query' ? '' : name} onChange={e => setName(e.target.value)}
+					value={name==='New Query' ? '' : name} onChange={/* e => setName(e.target.value) */queryNameHandler}
 				/>  
 				<p style={{'marginBottom': '.5rem'}}>Description (optional)</p>
 				<textarea className="query__save" rows="4"
