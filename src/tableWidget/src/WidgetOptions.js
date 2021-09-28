@@ -34,7 +34,7 @@ function WidgetOptions({model, condition, value, setValue, title, displayedData,
 				onChange={e=>setValue({title: e.target.value}, title)}
 			/>
 			<input
-				type="text" class="form-control mb-1"
+				type="text" className="form-control mb-1"
 				placeholder="Column link"
 				value={columnLink}
 				onChange={e=>setValue({link: e.target.value}, title)}

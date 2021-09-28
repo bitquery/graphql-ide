@@ -129,12 +129,28 @@ $top-bar-height: 44px;
 }
 .table-widget-editor {
   display: flex;
+  // flex-direction: column;
+  flex-wrap: wrap;
+  align-content: flex-start;
   overflow: auto;
   height: 100%;
   width: 100%;
   padding: 10px 10px 0;
   .widget-option {
+    label,.columns_number_selector {
+      text-align: center;
+    }
     min-width: 200px;
+    max-width: 31%;
+    .column_number {
+      margin: 0 10px 0;
+    }
+    .columns_number {
+      outline: none;
+      background: none;
+      border: none;
+      width: auto;
+    }
     * {
       width: 100%;
     }

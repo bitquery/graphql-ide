@@ -34,6 +34,7 @@ import WidgetView from './bitqueditor/components/WidgetView'
 import { getCheckoutCode } from '../api/api'
 import DashboardReact from './DashboardReact'
 import { flattenData } from './flattenData.js'
+import { stringifyIncludesFunction } from '../utils/common';
 
 
 const EditorInstance = observer(function EditorInstance({number})  {
@@ -331,7 +332,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 	}, [user, schema, queryTypes, index])
 	const setConfig = (config) => {
 		if (number === index) {
-			if (JSON.stringify(currentQuery.config) !== JSON.stringify(config)) {
+			if (JSON.stringify(currentQuery.config) !== JSON.stringify(config, stringifyIncludesFunction)) {
 				console.log(config)
 				updateQuery({config}, index)
 				console.log('setconfig')

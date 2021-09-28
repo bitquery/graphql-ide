@@ -105,9 +105,9 @@ const AddRemoveLayout = observer(
 								}
 								if (cfg.content) {
 									contentWithVariables[position] = contentWithVariables[position] 
-										? cfg.contentWithVariables[position].replaceAll(`$${arg}`, args[arg]) 
+										? contentWithVariables[position].replaceAll(`$${arg}`, args[arg]) 
 										: cfg.content.replaceAll(`$${arg}`, args[arg])
-								}
+ 								}
 							}
 							queries[position].arguments = JSON.stringify(queryArguments)
 						}

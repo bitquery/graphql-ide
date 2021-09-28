@@ -1,5 +1,6 @@
 import Tabulator from "tabulator-tables"; 
 import "tabulator-tables/dist/css/bootstrap/tabulator_bootstrap4.min.css";
+import { formatter } from "../utils/formatter";
 
 export default async function tableWidgetRenderer(ds, config, el) {
 	let values = undefined
@@ -11,6 +12,8 @@ export default async function tableWidgetRenderer(ds, config, el) {
 	} else {
 		values = ds.values
 	}
+	let newCol = [...config.columns]
+	newCol.forEach(col => col.formatter = col.formatterParams && formatter)
 	cfg = {
 		height: '100%',
 		layout: 'fitColumns',

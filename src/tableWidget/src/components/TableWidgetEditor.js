@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import WidgetOptions from '../WidgetOptions'
+import { formatter } from '../utils/formatter'
 
 function TableWidgetEditor({model, config, setConfig, displayedData}) {
 	const condition = key => {if (model[key].typeInfo) { 
@@ -37,6 +38,7 @@ function TableWidgetEditor({model, config, setConfig, displayedData}) {
 		}
 	}
     const updateColumns = ({value, title, link}, i) => {
+		console.log('link', link)
 		console.log(title)
 		let newColumns = [...columns]
 		if (value) {
@@ -45,11 +47,12 @@ function TableWidgetEditor({model, config, setConfig, displayedData}) {
 		} else if (title || title === '') {
 			newColumns[i-1].title = title
 		}
-		newColumns[i-1].titleFormatter = link ? 'link' : null
-		newColumns[i-1].titleFormatterParams = link ? {
+		if (newColumns[i-1]) newColumns[i-1].formatterParams = link ? {
 			url: link,
 			target:"_blank",
 		} : null
+		if (newColumns[i-1] && link) newColumns[i-1].formatter = formatter
+		if (typeof link==='string' && !link) newColumns[i-1].formatter = null 
 		setColumns(newColumns)
 		setConfig({columns: newColumns})
     }
@@ -59,13 +62,15 @@ function TableWidgetEditor({model, config, setConfig, displayedData}) {
 			<div className="table-widget-editor">
 				<div className="widget-option"> 
 					<label>Number of columns</label>
-					<select 
-						className="custom-select" 
-						value={columnsNumber} 
-						onChange={e=>updateColumnsNumber(+e.target.value)}
-					>
-						{[...Array(10).keys()].map(i => i+1).map(number => <option key={number} value={number}> {number} </option>)}
-					</select>
+					<div className="columns_number_selector">
+						<button className="columns_number" onClick={() => updateColumnsNumber(columnsNumber === 1 ? 1 : columnsNumber - 1)}>
+							<i className="tab__add fas fa-minus"/>
+						</button>
+						<span className="column_number">{columnsNumber}</span>
+						<button className="columns_number" onClick={() => updateColumnsNumber(columnsNumber + 1)}>
+							<i className="tab__add fas fa-plus"/>
+						</button>
+					</div>
 				</div>
 				{[...Array(columnsNumber).keys()].map(i => i+1).map(i => 
 					<WidgetOptions 
@@ -77,7 +82,7 @@ function TableWidgetEditor({model, config, setConfig, displayedData}) {
 						condition={condition}
 						title={i}
 						customTitle={columns[i-1]?.title}
-						columnLink={columns[i-1]?.titleFormatterParams?.url}
+						columnLink={columns[i-1]?.formatterParams?.url}
 						model={model}
 				/>)}
 			</div>
