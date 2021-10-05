@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 
-function WidgetOptions({model, condition, value, setValue, title, displayedData, config, customTitle, columnLink}) {
+function WidgetOptions({model, condition, value, setValue, title, displayedData, config, customTitle, columnLink, expression}) {
 	let optionValue = ''
 	useEffect(() => {
 		if (model && !Object.keys(config).length) {
@@ -38,6 +38,12 @@ function WidgetOptions({model, condition, value, setValue, title, displayedData,
 				placeholder="Column link"
 				value={columnLink}
 				onChange={e=>setValue({link: e.target.value}, title)}
+			/>
+			<input
+				type="text" className="form-control mb-1"
+				placeholder="javascript"
+				value={expression}
+				onChange={e=>setValue({expression: e.target.value}, title)}
 			/>
 		</div>
 	)

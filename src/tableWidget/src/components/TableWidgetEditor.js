@@ -37,22 +37,35 @@ function TableWidgetEditor({model, config, setConfig, displayedData}) {
 			setConfig({columns: updColumns})
 		}
 	}
-    const updateColumns = ({value, title, link}, i) => {
-		console.log('link', link)
-		console.log(title)
+    const updateColumns = ({value, title, link, expression}, i) => {
 		let newColumns = [...columns]
+		let formatterParams = null
 		if (value) {
 			newColumns[i-1] = {field: value.replace(`${displayedData}.`, ''), 
 				title: title || value.replace(`${displayedData}.`, '')}
 		} else if (title || title === '') {
 			newColumns[i-1].title = title
 		}
-		if (newColumns[i-1]) newColumns[i-1].formatterParams = link ? {
-			url: link,
-			target:"_blank",
-		} : null
-		if (newColumns[i-1] && link) newColumns[i-1].formatter = formatter
-		if (typeof link==='string' && !link) newColumns[i-1].formatter = null 
+		if (newColumns[i-1]) {
+			if (link || link === '') {
+				newColumns[i-1].formatterParams = newColumns[i-1].formatterParams 
+				? {
+					...newColumns[i-1].formatterParams,
+					url: link,
+					target:"_blank",
+				} : {
+					url: link,
+					target:"_blank"
+				}
+			}
+			if (expression || expression === '') {
+				newColumns[i-1].formatterParams = newColumns[i-1].formatterParams 
+					? {...newColumns[i-1].formatterParams, expression}
+					: { expression }
+			}
+			newColumns[i-1].formatter = formatterParams && formatter
+		}
+		if ((typeof link==='string' && !link) || (typeof expression==='string' && !expression)) newColumns[i-1].formatter = null 
 		setColumns(newColumns)
 		setConfig({columns: newColumns})
     }
@@ -83,6 +96,7 @@ function TableWidgetEditor({model, config, setConfig, displayedData}) {
 						title={i}
 						customTitle={columns[i-1]?.title}
 						columnLink={columns[i-1]?.formatterParams?.url}
+						expression={columns[i-1]?.formatterParams?.expression}
 						model={model}
 				/>)}
 			</div>
