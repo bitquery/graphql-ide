@@ -5,7 +5,8 @@ const fs = require('fs')
 const path = require('path')
 const _ = require('lodash')
 
-module.exports = function(app, passport, db) {
+module.exports = function(app, passport, db, redisClient) {
+	
 
 	app.get('/api/check', (req, res) => {
 		console.log(req.protocol, req.get('Host'))
@@ -453,8 +454,21 @@ module.exports = function(app, passport, db) {
 		ON qtd.dashboard_id = rd.id
 		WHERE rd.published=true) ORDER BY number DESC`, (err, queries) => {
 				if (err) console.log(err)
-				res.send({queries: queries, msg: checkActive})
+				redisClient.get('query', async (error, query) => {
+					if (error) console.log(error)
+					if (query !== null) {
+						console.log('there is some query')
+						res.send({queries: queries, msg: checkActive, transferedQuery: JSON.parse(query)})
+					} else {
+						res.send({queries: queries, msg: checkActive})
+					}
+				})
 			})
+	})
+	app.post('/api/querytransfer', (req, res) => {
+		redisClient.setex('query', 10, JSON.stringify(req.body))
+		res.set('Location', process.env.IDE_URL)
+		res.sendStatus(302)
 	})
 	app.get('/api/getmyqueries', (req, res) => {
 		db.query(`
@@ -480,12 +494,12 @@ module.exports = function(app, passport, db) {
 				) qtd
 				ON qtd.dashboard_id = rd.id
 				WHERE rd.account_id = ?
-				AND rd.deleted = false ) ORDER BY updated_at DESC`, [req.session.passport.user, req.session.passport.user], (err, queries) => {
+				AND rd.deleted = false ) ORDER BY updated_at DESC`, [req.session?.passport?.user || undefined, req.session?.passport?.user || undefined], (err, queries) => {
 				if (err) console.log(err)
 				res.send(queries)
 		})
 	})
-
+	
 	app.get('/api/activate', (req, res) => {
 		db.query(`select * from activations where code = ?`, [req.query.code], (err, result) => {
 			if (err) console.log(err)

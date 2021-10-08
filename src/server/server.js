@@ -11,24 +11,30 @@ const db = mysql.createPool({
 	'database': dbconfig.database
 })
 const app = express()
-const cookieSession = require('cookie-session')
 const bodyParser = require('body-parser')
 const passport = require('passport')
 const defaultmeta = require('./defaultMeta')
 app.use(bodyParser.json())
 app.use(express.static(path.join(__dirname, '../../build')))
 app.use(cors())
-app.use(cookieSession({
-	name: 'mysession',
-	keys: ['vueauthrandomkey'],
-	maxAge: 30 * 24 * 60 * 60 * 1000
-}))
+const redis = require('redis')
+const session = require('express-session')
+let RedisStore = require('connect-redis')(session)
+let redisClient = redis.createClient()
+app.use(
+  session({
+    store: new RedisStore({ client: redisClient }),
+    saveUninitialized: false,
+    secret: 'keyboard cat',
+    resave: false,
+  })
+)
 app.use(passport.initialize());
 app.use(passport.session());
 app.enable('trust proxy');
 
 require('./passport')(passport, db)
-require('./endPoints')(app, passport, db)
+require('./endPoints')(app, passport, db, redisClient)
 
 if (process.env.NODE_ENV==='production') {
 	app.get('*', (req,res) => {

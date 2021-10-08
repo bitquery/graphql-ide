@@ -38,6 +38,9 @@ const GalleryComponent = observer(function GalleryComponent() {
 			if (data1.data.queries.length !== allQueries.length) {
 				setAllQueries({queries: data1.data.queries})
 				setSharedQueires(data1.data.queries)
+				if ('transferedQuery' in data1.data) {
+					updateQuery({query: data1.data.transferedQuery.query, variables: data1.data.transferedQuery.variables}, index)
+				}
 			}
 			data1.data.msg && addToast('Account activated!', {appearance: 'success'})
 			if (data2.data.length !== myQueries.length) {
