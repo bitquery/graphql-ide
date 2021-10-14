@@ -37,6 +37,9 @@ const GalleryComponent = observer(function GalleryComponent() {
 				if (data.queries.length !== allQueries.length) {
 					setAllQueries({queries: data.queries})
 				}
+				if ('transferedQuery' in data) {
+					updateQuery({query: data.transferedQuery.query, variables: data.transferedQuery.variables}, index)
+				}
 				data.msg && addToast('Account activated!', {appearance: 'success'})
 			} catch (e) {
 				console.log(e)

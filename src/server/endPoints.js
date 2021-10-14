@@ -5,7 +5,7 @@ const fs = require('fs')
 const path = require('path')
 const axios = require('axios')
 
-module.exports = function(app, passport, db) {
+module.exports = function(app, passport, db, redisClient) {
 
 	app.get('/api/check', (req, res) => {
 		console.log(req.protocol, req.get('Host'))
@@ -290,8 +290,21 @@ module.exports = function(app, passport, db) {
 			GROUP BY a.id  
 			ORDER BY number DESC`, (err, queries) => {
 				if (err) console.log(err)
-				res.send({queries: queries, msg: checkActive})
+				redisClient.get('query', async (error, query) => {
+					if (error) console.log(error)
+					if (query !== null) {
+						console.log('there is some query')
+						res.send({queries, msg: checkActive, transferedQuery: JSON.parse(query)})
+					} else {
+						res.send({queries, msg: checkActive})
+					}
+				})
 			})
+	})
+	app.post('/api/querytransfer', (req, res) => {
+		redisClient.setex('query', 10, JSON.stringify(req.body))
+		res.set('Location', process.env.IDE_URL)
+		res.sendStatus(302)
 	})
 	app.get('/api/getmyqueries', (req, res) => {
 		db.query(`
@@ -307,7 +320,7 @@ module.exports = function(app, passport, db) {
 			ON a.id=b.query_id
 			WHERE a.account_id=?
 			AND a.deleted=false
-			ORDER BY a.updated_at DESC`, [req.session.passport.user], (err, queries) => {
+			ORDER BY a.updated_at DESC`, [req.session?.passport?.user || undefined], (err, queries) => {
 				if (err) console.log(err)
 				res.send(queries)
 		})
