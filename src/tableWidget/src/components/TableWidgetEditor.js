@@ -21,21 +21,20 @@ function TableWidgetEditor({model, config, setConfig, displayedData}) {
 		}
 	}, [])
 	
+	const removeColumn = number => {
+		setColumnsNumber(prev => prev - 1)
+		const updColumns = [...columns]
+		updColumns.splice(number-1, 1)
+		setColumns(updColumns)
+		setConfig({columns: updColumns})
+	}
 	const updateColumnsNumber = value => {
 		setColumnsNumber(value)
 		const defColumn = {field: columns[0].field, title: columns[0].title}
-		if (value > columns.length) {
-			const newColumnsNumber = value - columns.length
-			const additionalColumns = Array(newColumnsNumber).fill({...defColumn})
-			setColumns(prev => {return [...prev, ...additionalColumns]})
-			setConfig({columns: [...columns, ...additionalColumns]})
-		} else {
-			const diff = columns.length - value
-			const updColumns = [...columns]
-			updColumns.splice(-diff, diff)
-			setColumns(updColumns)
-			setConfig({columns: updColumns})
-		}
+		const newColumnsNumber = value - columns.length
+		const additionalColumns = Array(newColumnsNumber).fill({...defColumn})
+		setColumns(prev => {return [...prev, ...additionalColumns]})
+		setConfig({columns: [...columns, ...additionalColumns]})
 	}
     const updateColumns = ({value, title, link, expression}, i) => {
 		let newColumns = [...columns]
@@ -73,18 +72,6 @@ function TableWidgetEditor({model, config, setConfig, displayedData}) {
 	return (
 		<div className="widget">
 			<div className="table-widget-editor">
-				<div className="widget-option"> 
-					<label>Number of columns</label>
-					<div className="columns_number_selector">
-						<button className="columns_number" onClick={() => updateColumnsNumber(columnsNumber === 1 ? 1 : columnsNumber - 1)}>
-							<i className="tab__add fas fa-minus"/>
-						</button>
-						<span className="column_number">{columnsNumber}</span>
-						<button className="columns_number" onClick={() => updateColumnsNumber(columnsNumber + 1)}>
-							<i className="tab__add fas fa-plus"/>
-						</button>
-					</div>
-				</div>
 				{[...Array(columnsNumber).keys()].map(i => i+1).map(i => 
 					<WidgetOptions 
 						key={i}
@@ -92,6 +79,7 @@ function TableWidgetEditor({model, config, setConfig, displayedData}) {
 						displayedData={displayedData}
 						value={columns[i-1]?.field || ''}
 						setValue={updateColumns}
+						removeColumn={removeColumn}
 						condition={condition}
 						title={i}
 						customTitle={columns[i-1]?.title}
@@ -99,6 +87,9 @@ function TableWidgetEditor({model, config, setConfig, displayedData}) {
 						expression={columns[i-1]?.formatterParams?.expression}
 						model={model}
 				/>)}
+				<button className="columns_number" onClick={() => updateColumnsNumber(columnsNumber + 1)}>
+					<i className="tab__add fas fa-plus"/>
+				</button>
 			</div>
 		</div>
 	)

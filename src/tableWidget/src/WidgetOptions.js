@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react'
 
-function WidgetOptions({model, condition, value, setValue, title, displayedData, config, customTitle, columnLink, expression}) {
+function WidgetOptions({model, condition, value, setValue, title, displayedData,
+	config, customTitle, columnLink, expression, removeColumn}) {
 	let optionValue = ''
 	useEffect(() => {
 		if (model && !Object.keys(config).length) {
@@ -12,7 +13,7 @@ function WidgetOptions({model, condition, value, setValue, title, displayedData,
 
 	return (
 		<div className="widget-option"> 
-			<label>Column {title}</label>
+			<label> <span>Column {title}</span> <i className="fas fa-times" onClick={()=>removeColumn(title)}/> </label>
 			<select 
 				className="custom-select mb-1" 
 				value={value} 
