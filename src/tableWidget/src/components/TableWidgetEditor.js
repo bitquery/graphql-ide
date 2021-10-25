@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import WidgetOptions from '../WidgetOptions'
 import { formatter } from '../utils/formatter'
+import { useFirstUpdate } from '../../../utils/useFirstUpdate'
 
 function TableWidgetEditor({model, config, setConfig, displayedData}) {
 	const condition = key => {if (model[key].typeInfo) { 
@@ -20,6 +21,10 @@ function TableWidgetEditor({model, config, setConfig, displayedData}) {
 			setColumnsNumber(config.columns.length)
 		}
 	}, [])
+	useFirstUpdate(() => {
+		setColumns(config.columns)
+		setColumnsNumber(config.columns.length)
+	}, [JSON.stringify(config)])
 	
 	const removeColumn = number => {
 		setColumnsNumber(prev => prev - 1)
