@@ -122,17 +122,24 @@ const EditorInstance = observer(function EditorInstance({number})  {
     	overwrap.current.addEventListener('mouseup', onMouseUp);
 	}
 	const getQueryTypes = (query) => {
+		console.log('get model')
 		const typeInfo = new TypeInfo(schema)
 		let typesMap = {}
 		const queryNodes = []
 		let depth = 0
+		let stop = false
 		let checkpoint = 0
+		let queryLength = 0
 		let visitor = {
 			enter(node ) {
 				typeInfo.enter(node)
 				if(node.kind === "Field") {
 					if (!depth && queryNodes.length) {
 						checkpoint = queryNodes.length
+						if (currentQuery.data_type === 'flatten') {
+							stop = true
+							return visitor.BREAK
+						}
 					}
 					if (node.alias) {
 						queryNodes.push(node.alias.value)
@@ -143,9 +150,8 @@ const EditorInstance = observer(function EditorInstance({number})  {
 						let arr = queryNodes.filter(node=> node.split('.').length === depth)
 						let index = queryNodes.indexOf(arr[arr.length-1])
 						let depthLength = depth!==1 ? index : 0
-						if (checkpoint) {
+						if (checkpoint && depthLength <= checkpoint) {
 							depthLength += checkpoint
-							checkpoint = 0
 						}
 						queryNodes[queryNodes.length-1] = 
 							queryNodes[depthLength]+'.'+queryNodes[queryNodes.length-1]
@@ -156,6 +162,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 						}
 					}
 					depth++
+					// console.log(typeInfo.getFieldDef().name, typeInfo.getType().toString())
 					return {...node, typeInfo: typeInfo.getType()}
 				}
 			},
@@ -164,7 +171,19 @@ const EditorInstance = observer(function EditorInstance({number})  {
 					let arr = queryNodes.filter(node=> node.split('.').length === depth)
 					let index = queryNodes.indexOf(arr[arr.length-1])
 					depth--
-					typesMap[queryNodes[index]] = node
+					if (queryNodes[index] !== undefined) {
+						typesMap[queryNodes[index]] = node
+					} 
+					//-------
+					if (queryLength <= 1) {
+						if (queryNodes[index].includes('.')) queryLength += 1
+						if (queryLength > 1) typesMap = {data: {typeInfo: '[data]'}, ...typesMap}
+					}
+					if (!depth && queryNodes.length) {
+						if (currentQuery.data_type === 'flatten') {
+							return visitor.BREAK
+						}
+					}
 				}
 				typeInfo.leave(node)
 			}
@@ -172,6 +191,25 @@ const EditorInstance = observer(function EditorInstance({number})  {
 		try {
 			visit(parseGql(query), visitWithTypeInfo(typeInfo, visitor))
 		} catch (e) {}
+		if (stop) {
+			let flattenModel = {}
+			Object.keys(typesMap).forEach((key, i) => {
+				console.log(key, typesMap[key].typeInfo.toString(), i)
+				if (key === 'data') {
+					flattenModel[key] = typesMap[key]
+				} else if ( ['Int', 'String'].some(value => typesMap[key].typeInfo.toString().includes(value)) ) { 
+					let flatKey = key.includes('data') ? key : `${key.replace( key.split('.')[0], '' ).replace('[0]', '')}`
+					const splittedKey = flatKey.split('.')
+					if (splittedKey.length > 3) {
+						flatKey = `${splittedKey[splittedKey.length-2]}${splittedKey[splittedKey.length-1]}`
+					}
+					flatKey = `data.${flatKey.replaceAll('.', '')}`
+					flattenModel[flatKey] = {typeInfo: typesMap[key].typeInfo.toString()}
+				}
+			})
+			flattenModel['data.network'] = {typeInfo: 'String'}
+			return flattenModel 
+		}
 		return typesMap
 	}
 
@@ -199,10 +237,18 @@ const EditorInstance = observer(function EditorInstance({number})  {
 		}
 		fetcher({query: currentQuery.query, variables: currentQuery.variables}).then(data => {
 			data.json().then(json => {
+				let values = null
+				if ('data' in json) {
+					if (currentQuery.displayed_data && currentQuery.displayed_data !=='data') {
+						values = getValueFrom(json.data, displayed_data)
+					} else {
+						values = json.data
+					}
+				}
 				setDataSource({
 					data: ('data' in json) ? json.data : null,
 					displayed_data: displayed_data || '',
-					values: ('data' in json) ? (currentQuery.displayed_data) ? getValueFrom(json.data, displayed_data) : json.data : null,
+					values,
 					error: ('errors' in json) ? json.errors : null,
 					query: toJS(currentQuery.query), 
 					variables: toJS(currentQuery.variables)

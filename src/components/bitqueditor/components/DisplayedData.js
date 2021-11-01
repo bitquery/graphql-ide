@@ -18,7 +18,7 @@ const DisplayedData = observer(function DisplayedData({model, dataWidgets, setDa
 			&& updateQuery({widget_id: plugins[availableWidgetNumbers[0]].id}, index)
 		dataSource.data
 			&& setDataSource(prev => {
-				return {...prev, displayed_data: value, values: getValueFrom(prev.data, value)}
+				return {...prev, displayed_data: value, values: value === 'data' ? prev.data : getValueFrom(prev.data, value)}
 			})
 	}
 	useEffect(() => {
