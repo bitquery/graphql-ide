@@ -7,6 +7,33 @@ const _ = require('lodash')
 
 module.exports = function(app, passport, db, redisClient) {
 	
+	app.get('/api/dbcode/:url', (req, response) => {
+		db.query(`SELECT rd.id, rd.account_id, null as query, null as arguments, 
+			rd.url, rd.name, rd.description , rd.published, rd.created_at , 
+			rd.deleted, rd.javascript, rd.updated_at , null as endpoint_url, 
+			null as displayed_data, null as widget_id ,qtd.widget_id as widget_ids, null as config, rd.layout, null as widget_number 
+			FROM dashboards rd
+			LEFT JOIN (
+				SELECT dashboard_id, GROUP_CONCAT(widget_id SEPARATOR ',') as widget_id 
+				FROM queries_to_dashboards 
+				GROUP BY dashboard_id
+			) qtd
+			ON qtd.dashboard_id = rd.id
+			WHERE rd.url = ?`, [req.params.url], (err, result) => {
+				if (err) console.log(err)
+				/* response.send(result[0]) */
+				db.query(`SELECT a.dashboard_id , a.widget_id as widget_number, a.query_index, b.*, q.*
+					FROM bitquery.queries_to_dashboards a
+					LEFT JOIN (SELECT * FROM bitquery.widgets) b
+					ON a.widget_id = b.id
+					LEFT JOIN (SELECT * FROM bitquery.queries) q
+					ON q.id=b.query_id
+					WHERE dashboard_id = ?`, [result[0].id], (err, res) => {
+						if (err) console.log(err)
+						response.send({widgets: res, layout: result[0].layout})
+					})
+			})
+	})
 
 	app.get('/api/check', (req, res) => {
 		console.log(req.protocol, req.get('Host'))

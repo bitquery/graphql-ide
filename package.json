@@ -52,6 +52,7 @@
     "react-tooltip": "^4.2.21",
     "redis": "^3.1.2",
     "rewire": "^5.0.0",
+    "table-widget": "^1.0.1",
     "tabulator-tables": "^4.9.3",
     "vega": "^5.20.2",
     "vega-embed": "^6.18.2",
