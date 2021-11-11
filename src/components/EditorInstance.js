@@ -8,6 +8,7 @@ import { vegaPlugins } from 'vega-widgets'
 import { tablePlugin } from 'table-widget'
 import { graphPlugins } from '@bitquery/ide-graph'
 import { timeChartPlugins } from '@bitquery/ide-charts'
+import { tradingView } from '@bitquery/ide-tradingview'
 import './bitqueditor/App.scss'
 import '@bitquery/ide-graph/dist/graphs.min.css'
 import getQueryFacts from '../utils/getQueryFacts'
@@ -239,7 +240,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 	} */
 
 
-	const plugins = useMemo(()=> [JsonPlugin,  ...vegaPlugins, ...graphPlugins, ...timeChartPlugins, tablePlugin], [])
+	const plugins = useMemo(()=> [JsonPlugin, tradingView,  ...vegaPlugins, ...graphPlugins, ...timeChartPlugins, tablePlugin], [])
 	let indexx = plugins.map(plugin => plugin.id).indexOf(currentQuery.widget_id)
 	const WidgetComponent = indexx>=0 ? plugins[indexx] : plugins[0]
 
@@ -391,6 +392,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 		let dependencies = WidgetComponent.dependencies.map(dep => `<script src="${dep}"></script>`).join('\n')
 		return `
 ${dependencies}
+${WidgetComponent.id === 'table.widget' ? '<link href="https://unpkg.com/tabulator-tables@4.9.3/dist/css/tabulator.min.css" rel="stylesheet">' : ''} 
 <script src="https://cdn.jsdelivr.net/gh/bitquery/widgets-runtime@v1.0/dataSource.js"></script>
 <div style="width: 500px; height: 500px; overflow-y: hidden;" id="${id}"></div>
 <script>

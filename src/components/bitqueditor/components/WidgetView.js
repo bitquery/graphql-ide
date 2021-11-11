@@ -3,7 +3,7 @@ import React, { useEffect } from 'react'
 function WidgetView({ el, config, dataSource, displayedData, children, renderFunc }) {
 	useEffect(() => {
 		if (dataSource && config && displayedData && dataSource.data) {
-			typeof renderFunc === 'function' && Object.keys(config).length && renderFunc(dataSource, config, el)
+			typeof renderFunc === 'function' /* && Object.keys(config).length */ && renderFunc(dataSource, config, el)
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [JSON.stringify(config), JSON.stringify(dataSource), displayedData, renderFunc])
