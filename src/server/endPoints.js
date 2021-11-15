@@ -3,9 +3,37 @@ const crypto = require('crypto')
 const bcrypt = require('bcrypt')
 const fs = require('fs')
 const path = require('path')
-const axios = require('axios')
+const _ = require('lodash')
 
 module.exports = function(app, passport, db, redisClient) {
+	
+	app.get('/api/dbcode/:url', (req, response) => {
+		db.query(`SELECT rd.id, rd.account_id, null as query, null as arguments, 
+			rd.url, rd.name, rd.description , rd.published, rd.created_at , 
+			rd.deleted, rd.javascript, rd.updated_at , null as endpoint_url, 
+			null as displayed_data, null as widget_id ,qtd.widget_id as widget_ids, null as config, rd.layout, null as widget_number 
+			FROM dashboards rd
+			LEFT JOIN (
+				SELECT dashboard_id, GROUP_CONCAT(widget_id SEPARATOR ',') as widget_id 
+				FROM queries_to_dashboards 
+				GROUP BY dashboard_id
+			) qtd
+			ON qtd.dashboard_id = rd.id
+			WHERE rd.url = ?`, [req.params.url], (err, result) => {
+				if (err) console.log(err)
+				/* response.send(result[0]) */
+				db.query(`SELECT a.dashboard_id , a.widget_id as widget_number, a.query_index, b.*, q.*
+					FROM bitquery.queries_to_dashboards a
+					LEFT JOIN (SELECT * FROM bitquery.widgets) b
+					ON a.widget_id = b.id
+					LEFT JOIN (SELECT * FROM bitquery.queries) q
+					ON q.id=b.query_id
+					WHERE dashboard_id = ?`, [result[0].id], (err, res) => {
+						if (err) console.log(err)
+						response.send({widgets: res, layout: result[0].layout})
+					})
+			})
+	})
 
 	app.get('/api/check', (req, res) => {
 		console.log(req.protocol, req.get('Host'))
@@ -23,24 +51,37 @@ module.exports = function(app, passport, db, redisClient) {
 			return next()
 		}
 	}
-	const addWidgetConfig = (res, db, params) => {
-		db.query('INSERT INTO widgets SET ?', params, (err, result) => {
+	const addWidgetConfig = (res, db, params, widget_id) => {
+		db.query(`UPDATE widgets SET active = FALSE WHERE query_id=${params.query_id}`, (err, _) => {
 			if (err) {
 				console.log(err)
-				res.send({err})
-			} else {
-				let msg = params.url ? 'Query shared!' : 'Query saved!'
-				result && res.send({msg, id: params.query_id})
 			}
+			db.query('INSERT INTO widgets SET ?', {...params, active: true}, (err, result) => {
+				if (err) {
+					console.log(err)
+					res.send({err})
+				} else {
+					widget_id && db.query(`update queries_to_dashboards set ? where widget_id=${widget_id}`, {
+						widget_id: result.insertId
+					}, (err, _) => {
+						if (err) console.log(err)
+					})
+					let msg = params.url ? 'Query shared!' : 'Query saved!'
+					result && res.send({msg, id: params.query_id})
+				}
+			})
+
 		})
 	}
 	const handleAddQuery = (req, res, db) => {
 		let sql = `INSERT INTO queries SET ?`
-		let params = {...req.body.params}
-		delete params.executed
-		delete params.config
-		delete params.widget_id
-		delete params.displayed_data
+		let {executed,
+			config,
+			widget_id,
+			displayed_data,
+			isDraggable,
+			isResizable,
+			data_type, ...params} = req.body.params
 		params.id = null
 		params.published = params.url ? true : null
 		db.query(sql, params, (err, result) => {
@@ -50,6 +91,7 @@ module.exports = function(app, passport, db, redisClient) {
 			}
 			let newParam = {
 				displayed_data: req.body.params.displayed_data,
+				data_type: req.body.params.data_type,
 				query_id: result.insertId,
 				widget_id : req.body.params.widget_id,
 				config: JSON.stringify(req.body.params.config)
@@ -62,22 +104,24 @@ module.exports = function(app, passport, db, redisClient) {
 			let params = {
 				name: req.body.params.name && req.body.params.name,
 				description: req.body.params.description && req.body.params.description,
-				arguments: req.body.params.arguments && req.body.params.arguments,
+				arguments: req.body.params.variables,
 				query: req.body.params.query && req.body.params.query,
 				url: req.body.params.url ? req.body.params.url : null,
 				endpoint_url: req.body.params.endpoint_url,
 				updated_at: new Date()
 			}
+			console.log(params)
 			params.published = params.url ? true : null
 			db.query(`UPDATE queries SET ? where id=${req.body.params.id}`, params, (err, _) => {
 				if (err) console.log(err)
 				let newParam = {
+					data_type: req.body.params.data_type,
 					displayed_data: req.body.params.displayed_data,
 					query_id: req.body.params.id,
 					widget_id: req.body.params.widget_id,
 					config: JSON.stringify(req.body.params.config)
 				}
-				addWidgetConfig(res, db, newParam)
+				addWidgetConfig(res, db, newParam, req.body.params.widget_number)
 			})
 		}
 	}
@@ -106,6 +150,155 @@ module.exports = function(app, passport, db, redisClient) {
 		}
 		transporter.sendMail(message)
 	}
+
+	app.get('/api/getw/:url', (req, response) => {
+		db.query(`SELECT rd.id, rd.account_id, null as query, null as arguments, 
+			rd.url, rd.name, rd.description , rd.published, rd.created_at , 
+			rd.deleted, rd.javascript, rd.updated_at , null as endpoint_url, 
+			null as displayed_data, null as widget_id ,qtd.widget_id as widget_ids, null as config, rd.layout, null as widget_number 
+			FROM dashboards rd
+			LEFT JOIN (
+				SELECT dashboard_id, GROUP_CONCAT(widget_id SEPARATOR ',') as widget_id 
+				FROM queries_to_dashboards 
+				GROUP BY dashboard_id
+			) qtd
+			ON qtd.dashboard_id = rd.id
+			WHERE rd.url = ?`, [req.params.url], (err, result) => {
+				if (err) console.log(err)
+				response.send(result[0])
+			})
+	})
+
+	app.post('/api/getwidget', (req, response) => {
+		console.log(req.body)
+		db.query(`SELECT a.dashboard_id , a.widget_id as widget_number, a.query_index, b.*, q.*
+		FROM bitquery.queries_to_dashboards a
+		LEFT JOIN (SELECT * FROM bitquery.widgets) b
+		ON a.widget_id = b.id
+		LEFT JOIN (SELECT * FROM bitquery.queries) q
+		ON q.id=b.query_id
+		WHERE dashboard_id = ?`, [req.body.dbid], (err, res) => {
+			if (err) console.log(err)
+			response.send(res)
+		})
+	})
+
+	app.post('/api/savedashboard', (req, response) => {
+		/* console.log(req.body)
+		response.send(200) */
+		const params = {
+			layout: JSON.stringify(req.body.layout),
+			name: req.body.name,
+			url: req.body.url,
+			description: req.body.description,
+			published: req.body.url ? true : false,
+			deleted: req.body.deleted || 0
+		}
+		if (req.body.javascript) params.javascript = JSON.stringify(req.body.javascript)
+		if (req.body.id) {
+			params.updated_at = new Date()
+		} else {
+			params.account_id = req.session.passport.user
+		}
+		req.body.id ?
+		db.query(`update dashboards set ? WHERE id = ${req.body.id}`, params, (err, res) => {
+			if (err) console.log(err)
+			if (req.body.content.length) {
+				let widget_ids = [...req.body.widget_ids]
+				db.query(`DELETE FROM queries_to_dashboards 
+					WHERE dashboard_id=?`, [req.body.id], (err, result) => {
+						if (err) console.log(err)
+						widget_ids.forEach((widget_id, i) => {
+							if (widget_id === -1) {
+								db.query(`insert into widgets SET ?`, {
+									displayed_data: null,
+									query_id: null,
+									widget_id: 'block.content',
+									config: JSON.stringify({content: req.body.content[i]})
+								}, (err, result) => {
+									if (err) console.log(err)
+									widget_ids[i] = result.insertId
+									db.query(`INSERT INTO queries_to_dashboards SET ?`, {
+										dashboard_id: req.body.id,
+										widget_id: result.insertId,
+										query_index: req.body.dashboard_item_indexes[i]
+										}, (err, _) => {
+											if (err) console.log(err)
+									})
+								})
+							} else {
+								req.body.content[i] ? db.query(`update widgets set ? WHERE id = ${widget_id}`, 
+								{config: JSON.stringify({content: req.body.content[i]})},
+								(err, result) => {
+									if (err) console.log(err)
+									db.query(`INSERT INTO queries_to_dashboards SET ?`, {
+										dashboard_id: req.body.id,
+										widget_id: widget_id,
+										query_index: req.body.dashboard_item_indexes[i]
+										}, (err, _) => {
+											if (err) console.log(err)
+									})
+								}) : db.query(`INSERT INTO queries_to_dashboards SET ?`, {
+									dashboard_id: req.body.id,
+									widget_id: widget_id,
+									query_index: req.body.dashboard_item_indexes[i]
+									}, (err, _) => {
+										if (err) console.log(err)
+								})
+							}
+						})
+					response.sendStatus(200)
+				})
+			} else {
+				db.query(`DELETE FROM queries_to_dashboards 
+				WHERE dashboard_id=?`, [req.body.id], (err, result) => {
+					if (err) console.log(err)
+					req.body.widget_ids.forEach((id, i) => {
+						db.query(`INSERT INTO queries_to_dashboards SET ?`, {
+							dashboard_id: req.body.id,
+							widget_id: id,
+							query_index: req.body.dashboard_item_indexes[i]
+						}, (err, _) => {
+							if (err) console.log(err)
+
+						})
+					})
+					response.sendStatus(200)
+				})
+			}
+		}) :
+		db.query('insert into dashboards SET ?', params, (err, res) => {
+			if (err) console.log(err)
+			req.body.widget_ids && req.body.widget_ids.forEach((widget_id, i)=> {
+				if (widget_id === -1) {
+					db.query(`insert into widgets SET ?`, {
+						displayed_data: null,
+						query_id: null,
+						widget_id: 'block.content',
+						config: JSON.stringify({content: req.body.content[i]})
+					}, (err, result) => {
+						if (err) console.log(err)
+						db.query('insert into queries_to_dashboards SET ?', {
+							dashboard_id: res.insertId,
+							query_index: req.body.dashboard_item_indexes[i],
+							widget_id: result.insertId
+						}, (err, result) => {
+							if (err) console.log(err)
+						})
+					})
+				} else {
+					db.query('insert into queries_to_dashboards SET ?', {
+						dashboard_id: res.insertId,
+						query_index: req.body.dashboard_item_indexes[i],
+						widget_id: widget_id
+					}, (err, result) => {
+						if (err) console.log(err)
+					})
+				}
+			})
+			response.send({msg: 'Dashboard saved!', id: res.insertId})
+		})	
+	}) 
 
 	app.post('/api/regenerate', (req, res) => {
 		db.query('update api_keys set active=false, updated_at=CURRENT_TIMESTAMP where user_id=? and active=true',
@@ -200,10 +393,15 @@ module.exports = function(app, passport, db, redisClient) {
 	})
 
 	app.post('/api/deletequery', (req, res) => {
-		db.query(`UPDATE queries SET deleted=?, updated_at=CURRENT_TIMESTAMP where id=?`, [true, req.body.id], (err, _) => {
-			if (err) console.log(err)
-			res.send('Query deleted')
-		})
+		req.body.layout 
+			? db.query(`UPDATE dashboards SET deleted=?, updated_at=CURRENT_TIMESTAMP where id=?`, [true, req.body.id], (err, _) => {
+				if (err) console.log(err)
+				res.send('Dashboard deleted')
+			})
+			: db.query(`UPDATE queries SET deleted=?, updated_at=CURRENT_TIMESTAMP where id=?`, [true, req.body.id], (err, _) => {
+				if (err) console.log(err)
+				res.send('Query deleted')
+			})
 	})
 
 	app.post('/api/addquerylog', (req, response) => {
@@ -254,7 +452,7 @@ module.exports = function(app, passport, db, redisClient) {
 	})
 	app.get('/api/getquery/:url', (req, res) => {
 		let sql = `
-			SELECT queries.*, widgets.widget_id, widgets.config, widgets.displayed_data FROM queries
+			SELECT queries.*, widgets.id as widget_number, widgets.widget_id, widgets.config, widgets.displayed_data, widgets.data_type FROM queries
 			LEFT JOIN widgets 
 			ON widgets.query_id=queries.id
 			WHERE queries.url=?
@@ -290,15 +488,7 @@ module.exports = function(app, passport, db, redisClient) {
 			GROUP BY a.id  
 			ORDER BY number DESC`, (err, queries) => {
 				if (err) console.log(err)
-				redisClient.get('query', async (error, query) => {
-					if (error) console.log(error)
-					if (query !== null) {
-						console.log('there is some query')
-						res.send({queries, msg: checkActive, transferedQuery: JSON.parse(query)})
-					} else {
-						res.send({queries, msg: checkActive})
-					}
-				})
+				res.send({queries: queries, msg: checkActive})
 			})
 	})
 	app.post('/api/querytransfer', (req, res) => {
@@ -308,7 +498,7 @@ module.exports = function(app, passport, db, redisClient) {
 	})
 	app.get('/api/getmyqueries', (req, res) => {
 		db.query(`
-			SELECT a.*, b.displayed_data, b.widget_id, b.config 
+		SELECT a.*, b.displayed_data, b.widget_id, b.config 
 			FROM queries a
 			LEFT JOIN (
 						SELECT * FROM widgets
@@ -325,7 +515,7 @@ module.exports = function(app, passport, db, redisClient) {
 				res.send(queries)
 		})
 	})
-
+	
 	app.get('/api/activate', (req, res) => {
 		db.query(`select * from activations where code = ?`, [req.query.code], (err, result) => {
 			if (err) console.log(err)
@@ -348,7 +538,7 @@ module.exports = function(app, passport, db, redisClient) {
 		const filePath = path.resolve(__dirname, req.query.source)
 		fs.readFile(filePath, 'utf8', (err, data) => {
 			if (err) console.log(err)
-			let js = data.match(/async function[^{]+\{([\s\S]*)\}/)[0]
+			let js = data?.match(/async function[^{]+\{([\s\S]*)\}/)[0]
 			res.send(js)
 		})
 	})

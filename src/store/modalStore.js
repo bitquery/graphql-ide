@@ -13,6 +13,7 @@ class Modal {
 	confirmationMessage = ''
 	forgotPasswordIsOpen = false
 	changePasswordIsOpen = false
+	dashboardSettingsIsOpen = false
 	
 	constructor() {
 		makeObservable(this, {
@@ -27,6 +28,7 @@ class Modal {
 			confirmationMessage: observable,
 			changePasswordIsOpen: observable,
 			forgotPasswordIsOpen: observable,
+			dashboardSettingsIsOpen: observable,
 			toggleModal: action,
 			toggleLogin: action,
 			toggleRegister: action,
@@ -34,7 +36,8 @@ class Modal {
 			toggleShareQuery: action,
 			toggleConfirmation: action,
 			toggleForgotPassword: action,
-			toggleChangePassword: action
+			toggleChangePassword: action,
+			toggleDashboardSettings: action
 		})
 	}
 
@@ -70,6 +73,9 @@ class Modal {
 	}
 	toggleChangePassword = () => {
 		this.changePasswordIsOpen = !this.changePasswordIsOpen
+	}
+	toggleDashboardSettings = () => {
+		this.dashboardSettingsIsOpen = !this.dashboardSettingsIsOpen
 	}
 }
 

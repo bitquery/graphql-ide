@@ -46,42 +46,49 @@ const DisplayedData = observer(function DisplayedData({model, dataWidgets, setDa
 	}, [JSON.stringify(model)])
 
 	return (
-		<li className="nav-item dropdown">
-			<a 	className="nav-link dropdown-toggle" 
-				href="# "
-				id="navbarDropdown" 
-				role="button" 
-				data-toggle="dropdown" 
-				aria-haspopup="true" 
-				aria-expanded="false"
-			>
-				{currentQuery.displayed_data ? currentQuery.displayed_data 
-					: 'Displayed Data'
-				}
-			</a>
-			<div className="dropdown-menu" aria-labelledby="navbarDropdown">
-				{dataWidgets && dataWidgets.length 
-					? 	dataWidgets.map((node, i) => 
-							node.some(widget => widget)
-						? 	<a  className="dropdown-item"
-								href="# " 
-								key={i} 
-								onClick={()=>onChangeHandle(Object.keys(model)[i], i)}
-							>
-								{Object.keys(model)[i]}
-							</a>
-						: 	null
-					) : currentQuery.displayed_data 
-						? 	<a  className="dropdown-item" 
-								href="# " 
-								onClick={()=>onChangeHandle(currentQuery.displayed_data)}
-							>
-								{currentQuery.displayed_data}
-							</a>
-						: 	null
-					}
+		<>
+			<a className="navbar-brand" href="# ">Display</a>
+			<div className="collapse navbar-collapse" id="navbarSupportedContent">
+				<ul className={'navbar-nav mr-auto ' + (currentQuery.widget_id === 'tradingview.widget' && 'dropup')}>
+					<li className="nav-item dropdown">
+						<a 	className="nav-link dropdown-toggle" 
+							href="# "
+							id="navbarDropdown" 
+							role="button" 
+							data-toggle="dropdown" 
+							aria-haspopup="true" 
+							aria-expanded="false"
+						>
+							{currentQuery.displayed_data ? currentQuery.displayed_data 
+								: 'Displayed Data'
+							}
+						</a>
+						<div className="dropdown-menu" aria-labelledby="navbarDropdown">
+							{dataWidgets && dataWidgets.length 
+								? 	dataWidgets.map((node, i) => 
+										node.some(widget => widget)
+									? 	<a  className="dropdown-item"
+											href="# " 
+											key={i} 
+											onClick={()=>onChangeHandle(Object.keys(model)[i], i)}
+										>
+											{Object.keys(model)[i]}
+										</a>
+									: 	null
+								) : currentQuery.displayed_data 
+									? 	<a  className="dropdown-item" 
+											href="# " 
+											onClick={()=>onChangeHandle(currentQuery.displayed_data)}
+										>
+											{currentQuery.displayed_data}
+										</a>
+									: 	null
+								}
+						</div>
+					</li>
+				</ul>
 			</div>
-		</li>
+		</>
 	)
 })
 

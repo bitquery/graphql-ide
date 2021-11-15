@@ -2,6 +2,74 @@
 	font-family: 'Nunito';
 	src: url('./assets/fonts/Nunito-Regular.ttf') format('truetype')
 }
+.cursor-pointer {
+	cursor: pointer;
+}
+.item_high {
+	z-index: 9;
+}
+.oyh {
+	overflow-y: hidden;
+}
+.dashboard__item__menu {
+	.dropdown-toggle {
+		&::after {
+			content: none;
+		}
+	}
+}
+.md__render {
+	height: 100%;
+	overflow-y: auto;
+}
+.block__content {
+	display: flex;
+	overflow-y: hidden;
+	flex: 1;
+	border: 1px solid #dfdfdf;
+	> .CodeMirror.cm-s-graphiql {
+		overflow: hidden;
+		height: auto;
+	}
+}
+.grid-stack { 
+	background: #FAFAD2; 
+	width: 100%;
+	height: 100% !important;
+}
+.grid-stack-item-content { 
+	background-color: #18BC9C; 
+	/* width: 500px !important;
+	height: 500px !important;*/
+	overflow: hidden !important;
+	/* min-width: 300px !important;
+	min-height: 300px !important; */
+}
+.react-grid-layout {
+	height: 100% !important;
+	.react-grid-item > .react-resizable-handle.react-resizable-handle {
+		&-sw {
+			bottom: -5px;
+			left: -5px;
+		}
+		&-nw {
+			top: -5px;
+			left: -5px;
+		}
+		&-se {
+			bottom: -5px;
+			right: -5px;
+		}
+		&-ne {
+			top: -5px;
+			right: -5px;
+		}
+	}
+}
+.react-grid-item {
+	display: flex;
+	flex-direction: column;
+}
 .App {
 	height: 100vh;
 	display: flex;
@@ -10,8 +78,33 @@
 	padding-top: 5px;
 	font-family: 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
-#switch {
-	display: none;
+#switchview {
+	// display: none;
+}
+.gallery__switch {
+	width: 100%;
+	&__label {
+		width: 100%;
+	}
+	.myqueries, .allqueries {
+		display: inline-flex;
+		justify-content: center;
+		color: #555;
+		  align-items: center;
+		width: 50%;
+		height: 25px;
+		background-color: #f0f0f0;
+	}
+	#switchview {
+		&:not(:checked) + label .myqueries {
+			cursor: pointer;
+			background-color: #d1d1d1;
+		}
+		&:checked + label .allqueries {
+			cursor: pointer;
+			background-color: #d1d1d1;
+		}
+	}
 }
 @mixin endpointURL {
 	font-size: 14px;
@@ -108,6 +201,10 @@
 		}
 		.list-group {
 			overflow: auto;
+			&-item {
+				display: flex;
+				flex: 1 0 auto;
+			}
 			&-item:first-child {
 				border-top: 0;
 			}
@@ -132,12 +229,21 @@
 				}
 			}
 			&__wrapper {
-				justify-content: space-between;
+				width: 100%;
+				&>i {
+					margin-right: .5rem;
+				}
+				&>.icon {
+					margin-right: .5rem;
+				}
 				button {
 					opacity: 0;
 				}
 				a {
 					cursor: pointer;
+					max-width: 90%;
+					overflow: hidden;
+					text-overflow: ellipsis;
 				}
 			}
 			position: relative;
@@ -389,6 +495,14 @@
 	&__save {
 		@include endpointURL;
 		border-bottom: 1px solid #aaa;
+	}
+}
+.dashboard {
+	display: none;
+	&.active {
+		overflow-y: scroll;
+		display: block;
+		height: 100%;
 	}
 }
 .modal {
@@ -665,7 +779,41 @@
   .enum-value {
 	color: #0B7FC7;
   }
-  
+  .nav-link {
+	  display: flex;
+	  align-items: center;
+	  &-add {
+		  height: 100%;
+	  }
+	  &-title {
+		display: inline-block;
+		white-space: nowrap;
+		max-width: 150px;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	  }
+	  &>i:not(:last-child) {
+		  margin-right: .5rem;
+	  }
+	  &>.icon:not(:last-child) {
+		  margin-right: .5rem;
+	  }
+  }
+  .nav-link>i:not(:last-child) {
+	  margin-right: .5rem;
+  }
+  .item-container {
+	  border: 1px solid #dfdfdf;
+	  width: 100%;
+	  height: 100%;
+	  overflow-y: hidden;
+	  display: flex;
+	  justify-content: center;
+	  align-items: center;
+	  &.tabulator {
+		  display: block;
+	  }
+  }
   .arg-name {
 	color: #8B2BB9;
   }

@@ -9,7 +9,7 @@ export const GraphqlExplorer = observer(() => {
 	const { tabs } = TabsStore
 	return (
 		tabs.map((tab, i) => (
-			<EditorInstance number={i} key={tab.id} />
-		))
-	)
+			
+			<EditorInstance number={i} key={tab.id} /> 
+		)))
 })

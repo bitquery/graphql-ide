@@ -4,18 +4,18 @@ import { useRouteMatch } from 'react-router-dom'
 import { useToasts } from 'react-toast-notifications'
 import modalStore from '../../store/modalStore'
 import { QueriesStore, TabsStore } from '../../store/queriesStore'
-import { generateLink } from '../../utils/common'
 import copy from 'copy-to-clipboard'
 import { deleteQuery } from '../../api/api'
 import { useEffect } from 'react'
 import ReactTooltip from 'react-tooltip'
 import ConfirmationWindow from '../modal/ConfirmationWindow'
 import { useRef } from 'react'
+import { observer } from 'mobx-react-lite'
 
-function EditDialog({active}) {
+const EditDialog = observer(function EditDialog({active}) {
 	const { addToast } = useToasts()
 	const { url } = useRouteMatch()
-	const { saveQuery, queryParams, currentQuery, 
+	const { saveQuery, queryParams, currentQuery, sharedQueries,
 		saveToggle, query, removeQuery } = QueriesStore
 	const [name, setName] = useState(currentQuery.name||'')
 	const [description, setDescription] = useState(currentQuery.description)
@@ -30,7 +30,7 @@ function EditDialog({active}) {
 	}
 	useEffect(() => {
 		if (shared && !currentQuery.url) {
-			setQueryUrl(generateLink())
+			setQueryUrl(name.trim().replaceAll(' ', '-').replace(/[^a-zA-Z0-9-_]/g, ''))
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [shared])
@@ -38,22 +38,35 @@ function EditDialog({active}) {
 		copy(`${window.location.protocol}//${window.location.host}${url}/${queryUrl}`)
 		addToast('Link Copied to clipboard', {appearance: 'success'})
 	}
+	const queryNameHandler = e => {
+		setName(e.target.value)
+		setQueryUrl(e.target.value.trim().replaceAll(' ', '-').replace(/[^a-zA-Z0-9-_]/g, ''))
+	}
 	const saveHandler = async (e) => {
 		e.preventDefault()
-		let params = queryParams
+		const fixWrongUrl = (queries, url) => {
+			const identicalUrl = queries.filter(query => query.url === url)
+			console.log(url, identicalUrl)
+			if (identicalUrl.length) {
+				return fixWrongUrl(queries ,url+'1')
+			} else {
+				return url
+			}
+		}
+		let params = currentQuery.layout ? {...currentQuery} : queryParams
 		let data = null
 		if (name) {
 			params.name = name
 			if (shared) {
 				if (!params.url) {
-					params.url = queryUrl
+					params.url = fixWrongUrl(sharedQueries, queryUrl)
 				}
 			} else {
 				params.url = null
 				setQueryUrl('')
 			}
 			if (description) params.description = description
-			data = await saveQuery(params)
+			data = await saveQuery({...params, isDraggable: false, isResizable: false})
 			if (data.status !== 400) {
 				renameCurrentTab(name)
 				data.msg && addToast(data.msg, {appearance: 'success'})
@@ -68,7 +81,7 @@ function EditDialog({active}) {
 		deleteHandler)
 	}
 	const deleteHandler = async () => {
-		const data = await deleteQuery(currentQuery.id)
+		const data = await deleteQuery(currentQuery.id, currentQuery.layout)
 		saveToggle()
 		closeHandler()
 		let id = query.map(query=>query.id).indexOf(currentQuery.id)
@@ -89,7 +102,7 @@ function EditDialog({active}) {
 				<input type="text" className="query__save"  
 					style={{'marginBottom': '1rem'}}
 					ref={nameInput}
-					value={name==='New Query' ? '' : name} onChange={e => setName(e.target.value)}
+					value={name==='New Query' ? '' : name} onChange={/* e => setName(e.target.value) */queryNameHandler}
 				/>  
 				<p style={{'marginBottom': '.5rem'}}>Description (optional)</p>
 				<textarea className="query__save" rows="4"
@@ -160,6 +173,6 @@ function EditDialog({active}) {
 			</div>
 		</div>
 	)
-}
+})
 
 export default EditDialog

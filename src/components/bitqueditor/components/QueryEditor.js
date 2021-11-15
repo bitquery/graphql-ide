@@ -28,6 +28,7 @@ export default class QueryEditor extends Component {
 	onDrag = (e) => {
 		if (this.editor && this.state.mouseDown) {
 			const newSize = this.state.start_h + e.y - this.state.start_y
+			this.calculateWrapperHeight()
 			if (newSize <= this.wrapperHeight-33 && newSize>= 25) {
 				this.editor.setSize(null, newSize + "px")
 			}
@@ -60,7 +61,7 @@ export default class QueryEditor extends Component {
 	getEditor = () => this.editor
 	calculateWrapperHeight = () => {
 		const editorWrapper = document.getElementsByClassName('editor__wrapper')[this.number]
-		this.wrapperHeight = height_of(editorWrapper)
+		this.wrapperHeight = editorWrapper && height_of(editorWrapper)
 		const editorHeight = this.editor.getWrapperElement().offsetHeight
 		if ( editorHeight > this.wrapperHeight ) {
 			this.editor.setSize(null, `${this.wrapperHeight-45}px`)

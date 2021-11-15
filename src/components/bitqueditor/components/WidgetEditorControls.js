@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import WidgetSelect from './WidgetSelect'
 import DisplayedData from './DisplayedData'
+import ResponseDataType from './ResponseDataType'
 import { QueriesStore, TabsStore } from '../../../store/queriesStore'
 import { observer } from 'mobx-react-lite'
 
@@ -25,34 +26,34 @@ const WidgetEditorControls = observer(
 		console.log(info)
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [JSON.stringify(model)])
+	/* const generalJson = () => {
+		console.log(model)
+		updateQuery({
+			displayed_data: Object.keys(model).filter(key => !key.includes('.'))[0],
+			widget_id: plugins[0].id
+		}, index)
+	} */
 	return (
 		<nav className="navbar navbar-expand-lg navbar-light bg-light">
-			<a className="navbar-brand" href="# ">Display</a>
-			<div className="collapse navbar-collapse" id="navbarSupportedContent">
-				<ul className="navbar-nav mr-auto">
-					<DisplayedData 
-						model={model}
-						number={number}
-						dataWidgets={dataWidgets}
-						setDataIndexInModel={setDataIndexInModel}
-						plugins={plugins}
-						dataSource={dataSource}
-						setDataSource={setDataSource}
-					/>
-					
-				</ul>
-			</div>
-			<a className="navbar-brand" href="# ">Using</a>
-			<div className="collapse navbar-collapse" id="navbarSupportedContent">
-				<ul className="navbar-nav mr-auto">
-					<WidgetSelect 
-						name={name}
-						dataWidgets={dataWidgets}
-						dataIndexInModel={dataIndexInModel}
-						plugins={plugins} 
-					/>
-				</ul>
-			</div>
+			<ResponseDataType 
+				dataSource={dataSource}
+				setDataSource={setDataSource}
+			/>
+			<DisplayedData 
+				model={model}
+				number={number}
+				dataWidgets={dataWidgets}
+				setDataIndexInModel={setDataIndexInModel}
+				plugins={plugins}
+				dataSource={dataSource}
+				setDataSource={setDataSource}
+			/>
+			<WidgetSelect 
+				name={name}
+				dataWidgets={dataWidgets}
+				dataIndexInModel={dataIndexInModel}
+				plugins={plugins} 
+			/>
 			{(('widget_id' in currentQuery) && currentQuery.widget_id !== defaultWidget) && 
 				<div className="btn-group btn-group-toggle" data-toggle="buttons">
 					<label className={"btn btn-secondary topBar__button "+(viewMode && 'active')}>

@@ -87,7 +87,7 @@ const QueriesControls = observer(({query, isSaved}) => {
 				<button type="button" 
 					className="gallery__query__control btn btn-sm btn-outline-primary"
 					onClick={()=>{toggleModal();toggleEditDialog()}}
-					disabled={(user && query.account_id!==user.id)||(!user) && true}
+					disabled={((user && query.account_id!==user.id)||(!user))&& true}
 				>
 					<i className="fas fa-pencil-alt" />
 				</button>
