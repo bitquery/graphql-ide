@@ -386,9 +386,12 @@ const EditorInstance = observer(function EditorInstance({number})  {
 	const fullscreenHandle = useFullScreenHandle()
 
 	const getCode = useCallback( async () => {
-		const data = WidgetComponent.source && await getCheckoutCode(WidgetComponent.source)
+		let { data } = WidgetComponent.source && await getCheckoutCode(WidgetComponent.source)
+		if (WidgetComponent.id === 'tradingview.widget') {
+			data = data.replace('createChart', 'LightweightCharts.createChart')
+		}
 		const id = generateLink(true)
-		let renderFunc = WidgetComponent.source ? data.data.match(/function(.*?)\(/)[1].trim() : WidgetComponent.rendererName
+		let renderFunc = WidgetComponent.source ? data.match(/function(.*?)\(/)[1].trim() : WidgetComponent.rendererName
 		let dependencies = WidgetComponent.dependencies.map(dep => `<script src="${dep}"></script>`).join('\n')
 		return `
 ${dependencies}
@@ -397,7 +400,7 @@ ${WidgetComponent.id === 'table.widget' ? '<link href="https://unpkg.com/tabulat
 <div style="width: 500px; height: 500px; overflow-y: hidden;" id="${id}"></div>
 <script>
 	let ds = new dataSourceWidget(\`${currentQuery.query}\`, ${currentQuery.variables}, \`${currentQuery.displayed_data}\`, '${user.key}')
-	${data ? data.data : ''}
+	${data ? data : ''}
 	const config = ${JSON.stringify(currentQuery.config)}
 	${renderFunc}(ds, config, '${id}')
 </script>

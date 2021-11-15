@@ -5,7 +5,7 @@
   "dependencies": {
     "@bitquery/ide-charts": "^2.0.5",
     "@bitquery/ide-graph": "^2.0.5",
-    "@bitquery/ide-tradingview": "^1.0.2",
+    "@bitquery/ide-tradingview": "^1.0.3",
     "@testing-library/jest-dom": "^5.12.0",
     "@testing-library/react": "^11.2.7",
     "@testing-library/user-event": "^12.8.3",
