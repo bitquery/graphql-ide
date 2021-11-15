@@ -33,7 +33,6 @@ import { getIntrospectionQuery, buildClientSchema } from 'graphql'
 import useDebounce from '../utils/useDebounce'
 import WidgetView from './bitqueditor/components/WidgetView'
 import { getCheckoutCode } from '../api/api'
-import DashboardReact from './DashboardReact'
 import { flattenData } from './flattenData.js'
 import { stringifyIncludesFunction } from '../utils/common';
 
@@ -524,7 +523,6 @@ ${WidgetComponent.id === 'table.widget' ? '<link href="https://unpkg.com/tabulat
 				</div>
 				{docExplorerOpen && <DocExplorer schema={schema} />}
 			</div>
-			{isLoaded && <DashboardReact plugins={plugins} number={number} id={number} query={query[index]} />}
 		</div> 
 	)
 })

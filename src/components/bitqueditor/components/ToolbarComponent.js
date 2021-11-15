@@ -5,8 +5,6 @@ import { useToasts } from 'react-toast-notifications'
 import { parse as parseGql } from 'graphql/language'
 import { print } from 'graphql'
 import React, { useState, useEffect } from 'react'
-import ToggleGroupEditor from '../../ToggleGroupEditor'
-
 
 const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOpen, toggleDocExplorer}) => {
 	const { currentQuery, saveQuery, updateQuery, 
@@ -96,8 +94,6 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 				className="gallery__toggle fas fa-angle-double-right" 
 				onClick={()=>toggleSideBar(!showSideBar)}
 			/>}
-			{(!currentQuery.id && (currentQuery.account_id === user?.id || !currentQuery.account_id)) 
-				&& <ToggleGroupEditor number={currentTab} isQuery={!currentQuery.layout} switchView={switchView} />}
 			{dashboardOwner && !(!currentQuery.id || !currentQuery.saved) && currentQuery.layout 
 				&& <button type="button" className="topBar__button" onClick={switchMode}>Edit</button>}
 			{(!currentQuery.id || !currentQuery.saved) && <button 
