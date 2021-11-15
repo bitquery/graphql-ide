@@ -42,6 +42,7 @@ class Queries {
 	sharedQueries = []
 	dashboardView = false
 	defaultWidget = 'json.widget'
+	queryIsTransfered = false	//flag to prettify query when it is transfered from explorer
 	currentVariables = ''
 	showGallery = true
 	showSideBar = true
@@ -62,6 +63,7 @@ class Queries {
 	
 	constructor() {
 		makeObservable(this, {
+			queryIsTransfered: observable,
 			sharedQueries: observable,
 			dashboardView: observable,
 			currentVariables: observable,
@@ -75,6 +77,7 @@ class Queries {
 			query: observable,
 			queryParams: computed,
 			queryNumber: computed,
+			setQueryIsTransfered: action,
 			toggleDashboardView: action,
 			setCurrentVariables: action,
 			setDashboardQuery : action,
@@ -110,6 +113,7 @@ class Queries {
 			endpoint_url: this.currentQuery.endpoint_url && this.currentQuery.endpoint_url
 		}
 	}
+	setQueryIsTransfered = isTransfered => this.queryIsTransfered = isTransfered
 	setIsLoaded = () => this.isLoaded = true
 	toggleDashboardView = () => this.dashboardView = !this.dashboardView
 	setSchema = schema => this.schema = schema

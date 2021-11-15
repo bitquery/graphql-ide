@@ -14,7 +14,7 @@ const GalleryComponent = observer(function GalleryComponent() {
 	const [showAllQueries, toggleQueries] = useState(true)
 	const [showBuilder, toggleBuilder] = useState(false)
 	const { currentQuery, showSideBar,
-		toggleSideBar, setSharedQueires,
+		toggleSideBar, setSharedQueires, setQueryIsTransfered,
 		queryJustSaved, updateQuery, schema } = QueriesStore
 	const { index } = TabsStore
 	const { user } = UserStore
@@ -40,6 +40,7 @@ const GalleryComponent = observer(function GalleryComponent() {
 				setSharedQueires(data1.data.queries)
 				if ('transferedQuery' in data1.data) {
 					updateQuery({query: data1.data.transferedQuery.query, variables: data1.data.transferedQuery.variables}, index)
+					setQueryIsTransfered(true)
 				}
 			}
 			data1.data.msg && addToast('Account activated!', {appearance: 'success'})

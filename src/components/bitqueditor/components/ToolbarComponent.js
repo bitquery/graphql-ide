@@ -10,7 +10,7 @@ import ToggleGroupEditor from '../../ToggleGroupEditor'
 
 const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOpen, toggleDocExplorer}) => {
 	const { currentQuery, saveQuery, updateQuery, 
-		showSideBar, toggleSideBar, isLoaded } = QueriesStore
+		showSideBar, toggleSideBar, isLoaded, queryIsTransfered, setQueryIsTransfered } = QueriesStore
 	const { index, currentTab } = TabsStore
 	const { user }  = UserStore
 	const { toggleModal, toggleEditDialog, toggleDashboardSettings } = modalStore
@@ -80,6 +80,12 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 		} catch {
 		}
 	}
+	useEffect(() => {
+		if (queryIsTransfered) {
+			prettifyQuery()
+			setQueryIsTransfered(false)
+		}
+	}, [queryIsTransfered, prettifyQuery])
 	const cancelHandle = () => {
 		switchMode()
 		window.dispatchEvent(new Event('setInitialDashboard'))
