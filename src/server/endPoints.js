@@ -488,7 +488,15 @@ module.exports = function(app, passport, db, redisClient) {
 			GROUP BY a.id  
 			ORDER BY number DESC`, (err, queries) => {
 				if (err) console.log(err)
-				res.send({queries: queries, msg: checkActive})
+				redisClient.get('query', async (error, query) => {
+					if (error) console.log(error)
+					if (query !== null) {
+						console.log('there is some query')
+						res.send({queries: queries, msg: checkActive, transferedQuery: JSON.parse(query)})
+					} else {
+						res.send({queries: queries, msg: checkActive})
+					}
+				})
 			})
 	})
 	app.post('/api/querytransfer', (req, res) => {
