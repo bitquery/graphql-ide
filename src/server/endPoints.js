@@ -4,6 +4,7 @@ const bcrypt = require('bcrypt')
 const fs = require('fs')
 const path = require('path')
 const _ = require('lodash')
+const axios = require('axios')
 
 module.exports = function(app, passport, db, redisClient) {
 	
