@@ -178,7 +178,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 					//-------
 					if (queryLength <= 1) {
 						if (queryNodes[index].includes('.')) queryLength += 1
-						if (queryLength > 1) typesMap = {data: {typeInfo: '[data]'}, ...typesMap}
+						if (queryLength > 1) typesMap = {data: {typeInfo: 'FullResponse'}, ...typesMap}
 					}
 					if (!depth && queryNodes.length) {
 						if (currentQuery.data_type === 'flatten') {

@@ -23,16 +23,9 @@ const WidgetEditorControls = observer(
 		if (JSON.stringify(dataWidgets) !== JSON.stringify(info)) {
 			setDataWidgets(info)
 		}
-		console.log(info)
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [JSON.stringify(model)])
-	/* const generalJson = () => {
-		console.log(model)
-		updateQuery({
-			displayed_data: Object.keys(model).filter(key => !key.includes('.'))[0],
-			widget_id: plugins[0].id
-		}, index)
-	} */
+
 	return (
 		<nav className="navbar navbar-expand-lg navbar-light bg-light">
 			<ResponseDataType 
