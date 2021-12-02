@@ -5,7 +5,7 @@
   "dependencies": {
     "@bitquery/ide-charts": "^2.0.5",
     "@bitquery/ide-graph": "^2.0.5",
-    "@bitquery/ide-tradingview": "^1.0.5",
+    "@bitquery/ide-tradingview": "^1.0.3",
     "axios": "^0.21.1",
     "bcrypt": "^5.0.1",
     "body-parser": "^1.19.0",
@@ -25,7 +25,7 @@
     "graphql": "^15.5.0",
     "http-proxy-middleware": "^0.19.1",
     "lodash": "^4.17.21",
-    "markdown-it": "^12.2.0",
+    "markdown-it": "^12.0.6",
     "mobx": "^6.3.2",
     "mobx-react": "^7.2.0",
     "mobx-react-lite": "^3.2.0",
