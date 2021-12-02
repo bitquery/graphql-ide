@@ -248,7 +248,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 			data.json().then(json => {
 				let values = null
 				if ('data' in json) {
-					if (currentQuery.displayed_data) {
+					if (currentQuery.displayed_data && currentQuery.displayed_data !== 'data') {
 						if (currentQuery.data_type === 'flatten') {
 							values = flattenData(json.data)
 						} else {
@@ -256,10 +256,14 @@ const EditorInstance = observer(function EditorInstance({number})  {
 						}
 					} else {
 						values = json.data
+						if ('extensions' in json) {
+							values.extensions = json.extensions
+						}
 					}
 				}
 				setDataSource({
 					data: ('data' in json) ? json.data : null,
+					extensions: ('extensions' in json) ? json.extensions : null,
 					displayed_data: displayed_data || '',
 					values,
 					error: ('errors' in json) ? json.errors : null,
