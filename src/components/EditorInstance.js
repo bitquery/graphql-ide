@@ -3,6 +3,7 @@ import { observer } from 'mobx-react-lite'
 import { toJS } from 'mobx'
 import ReactTooltip from 'react-tooltip'
 import PlayIcon from './icons/PlayIcon.js'
+import ErrorIcon from './icons/ErrorIcon.js'
 import { generateLink } from '../utils/common'
 import { vegaPlugins } from 'vega-widgets'
 import { tablePlugin } from 'table-widget'
@@ -11,6 +12,7 @@ import { timeChartPlugins } from '@bitquery/ide-charts'
 import { tradingView } from '@bitquery/ide-tradingview'
 import './bitqueditor/App.scss'
 import '@bitquery/ide-graph/dist/graphs.min.css'
+import { useToasts } from 'react-toast-notifications'
 import getQueryFacts from '../utils/getQueryFacts'
 import GraphqlEditor from './bitqueditor/components/GraphqlEditor'
 import { 
@@ -45,11 +47,13 @@ const EditorInstance = observer(function EditorInstance({number})  {
 	const [docExplorerOpen, toggleDocExplorer] = useState(false)
 	const [_variableToType, _setVariableToType] = useState(null)
 	const [loading, setLoading] = useState(false)
+	const [errorLoading, setErrorLoading] = useState(false)
 	const [queryTypes, setQueryTypes] = useState('')
 	const [dataSource, setDataSource] = useState({})
 	const [accordance, setAccordance] = useState(true)
 	const [checkoutCode, setCheckOutCode] = useState('')
 	const debouncedURL = useDebounce(currentQuery.endpoint_url, 500)
+	const { addToast } = useToasts()
 	const workspace = useRef(null)
 	const overwrap = useRef(null)
 	const executeButton = useRef(null)
@@ -342,14 +346,19 @@ const EditorInstance = observer(function EditorInstance({number})  {
 					operationName: introspectionQueryName,
 				}
 				fetcher(graphQLParams)
-				.then(data => data.json())	
+				.then(response => response.json())
 				.then(result => {
 					if (typeof result !== 'string' && 'data' in result) {
 						let schema = buildClientSchema(result.data)
 						setSchema(schema)
 					}
 					setLoading(false)
-				}).catch(e => {})
+					setErrorLoading(false)
+				}).catch(e => {
+					setLoading(false)
+					setErrorLoading(true)
+					addToast('Authorization required...', {appearance: 'error'})
+				})
 			}
 			fetchSchema() 
 		}
@@ -405,8 +414,8 @@ ${WidgetComponent.id === 'table.widget' ? '<link href="https://unpkg.com/tabulat
 				/>
 				
 				<button className="execute-button"
-					data-tip='Execute query (Ctrl-Enter)' 
-					disabled={loading} 
+					data-tip='Execute query (Ctrl-Enter)'
+					disabled={loading || errorLoading} 
 					ref={executeButton} 
 					onClick={getResult}
 				>
@@ -417,7 +426,9 @@ ${WidgetComponent.id === 'table.widget' ? '<link href="https://unpkg.com/tabulat
 								height={25}
 								width={25}
 							/> 
-						: 	<PlayIcon fill={accordance ? '#eee' : '#14ff41'} />}
+						: 	errorLoading	?
+								<ErrorIcon fill={'#FF2D00'} /> 	:
+								<PlayIcon fill={accordance ? '#eee' : '#14ff41'} />}
 				</button>
 				<div className="workspace__wrapper" 
 						ref={workspace} 
