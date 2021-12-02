@@ -36,25 +36,12 @@ class JsonWidget extends Component {
 	}
 
 	async componentDidUpdate(prevProps) {
-		const updateValue = () => {
-			const value = this.formatResult()
+		if (this.viewer) {
+			const value = this.props.mode === 'code' ? await this.props.getCode() : this.formatResult()
+			const mode = this.props.mode === 'code' ? 'htmlmixed' : 'graphql-results'
 			this.viewer.setValue(value || '')
-			this.viewer.setOption('mode', 'graphql-results')
+			this.viewer.setOption('mode', mode)
 		}
-		if (this.viewer && !this.props.mode) {
-			updateValue()
-		}
-		if (this.props.mode !== prevProps.mode) {
-			if (this.props.mode === 'code') {
-				const value = await this.props.getCode()
-				this.viewer.setValue(value)
-				this.viewer.setOption('mode', 'htmlmixed')
-			} else {
-				updateValue()
-			}
-		}
-		const value = this.formatResult()
-		this.viewer.setValue(value || '')
 	}
 
 	componentWillUnmount() {
