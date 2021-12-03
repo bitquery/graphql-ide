@@ -12,7 +12,6 @@ import { timeChartPlugins } from '@bitquery/ide-charts'
 import { tradingView } from '@bitquery/ide-tradingview'
 import './bitqueditor/App.scss'
 import '@bitquery/ide-graph/dist/graphs.min.css'
-import { useToasts } from 'react-toast-notifications'
 import getQueryFacts from '../utils/getQueryFacts'
 import GraphqlEditor from './bitqueditor/components/GraphqlEditor'
 import { 
@@ -53,7 +52,6 @@ const EditorInstance = observer(function EditorInstance({number})  {
 	const [accordance, setAccordance] = useState(true)
 	const [checkoutCode, setCheckOutCode] = useState('')
 	const debouncedURL = useDebounce(currentQuery.endpoint_url, 500)
-	const { addToast } = useToasts()
 	const workspace = useRef(null)
 	const overwrap = useRef(null)
 	const executeButton = useRef(null)
@@ -361,7 +359,6 @@ const EditorInstance = observer(function EditorInstance({number})  {
 				}).catch(e => {
 					setLoading(false)
 					setErrorLoading(true)
-					addToast('Authorization required...', {appearance: 'error'})
 				})
 			}
 			fetchSchema() 
