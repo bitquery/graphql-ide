@@ -148,7 +148,7 @@ class Queries {
 		if (typeof params.displayed_data === 'string') this.query[index].displayed_data = params.displayed_data
 		if (params.data_type) this.query[index].data_type = params.data_type
 		if (params.account_id) this.query[index].account_id = params.account_id
-		if (params.endpoint_url) this.query[index].endpoint_url = params.endpoint_url
+		if (params.endpoint_url || params.endpoint_url === '')  this.query[index].endpoint_url = params.endpoint_url
 		if (params.url || params.url===null) this.query[index].url = params.url
 		if (params.name) {
 			this.query[index].name = params.name || this.query[index].name

@@ -9,13 +9,12 @@ import React, { useState, useEffect } from 'react'
 const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOpen, toggleDocExplorer}) => {
 	const { currentQuery, saveQuery, updateQuery, 
 		showSideBar, toggleSideBar, isLoaded, queryIsTransfered, setQueryIsTransfered } = QueriesStore
-	const { index, currentTab } = TabsStore
+	const { index } = TabsStore
 	const { user }  = UserStore
 	const { toggleModal, toggleEditDialog, toggleDashboardSettings } = modalStore
 	const { addToast } = useToasts()
 	const [mode, setMode] = useState(false)
 	const [dashboardOwner,setOwner] = useState(false)
-	const isDashboardNotSaved = dashboardOwner && !(!currentQuery.id || !currentQuery.saved) && currentQuery.layout
 	useEffect(() => {
 		if (((currentQuery.layout && (currentQuery.account_id === user?.id)) || !currentQuery.id) || !currentQuery.layout) {
 			setOwner(true)
