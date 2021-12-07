@@ -223,6 +223,7 @@ button.columns_number {
 .variable-editor {
   display: flex;  
   flex: 1 1;
+  overflow: hidden;
 }
 .variable-editor>.CodeMirror {
   height: auto !important;
