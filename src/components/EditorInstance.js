@@ -36,7 +36,9 @@ import { getCheckoutCode } from '../api/api'
 import DashboardReact from './DashboardReact'
 import { flattenData } from './flattenData.js'
 import { stringifyIncludesFunction } from '../utils/common';
+import { widgetCallbacks } from '../utils/widgetCallbacks.js';
 
+const explorer = 'https://explorer.bitquery.io/'
 
 const EditorInstance = observer(function EditorInstance({number})  {
 	const { tabs, currentTab, index, jsonMode, codeMode } = TabsStore
@@ -160,7 +162,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 						}
 					}
 					depth++
-					// console.log(typeInfo.getFieldDef().name, typeInfo.getType().toString())
+					console.log(typeInfo.getFieldDef().name, typeInfo.getType().toString())
 					return {...node, typeInfo: typeInfo.getType()}
 				}
 			},
@@ -278,6 +280,9 @@ const EditorInstance = observer(function EditorInstance({number})  {
 					}
 				}
 				setDataSource({
+					renderer: {
+						link: `${explorer}${displayed_data.split('.')[0]}/`
+					},
 					data: ('data' in json) ? json.data : null,
 					displayed_data: displayed_data || '',
 					values,
@@ -473,7 +478,8 @@ ${WidgetComponent.id === 'table.widget' ? '<link href="https://unpkg.com/tabulat
 						plugins={plugins}
 						number={number}
 					/>
-					{(currentQuery.displayed_data && isLoaded) ? <WidgetComponent.editor 
+					{(currentQuery.displayed_data && isLoaded) ? <WidgetComponent.editor
+						dataSource={dataSource}
 						model={queryTypes}
 						displayedData={toJS(query[index].displayed_data)}
 						config={toJS(query[index].config)}
