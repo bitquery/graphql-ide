@@ -35,6 +35,8 @@ function RegisterForm({ active }) {
 			} catch (e) {
 				addToast(e.response.data, {appearance: 'error'})
 			}
+		} else {
+			addToast('Email is not valid or fill all required fields', {appearance: 'error'})
 		}
 	}
 	return (

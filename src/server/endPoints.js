@@ -353,13 +353,36 @@ module.exports = function(app, passport, db, redisClient) {
 					if (!user) {
 						return res.status(400).send("user already exist")
 					}
-					console.log("you are in ............")
 					db.query('UPDATE accounts SET name=?, company_name=? WHERE email=?', [
 						req.body.accountName,
 						req.body.companyName,
 						req.body.email
 					], (err, _) => {
 						if (err) console.log(err)
+						axios.post(`https://api.hubapi.com/contacts/v1/contact/?hapikey=${process.env.HUBSPOT}`,
+							{
+								properties: [
+									{
+										"property": "email",
+										"value": req.body.email
+									},
+									{
+										"property": "firstname",
+										"value": req.body.accountName
+									},
+									{
+										"property": "company",
+										"value": req.body.companyName
+									},
+									{
+										"property": "channel",
+										"value": "IDE"
+									}
+								]
+							},
+						).catch(error => {
+							console.log(error.response.data.validationResults[0].message)
+						})
 						sendActivationLink(user[0].id, user[0].email, req)
 						res.send('Activation link sent. Check your email for further instructions!')
 					})
