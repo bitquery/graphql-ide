@@ -386,7 +386,7 @@ div.CodeMirror span.CodeMirror-matchingbracket {
 .form-control {
   width: auto;
 }
-.icon_fullscreen {
+.icon_fullscreen, .icon_csv {
   position: absolute;
   z-index: 9;
   height: 25px;
@@ -395,6 +395,11 @@ div.CodeMirror span.CodeMirror-matchingbracket {
   bottom: 20px;
   left: 20px;
   cursor: pointer;
+}
+.icon_csv {
+  left: 65px;
+  width: 30px;
+  height: 30px;
 }
 .docExplorerWrap {
   .doc-explorer-contents {
