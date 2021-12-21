@@ -36,7 +36,7 @@ import { getCheckoutCode } from '../api/api'
 import DashboardReact from './DashboardReact'
 import { flattenData } from './flattenData.js'
 import { stringifyIncludesFunction } from '../utils/common';
-import { widgetCallbacks } from '../utils/widgetCallbacks.js';
+import { links } from '../utils/links.js';
 
 const explorer = 'https://explorer.bitquery.io/'
 
@@ -162,7 +162,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 						}
 					}
 					depth++
-					console.log(typeInfo.getFieldDef().name, typeInfo.getType().toString())
+					// console.log(typeInfo.getFieldDef().name, typeInfo.getType().toString())
 					return {...node, typeInfo: typeInfo.getType()}
 				}
 			},
@@ -479,11 +479,12 @@ ${WidgetComponent.id === 'table.widget' ? '<link href="https://unpkg.com/tabulat
 						number={number}
 					/>
 					{(currentQuery.displayed_data && isLoaded) ? <WidgetComponent.editor
-						dataSource={dataSource}
+						ds={dataSource}
 						model={queryTypes}
 						displayedData={toJS(query[index].displayed_data)}
 						config={toJS(query[index].config)}
-						setConfig={setConfig} 
+						setConfig={setConfig}
+						links={links}
 					/> : <div className="widget" /> }
 				</div>
 				<div className={'widget-display widget-display-wrapper'+
