@@ -26,7 +26,7 @@ const QueriesControls = observer(({query, isSaved}) => {
 		e.stopPropagation()
 	}
 	const handleCopy = (queryurl) => {
-		copy(`${window.location.protocol}//${window.location.host}${url}/${queryurl}`)
+		copy(`${window.location.protocol}//${window.location.host}${url.match(/^\/([^?\/]+)/)[0]}/${queryurl}`)
 		addToast('Link copied to clipboard', {appearance: 'success'})
 	}
 	const handleSave = (query) => {

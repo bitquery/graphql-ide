@@ -35,7 +35,7 @@ const EditDialog = observer(function EditDialog({active}) {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [shared])
 	const handleCopy = () => {
-		copy(`${window.location.protocol}//${window.location.host}${url}/${queryUrl}`)
+		copy(`${window.location.protocol}//${window.location.host}${url.match(/^\/([^?\/]+)/)[0]}/${queryUrl}`)
 		addToast('Link Copied to clipboard', {appearance: 'success'})
 	}
 	const queryNameHandler = e => {
@@ -135,7 +135,7 @@ const EditDialog = observer(function EditDialog({active}) {
 				</div>
 				{shared && <div className="input-group mb-3">
 					<input type="text" className="form-control query-link" 
-						value={queryUrl && (`${window.location.protocol}://${window.location.host}${url}/${queryUrl}`||'')} 
+						value={queryUrl && (`${window.location.protocol}://${window.location.host}${url.match(/^\/([^?\/]+)/)[0]}/${queryUrl}`||'')} 
 						readOnly 
 						placeholder="Query link" aria-label="Query link" aria-describedby="basic-addon2"
 					/>
