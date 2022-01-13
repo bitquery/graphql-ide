@@ -275,7 +275,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 			setAccordance(true)
 			ReactTooltip.hide(executeButton.current)
 		})
-		// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line 
 	}, [JSON.stringify(currentQuery), schema, JSON.stringify(queryTypes)])
 	useEffect(() => {
 		number === index && console.log(!dataSource.values, !!currentQuery.query, !!currentQuery.saved, number === index, !!schema);
@@ -284,7 +284,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 		currentQuery.saved &&
 		number === index &&
 		schema) && getResult()
-		// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line 
 	}, [schema])
 	const editQueryHandler = useCallback(handleSubject => {
 		if ('query' in handleSubject) {
@@ -308,7 +308,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 			updateQuery({...handleSubject, url: null}, index, null)
 		}
 		setAccordance(false)
-		// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line 
 	}, [user, schema, queryTypes, index])
 	const setConfig = (config) => {
 		if (number === index) {
@@ -363,7 +363,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 			}
 			fetchSchema() 
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line 
 	}, [debouncedURL, user])
 	
 	const fullscreenHandle = useFullScreenHandle()
@@ -388,7 +388,7 @@ ${WidgetComponent.id === 'table.widget' ? '<link href="https://unpkg.com/tabulat
 	${renderFunc}(ds, config, '${id}')
 </script>
 		`
-		// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line 
 	}, [WidgetComponent.id, JSON.stringify(currentQuery), user])
 
 	return (

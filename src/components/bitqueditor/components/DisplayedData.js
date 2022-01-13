@@ -35,7 +35,7 @@ const DisplayedData = observer(function DisplayedData({model, dataWidgets, setDa
 			let dataIndex = Object.keys(model).indexOf(currentQuery.displayed_data)
 			dataIndex !== -1 && setDataIndexInModel(dataIndex)
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line 
 	}, [currentQuery.displayed_data, JSON.stringify(model)])
 	useEffect(() => {
 		if (!currentQuery.displayed_data && Object.keys(model).length && number===index) {
@@ -46,7 +46,7 @@ const DisplayedData = observer(function DisplayedData({model, dataWidgets, setDa
 				saved: currentQuery.id && true
 			}, index)
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line 
 	}, [JSON.stringify(model)])
 	useFirstUpdate(() => {
 		if (!Object.keys(model).length && currentQuery.displayed_data && number===index) {

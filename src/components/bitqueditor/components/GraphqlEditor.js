@@ -18,7 +18,7 @@ const GraphqlEditor = observer(function GraphqlEditor({
 	useEffect(() => {
 		ref1.current.getEditor().refresh()
 		ref2.current.getEditor().refresh()
-		// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line 
 	}, [currentTab])
 	return (
 		<div className="editor__wrapper" >

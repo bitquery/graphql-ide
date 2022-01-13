@@ -32,7 +32,7 @@ const EditDialog = observer(function EditDialog({active}) {
 		if (shared && !currentQuery.url) {
 			setQueryUrl(name.trim().replaceAll(' ', '-').replace(/[^a-zA-Z0-9-_]/g, ''))
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line 
 	}, [shared])
 	const handleCopy = () => {
 		copy(`${window.location.protocol}//${window.location.host}${url.match(/^\/([^?\/]+)/)[0]}/${queryUrl}`)

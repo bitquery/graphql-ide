@@ -23,7 +23,7 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 			setOwner(false)
 			toggleSideBar(false)
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line 
 	}, [user, JSON.stringify(currentQuery)])
 	const handleInputURLChange = e => {
 		updateQuery({endpoint_url: e.target.value}, index)

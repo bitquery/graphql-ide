@@ -27,7 +27,7 @@ const TabsComponent = observer(() => {
 				? history.push(`${process.env.REACT_APP_IDE_URL}/${currentQuery.url}`) 
 				: history.push(`${process.env.REACT_APP_IDE_URL}`)
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line 
 	}, [currentQuery.url])
 	useEffect(() => {
 		if (!match) {
@@ -55,7 +55,7 @@ const TabsComponent = observer(() => {
 			}
 			updateTabs()
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line 
 	}, [])
 	const editTabNameHandler = useCallback(({key}) => {
 		if (key==='Enter') {
@@ -65,13 +65,13 @@ const TabsComponent = observer(() => {
 			setEditTabName(prev=>prev?!prev:prev)
 			setQueryName({[currentTab]: tabs[index].name})
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line 
 	}, [setEditTabName, currentTab, queryName])
 	useEventListener('keyup', editTabNameHandler)	
 	useEffect(() => {
 		setEditTabName(false)
 		setQueryName(handleState({...queryName}) || {[currentTab]: 'New Query'})
-		// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line 
 	}, [tabs.length])
 	const handleEdit = e => setQueryName({...queryName, [currentTab]: e.target.value})
 	const switchTabHandler = (tabid) => {

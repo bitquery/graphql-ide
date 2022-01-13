@@ -23,7 +23,7 @@ const WidgetEditorControls = observer(
 		if (JSON.stringify(dataWidgets) !== JSON.stringify(info)) {
 			setDataWidgets(info)
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line 
 	}, [JSON.stringify(model)])
 
 	return (
