@@ -10,8 +10,8 @@
     "bcrypt": "^5.0.1",
     "body-parser": "^1.19.0",
     "bootstrap": "^5.0.1",
-    "codemirror": "^5.61.1",
-    "codemirror-graphql": "^1.0.2",
+    "codemirror": "^5.65.0",
+    "codemirror-graphql": "^1.2.11",
     "connect-redis": "^6.0.0",
     "cookie-parser": "^1.4.5",
     "cookie-session": "^1.4.0",
@@ -24,8 +24,7 @@
     "express-session": "^1.17.2",
     "graphql": "^15.5.0",
     "http-proxy-middleware": "^0.19.1",
-    "lodash": "^4.17.21",
-    "markdown-it": "^12.0.6",
+    "markdown-it": "^12.3.2",
     "mobx": "^6.3.2",
     "mobx-react": "^7.2.0",
     "mobx-react-lite": "^3.2.0",
@@ -63,12 +62,6 @@
     "buildns": "node ./build-non-split.js",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
   },
   "browserslist": {
     "production": [

@@ -7,6 +7,7 @@ config.optimization.splitChunks = {
 		default: false
 	}
 }
+config.resolve.fallback= { "punycode": false }
 
 config.optimization.runtimeChunk = false
 config.output.filename = 'static/js/[name].js'
