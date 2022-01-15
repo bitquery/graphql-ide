@@ -4,6 +4,7 @@ function WidgetOptions({model, condition, value, setValue, title, displayedData,
 config, customTitle, expression, removeColumn, formatterType, links, variables}) {
 	let optionValue = ''
 	const possibleLinks = links(model, variables)
+	const network = Object.keys(model)[Object.keys(model).length-1]
 	useEffect(() => {
 		if (model && !Object.keys(config).length) {
 			let list = Object.keys(model).filter(condition)
@@ -41,8 +42,8 @@ config, customTitle, expression, removeColumn, formatterType, links, variables})
 				onChange={(e=>setValue({formatterType: e.target.value}, title))}
 			>
 				{ 
-					Object.keys(possibleLinks).filter(link => possibleLinks[link]())
-						.map(link => <option key={link} value={link}>{link.replaceAll('_', ' ')}</option>) 
+					possibleLinks[network] && Object.keys(possibleLinks[network]).filter(o=> possibleLinks[network][o].supportsModel())
+						.map(o => <option key={o} value={o}>{o}</option>) 
 				}
 			</select>
 			<input

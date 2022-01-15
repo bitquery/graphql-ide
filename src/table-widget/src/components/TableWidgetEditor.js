@@ -49,7 +49,6 @@ function TableWidgetEditor({model, config, setConfig, displayedData, ds, links})
 			newColumns[i-1].title = title
 		}
 		if (newColumns[i-1]) {
-			// newColumns[i-1].formatterParams.network ||= displayedData.split('.')[0]
 			if (formatterType) {
 				newColumns[i-1].formatterParams = newColumns[i-1].formatterParams 
 				? {
@@ -57,8 +56,6 @@ function TableWidgetEditor({model, config, setConfig, displayedData, ds, links})
 					formatterType,
 					target:"_blank",
 				} : {
-					network: displayedData.split('.')[0],
-					variables: JSON.parse(ds.variables),
 					formatterType,
 					target:"_blank"
 				}
@@ -91,7 +88,7 @@ function TableWidgetEditor({model, config, setConfig, displayedData, ds, links})
 						formatterType={columns[i-1]?.formatterParams?.formatterType}
 						customTitle={columns[i-1]?.title}
 						expression={columns[i-1]?.formatterParams?.expression}
-						variables={columns[i-1]?.formatterParams?.variables}
+						variables={ds.varaibles ? JSON.parse(ds.variables) : null}
 						model={model}
 						links={links}
 				/>)}

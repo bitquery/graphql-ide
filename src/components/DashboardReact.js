@@ -12,6 +12,7 @@ import { Dropdown } from 'react-bootstrap'
 import { ContentBlock } from './ContentBlock'
 import micromark from 'micromark'
 import { flattenData } from "./flattenData";
+import { links } from '../utils/links'
 const ReactGridLayout = WidthProvider(RGL);
 
 /**
@@ -182,6 +183,7 @@ const AddRemoveLayout = observer(
 					const WidgetComponent = indexx >= 0 ? this.props.plugins[indexx] : this.props.plugins[0]
 					
 					const dataSource = {
+						links,
 						query: query.query,
 						variables: query.arguments ? JSON.parse(query.arguments) : '',
 						displayed_data: query.displayed_data,

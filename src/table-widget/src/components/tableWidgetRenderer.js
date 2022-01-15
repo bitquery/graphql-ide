@@ -16,7 +16,8 @@ export default async function tableWidgetRenderer(ds, config, el) {
 		let newCol = [...config.columns]
 		newCol.forEach(col => {
 			if (col?.formatterParams?.formatterType)
-				col.formatterParams[col.formatterParams.formatterType] = ds.renderer[col.formatterParams.formatterType]
+				col.formatterParams.links = ds.links
+				col.formatterParams = {...col.formatterParams, network: ds.displayed_data.split('.')[0], variables: ds.variables}
 		})
 		newCol.forEach(col => col.formatter = col.formatterParams && formatter)
 		cfg = {

@@ -281,9 +281,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 					}
 				}
 				setDataSource({
-					renderer: {
-						link: `${explorer}${displayed_data.split('.')[0]}/`
-					},
+					links,
 					data: ('data' in json) ? json.data : null,
 					displayed_data: displayed_data || '',
 					values,
