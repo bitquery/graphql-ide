@@ -37,6 +37,7 @@ const Profile = observer(() => {
 			<UserIcon />
 		</div>
 	) : <Dropdown className={'profile__menu'}>
+			<a className='link__hire' href='https://angel.co/company/bitquery/jobs'>We are hiring!</a>
 			<p className="profile__email"> {user.email} </p> 
 			<Dropdown.Toggle id="dropdown-basic" as={'span'} >
 				<UserIcon />

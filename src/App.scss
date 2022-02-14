@@ -415,6 +415,9 @@
 	position: relative;
 	margin: 0 5px 0 0;
 	&__menu {
+		.link__hire {
+			margin: auto 1em auto 0;
+		}
 		justify-content: center;
 		border-bottom: 1px solid #dee2e6;
 		padding-bottom: 5px;
