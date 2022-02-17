@@ -579,6 +579,36 @@
 		}
 	}
 }
+.statisticsTable {
+	td {
+		position: relative;
+		vertical-align: inherit;
+	}
+	td:nth-child(2):after {
+		content: "";
+		display: block;
+		z-index: -2;
+		top: 10%;
+		left: 0;
+		width: 100%;
+		height: 80%;
+		position: absolute;
+		background: rgb(175,245,180);
+		background: linear-gradient(90deg, rgba(175,245,180,1) 0%, rgba(243,244,151,1) 50%, rgba(255,143,143,1) 100%);
+	}
+	td:nth-child(2):before {
+		content: "";
+		display: block;
+		position: absolute;
+		z-index: -1;
+		top: 0;
+		width: calc(100% - var(--part));
+		left: var(--part);
+		height: 100%;
+
+		background-color: rgb(240, 240, 240);
+	}
+}
 .navbar-collapse {
 	flex-grow: 0;
 	flex-basis: 0%;

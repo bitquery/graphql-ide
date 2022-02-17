@@ -9,6 +9,7 @@ class Modal {
 	shareQueryIsOpen = false
 	editDialogIsOpen = false
 	confirmationIsOpen = false
+	statisticsModalIsOpen = false
 	confirmationAction = null
 	confirmationMessage = ''
 	forgotPasswordIsOpen = false
@@ -28,6 +29,7 @@ class Modal {
 			confirmationMessage: observable,
 			changePasswordIsOpen: observable,
 			forgotPasswordIsOpen: observable,
+			statisticsModalIsOpen: observable,
 			dashboardSettingsIsOpen: observable,
 			toggleModal: action,
 			toggleLogin: action,
@@ -37,6 +39,7 @@ class Modal {
 			toggleConfirmation: action,
 			toggleForgotPassword: action,
 			toggleChangePassword: action,
+			toggleStatisticsModal: action,
 			toggleDashboardSettings: action
 		})
 	}
@@ -59,6 +62,9 @@ class Modal {
 	}
 	toggleShareQuery = () => {
 		this.shareQueryIsOpen = !this.shareQueryIsOpen
+	}
+	toggleStatisticsModal = () => {
+		this.statisticsModalIsOpen = !this.statisticsModalIsOpen
 	}
 	toggleEditDialog = () => {
 		this.editDialogIsOpen = !this.editDialogIsOpen

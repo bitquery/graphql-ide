@@ -11,7 +11,7 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 		showSideBar, toggleSideBar, isLoaded, queryIsTransfered, setQueryIsTransfered } = QueriesStore
 	const { index } = TabsStore
 	const { user }  = UserStore
-	const { toggleModal, toggleEditDialog, toggleDashboardSettings } = modalStore
+	const { toggleModal, toggleEditDialog, toggleDashboardSettings, toggleStatisticsModal } = modalStore
 	const { addToast } = useToasts()
 	const [mode, setMode] = useState(false)
 	const [dashboardOwner,setOwner] = useState(false)
@@ -124,6 +124,13 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 				value={currentQuery.endpoint_url}
 				onChange={handleInputURLChange}
 			/>}
+			<button 
+				className="topBar__button"
+				onClick={()=>{toggleModal();toggleStatisticsModal();}}
+				disabled={!currentQuery.graphqlQueryID}
+			>
+				Query statistics
+			</button>
 			{!docExplorerOpen ? currentQuery.layout ? <></> : 
 			<button
 				className="docExplorerShow"

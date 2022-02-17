@@ -7,6 +7,7 @@ import RegisterForm from './RegisterForm'
 import { observer } from 'mobx-react-lite'
 import SaveQueryFrom from './SaveQueryForm'
 import modalStore from '../../store/modalStore'
+import StatisticsModal from './StatisticsModal'
 import ForgotPasswordForm from './ForgotPasswordForm'
 import ChangePasswordForm from './ChangePasswordForm'
 import DashbaordSettings from './DashbaordSettings'
@@ -46,9 +47,9 @@ Modal.setAppElement('#graphql_ide')
 const ModalWindow = observer(() => {
 	const { 
 		registerIsOpen, loginIsOpen, modalIsOpen,
-		saveQueryIsOpen, editDialogIsOpen, apiKeyIsOpen,
+		saveQueryIsOpen, editDialogIsOpen, apiKeyIsOpen, statisticsModalIsOpen,
 		forgotPasswordIsOpen, changePasswordIsOpen, dashboardSettingsIsOpen,
-		toggleModal, toggleLogin, toggleRegister, 
+		toggleModal, toggleLogin, toggleRegister, toggleStatisticsModal,
 		toggleSaveQuery, toggleEditDialog, toggleApiKey,
 		toggleForgotPassword, toggleChangePassword, toggleDashboardSettings
 	} = modalStore
@@ -62,8 +63,10 @@ const ModalWindow = observer(() => {
 		editDialogIsOpen && toggleEditDialog()
 		forgotPasswordIsOpen && toggleForgotPassword()
 		changePasswordIsOpen && toggleChangePassword()
+		statisticsModalIsOpen && toggleStatisticsModal()
 		dashboardSettingsIsOpen && toggleDashboardSettings()
 	}
+	
     return (
 		<Modal
 			isOpen={modalIsOpen}
@@ -76,6 +79,7 @@ const ModalWindow = observer(() => {
 			<EditDialog active={editDialogIsOpen} />
 			<RegisterForm active={registerIsOpen} />
 			<SaveQueryFrom  active={saveQueryIsOpen} />
+			<StatisticsModal active={statisticsModalIsOpen} />
 			<ChangePasswordForm active={changePasswordIsOpen} />
 			<ForgotPasswordForm active={forgotPasswordIsOpen} />
 			<DashbaordSettings active={dashboardSettingsIsOpen} />
