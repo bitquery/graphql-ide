@@ -28,8 +28,11 @@ const StatisticsModal = observer(function StatisticsModal({active}) {
 	}
 
 	useEffect(() => {
-		getMetrics()
-	}, [])
+		if (!metrics) {
+			const interval = setInterval(getMetrics, 5000)
+			return () => clearInterval(interval)
+		}
+	}, [metrics])
 
 	const closeHandler = () => {
 		toggleModal()
