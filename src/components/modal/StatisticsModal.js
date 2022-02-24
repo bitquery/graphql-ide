@@ -18,7 +18,7 @@ const StatisticsModal = observer(function StatisticsModal({active}) {
 					"content-type": "application/json",
 					"x-api-key": user.key
 				},
-				"body": `{\"query\":\"query MyQuery {\\n  metrics(queryId: \\\"${currentQuery.graphqlQueryID}\\\", options: {seed: 10}) {\\n    points\\n    id\\n    sqlRequestsCount\\n    list {\\n      cost\\n      max\\n      min\\n      name\\n      price\\n      value\\n      divider\\n      maxUnit\\n      minUnit\\n      valueUnit\\n    }\\n  }\\n}\\n\",\"variables\":\"{}\"}`,
+				"body": `{\"query\":\"query MyQuery {\\n  metrics(queryId: \\\"${currentQuery.graphqlQueryID}\\\", options: {seed: ${new Date().getTime()}}) {\\n    points\\n    id\\n    sqlRequestsCount\\n    list {\\n      cost\\n      max\\n      min\\n      name\\n      price\\n      value\\n      divider\\n      maxUnit\\n      minUnit\\n      valueUnit\\n    }\\n  }\\n}\\n\",\"variables\":\"{}\"}`,
 				"method": "POST",
 				"mode": "cors",
 			})
@@ -28,9 +28,12 @@ const StatisticsModal = observer(function StatisticsModal({active}) {
 	}
 
 	useEffect(() => {
-		if (!metrics) {
-			const interval = setInterval(getMetrics, 5000)
-			return () => clearInterval(interval)
+		if (!currentQuery.queryCached) {
+			if (!metrics) {
+				getMetrics()
+				const interval = setInterval(getMetrics, 5000)
+				return () => clearInterval(interval)
+			}
 		}
 	}, [metrics])
 
@@ -45,8 +48,7 @@ const StatisticsModal = observer(function StatisticsModal({active}) {
 			modal = <div className={'modal__form '+(!active && 'modal__form_hide')}>
 						<i className="handler handler__close fas fa-times" onClick={closeHandler} />
 						<p>Query ID: {currentQuery.graphqlQueryID}</p>
-						<p>Query cached</p>
-						<p>Points Consumed: 0</p>
+						<p>Query is cached. Points Consumed: 0.</p>
 					</div>
 		} else
 		if (metrics) {
@@ -77,11 +79,12 @@ const StatisticsModal = observer(function StatisticsModal({active}) {
 							</tfoot>
 						</table>
 						<p>Query ID: {currentQuery.graphqlQueryID}</p>
-						<p>SQL Request Count: <span>{metrics.sqlRequestsCount}</span></p>
 					</div>
 		} else {
-			modal = <div className='d-flex justify-content-center'>
+			modal = <div className={'modal__form '+(!active && 'modal__form_hide')}>
 						<i className="handler handler__close fas fa-times" onClick={closeHandler} />
+						<p>Query ID: {currentQuery.graphqlQueryID}</p>
+						<p>Waiting for processing of this query...</p>
 						<Loader type='Triangle'/>
 					</div>
 		}

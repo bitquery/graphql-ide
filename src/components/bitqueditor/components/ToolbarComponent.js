@@ -124,13 +124,13 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 				value={currentQuery.endpoint_url}
 				onChange={handleInputURLChange}
 			/>}
-			<button 
+			{user?.id && <button 
 				className="topBar__button"
 				onClick={()=>{toggleModal();toggleStatisticsModal();}}
 				disabled={!currentQuery.graphqlQueryID}
 			>
 				Query statistics
-			</button>
+			</button>}
 			{!docExplorerOpen ? currentQuery.layout ? <></> : 
 			<button
 				className="docExplorerShow"
