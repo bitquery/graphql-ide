@@ -225,6 +225,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 
 	const getResult = useCallback(() => {
 		ReactTooltip.hide(executeButton.current)
+		updateQuery({points: undefined, queryCached: undefined}, index)
 		setLoading(true)
 		let queryType = getQueryTypes(currentQuery.query)
 		console.log(queryType)

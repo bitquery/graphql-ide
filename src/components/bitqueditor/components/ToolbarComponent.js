@@ -5,6 +5,7 @@ import { useToasts } from 'react-toast-notifications'
 import { parse as parseGql } from 'graphql/language'
 import { print } from 'graphql'
 import React, { useState, useEffect } from 'react'
+import StatisticsButton from './StatisticsButton'
 
 const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOpen, toggleDocExplorer}) => {
 	const { currentQuery, saveQuery, updateQuery, 
@@ -124,13 +125,7 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 				value={currentQuery.endpoint_url}
 				onChange={handleInputURLChange}
 			/>}
-			<button 
-				className="topBar__button"
-				onClick={()=>{toggleModal();toggleStatisticsModal();}}
-				disabled={!currentQuery.graphqlQueryID}
-			>
-				Query statistics
-			</button>
+			<StatisticsButton />
 			{!docExplorerOpen ? currentQuery.layout ? <></> : 
 			<button
 				className="docExplorerShow"

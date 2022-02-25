@@ -49,6 +49,7 @@ class Queries {
 	queryJustSaved = false
 	schema = null
 	isMobile = window.innerWidth <= 768
+	gettingResult = false
 	isLoaded = false
 	currentQuery = {
 		query: '',
@@ -69,6 +70,7 @@ class Queries {
 			currentVariables: observable,
 			queryJustSaved: observable,
 			dashboardQuery: observable,
+			gettingResult: observable,
 			currentQuery: observable,
 			showSideBar: observable,
 			isMobile: observable,
@@ -82,6 +84,7 @@ class Queries {
 			setCurrentVariables: action,
 			setDashboardQuery : action,
 			setSharedQueires: action,
+			setGettingResult: action,
 			setCurrentQuery: action,
 			toggleSideBar: action,
 			setIsLoaded: action,
@@ -113,6 +116,7 @@ class Queries {
 			endpoint_url: this.currentQuery.endpoint_url && this.currentQuery.endpoint_url
 		}
 	}
+	setGettingResult = state => this.gettingResult = state
 	setQueryIsTransfered = isTransfered => this.queryIsTransfered = isTransfered
 	setIsLoaded = () => this.isLoaded = true
 	toggleDashboardView = () => this.dashboardView = !this.dashboardView
@@ -161,6 +165,7 @@ class Queries {
 		if (params.layout || params.layout === null) this.query[index].layout = params.layout
 		if (params.content) this.query[index].content = params.content
 		if (params.graphqlQueryID) this.query[index].graphqlQueryID = params.graphqlQueryID
+		if ('points' in params) this.query[index].points = params.points
 		if ('queryCached' in params) this.query[index].queryCached = params.queryCached
 		if ('isDraggable' in params) this.query[index].isDraggable = params.isDraggable
 		if ('isResizable' in params) this.query[index].isResizable = params.isResizable
