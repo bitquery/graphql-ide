@@ -166,7 +166,7 @@ class Queries {
 		if (params.content) this.query[index].content = params.content
 		if (params.graphqlQueryID) this.query[index].graphqlQueryID = params.graphqlQueryID
 		if ('points' in params) this.query[index].points = params.points
-		if ('queryCached' in params) this.query[index].queryCached = params.queryCached
+		if ('graphqlRequested' in params) this.query[index].graphqlRequested = params.graphqlRequested
 		if ('isDraggable' in params) this.query[index].isDraggable = params.isDraggable
 		if ('isResizable' in params) this.query[index].isResizable = params.isResizable
 		this.query[index].id = id || id===null ? id : this.query[index].id

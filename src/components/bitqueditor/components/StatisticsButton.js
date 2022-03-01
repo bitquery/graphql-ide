@@ -4,7 +4,7 @@ import { QueriesStore, UserStore, TabsStore } from '../../../store/queriesStore'
 
 function StatisticsButton({number}) {
 	const { toggleModal, toggleStatisticsModal } = modalStore
-	const { currentQuery: { points, graphqlQueryID, queryCached }, updateQuery } = QueriesStore
+	const { currentQuery: { points, graphqlQueryID, graphqlRequested }, updateQuery } = QueriesStore
 	const { user } = UserStore
 	const { index } = TabsStore
 	
@@ -27,13 +27,13 @@ function StatisticsButton({number}) {
 	}
 
 	useEffect(() => {
-		if (queryCached) {
+		if (graphqlRequested) {
 			if (!points) {
 				const interval = setInterval(getPoints, 3000)
 				return () => clearInterval(interval)
 			}
 		}
-	}, [graphqlQueryID, queryCached, points])
+	}, [graphqlQueryID, graphqlRequested, points])
 
 	return (
 		<button 
