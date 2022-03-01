@@ -244,10 +244,12 @@ const EditorInstance = observer(function EditorInstance({number})  {
 			}, index)
 		}
 		fetcher({query: currentQuery.query, variables: currentQuery.variables}).then(data => {
+			const graphqlRequested = data.headers.get('X-GraphQL-Requested') === 'true' ? true : false
 			updateQuery(
 				{
 					graphqlQueryID: data.headers.get('X-GraphQL-Query-ID'),
-					queryCached: data.headers.get('X-GraphQL-Requested'),
+					queryCached: graphqlRequested,
+					points: graphqlRequested ? undefined : 0,
 					saved: true
 				}, index)
 			data.json().then(json => {

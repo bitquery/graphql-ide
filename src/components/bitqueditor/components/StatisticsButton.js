@@ -37,18 +37,20 @@ function StatisticsButton({number}) {
 	}
 
 	useEffect(() => {
-		if (!points) {
-			const interval = setInterval(getPoints, 3000)
-			return () => clearInterval(interval)
+		if (queryCached) {
+			if (!points) {
+				const interval = setInterval(getPoints, 3000)
+				return () => clearInterval(interval)
+			}
 		}
-	}, [graphqlQueryID, points])
+	}, [graphqlQueryID, queryCached, points])
 
 	return (
 		<button 
 			className="topBar__button"
 			onClick={()=>{toggleModal();toggleStatisticsModal();}}
 		>
-			{queryCached ? points ? `Points consumed: ${points}` : 'Calculating points...' : 'Points consumed: 0'}
+			{typeof points === 'number' ? `Points consumed: ${points}` : 'Calculating points...'}
 		</button>
 	)
 }
