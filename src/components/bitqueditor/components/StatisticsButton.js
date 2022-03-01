@@ -17,8 +17,7 @@ function StatisticsButton({number}) {
 	const [label, setLabel] = useState(labels.calculating)
 	
 	const getPoints = async () => {
-		console.log(number, index)
-		if (user.key ) {
+		if (user.key && number === index ) {
 			const response = await fetch("https://graphql.bitquery.io/", {
 				"headers": {
 					"accept": "application/json",

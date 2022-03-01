@@ -408,6 +408,7 @@ ${WidgetComponent.id === 'table.widget' ? '<link href="https://unpkg.com/tabulat
 			}
 		>
 			<ToolbarComponent 
+				number={number}
 				queryEditor={queryEditor}
 				variablesEditor={variablesEditor}
 				docExplorerOpen={docExplorerOpen}
