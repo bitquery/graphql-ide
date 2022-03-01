@@ -15,10 +15,7 @@ function StatisticsButton({number}) {
 	const { user } = UserStore
 	const { index } = TabsStore
 	const [label, setLabel] = useState(labels.calculating)
-	const counter = () => {
-		let counter = 0
-		return () => counter++
-	}
+	
 	const getPoints = async () => {
 		console.log(number, index)
 		if (user.key ) {
@@ -38,36 +35,20 @@ function StatisticsButton({number}) {
 			}
 		}
 	}
+
 	useEffect(() => {
-		console.log('we are here')
-		let interval
-		if (queryCached) {
-			setLabel(labels.cached)
-		}
-		if (!points && !queryCached && graphqlQueryID) {
-			setLabel(label.calculating)
-			getPoints()
-			interval = setInterval(getPoints, 2000)
+		if (!points) {
+			const interval = setInterval(getPoints, 3000)
 			return () => clearInterval(interval)
 		}
-		if (points) clearInterval(interval)
-	}, [JSON.stringify(currentQuery), graphqlQueryID, points, queryCached])
+	}, [graphqlQueryID, points])
 
-	/* let info
-	if (!points && !queryCached) {
-		info = 'Calculating points...'
-	} else if (queryCached) {
-		info = 'Points consumed: 0'
-	} else if (points) {
-		info = `Points consumed: ${points.toFixed(2)}`
-	} */
 	return (
 		<button 
 			className="topBar__button"
 			onClick={()=>{toggleModal();toggleStatisticsModal();}}
-			disabled={!points && !queryCached}
 		>
-			{label}
+			{queryCached ? points ? `Points consumed: ${points}` : 'Calculating points...' : 'Points consumed: 0'}
 		</button>
 	)
 }

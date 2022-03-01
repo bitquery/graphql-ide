@@ -247,7 +247,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 			updateQuery(
 				{
 					graphqlQueryID: data.headers.get('X-GraphQL-Query-ID'),
-					queryCached: data.headers.get('X-Query-Cached'),
+					queryCached: data.headers.get('X-GraphQL-Requested'),
 					saved: true
 				}, index)
 			data.json().then(json => {
