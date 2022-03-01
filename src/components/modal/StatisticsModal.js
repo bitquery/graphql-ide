@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from 'react'
 import { observer } from 'mobx-react'
 import { QueriesStore, UserStore } from '../../store/queriesStore'
+import { useInterval } from '../../utils/useInterval'
 import modalStore from '../../store/modalStore'
 import Loader from "react-loader-spinner"
   
 const StatisticsModal = observer(function StatisticsModal({active}) {
-	const { currentQuery } = QueriesStore
+	const { currentQuery: { points, graphqlQueryID, graphqlRequested } } = QueriesStore
 	const { user } = UserStore
 	const { toggleModal, toggleStatisticsModal } = modalStore
 	const [metrics, setMetrics] = useState(undefined)
+	const [count, setCount] = useState(0)
 
 	const getMetrics = async () => {
 		if (user.key) {
@@ -18,24 +20,25 @@ const StatisticsModal = observer(function StatisticsModal({active}) {
 					"content-type": "application/json",
 					"x-api-key": user.key
 				},
-				"body": `{\"query\":\"query MyQuery {\\n  metrics(queryId: \\\"${currentQuery.graphqlQueryID}\\\", options: {seed: ${new Date().getTime()}}) {\\n    points\\n    id\\n    sqlRequestsCount\\n    list {\\n      cost\\n      max\\n      min\\n      name\\n      price\\n      value\\n      divider\\n      maxUnit\\n      minUnit\\n      valueUnit\\n    }\\n  }\\n}\\n\",\"variables\":\"{}\"}`,
+				"body": `{\"query\":\"query MyQuery {\\n  metrics(queryId: \\\"${graphqlQueryID}\\\", options: {seed: ${new Date().getTime()}}) {\\n    points\\n    id\\n    sqlRequestsCount\\n    list {\\n      cost\\n      max\\n      min\\n      name\\n      price\\n      value\\n      divider\\n      maxUnit\\n      minUnit\\n      valueUnit\\n    }\\n  }\\n}\\n\",\"variables\":\"{}\"}`,
 				"method": "POST",
 				"mode": "cors",
 			})
 			const { data } = await response.json()
-			setMetrics(data.metrics)
+			if (data.metrics && 'points' in data.metrics) {
+				setMetrics(data.metrics)
+			}
 		}
 	}
 
 	useEffect(() => {
-		if (!currentQuery.queryCached) {
-			if (!metrics) {
-				getMetrics()
-				const interval = setInterval(getMetrics, 5000)
-				return () => clearInterval(interval)
-			}
-		}
-	}, [metrics])
+		graphqlRequested ? setCount(0) : setCount(10)
+	}, [points, graphqlRequested])
+
+	useInterval(() => {
+		setCount(prev => prev + 1)
+		getMetrics()
+	}, count < 10 ? 2000 : null)
 
 	const closeHandler = () => {
 		toggleModal()
@@ -44,10 +47,10 @@ const StatisticsModal = observer(function StatisticsModal({active}) {
 
 	let modal = null
 	if (active) {
-		if (currentQuery.queryCached) {
+		if (!graphqlRequested) {
 			modal = <div className={'modal__form '+(!active && 'modal__form_hide')}>
 						<i className="handler handler__close fas fa-times" onClick={closeHandler} />
-						<p>Query ID: {currentQuery.graphqlQueryID}</p>
+						<p>Query ID: {graphqlQueryID}</p>
 						<p>Query is cached. Points Consumed: 0.</p>
 					</div>
 		} else
@@ -78,12 +81,12 @@ const StatisticsModal = observer(function StatisticsModal({active}) {
 								<td>{metrics.points.toFixed(2)}</td>
 							</tfoot>
 						</table>
-						<p>Query ID: {currentQuery.graphqlQueryID}</p>
+						<p>Query ID: {graphqlQueryID}</p>
 					</div>
 		} else {
 			modal = <div className={'modal__form '+(!active && 'modal__form_hide')}>
 						<i className="handler handler__close fas fa-times" onClick={closeHandler} />
-						<p>Query ID: {currentQuery.graphqlQueryID}</p>
+						<p>Query ID: {graphqlQueryID}</p>
 						<p>Waiting for processing of this query...</p>
 						<Loader type='Triangle'/>
 					</div>

@@ -225,6 +225,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 
 	const getResult = useCallback(() => {
 		ReactTooltip.hide(executeButton.current)
+		updateQuery({points: undefined, graphqlRequested: undefined}, index)
 		setLoading(true)
 		let queryType = getQueryTypes(currentQuery.query)
 		console.log(queryType)
@@ -243,10 +244,12 @@ const EditorInstance = observer(function EditorInstance({number})  {
 			}, index)
 		}
 		fetcher({query: currentQuery.query, variables: currentQuery.variables}).then(data => {
+			const graphqlRequested = data.headers.get('X-GraphQL-Requested') === 'true' ? true : false
 			updateQuery(
 				{
 					graphqlQueryID: data.headers.get('X-GraphQL-Query-ID'),
-					queryCached: data.headers.get('X-Query-Cached'),
+					graphqlRequested: graphqlRequested,
+					points: graphqlRequested ? undefined : 0,
 					saved: true
 				}, index)
 			data.json().then(json => {
@@ -405,6 +408,7 @@ ${WidgetComponent.id === 'table.widget' ? '<link href="https://unpkg.com/tabulat
 			}
 		>
 			<ToolbarComponent 
+				number={number}
 				queryEditor={queryEditor}
 				variablesEditor={variablesEditor}
 				docExplorerOpen={docExplorerOpen}
