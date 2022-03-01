@@ -1,4 +1,5 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
+import { useInterval } from '../../../utils/useInterval'
 import modalStore from '../../../store/modalStore';
 import { QueriesStore, UserStore, TabsStore } from '../../../store/queriesStore';
 
@@ -7,6 +8,7 @@ function StatisticsButton({number}) {
 	const { currentQuery: { points, graphqlQueryID, graphqlRequested }, updateQuery } = QueriesStore
 	const { user } = UserStore
 	const { index } = TabsStore
+	const [count, setCount] = useState(0)
 	
 	const getPoints = async () => {
 		if (user.key && number === index ) {
@@ -20,20 +22,20 @@ function StatisticsButton({number}) {
 				"method": "POST"
 			})
 			const { data } = await response.json()
-			if ('points' in data.metrics) {
+			if (data.metrics && 'points' in data.metrics) {
 				updateQuery({points: data.metrics.points}, index)
 			}
 		}
 	}
 
 	useEffect(() => {
-		if (graphqlRequested) {
-			if (!points) {
-				const interval = setInterval(getPoints, 3000)
-				return () => clearInterval(interval)
-			}
-		}
-	}, [graphqlQueryID, graphqlRequested, points])
+		graphqlRequested ? setCount(0) : setCount(10)
+	}, [points, graphqlRequested])
+
+	useInterval(() => {
+		setCount(prev => prev + 1)
+		getPoints()
+	}, count < 10 ? 2000 : null)
 
 	return (
 		<button 
