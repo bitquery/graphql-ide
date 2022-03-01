@@ -28,7 +28,7 @@ const StatisticsModal = observer(function StatisticsModal({active}) {
 	}
 
 	useEffect(() => {
-		if (!currentQuery.queryCached) {
+		if (currentQuery.queryCached) {
 			if (!metrics) {
 				getMetrics()
 				const interval = setInterval(getMetrics, 5000)
@@ -44,7 +44,7 @@ const StatisticsModal = observer(function StatisticsModal({active}) {
 
 	let modal = null
 	if (active) {
-		if (currentQuery.queryCached) {
+		if (!currentQuery.queryCached) {
 			modal = <div className={'modal__form '+(!active && 'modal__form_hide')}>
 						<i className="handler handler__close fas fa-times" onClick={closeHandler} />
 						<p>Query ID: {currentQuery.graphqlQueryID}</p>
