@@ -1,20 +1,12 @@
 import React, { useEffect } from 'react'
-import { useState } from 'react';
 import modalStore from '../../../store/modalStore';
 import { QueriesStore, UserStore, TabsStore } from '../../../store/queriesStore';
 
-const labels = {
-	calculating: 'Calculating points...',
-	cached: 'Points consumed: 0',
-	points: 'Points consumed: '
-}
-
 function StatisticsButton({number}) {
 	const { toggleModal, toggleStatisticsModal } = modalStore
-	const { currentQuery: { points, graphqlQueryID, queryCached }, currentQuery, updateQuery, queryIsLoaded } = QueriesStore
+	const { currentQuery: { points, graphqlQueryID, queryCached }, updateQuery } = QueriesStore
 	const { user } = UserStore
 	const { index } = TabsStore
-	const [label, setLabel] = useState(labels.calculating)
 	
 	const getPoints = async () => {
 		if (user.key && number === index ) {
@@ -29,7 +21,6 @@ function StatisticsButton({number}) {
 			})
 			const { data } = await response.json()
 			if ('points' in data.metrics) {
-				setLabel(label.points)
 				updateQuery({points: data.metrics.points}, index)
 			}
 		}
@@ -49,7 +40,7 @@ function StatisticsButton({number}) {
 			className="topBar__button"
 			onClick={()=>{toggleModal();toggleStatisticsModal();}}
 		>
-			{typeof points === 'number' ? `Points consumed: ${points}` : 'Calculating points...'}
+			{typeof points === 'number' ? `Points consumed: ${points.toFoxed(2)}` : 'Calculating points...'}
 		</button>
 	)
 }
