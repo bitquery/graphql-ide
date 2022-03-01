@@ -330,7 +330,7 @@
 	}
 }
 .tabs {
-	flex: 1 1 auto;
+	flex: 1;
 	&__add {
 		padding: 10px 10px 0;
 	}
@@ -361,6 +361,9 @@
 		}
 	}
 	.nav {
+		&-tabs {
+			border: none;
+		}
 		&-link {
 			.cursor-edit {
 				cursor: url('https://cdn.jsdelivr.net/gh/bitquery/graphql-ide@1.1.19/src/assets/images/pencil-alt-solid.svg') 0 20, auto;
@@ -391,7 +394,8 @@
 .controlpanel {
 	position: relative;
 	display: flex;
-	align-items: flex-end;
+	align-items: flex-start;
+	border-bottom: 1px solid #dee2e6;
 	position: relative;
 	.endpoint_url {
 		position: absolute;
@@ -419,12 +423,10 @@
 			margin: auto 1em auto 0;
 		}
 		justify-content: center;
-		border-bottom: 1px solid #dee2e6;
 		padding-bottom: 5px;
 		&.dropdown{
 			height: 40px;
 			display: flex;
-			border-bottom: 1px solid #dee2e6;
 		}
 		.dropdown-toggle {
 			&::after {
