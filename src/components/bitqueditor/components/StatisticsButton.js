@@ -40,7 +40,7 @@ function StatisticsButton({number}) {
 			className="topBar__button"
 			onClick={()=>{toggleModal();toggleStatisticsModal();}}
 		>
-			{typeof points === 'number' ? `Points consumed: ${points.toFoxed(2)}` : 'Calculating points...'}
+			{typeof points === 'number' ? `Points consumed: ${(Math.round(points * 100) / 100).toFixed(2)}` : 'Calculating points...'}
 		</button>
 	)
 }
