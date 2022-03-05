@@ -5,7 +5,7 @@ import { QueriesStore, UserStore, TabsStore } from '../../../store/queriesStore'
 
 function StatisticsButton({number}) {
 	const { toggleModal, toggleStatisticsModal } = modalStore
-	const { currentQuery: { points, graphqlQueryID, graphqlRequested }, updateQuery } = QueriesStore
+	const { currentQuery: { points, graphqlQueryID, graphqlRequested, saved }, updateQuery } = QueriesStore
 	const { user } = UserStore
 	const { index } = TabsStore
 	const [count, setCount] = useState(0)
@@ -23,7 +23,7 @@ function StatisticsButton({number}) {
 			})
 			const { data } = await response.json()
 			if (data.metrics && 'points' in data.metrics) {
-				updateQuery({points: data.metrics.points}, index)
+				updateQuery({points: data.metrics.points, saved}, index)
 			}
 		}
 	}

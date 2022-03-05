@@ -225,7 +225,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 
 	const getResult = useCallback(() => {
 		ReactTooltip.hide(executeButton.current)
-		updateQuery({points: undefined, graphqlRequested: undefined}, index)
+		updateQuery({points: undefined, graphqlRequested: undefined, saved: currentQuery.saved}, index)
 		setLoading(true)
 		let queryType = getQueryTypes(currentQuery.query)
 		console.log(queryType)
@@ -250,7 +250,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 					graphqlQueryID: data.headers.get('X-GraphQL-Query-ID'),
 					graphqlRequested: graphqlRequested,
 					points: graphqlRequested ? undefined : 0,
-					saved: true
+					saved: currentQuery.saved
 				}, index)
 			data.json().then(json => {
 				let values = null
