@@ -10,6 +10,7 @@ import { QueriesStore } from './store/queriesStore'
 import { GraphqlExplorer } from './components/GraphqlExplorer'
 import { observer } from 'mobx-react-lite'
 import 'react-grid-layout/css/styles.css'
+import TopBapNotification from './components/TopBapNotification'
 
 if (process.env.NODE_ENV === 'development') {
 	/* require('@welldone-software/why-did-you-render')(React, {
@@ -41,19 +42,20 @@ const App = observer(function App() {
 	
 	return (
 		<div className="App">
-				<Switch>
-					<Route path={`${process.env.REACT_APP_IDE_URL}/reset`} >
-						<ResetPassword />
-					</Route>
-					<Route path={[`${process.env.REACT_APP_IDE_URL}/:queryurl`, `${process.env.REACT_APP_IDE_URL}`]} >
-						<ModalWindow />
-						<ControlPanel />
-						<div className="content flex">
-							{showSideBar && <GalleryComponent />}
-							<GraphqlExplorer />
-						</div>
-					</Route>
-				</Switch>
+			<TopBapNotification />
+			<Switch>
+				<Route path={`${process.env.REACT_APP_IDE_URL}/reset`} >
+					<ResetPassword />
+				</Route>
+				<Route path={[`${process.env.REACT_APP_IDE_URL}/:queryurl`, `${process.env.REACT_APP_IDE_URL}`]} >
+					<ModalWindow />
+					<ControlPanel />
+					<div className="content flex">
+						{showSideBar && <GalleryComponent />}
+						<GraphqlExplorer />
+					</div>
+				</Route>
+			</Switch>
 		</div>
 	)
 })

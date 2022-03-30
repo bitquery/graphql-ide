@@ -329,7 +329,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 		}
 	}
 	const fetcher = (graphQLParams) => {
-		let key = user ? user.key : process.env.REACT_APP_IDE_GUEST_API_KEY
+		let key = user ? user.key : null
 		let keyHeader = {'X-API-KEY': key}
 		return fetch(
 			currentQuery.endpoint_url,
@@ -368,9 +368,10 @@ const EditorInstance = observer(function EditorInstance({number})  {
 				}).catch(e => {
 					setLoading(false)
 					setErrorLoading(true)
+					console.log(e.response)
 				})
 			}
-			fetchSchema() 
+			fetchSchema()
 		}
 		// eslint-disable-next-line 
 	}, [debouncedURL, user])

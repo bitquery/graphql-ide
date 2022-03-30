@@ -1009,3 +1009,43 @@
   transform: rotate(-45deg);
   width: 9px;
 }
+
+.main_notification {
+	.handler {
+		position: absolute;
+		right: 0;
+		top: 0;
+		cursor: pointer;
+		padding: 15px;
+	}
+	color: #fff;
+	height: 50px;
+	width: 100%;
+	top: -1px;
+	z-index: 9;
+	position: absolute;
+	background: rgb(101, 101, 101);
+	background: linear-gradient(
+	  30deg,
+	  rgba(101, 101, 101, 1) 0%,
+	  rgba(27, 27, 27, 1) 100%
+	);
+	-webkit-box-shadow: 0px 6px 12px 6px rgba(34, 60, 80, 0.52);
+	-moz-box-shadow: 0px 6px 12px 6px rgba(34, 60, 80, 0.52);
+	box-shadow: 0px 6px 12px 6px rgba(34, 60, 80, 0.52);
+	border-bottom-left-radius: 10px;
+	border-bottom-right-radius: 10px;
+	padding: 10px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	animation: appears_from_top 1.5s ease;
+  }
+  @keyframes appears_from_top {
+	from {
+	  transform: translateY(-100px);
+	}
+	to {
+	  transform: translateY(0);
+	}
+  }
