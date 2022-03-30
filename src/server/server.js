@@ -23,10 +23,10 @@ let RedisStore = require('connect-redis')(session)
 let redisClient = redis.createClient()
 app.use(
   session({
-    store: new RedisStore({ client: redisClient }),
+    store: new RedisStore({ client: redisClient, ttl: 172800 }),
     saveUninitialized: false,
     secret: process.env.CAT,
-    resave: false,
+    resave: false
   })
 )
 app.use(passport.initialize());
