@@ -46,7 +46,7 @@ Modal.setAppElement('#graphql_ide')
 
 const ModalWindow = observer(() => {
 	const { 
-		registerIsOpen, loginIsOpen, modalIsOpen,
+		fade, registerIsOpen, loginIsOpen, modalIsOpen,
 		saveQueryIsOpen, editDialogIsOpen, apiKeyIsOpen, statisticsModalIsOpen,
 		forgotPasswordIsOpen, changePasswordIsOpen, dashboardSettingsIsOpen,
 		toggleModal, toggleLogin, toggleRegister, toggleStatisticsModal,
@@ -73,6 +73,7 @@ const ModalWindow = observer(() => {
 			onRequestClose={onRequestClose}
 			style={customStyles}
 			contentLabel="Example Modal"
+			overlayClassName={fade ? "Overlay" : ''}
 		>
 			<LoginForm active={loginIsOpen} />
 			<ApiKeyModal active={apiKeyIsOpen} />

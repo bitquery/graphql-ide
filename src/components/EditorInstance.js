@@ -36,10 +36,12 @@ import WidgetView from './bitqueditor/components/WidgetView'
 import { getCheckoutCode } from '../api/api'
 import { flattenData } from './flattenData.js'
 import { stringifyIncludesFunction } from '../utils/common';
+import modalStore from '../store/modalStore.js';
 
 
 const EditorInstance = observer(function EditorInstance({number})  {
 	const { tabs, currentTab, index, jsonMode, codeMode } = TabsStore
+	const { toggleModal, toggleLogin, modalIsOpen } = modalStore
 	const { user }  = UserStore
 	const { query, updateQuery, currentQuery, isMobile,
 		setMobile, showSideBar, schema, setSchema, isLoaded } = QueriesStore
@@ -357,7 +359,12 @@ const EditorInstance = observer(function EditorInstance({number})  {
 					operationName: introspectionQueryName,
 				}
 				fetcher(graphQLParams)
-				.then(response => response.json())
+				.then(response => {
+					if (!response.ok) {
+						throw new Error(response.status);
+				  	}
+					return response.json()
+				})
 				.then(result => {
 					if (typeof result !== 'string' && 'data' in result) {
 						let schema = buildClientSchema(result.data)
@@ -365,10 +372,13 @@ const EditorInstance = observer(function EditorInstance({number})  {
 					}
 					setLoading(false)
 					setErrorLoading(false)
-				}).catch(e => {
+				}).catch(error => {
 					setLoading(false)
 					setErrorLoading(true)
-					console.log(e.response)
+					if (error.message === '401' && !modalIsOpen) {
+						toggleModal({fade: true})
+						toggleLogin()
+					}
 				})
 			}
 			fetchSchema()

@@ -1,6 +1,7 @@
 import { makeObservable, observable, action } from "mobx"
 
 class Modal {
+	fade = false
 	modalIsOpen = false
 	loginIsOpen = false
 	apiKeyIsOpen = false
@@ -18,6 +19,7 @@ class Modal {
 	
 	constructor() {
 		makeObservable(this, {
+			fade: observable,
 			modalIsOpen: observable,
 			loginIsOpen: observable,
 			apiKeyIsOpen: observable,
@@ -44,8 +46,13 @@ class Modal {
 		})
 	}
 
-	toggleModal = () => {
+	toggleModal = settings => {
 		this.modalIsOpen = !this.modalIsOpen
+		if (settings) {
+			this.fade = settings.fade
+		} else {
+			this.fade &&= false
+		}
 	}
 	toggleLogin = (e) => {
 		if (e) e.preventDefault()

@@ -11,7 +11,7 @@ function LoginForm({ active }) {
 	const [password, setPassword] = useState('')
 	const [resend, setResend] = useState(false)
 	const { getUser } = UserStore
-	const { toggleRegister, toggleLogin, toggleModal, toggleForgotPassword } = modalStore
+	const { fade, toggleRegister, toggleLogin, toggleModal, toggleForgotPassword } = modalStore
 	const { addToast } = useToasts()
 	const closeHandler = () => {
 		toggleModal()
@@ -52,6 +52,7 @@ function LoginForm({ active }) {
 	}
 	return (
 		<form onSubmit={e => logIn(e)} className={'modal__form '+(!active && 'modal__form_hide')} >
+			{fade && <h2>Please, login to continue</h2>}
 			<p className="p-modal">Email</p>
 			<input type="text" className="query__save" value={email} onChange={e => setEmail(e.target.value)} />  
 			<p className="p-modal">Password</p>
