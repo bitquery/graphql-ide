@@ -8,7 +8,7 @@ import { Dropdown } from 'react-bootstrap'
 
 const Profile = observer(() => {
 	const { getUser, user, setUser } = UserStore
-	const { toggleModal, toggleLogin, toggleChangePassword, toggleApiKey } = ModalStore
+	const { fade, toggleModal, toggleLogin, toggleChangePassword, toggleApiKey } = ModalStore
 
 	const clickHandler = () => {
 		toggleModal()
@@ -25,6 +25,8 @@ const Profile = observer(() => {
 	const logOut = async () => {
 		await logout().catch(e => console.log(e))
 		setUser(null)
+		toggleModal({fade: true})
+		toggleLogin()
 	}
 	useEffect(() => {
 		getUser()

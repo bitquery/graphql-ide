@@ -6,7 +6,7 @@ import modalStore from '../../store/modalStore'
 
 function ResetPassword({active}) {
 	const [email, setEmail] = useState('')
-	const { toggleLogin, toggleModal, toggleForgotPassword } = modalStore
+	const { fade, toggleLogin, toggleModal, toggleForgotPassword } = modalStore
 	const { addToast } = useToasts()
 	const backHandler = () => {
 		toggleForgotPassword()
@@ -36,7 +36,7 @@ function ResetPassword({active}) {
 			<p className="p-modal">Email</p>
 			<input type="text" className="query__save" value={email} onChange={e => setEmail(e.target.value)} />
 			<i className="handler handler__back fas fa-chevron-left" onClick={backHandler} />
-			<i className="handler handler__close fas fa-times" onClick={closeHandler} />
+			{!fade && <i className="handler handler__close fas fa-times" onClick={closeHandler} />}
 			<button className="button button_filled" type="submit">GO</button>
 		</form>
 	)

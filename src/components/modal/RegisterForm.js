@@ -12,7 +12,7 @@ function RegisterForm({ active }) {
 	const [companyName, setCompanyName] = useState('')
 	const [captcha, setCaptcha] = useState('')
 	const { addToast } = useToasts()
-	const { toggleLogin, toggleModal, toggleRegister } = modalStore
+	const { fade, toggleLogin, toggleModal, toggleRegister } = modalStore
 	const closeHandler = () => {
 		toggleModal()
 		toggleRegister()		
@@ -64,7 +64,7 @@ function RegisterForm({ active }) {
 			/>  
 			<button className="button button_filled mt-3" onClick={register}>Sign Up</button>
 			<i className="handler handler__back fas fa-chevron-left" onClick={backHandler} />
-			<i className="handler handler__close fas fa-times" onClick={closeHandler} />
+			{!fade && <i className="handler handler__close fas fa-times" onClick={closeHandler} />}
 		</form>
 	)
 }

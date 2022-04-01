@@ -70,7 +70,7 @@ const ModalWindow = observer(() => {
     return (
 		<Modal
 			isOpen={modalIsOpen}
-			onRequestClose={onRequestClose}
+			onRequestClose={fade ? null : onRequestClose}
 			style={customStyles}
 			contentLabel="Example Modal"
 			overlayClassName={fade ? "Overlay" : ''}
