@@ -16,9 +16,6 @@ const TopBapNotification = observer(function TopBapNotification() {
 	}
 	return (show && user) ? (
 		<div className="main_notification">
-			<a href="https://bitquery.io/blog/blockchain-graphql-query" target="_blank" rel="noopener noreferrer">
-				Create your first GraphQL Query
-			</a>
 			<p>We have introduced Points, &nbsp;<a target="_blank" rel="noopener" href="https://community.bitquery.io/t/introducing-points/874">Click here</a>&nbsp; to learn how it will impact your
 			billing.</p>
 			<i className="handler handler__close fas fa-times" onClick={close} />
