@@ -60,6 +60,7 @@ class Queries {
 	}
 	dashboardQuery = this.currentQuery
 	query = [this.currentQuery]
+	galleryQueries = []
 	
 	constructor() {
 		makeObservable(this, {
@@ -81,6 +82,7 @@ class Queries {
 			toggleDashboardView: action,
 			setCurrentVariables: action,
 			setDashboardQuery : action,
+			setGalleryQueries: action,
 			setSharedQueires: action,
 			setCurrentQuery: action,
 			toggleSideBar: action,
@@ -134,8 +136,10 @@ class Queries {
 	setSharedQueires = queries => {
 		this.sharedQueries = [...queries]
 	}
+	setGalleryQueries = queries => {
+		this.galleryQueries = [...this.query, ...queries]
+	}
 	updateQuery = (params, index, id) => {
-		console.log(params)
 		if (params.query) this.query[index].query = params.query
 		if (params.variables) this.query[index].variables = params.variables
 		if (params.config) this.query[index].config = params.config

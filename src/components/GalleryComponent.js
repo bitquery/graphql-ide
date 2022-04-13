@@ -15,7 +15,7 @@ const GalleryComponent = observer(function GalleryComponent() {
 	const [showBuilder, toggleBuilder] = useState(false)
 	const { currentQuery, showSideBar,
 		toggleSideBar, setSharedQueires, setQueryIsTransfered,
-		queryJustSaved, updateQuery, schema } = QueriesStore
+		queryJustSaved, updateQuery, schema, galleryQueries } = QueriesStore
 	const { index } = TabsStore
 	const { user } = UserStore
 	const { addToast } = useToasts()
@@ -104,7 +104,7 @@ const GalleryComponent = observer(function GalleryComponent() {
 					</ul>
 				
 			</div>
-			{ component }
+			<QueriesComponent queries={{queries: galleryQueries}} />
 		</div>
 	)
 })

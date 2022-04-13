@@ -39,7 +39,7 @@ function LinkComponent({ propquery, as }) {
 	if (as === 'menu') props.component = menu
     return (
         <Link {...props}> 
-            {isSaved(propquery) ? propquery.name : `*${propquery.name}`}
+			{isSaved(propquery) ? '' : '*'}{propquery.name}
         </Link>
     )
 }

@@ -77,6 +77,7 @@ const AddRemoveLayout = observer(
 				//load by link && load from gallery
 				if (QueriesStore.currentQuery.id && QueriesStore.currentQuery.layout) {
 					const { data } = await getQueryForDashboard(QueriesStore.currentQuery.widget_ids, QueriesStore.currentQuery.id)
+					QueriesStore.setGalleryQueries(data)
 					const layout = JSON.parse(QueriesStore.currentQuery.layout)
 					const layoutindexes = layout.map(i => i.i)
 					let dashboard_item_indexes = []
