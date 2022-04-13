@@ -52,7 +52,7 @@
     "rewire": "^5.0.0",
     "table-widget": "^1.0.1",
     "tabulator-tables": "^4.9.3",
-    "vega-widgets": "^2.0.3",
+    "vega-widgets": "^2.0.4",
     "web-vitals": "^1.1.2"
   },
   "scripts": {
