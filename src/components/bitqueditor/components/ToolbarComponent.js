@@ -6,11 +6,12 @@ import { parse as parseGql } from 'graphql/language'
 import { print } from 'graphql'
 import React, { useState, useEffect } from 'react'
 import ToggleGroupEditor from '../../ToggleGroupEditor'
+import { getWidget } from '../../../api/api'
 
 
 const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOpen, toggleDocExplorer}) => {
 	const { currentQuery, saveQuery, updateQuery, 
-		showSideBar, toggleSideBar, isLoaded, queryIsTransfered, setQueryIsTransfered } = QueriesStore
+		showSideBar, toggleSideBar, isLoaded, queryIsTransfered, setQueryIsTransfered, setQuery, query } = QueriesStore
 	const { index, currentTab } = TabsStore
 	const { user }  = UserStore
 	const { toggleModal, toggleEditDialog, toggleDashboardSettings } = modalStore
@@ -90,6 +91,29 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 		switchMode()
 		window.dispatchEvent(new Event('setInitialDashboard'))
 	}
+	const pasteQuery = async () => {
+		let copiedQuery = await navigator.clipboard.readText()
+		console.log(copiedQuery, typeof copiedQuery)
+		copiedQuery = JSON.parse(copiedQuery)
+		if ('dashboard_url' in copiedQuery) {
+			if (query.every(query => query?.url !== copiedQuery.dashboard_url)) {
+				console.log('is')
+				const { data } = await getWidget(copiedQuery.dashboard_url)
+				console.log(data, typeof data)
+				if (typeof data === 'object') {
+					console.log('object')
+					if (query.map(query=>query.id).indexOf(data.id) === -1) {
+						console.log('set query')
+						setQuery(data, data.id)
+					}
+				} 
+			}
+		} else {
+			copiedQuery.variables = copiedQuery.arguments
+			setQuery(copiedQuery, copiedQuery.id)
+		}
+	}
+
 	const toolbar = (!dashboardOwner || !isLoaded) ? null : <div className="topBarWrap">
 		<div className="topBar">
 			{!showSideBar && <i 
@@ -123,6 +147,11 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 			>
 				Prettify
 			</button>}
+			<button
+				className="topBar__button"
+				onClick={pasteQuery}>
+					Paste
+			</button>
 			{!currentQuery.layout && <input 
 				className="endpointURL"
 				type="text" 
