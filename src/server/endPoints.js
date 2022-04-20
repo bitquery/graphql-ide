@@ -104,7 +104,7 @@ module.exports = function(app, passport, db, redisClient) {
 			let params = {
 				name: req.body.params.name && req.body.params.name,
 				description: req.body.params.description && req.body.params.description,
-				arguments: req.body.params.variables,
+				arguments: req.body.params.arguments || req.body.params.variables,
 				query: req.body.params.query && req.body.params.query,
 				url: req.body.params.url ? req.body.params.url : null,
 				endpoint_url: req.body.params.endpoint_url,
