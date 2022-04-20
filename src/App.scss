@@ -1015,8 +1015,10 @@
 		position: absolute;
 		right: 0;
 		top: 0;
+		margin-top: -5px;
 		cursor: pointer;
 		padding: 15px;
+		animation: appears_from_top 1.5s ease;
 	}
 	p {
 		margin-bottom: 0;
@@ -1025,11 +1027,9 @@
 	flex-direction: column;
 	align-items: center;
 	height: 50px;
-	width: 100%;
-	top: -1px;
+	width: 99%;
 	z-index: 9;
-	position: absolute;
-	// background: #c7c7c7;
+	margin: -5px auto 0;
 	color: #555;
 	background: linear-gradient(#f9f9f9, #ececec);
 	-webkit-box-shadow: 0px 6px 12px 6px rgba(34, 60, 80, 0.22);
@@ -1037,24 +1037,22 @@
 	box-shadow: 0px 6px 12px 6px rgba(34, 60, 80, 0.22);
 	border-bottom-left-radius: 10px;
 	border-bottom-right-radius: 10px;
-	padding: 3px;
-	display: flex;
 	justify-content: center;
 	align-items: center;
 	animation: appears_from_top 1.5s ease;
   }
   @keyframes appears_from_top {
 	from {
-	  transform: translateY(-100px);
+	  margin-top: -50px;
 	}
 	to {
-	  transform: translateY(0);
+	  margin-top: -5px;
 	}
   }
   .Overlay {
-	animation: someshit 2s ease;
+	animation: opac 2s ease;
   }
-  @keyframes someshit {
+  @keyframes opac {
 	0% {
 	  opacity: 0
 	}
