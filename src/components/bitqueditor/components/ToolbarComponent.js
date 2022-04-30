@@ -7,6 +7,8 @@ import { print } from 'graphql'
 import React, { useState, useEffect } from 'react'
 import ToggleGroupEditor from '../../ToggleGroupEditor'
 import { getWidget } from '../../../api/api'
+import { Dropdown } from 'react-bootstrap'
+import { toJS } from 'mobx'
 
 
 const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOpen, toggleDocExplorer}) => {
@@ -152,6 +154,18 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 				onClick={pasteQuery}>
 					Paste
 			</button>
+			<Dropdown>
+				<Dropdown.Toggle className='topBar__button'>Add to Dashboard</Dropdown.Toggle>
+				<Dropdown.Menu>
+					{query.map((query, i) => 
+						'layout' in query && <Dropdown.Item
+							onClick={() => window.dispatchEvent(new CustomEvent('query-request', {detail: {query: toJS(currentQuery), tabID: i}}))}
+						>
+							{`${query.name} id is ${i}`}
+						</Dropdown.Item>
+					)}
+				</Dropdown.Menu>
+			</Dropdown>
 			{!currentQuery.layout && <input 
 				className="endpointURL"
 				type="text" 

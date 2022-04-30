@@ -175,79 +175,82 @@ const AddRemoveLayout = observer(
 			}
 		}
 		qrh = (e, id) => {
-			if (TabsStore.currentTab === TabsStore.tabs[this.props.number]?.id && (QueriesStore.currentQuery.isDraggable || this.state.saved)) {
-				const query = e.detail ? e.detail : e
-				const repeatProtector = this.state.saved ? true : !this.state.widget_ids.includes(query.widget_number)
-				let cfg = typeof query.config === 'string' ? JSON.parse(query.config) : query.config
-				if (query.widget_id !== 'json.widget' && query.widget_id && repeatProtector) {
-					let indexx = this.props.plugins.map(plugin => plugin.id).indexOf(query.widget_id)
-					const WidgetComponent = indexx >= 0 ? this.props.plugins[indexx] : this.props.plugins[0]
-					
-					const dataSource = {
-						links,
-						query: query.query,
-						variables: query.arguments ? JSON.parse(query.arguments) : '',
-						displayed_data: query.displayed_data,
-						key: UserStore.user ? UserStore.user.key : process.env.REACT_APP_IDE_GUEST_API_KEY,
-						setupData: (json) => {
-							let values = null
-							if ('data' in json) {
-								if (query.displayed_data) {
-									if (query.data_type === 'flatten') {
-										values = flattenData(json.data)
+			if (e.detail) {
+				const query = e.detail ? e.detail.query : e
+				const tabID = e.detail.tabID
+				if (tabID === this.props.number) {
+					const repeatProtector = this.state.saved ? true : !this.state.widget_ids.includes(query.widget_number)
+					let cfg = typeof query.config === 'string' ? JSON.parse(query.config) : query.config
+					if (query.widget_id !== 'json.widget' && query.widget_id && repeatProtector) {
+						let indexx = this.props.plugins.map(plugin => plugin.id).indexOf(query.widget_id)
+						const WidgetComponent = indexx >= 0 ? this.props.plugins[indexx] : this.props.plugins[0]
+						const dataSource = {
+							links,
+							query: query.query,
+							variables: query.arguments ? JSON.parse(query.arguments) : '',
+							displayed_data: query.displayed_data,
+							key: UserStore.user ? UserStore.user.key : process.env.REACT_APP_IDE_GUEST_API_KEY,
+							setupData: (json) => {
+								let values = null
+								if ('data' in json) {
+									if (query.displayed_data) {
+										if (query.data_type === 'flatten') {
+											values = flattenData(json.data)
+										} else {
+											values = getValueFrom(json.data, query.displayed_data)
+										}
 									} else {
-										values = getValueFrom(json.data, query.displayed_data)
+										values = json.data
 									}
-								} else {
-									values = json.data
 								}
-							}
-							return values
-						},
-						fetcher: function () {
-							let keyHeader = { 'X-API-KEY': this.key }
-							return fetch(
-								'https://graphql.bitquery.io',
-								{
-									method: 'POST',
-									headers: {
-										Accept: 'application/json',
-										'Content-Type': 'application/json',
-										...keyHeader
+								return values
+							},
+							fetcher: function () {
+								let keyHeader = { 'X-API-KEY': this.key }
+								return fetch(
+									'https://graphql.bitquery.io',
+									{
+										method: 'POST',
+										headers: {
+											Accept: 'application/json',
+											'Content-Type': 'application/json',
+											...keyHeader
+										},
+										body: JSON.stringify({ query: query.query, variables: query.arguments }),
+										credentials: 'same-origin',
 									},
-									body: JSON.stringify({ query: query.query, variables: query.arguments }),
-									credentials: 'same-origin',
-								},
-							)
+								)
+							}
+						}
+						let currentId = query.widget_id === 'block.content' ? "ctn" + generateLink() : "n" + generateLink()
+						const updateAndRender = () => {
+							QueriesStore.updateQuery({
+								widget_ids: this.state.widget_ids,
+								dashboard_item_indexes: this.state.dashboard_item_indexes,
+								content: this.state.content,
+								saved: this.state.saved
+							}, tabID)
+							query.widget_id !== 'block.content' &&	WidgetComponent.renderer(dataSource, cfg, id || currentId)
+						}
+						if (!id) {
+							this.setState({
+								widget_ids: [...this.state.widget_ids, query.widget_number || this.blockContentNumber],
+								dashboard_item_indexes: [...this.state.dashboard_item_indexes, currentId],
+								queries: query.id || query.widget_id === 'block.content' ? [...this.state.queries, query] : [...this.state.queries],
+								items: this.state.items.concat({
+									i: currentId,
+									x: (this.state.items.length * 2) % (this.state.cols || 12),
+									y: Infinity, // puts it at the bottom
+									w: 2,
+									h: 2
+								})
+							}, () => updateAndRender())
+						} else { 
+							updateAndRender()
 						}
 					}
-					let currentId = query.widget_id === 'block.content' ? "ctn" + generateLink() : "n" + generateLink()
-					const updateAndRender = () => {
-						QueriesStore.updateQuery({
-							widget_ids: this.state.widget_ids,
-							dashboard_item_indexes: this.state.dashboard_item_indexes,
-							content: this.state.content,
-							saved: this.state.saved
-						}, TabsStore.index)
-						query.widget_id !== 'block.content' &&	WidgetComponent.renderer(dataSource, cfg, id || currentId)
-					}
-					if (!id) {
-						this.setState({
-							widget_ids: [...this.state.widget_ids, query.widget_number || this.blockContentNumber],
-							dashboard_item_indexes: [...this.state.dashboard_item_indexes, currentId],
-							queries: query.id || query.widget_id === 'block.content' ? [...this.state.queries, query] : [...this.state.queries],
-							items: this.state.items.concat({
-								i: currentId,
-								x: (this.state.items.length * 2) % (this.state.cols || 12),
-								y: Infinity, // puts it at the bottom
-								w: 2,
-								h: 2
-							})
-						}, () => updateAndRender())
-					} else { 
-						updateAndRender()
-					}
-			}}
+				}
+			}
 		}
 		queryUrl = queryUrl => queryUrl ? `${process.env.REACT_APP_IDE_URL}/${queryUrl}` : `${process.env.REACT_APP_IDE_URL}`
 		onEditBlockContent({content}, index) {
@@ -357,11 +360,13 @@ const AddRemoveLayout = observer(
 		}
 
 		onLayoutChange(layout) {
-			this.setState({ layout })
-			QueriesStore.updateQuery({
-				layout: layout.layout,
-				saved: this.state.saved
-			}, TabsStore.index)
+			if (TabsStore.currentTab === TabsStore.tabs[this.props.number].id) {
+				this.setState({ layout })
+				QueriesStore.updateQuery({
+					layout: layout.layout,
+					saved: this.state.saved
+				}, TabsStore.index)
+			}
 		}
 
 		onDrop(_, __, event) {

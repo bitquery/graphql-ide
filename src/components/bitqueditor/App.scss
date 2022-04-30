@@ -327,6 +327,21 @@ div.CodeMirror span.CodeMirror-matchingbracket {
   display: flex;
 }
 .topBar {
+  .dropdown-toggle::after {
+    display: none !important; 
+  }
+  .show>.btn-primary.dropdown-toggle {
+    color: inherit;
+  }
+  .show>.btn-primary.dropdown-toggle {
+    color: inherit;
+  }
+  .btn-primary:not(:disabled):not(.disabled):active {
+    color: inherit;
+  }
+  .btn-primary:focus {
+    color: inherit;
+  }
   align-items: center;
   border-bottom: 1px solid #d0d0d0;
   cursor: default;

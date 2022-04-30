@@ -169,7 +169,7 @@ class Queries {
 		this.query[index].id = id || id===null ? id : this.query[index].id
 		this.query[index].saved = false
 		if (params.saved) this.query[index].saved = params.saved
-		this.setCurrentQuery(index)
+		TabsStore.currentTab === index && this.setCurrentQuery(index)
 	}
 	removeQuery = index => {
 		this.query.length!==1 ? this.query.splice(index, 1) : this.query.splice(index, 1, {
