@@ -46,7 +46,7 @@
 	min-height: 300px !important; */
 }
 .react-grid-layout {
-	height: 100% !important;
+	height: 9999px !important;
 	.react-grid-item > .react-resizable-handle.react-resizable-handle {
 		&-sw {
 			bottom: -5px;
@@ -294,7 +294,7 @@
 .graphiql__wrapper {
 	display: none;
 	flex: 1 1 auto;
-	max-width: calc(100% - 300px);
+	width: 100%;
 	&_active {
 		display: flex;
 		flex-direction: column;

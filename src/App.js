@@ -49,7 +49,6 @@ const App = observer(function App() {
 						<ModalWindow />
 						<ControlPanel />
 						<div className="content flex">
-							{showSideBar && <GalleryComponent />}
 							<GraphqlExplorer />
 						</div>
 					</Route>
