@@ -8,8 +8,9 @@ const fileCache = {}
 
 const checkDisposableEmail = (email, disposableDomains, done, cb) => {
 	const emailTrim = email.trim()
-	const domain = emailTrim.slice( emailTrim.indexOf('@')+1 )
-	if (disposableDomains.includes(domain)) {
+	const domain = emailTrim.slice( emailTrim.indexOf('@')+1 ).replace('.', '[.]')
+	const re = new RegExp(`^${domain}$`, 'gm')
+	if (disposableDomains.match(re)) {
 		return done(null, false, {
 			message: 'You cannot register with this email address'
 		})
