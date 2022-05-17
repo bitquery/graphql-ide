@@ -1,5 +1,34 @@
 const LocalStrategy = require('passport-local').Strategy
 const bcrypt = require('bcrypt')
+const fs = require('fs')
+const path = require('path')
+const fileName = 'disposable-email-provider-domains'
+const filePath = path.join(__dirname, '..', '..', fileName)
+const fileCache = {}
+
+const checkDisposableEmail = (email, disposableDomains, done, cb) => {
+	const emailTrim = email.trim()
+	const domain = emailTrim.slice( emailTrim.indexOf('@')+1 )
+	if (disposableDomains.includes(domain)) {
+		return done(null, false, {
+			message: 'You cannot register with this email address'
+		})
+	}
+	return cb()
+}
+
+const getFileFromCache = (email, done, cb) => {
+    if (fileCache[fileName]) {
+		return checkDisposableEmail(email, fileCache[fileName], done, cb)
+    }
+    fs.readFile(filePath, 'utf8', (err, data) => {
+		if (err) {
+			return done(err)
+		}
+		fileCache[fileName] = data
+		return checkDisposableEmail(email, fileCache[fileName], done, cb)
+    })
+}
 
 function makekey() {
 	let result           = '';
@@ -24,13 +53,14 @@ module.exports = function(passport, db) {
 		usernameField : 'email',
 		passwordField : 'password',
 	},
+
 	function(email, password, done) {
-		db.query("select * from accounts where email = ?", [email], (err,rows) => {
+		getFileFromCache(email, done, () => db.query("select * from accounts where email = ?", [email], (err,rows) => {
 			console.log(rows)
 			console.log("above row object, email already exist")
 			if (err)
 				return done(err)
-			 if (rows.length) {
+				if (rows.length) {
 				return done(null, false)
 			} else {
 				let newUser = [{}]
@@ -53,10 +83,10 @@ module.exports = function(passport, db) {
 						})
 					})
 				})
-				
 			}	
-		})
+		}))
 	}))
+
 	passport.use('local-login', new LocalStrategy({
 		usernameField: 'email',
 		passwordField: 'password'

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, createRef } from 'react'
 import { signUp } from '../../api/api'
 import { useToasts } from 'react-toast-notifications'
 import modalStore from '../../store/modalStore'
@@ -6,6 +6,7 @@ import { validEmail } from '../../utils/common'
 import ReCAPTCHA from "react-google-recaptcha"
 
 function RegisterForm({ active }) {
+	const recaptchaRef = createRef()
 	const [email, setEmail] = useState('')
 	const [password, setPassword] = useState('')
 	const [accountName, setName] = useState('')
@@ -33,6 +34,7 @@ function RegisterForm({ active }) {
 				toggleRegister()
 				toggleModal()
 			} catch (e) {
+				recaptchaRef.current.reset()
 				addToast(e.response.data, {appearance: 'error'})
 			}
 		} else {
@@ -59,6 +61,7 @@ function RegisterForm({ active }) {
 			<div className="p-modal">Company Name</div>
 			<input type="text" className="query__save mb-3" value={companyName} onChange={e => setCompanyName(e.target.value)} />
 			<ReCAPTCHA
+				ref={recaptchaRef}
 				sitekey="6LfZXscaAAAAAPTYeT0IbcFE1-2v-MlJ3aAj5SaY"
 				onChange={onChange}
 			/>  

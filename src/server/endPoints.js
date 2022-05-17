@@ -347,10 +347,10 @@ module.exports = function(app, passport, db, redisClient) {
 	app.post('/api/signup', (req, res, next) => {
 		verifyUser(req.body.captcha).then(result => {
 			if (result.data.success) {
-				passport.authenticate('local-signup', (err, user) => {
+				passport.authenticate('local-signup', (err, user, message) => {
 					if(err) return next(err)
 					if (!user) {
-						return res.status(400).send("user already exist")
+						return res.status(400).send(message?.message || "user already exist")
 					}
 					db.query('UPDATE accounts SET name=?, company_name=? WHERE email=?', [
 						req.body.accountName,
