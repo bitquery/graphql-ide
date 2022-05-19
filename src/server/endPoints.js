@@ -380,7 +380,7 @@ module.exports = function(app, passport, db, redisClient) {
 								]
 							},
 						).catch(error => {
-							console.log(error.response.data.validationResults[0].message)
+							console.log(error.response.data)
 						})
 						sendActivationLink(user[0].id, user[0].email, req)
 						res.send('Activation link sent. Check your email for further instructions!')
@@ -551,13 +551,28 @@ module.exports = function(app, passport, db, redisClient) {
 		db.query(`select * from activations where code = ?`, [req.query.code], (err, result) => {
 			if (err) console.log(err)
 			if (result.length) {
-				db.query(`update accounts set active = true where id = ?`, [result[0].user_id], (err, result) => {
+				const user_id = result[0].user_id
+				db.query(`update accounts set active = true where id = ?`, [user_id], (err, result) => {
 					if (err) console.log(err)
 					console.log('account activated', result)
 					req.session.active = true
-					process.env.NODE_ENV==='production'
-						? res.redirect(`${process.env.IDE_URL}`)
-						: res.redirect(`http://localhost:3000`)
+					const billingPeriods = {}
+					const now = new Date()
+					billingPeriods.user_id = user_id
+					billingPeriods.started_at = new Date ( now.setUTCHours(0, 0, 0, 0) ).toISOString().replace('T', ' ').replace('Z', '')
+					now.setDate( now.getDate() + 30 )
+					now.setUTCHours(23, 59, 59)
+					const ended_at = now.toISOString()
+					billingPeriods.ended_at = ended_at.replace('T', ' ').replace('Z', '')
+					billingPeriods.created_at = new Date().toISOString().replace('T', ' ').replace('Z', '')
+					billingPeriods.updated_at = new Date().toISOString().replace('T', ' ').replace('Z', '')
+					billingPeriods.day_of_month = new Date().getDate()
+					db.query('INSERT INTO billing_periods SET ?', {...billingPeriods}, (err, _) => {
+						if (err) console.log(err)
+						process.env.NODE_ENV==='production'
+							? res.redirect(`${process.env.IDE_URL}`)
+							: res.redirect(`http://localhost:3005`)
+					})
 				})
 			} else {
 				res.send('Something went wrong...')
