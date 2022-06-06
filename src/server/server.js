@@ -27,7 +27,7 @@ app.use(
     saveUninitialized: false,
     secret: process.env.CAT,
     resave: false,
-	cookie: { path: '/', httpOnly: true, secure: true, maxAge: 60 * 60 * 24 * 7 * 1000}
+	cookie: { path: '/', httpOnly: true, secure: process.env.NODE_ENV === 'production', maxAge: 60 * 60 * 24 * 7 * 1000}
   })
 )
 app.use(passport.initialize());

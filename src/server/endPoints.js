@@ -552,13 +552,13 @@ module.exports = function(app, passport, db, redisClient) {
 			if (err) console.log(err)
 			if (result.length) {
 				const user_id = result[0].user_id
-				db.query(`select active from accounts where id = ?`, [user_id], (err, result) => {
+				db.query(`update accounts set active = true where id = ?`, [user_id], (err, result) => {
 					if (err) console.log(err)
-					if (!result[0].active) {
-						db.query(`update accounts set active = true where id = ?`, [user_id], (err, result) => {
-							if (err) console.log(err)
-							console.log('account activated', result)
-							req.session.active = true
+					console.log('account activated', result)
+					req.session.active = true
+					db.query('SELECT * from billing_periods WHERE user_id = ?', [user_id], (err, billing_period) => {
+						if (err) console.log(err)
+						if (!billing_period.length) {
 							const billingPeriods = {}
 							const now = new Date()
 							billingPeriods.user_id = user_id
@@ -576,12 +576,12 @@ module.exports = function(app, passport, db, redisClient) {
 									? res.redirect(`${process.env.IDE_URL}`)
 									: res.redirect(`http://localhost:3005`)
 							})
-						})
-					} else {
-						process.env.NODE_ENV==='production'
-									? res.redirect(`${process.env.IDE_URL}`)
-									: res.redirect(`http://localhost:3005`)
-					}
+						} else {
+							process.env.NODE_ENV==='production'
+										? res.redirect(`${process.env.IDE_URL}`)
+										: res.redirect(`http://localhost:3005`)
+						}
+					})
 				})
 			} else {
 				res.send('Something went wrong...')
