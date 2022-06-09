@@ -1,16 +1,17 @@
 FROM node:14.15-alpine AS builder
+ENV NODE_ENV=production
 
 WORKDIR /app
 
-ENV NODE_ENV=production
+COPY package.json package-lock.json* ./
 
-COPY package-lock.json package.json ./
-
-RUN npm ci --only=production
-#RUN npm install && npm run build
+#RUN npm ci --only=production && \
+RUN npm install --production
 
 COPY . .
 
-EXPOSE 4000
+RUN chmod +x ./entrypoint.sh
 
-CMD [ "npm", "run", "server" ]
+EXPOSE 5000
+
+ENTRYPOINT ["./entrypoint.sh"]
