@@ -20,7 +20,7 @@ app.use(cors())
 const redis = require('redis')
 const session = require('express-session')
 let RedisStore = require('connect-redis')(session)
-let redisClient = redis.createClient()
+let redisClient = redis.createClient({ url: 'redis://redis1:6379/10' })
 app.use(
   session({
     store: new RedisStore({ client: redisClient, ttl: 60 * 60 * 24 * 7 * 1000 }),
