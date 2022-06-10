@@ -1,14 +1,20 @@
 FROM node:14.15-alpine AS builder
+
 ENV NODE_ENV=production
 
 WORKDIR /app
 
 COPY package.json package-lock.json* ./
 
-#RUN npm ci --only=production && \
+RUN chown node:node -R /app
+
+USER node
+
 RUN npm install --production
 
-COPY . .
+COPY --chown=node:node . .
+
+RUN npm run build
 
 RUN chmod +x ./entrypoint.sh
 

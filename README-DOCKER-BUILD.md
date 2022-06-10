@@ -33,7 +33,8 @@ docker run -d \
    --name graphql-ide \
    --dns 10.0.0.254 \
    --dns-search etl-cluster.local \
-   -p 127.0.0.1:4000:4000 \
+   -v "$(pwd)/.env:/app/.env" \
+   -p 127.0.0.1:5000:5000 \
    nexus.bitq.dev/repository/bitquery/graphql-ide:`git rev-parse --short HEAD`
 ```
 
