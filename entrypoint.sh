@@ -1,5 +1,5 @@
 #!/bin/sh
 
-source .env
+#source .env
 
 npm run server

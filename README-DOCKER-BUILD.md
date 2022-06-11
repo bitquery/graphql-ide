@@ -2,6 +2,9 @@
 
 ```
 docker build \
+   --build-arg SCHEME=http \
+   --build-arg HOST=172.16.157.1 \
+   --build-arg PORT=5000 \
    -t nexus.bitq.dev/repository/bitquery/graphql-ide:`git rev-parse --short HEAD` .
 ```
 
@@ -33,7 +36,7 @@ docker run -d \
    --name graphql-ide \
    --dns 10.0.0.254 \
    --dns-search etl-cluster.local \
-   -v "$(pwd)/.env:/app/.env" \
+   --env-file .env \
    -p 127.0.0.1:5000:5000 \
    nexus.bitq.dev/repository/bitquery/graphql-ide:`git rev-parse --short HEAD`
 ```
