@@ -19,10 +19,8 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 	useEffect(() => {
 		if (((currentQuery.layout && (currentQuery.account_id === user?.id)) || !currentQuery.id) || !currentQuery.layout) {
 			setOwner(true)
-			toggleSideBar(true)
 		} else {
 			setOwner(false)
-			toggleSideBar(false)
 		}
 		// eslint-disable-next-line 
 	}, [user, JSON.stringify(currentQuery)])
