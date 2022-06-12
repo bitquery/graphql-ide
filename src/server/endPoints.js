@@ -511,19 +511,27 @@ module.exports = function(app, passport, db, redisClient) {
 			GROUP BY a.id  
 			ORDER BY number DESC`, (err, queries) => {
 				if (err) console.log(err)
-				redisClient.get('query', async (error, query) => {
-					if (error) console.log(error)
-					if (query !== null) {
-						console.log('there is some query')
-						res.send({queries: queries, msg: checkActive, transferedQuery: JSON.parse(query)})
-					} else {
-						res.send({queries: queries, msg: checkActive})
-					}
-				})
-			})
+				const transferedKey = req.session?.transferedKey
+				req.session.transferedKey = null
+				if (transferedKey) {
+					redisClient.get(transferedKey, async (error, query) => {
+						if (query !== null) {
+							res.send({queries: queries, msg: checkActive, transferedQuery: JSON.parse(query)})
+						} else {
+							res.send({queries: queries, msg: checkActive})
+						}
+					})
+				} else {
+					res.send({queries: queries, msg: checkActive})
+				}
+			}
+		)
 	})
+		
 	app.post('/api/querytransfer', (req, res) => {
-		redisClient.setex('query', 10, JSON.stringify(req.body))
+		const key = Math.floor(Math.random()*(2**24-1)).toString(16)
+		redisClient.setex(key, 10, JSON.stringify(req.body))
+		req.session.transferedKey = key
 		res.set('Location', process.env.IDE_URL)
 		res.sendStatus(302)
 	})
