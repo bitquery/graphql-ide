@@ -123,7 +123,6 @@ const EditorInstance = observer(function EditorInstance({number})  {
     	overwrap.current.addEventListener('mouseup', onMouseUp);
 	}
 	const getQueryTypes = (query) => {
-		console.log('get model')
 		const typeInfo = new TypeInfo(schema)
 		let typesMap = {}
 		const queryNodes = []
@@ -163,7 +162,6 @@ const EditorInstance = observer(function EditorInstance({number})  {
 						}
 					}
 					depth++
-					// console.log(typeInfo.getFieldDef().name, typeInfo.getType().toString())
 					return {...node, typeInfo: typeInfo.getType()}
 				}
 			},
@@ -195,7 +193,6 @@ const EditorInstance = observer(function EditorInstance({number})  {
 		if (stop) {
 			let flattenModel = {}
 			Object.keys(typesMap).forEach((key, i) => {
-				console.log(key, typesMap[key].typeInfo.toString(), i)
 				if (key === 'data') {
 					flattenModel[key] = typesMap[key]
 				} else if ( ['Int', 'String'].some(value => typesMap[key].typeInfo.toString().includes(value)) ) { 
@@ -230,7 +227,6 @@ const EditorInstance = observer(function EditorInstance({number})  {
 		updateQuery({points: undefined, graphqlRequested: undefined, saved: currentQuery.saved}, index)
 		setLoading(true)
 		let queryType = getQueryTypes(currentQuery.query)
-		console.log(queryType)
 		if (JSON.stringify(queryType) !== JSON.stringify(queryTypes)) {
 			setQueryTypes(queryType)
 		}
@@ -289,7 +285,6 @@ const EditorInstance = observer(function EditorInstance({number})  {
 		// eslint-disable-next-line 
 	}, [JSON.stringify(currentQuery), schema, JSON.stringify(queryTypes)])
 	useEffect(() => {
-		number === index && console.log(!dataSource.values, !!currentQuery.query, !!currentQuery.saved, number === index, !!schema);
 		(!dataSource.values && 
 		currentQuery.query &&
 		currentQuery.saved &&
@@ -324,9 +319,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 	const setConfig = (config) => {
 		if (number === index) {
 			if (JSON.stringify(currentQuery.config) !== JSON.stringify(config, stringifyIncludesFunction)) {
-				console.log(config)
 				updateQuery({config}, index)
-				console.log('setconfig')
 			}
 		}
 	}
