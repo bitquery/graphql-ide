@@ -5,55 +5,70 @@ const fs = require('fs')
 const path = require('path')
 const axios = require('axios')
 
-module.exports = function(app, passport, db, redisClient) {
-
-	const hadnleTags = (query_id, tags, res) => {
-		tags.forEach((tag, i, arr) => {
-			db.query('SELECT id FROM tags WHERE tag = ?', [tag], (err, results) => {
-				if (err) console.log(err)
-				if (!results.length) {   //there is no tag, add tag and tag/query rel
-					db.query('INSERT INTO tags SET ?', { tag }, (err, results) => {
+const handleTags = (db, query_id, tags, res) => {
+	tags.forEach((tag, i, arr) => {
+		db.query('SELECT id FROM tags WHERE tag = ?', [tag], (err, results) => {
+			if (err) console.log(err)
+			if (!results.length) {   //there is no tag, add tag and tag/query rel
+				db.query('INSERT INTO tags SET ?', { tag }, (err, results) => {
+					if (err) console.log(err)
+					const tag_id = results.insertId
+					db.query('INSERT INTO tags_to_queries SET ?', { query_id, tag_id }, (err, _) => {
 						if (err) console.log(err)
-						const tag_id = results.insertId
+						if (i === arr.length - 1) {
+							res.sendStatus(201)
+						}
+					})
+				})
+			} else {   //there is tag, add tag/query rel
+				const tag_id = results[0].id
+				db.query('SELECT query_id from tags_to_queries WHERE tag_id = ?', [tag_id], (err, results) => {
+					if (err) console.log(err)
+					if (!results.length) {
 						db.query('INSERT INTO tags_to_queries SET ?', { query_id, tag_id }, (err, _) => {
 							if (err) console.log(err)
 							if (i === arr.length - 1) {
 								res.sendStatus(201)
 							}
 						})
-					})
-				} else {   //there is tag, add tag/query rel
-					const tag_id = results[0].id
-					db.query('SELECT query_id from tags_to_queries WHERE tag_id = ?', [tag_id], (err, results) => {
-						if (err) console.log(err)
-						if (!results.length) {
-							db.query('INSERT INTO tags_to_queries SET ?', { query_id, tag_id }, (err, _) => {
-								if (err) console.log(err)
-								if (i === arr.length - 1) {
-									res.sendStatus(201)
-								}
-							})
-						} else {
-							if (i === arr.length - 1) {
-								res.sendStatus(400)
-							}
+					} else {
+						if (i === arr.length - 1) {
+							res.sendStatus(400)
 						}
-					})
-				}
-			})
+					}
+				})
+			}
 		})
-	}
+	})
+}
+module.exports = function(app, passport, db, redisClient) {
+
+	app.get('/api/tags', (req, res) => {
+		db.query(
+			`SELECT
+				COUNT(ttq.tag_id) as tags_count,
+				t.*
+			FROM tags t 
+			LEFT JOIN tags_to_queries ttq 
+			ON ttq.tag_id = t.id 
+			GROUP BY tag
+			ORDER BY tags_count DESC`,
+		(err, results) => {
+			if (err) console.log(err)
+			res.status(200).send(results)
+		})
+	})
 
 	app.post('/api/tagspr', (req, res) => {
 		const { query_id, tags } = req.body.params
-		hadnleTags(query_id, tags, res)
+		handleTags(db, query_id, tags, res)
 	})
 
 	app.put('/api/tagspr', (req, res) => {
 		const { query_id, tags } = req.body.params
 		db.query('DELETE FROM tags_to_queries WHERE query_id = ?', [query_id], (err, _) => {
 			if (err) console.log(err)
-			hadnleTags(query_id, tags, res)
+			handleTags(db, query_id, tags, res)
 		})
 	})
 	

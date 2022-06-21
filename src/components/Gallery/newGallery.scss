@@ -1,0 +1,9 @@
+.newGallery {
+	&__root {
+		display: flex;
+		flex-direction: column;
+		flex-basis: 15%;
+		min-width: 300px;
+		max-width: 300px;
+	}
+}
