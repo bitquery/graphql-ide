@@ -33,13 +33,33 @@ exports.up = function (db) {
 					sql += ` ('${uniqueTags[i]}')`
 					if (i !== uniqueTags.length - 1) sql +=','
 				}
-				return db.runSql(sql, err => console.log(err))
+				return db.runSql(sql).then(someshit => {
+						const values = []
+						for (let k = 0; k < result.length; k++) {
+							const { id: query_id, query } = result[k]
+							let tags = query.match(regex)
+							if (tags) {
+								tags = tags.filter(tag => tag !== 'query').slice(0, 2)
+								for (let j = 0; j < tags.length; j++) {
+									const tag_id = uniqueTags.indexOf(tags[j]) + 1
+									values.push({query_id, tag_id})
+								}
+							}
+						}
+						let sql = 'INSERT INTO tags_to_queries (query_id, tag_id) VALUES'
+						for (let i = 0; i < values.length; i++) {
+							sql += ` (${values[i].query_id}, ${values[i].tag_id})`
+							if (i !== values.length - 1) sql +=','
+						}
+						return db.runSql(sql, err => console.log(err))
+					})
 			}
 		})
 };
 
 exports.down = function (db) {
-	return db.runSql('DELETE FROM tags');
+	return db.runSql('DELETE FROM tags_to_queries')
+		.then(_ => db.runSql('DELETE FROM tags'))
 };
 
 exports._meta = {
