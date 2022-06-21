@@ -44,3 +44,5 @@ export const getWidget = url => axios.get(`/api/getw/${url}`)
 
 // export const getQueryForDashboard = ids => axios.get(`/api/getwidget/${ids}`)
 export const getQueryForDashboard = (ids, dbid) => axios.post(`/api/getwidget`, {ids, dbid})
+
+export const getTagsList = () => axios.get('/api/tags')

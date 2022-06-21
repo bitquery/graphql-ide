@@ -1,9 +1,27 @@
 .newGallery {
 	&__root {
-		display: flex;
-		flex-direction: column;
 		flex-basis: 15%;
 		min-width: 300px;
 		max-width: 300px;
+		overflow: auto;
+	}
+	&__listWrapper {
+		display: flex;
+		flex-direction: column;
+		padding: 0;
+	}
+	&__listItem {
+		display: flex;
+		align-items: center;
+		justify-content: flex-start;
+		padding: 20px;
+		min-height: 70px;
+		cursor: pointer;
+		font-weight: bold;
+		&:hover {
+			background-color: chartreuse;
+			font-size: 20px;
+		}
+		transition: all .15s ease;
 	}
 }
