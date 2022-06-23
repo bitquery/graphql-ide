@@ -10,7 +10,7 @@ import { useHistory } from 'react-router-dom'
 const QueriesList = observer(function QueriesList() {
 
 	const history = useHistory()
-	const { queriesListIsOpen, toggleQueriesList, currentTag } = GalleryStore
+	const { queriesListIsOpen, toggleQueriesList, currentTag, tagListIsOpen } = GalleryStore
 	const { setQuery, query, currentQuery } = QueriesStore
 	const { switchTab, tabs } = TabsStore
 
@@ -37,7 +37,7 @@ const QueriesList = observer(function QueriesList() {
 	}
 	
 	return (
-		<div className={'querylist__root' + (queriesListIsOpen ? ' querylist__root_active' : '')}>
+		<div className={'querylist__root' + (queriesListIsOpen ? ' active' : '') + (!tagListIsOpen && queriesListIsOpen  ? ' fullwidth' : '')}>
 			<Table striped bordered hover size="sm">
 				<thead>
 					<tr>

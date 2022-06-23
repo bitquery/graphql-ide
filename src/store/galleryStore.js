@@ -1,7 +1,7 @@
 import { makeObservable, observable, action } from "mobx"
 
 class Gallery {
-	tagListIsOpen = false
+	tagListIsOpen = true
 	queriesListIsOpen = false
 	tagList = []
 	queryList = []

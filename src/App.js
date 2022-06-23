@@ -12,6 +12,7 @@ import { observer } from 'mobx-react-lite'
 import 'react-grid-layout/css/styles.css'
 import NewGallery from "./components/Gallery/NewGallery"
 import QueryList from "./components/Gallery/QueriesList"
+import { GalleryStore } from './store/galleryStore'
 
 if (process.env.NODE_ENV === 'development') {
 	/* require('@welldone-software/why-did-you-render')(React, {
@@ -25,6 +26,7 @@ if (process.env.NODE_ENV === 'development') {
 
 const App = observer(function App() {
 	const { query, showSideBar } = QueriesStore
+	const { tagListIsOpen } = GalleryStore
 	useEffect(() => {
 		const handleUnload = e => {
 			for (let i=0; i<query.length; i++) {
@@ -52,7 +54,7 @@ const App = observer(function App() {
 					<ControlPanel />
 					<div className="content flex">
 						{/* {showSideBar && <GalleryComponent />} */}
-						<NewGallery />
+						{tagListIsOpen && <NewGallery />}
 						<GraphqlExplorer />
 						<QueryList />
 					</div>

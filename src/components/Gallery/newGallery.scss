@@ -1,9 +1,25 @@
 .newGallery {
 	&__root {
+		display: flex;
+		flex-direction: column;
 		flex-basis: 15%;
 		min-width: 300px;
 		max-width: 300px;
 		overflow: auto;
+	}
+	&__close {
+		margin-right: auto;
+		cursor: pointer;
+		margin-left: 15px;
+		&_helper {
+			visibility: hidden;
+			margin-left: auto;
+			margin-right: 15px;
+		}
+	}
+	&__header {
+		justify-content: center;
+		align-items: center;
 	}
 	&__listWrapper {
 		display: flex;

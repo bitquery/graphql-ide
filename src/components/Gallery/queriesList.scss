@@ -8,8 +8,11 @@
 		right: 0;
 		display: flex;
 		transition: width .1s ease-out;
-		&_active {
+		&.active {
 			width: calc(100% - 300px);
+		}
+		&.fullwidth {
+			width: 100%;
 		}
 	}
 }
