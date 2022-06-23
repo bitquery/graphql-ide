@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from 'react'
+import { observer } from 'mobx-react'
 import { getTagsList } from "../../api/api"
+import { GalleryStore } from '../../store/galleryStore'
 
-function NewGallery() {
+const NewGallery = observer(function NewGallery() {
 
+	const { tagListIsOpen, queriesListIsOpen, toggleQueriesList, setCurrentTag, currentTag } = GalleryStore
 	const [tagsList, setTagsList] = useState([])
-
+	
 	useEffect(() => {
 		const onload = async () => {
 			try {
@@ -17,15 +20,24 @@ function NewGallery() {
 		onload()
 	}, [])
 
+	const handleClick = tag => {
+		setCurrentTag(tag)
+		console.log(tagListIsOpen, tag, currentTag)
+		if (queriesListIsOpen && tag === currentTag || !queriesListIsOpen) {
+			toggleQueriesList()
+		}
+	}
+	
 	return (
 		<div className="newGallery__root">
 			<ul className="newGallery__listWrapper">
-				<li className="newGallery__listItem">
-					My queries {'(74)'}
-				</li>
 				{
 					tagsList.map(({tag, id, tags_count}) => (
-						<li className="newGallery__listItem">
+						<li 
+							className="newGallery__listItem" 
+							key={`${id}-${tags_count}`}
+							onClick={() => handleClick(tag)}
+						>
 							{`#${tag} (${tags_count})`}
 						</li>
 					))
@@ -33,6 +45,6 @@ function NewGallery() {
 			</ul>			
 		</div>
 	)
-}
+}) 
 
 export default NewGallery

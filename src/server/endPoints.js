@@ -43,15 +43,34 @@ const handleTags = (db, query_id, tags, res) => {
 }
 module.exports = function(app, passport, db, redisClient) {
 
+	app.get('/api/taggedqueries/:tag', (req, res) => {
+		db.query(`
+		SELECT * from queries q
+		LEFT JOIN (
+			Select query_id , GROUP_CONCAT(t.tag) as tags from bitquery.tags_to_queries tq
+			inner join bitquery.tags t on t.id  = tq.tag_id
+			group by query_id
+		) t
+		ON q.id = t.query_id
+		where t.tags LIKE ?
+		LIMIT 0, 11`, [`%${req.params.tag}%`], (err, results) => {
+				if (err) console.log(err)
+				res.status(200).send(results)
+			})
+	})
+
 	app.get('/api/tags', (req, res) => {
 		db.query(
 			`SELECT
 				COUNT(ttq.tag_id) as tags_count,
 				t.*
-			FROM tags t 
+			FROM tags t
 			LEFT JOIN tags_to_queries ttq 
-			ON ttq.tag_id = t.id 
+			ON ttq.tag_id = t.id
 			GROUP BY tag
+			UNION
+			SELECT COUNT(q.account_id), 0 as id, 'My queries' as tag
+			FROM queries q
 			ORDER BY tags_count DESC`,
 		(err, results) => {
 			if (err) console.log(err)

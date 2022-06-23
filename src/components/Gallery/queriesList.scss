@@ -1,0 +1,15 @@
+.querylist {
+	&__root {
+		position: absolute;
+		width: 0;
+		height: calc(100% - 42px);
+		background-color: pink;
+		z-index: 10;
+		right: 0;
+		display: flex;
+		transition: width .1s ease-out;
+		&_active {
+			width: calc(100% - 300px);
+		}
+	}
+}

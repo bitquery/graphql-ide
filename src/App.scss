@@ -1,8 +1,12 @@
 @import "./components/Gallery/newGallery.scss";
+@import "./components/Gallery/queriesList.scss";
 
 @font-face {
 	font-family: 'Nunito';
 	src: url('./assets/fonts/Nunito-Regular.ttf') format('truetype')
+}
+body {
+	overflow: hidden;
 }
 .cursor-pointer {
 	cursor: pointer;
