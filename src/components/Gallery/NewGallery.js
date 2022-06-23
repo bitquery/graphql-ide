@@ -8,7 +8,8 @@ import QueryBuilder from '../Gallery/QueryBuilder/index'
 
 const NewGallery = observer(function NewGallery() {
 
-	const { tagListIsOpen, queriesListIsOpen, toggleQueriesList, toggleTagsList, setCurrentTag, currentTag } = GalleryStore
+	const { tagListIsOpen, queriesListIsOpen, currentTag,
+		toggleQueriesList, toggleTagsList, setCurrentTag } = GalleryStore
 	const { currentQuery, updateQuery, schema } = QueriesStore
 	const { index } = TabsStore
 	const [tagsList, setTagsList] = useState([])
@@ -28,7 +29,6 @@ const NewGallery = observer(function NewGallery() {
 
 	const handleClick = tag => {
 		setCurrentTag(tag)
-		console.log(tagListIsOpen, tag, currentTag)
 		if (queriesListIsOpen && tag === currentTag || !queriesListIsOpen) {
 			toggleQueriesList()
 		}

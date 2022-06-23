@@ -37,11 +37,13 @@ import { getCheckoutCode } from '../api/api'
 import { flattenData } from './flattenData.js'
 import { stringifyIncludesFunction } from '../utils/common';
 import modalStore from '../store/modalStore.js';
+import { GalleryStore } from '../store/galleryStore.js';
 
 
 const EditorInstance = observer(function EditorInstance({number})  {
 	const { tabs, currentTab, index, jsonMode, codeMode } = TabsStore
 	const { toggleModal, toggleLogin, modalIsOpen } = modalStore
+	const { tagListIsOpen } = GalleryStore
 	const { user }  = UserStore
 	const { query, updateQuery, currentQuery, isMobile,
 		setMobile, showSideBar, schema, setSchema, isLoaded } = QueriesStore
@@ -409,6 +411,7 @@ ${WidgetComponent.id === 'table.widget' ? '<link href="https://unpkg.com/tabulat
 			className={'graphiql__wrapper ' + 
 				(currentTab === tabs[number].id ? 'graphiql__wrapper_active' : '')
 				+ (!showSideBar ? ' graphiql__wrapper_wide' : '')
+				+ (!tagListIsOpen ? ' fullwidth' : '')
 			}
 		>
 			<ToolbarComponent 

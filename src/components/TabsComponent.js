@@ -8,9 +8,11 @@ import handleState from '../utils/handleState'
 import useEventListener from '../utils/useEventListener'
 import logo from '../assets/images/bitquery_logo_w.png'
 import GraphqlIcon from './icons/GraphqlIcon'
+import { GalleryStore } from '../store/galleryStore'
 
 const TabsComponent = observer(() => {
 	const history = useHistory()
+	const { queriesListIsOpen, toggleQueriesList } = GalleryStore
 	const { user } = UserStore
 	const { tabs, currentTab, switchTab, index } = TabsStore
 	const match = useRouteMatch(`${process.env.REACT_APP_IDE_URL}/:queryurl`)
@@ -75,12 +77,14 @@ const TabsComponent = observer(() => {
 	}, [tabs.length])
 	const handleEdit = e => setQueryName({...queryName, [currentTab]: e.target.value})
 	const switchTabHandler = (tabid) => {
+		queriesListIsOpen && toggleQueriesList()
 		switchTab(tabid)
 		let id = tabs.map(tab => tab.id).indexOf(tabid)
 		query[id].url ? history.push(`${process.env.REACT_APP_IDE_URL}/${query[id].url}`) : history.push(`${process.env.REACT_APP_IDE_URL}`)
 		setEditTabName(false)
 	}
 	const addNewTabHandler = () => {
+		queriesListIsOpen && toggleQueriesList()
 		setQuery({query: '', variables: '{}', name: 'New Query', endpoint_url: currentQuery.endpoint_url, config: '{}'})
 	}
 	const removeTabHandler = (index, event) => {

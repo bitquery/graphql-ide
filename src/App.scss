@@ -300,7 +300,10 @@ body {
 .graphiql__wrapper {
 	display: none;
 	flex: 1 1 auto;
-	// max-width: calc(100% - 300px);
+	max-width: calc(100% - 300px);
+	&.fullwidth {
+		max-width: 100%;
+	}
 	&_active {
 		display: flex;
 		flex-direction: column;
