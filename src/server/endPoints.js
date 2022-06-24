@@ -5,7 +5,8 @@ const fs = require('fs')
 const path = require('path')
 const axios = require('axios')
 
-const handleTags = (db, query_id, tags, res) => {
+const handleTags = (db, query_id, tags, res, resolve) => {
+	console.log('handle tags')
 	tags.forEach((tag, i, arr) => {
 		db.query('SELECT id FROM tags WHERE tag = ?', [tag], (err, results) => {
 			if (err) console.log(err)
@@ -16,19 +17,23 @@ const handleTags = (db, query_id, tags, res) => {
 					db.query('INSERT INTO tags_to_queries SET ?', { query_id, tag_id }, (err, _) => {
 						if (err) console.log(err)
 						if (i === arr.length - 1) {
-							res.sendStatus(201)
+							res.status(201)
+							resolve ? res.status(201).send(resolve) : res.sendStatus(201)
 						}
 					})
 				})
 			} else {   //there is tag, add tag/query rel
+				console.log('there is tag')
 				const tag_id = results[0].id
-				db.query('SELECT query_id from tags_to_queries WHERE tag_id = ?', [tag_id], (err, results) => {
+				db.query('SELECT * from tags_to_queries WHERE tag_id = ? AND query_id = ?', [tag_id, query_id], (err, results) => {
 					if (err) console.log(err)
+					console.log(results)
 					if (!results.length) {
+						console.log('no such query with this tag_id')
 						db.query('INSERT INTO tags_to_queries SET ?', { query_id, tag_id }, (err, _) => {
 							if (err) console.log(err)
 							if (i === arr.length - 1) {
-								res.sendStatus(201)
+								resolve ? res.status(201).send(resolve) : res.sendStatus(201)
 							}
 						})
 					} else {
@@ -144,26 +149,26 @@ module.exports = function(app, passport, db, redisClient) {
 		}
 	}
 	const addWidgetConfig = (res, db, params, widget_id) => {
-		db.query(`UPDATE widgets SET active = FALSE WHERE query_id=${params.query_id}`, (err, _) => {
-			if (err) {
-				console.log(err)
-			}
-			db.query('INSERT INTO widgets SET ?', {...params, active: true}, (err, result) => {
+		return new Promise((resolve, reject) => {
+			db.query(`UPDATE widgets SET active = FALSE WHERE query_id=${params.query_id}`, (err, _) => {
 				if (err) {
 					console.log(err)
-					res.send({err})
-				} else {
-					widget_id && db.query(`update queries_to_dashboards set ? where widget_id=${widget_id}`, {
-						widget_id: result.insertId
-					}, (err, _) => {
-						if (err) console.log(err)
-					})
-					let msg = params.url ? 'Query shared!' : 'Query saved!'
-					result && res.send({msg, id: params.query_id})
 				}
-			})
-
-		})
+				db.query('INSERT INTO widgets SET ?', {...params, active: true}, (err, result) => {
+					if (err) {
+						console.log(err)
+						res.send({err})
+					} else {
+						widget_id && db.query(`update queries_to_dashboards set ? where widget_id=${widget_id}`, {
+							widget_id: result.insertId
+						}, (err, _) => {
+							if (err) console.log(err)
+						})
+						let msg = params.url ? 'Query shared!' : 'Query saved!'
+						result ? resolve({msg, id: params.query_id}) : reject('Error adding widget Config')
+					}
+				})
+		})})
 	}
 	const handleAddQuery = (req, res, db) => {
 		let sql = `INSERT INTO queries SET ?`
@@ -189,8 +194,7 @@ module.exports = function(app, passport, db, redisClient) {
 				widget_id : req.body.params.widget_id,
 				config: JSON.stringify(req.body.params.config)
 			}
-			addWidgetConfig(res, db, newParam)
-			handleTags(db, result.insertId, tags, res)
+			addWidgetConfig(res, db, newParam).then(resolve => handleTags(db, result.insertId, tags, res, resolve))
 		})
 	}
 	const handleUpdateQuery = (req, res, db) => {
