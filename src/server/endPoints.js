@@ -5,52 +5,43 @@ const fs = require('fs')
 const path = require('path')
 const axios = require('axios')
 
-const handleTags = (db, query_id, tags, res, resolve) => {
-	console.log('handle tags')
-	tags.forEach((tag, i, arr) => {
-		db.query('SELECT id FROM tags WHERE tag = ?', [tag], (err, results) => {
-			if (err) console.log(err)
-			if (!results.length) {   //there is no tag, add tag and tag/query rel
-				db.query('INSERT INTO tags SET ?', { tag }, (err, results) => {
-					if (err) console.log(err)
-					const tag_id = results.insertId
-					db.query('INSERT INTO tags_to_queries SET ?', { query_id, tag_id }, (err, _) => {
-						if (err) console.log(err)
-						if (i === arr.length - 1) {
-							res.status(201)
-							resolve ? res.status(201).send(resolve) : res.sendStatus(201)
-						}
-					})
-				})
-			} else {   //there is tag, add tag/query rel
-				console.log('there is tag')
+module.exports = function(app, passport, db, redisClient) {
+	
+	const query = (sql, values) => new Promise((resolve, reject) => {
+		const callback = (err, results) => {
+			if (err) {
+				console.log(err)
+				reject(err)
+			}
+			resolve(results)
+		}
+		values
+			? db.query(sql, values, callback)
+			: db.query(sql, callback)
+	})
+	const handleTags = async (query_id, tags, res, msg) => {
+		tags.forEach(async (tag, i, arr) => {
+			const results = await query('SELECT id FROM tags WHERE tag = ?', [tag])
+			if (!results.length) {
+				const { insertId } = await query('INSERT INTO tags SET ?', { tag })
+				await query('INSERT INTO tags_to_queries SET ?', { query_id, tag_id })
+				msg ? res.status(201).send(msg) : res.sendStatus(201)
+			} else {
 				const tag_id = results[0].id
-				db.query('SELECT * from tags_to_queries WHERE tag_id = ? AND query_id = ?', [tag_id, query_id], (err, results) => {
-					if (err) console.log(err)
-					console.log(results)
-					if (!results.length) {
-						console.log('no such query with this tag_id')
-						db.query('INSERT INTO tags_to_queries SET ?', { query_id, tag_id }, (err, _) => {
-							if (err) console.log(err)
-							if (i === arr.length - 1) {
-								resolve ? res.status(201).send(resolve) : res.sendStatus(201)
-							}
-						})
-					} else {
-						if (i === arr.length - 1) {
-							res.sendStatus(400)
-						}
-					}
-				})
+				const queryInstance = await query('SELECT * from tags_to_queries WHERE tag_id = ? AND query_id = ?', [tag_id, query_id])
+				if (!queryInstance.length) {
+					await query('INSERT INTO tags_to_queries SET ?', { query_id, tag_id })
+				}
+				if (i === arr.length - 1) {
+					msg ? res.status(201).send(msg) : res.sendStatus(201)
+				}
 			}
 		})
-	})
-}
-module.exports = function(app, passport, db, redisClient) {
-
-	app.get('/api/taggedqueries/:tag', (req, res) => {
+	}
+	
+	app.get('/api/taggedqueries/:tag', async (req, res) => {
 		const makesql = (patch = '', limit = 0) => `SELECT * from queries q
-			LEFT JOIN (
+		LEFT JOIN (
 				Select query_id , GROUP_CONCAT(t.tag) as tags from bitquery.tags_to_queries tq
 				inner join bitquery.tags t on t.id  = tq.tag_id
 				group by query_id
@@ -66,14 +57,12 @@ module.exports = function(app, passport, db, redisClient) {
 			sql.query = makesql('WHERE t.tags LIKE ?')
 			sql.param = [`%${req.params.tag}%`]
 		}
-		db.query(sql.query, sql.param, (err, results) => {
-			if (err) console.log(err)
-			res.status(200).send(results)
-		})
+		const results = await query(sql.query, sql.param)
+		res.status(200).send(results)	
 	})
 
-	app.get('/api/tags', (req, res) => {
-		db.query(
+	app.get('/api/tags', async (req, res) => {
+		const results = await query(
 			`SELECT
 				COUNT(ttq.tag_id) as tags_count,
 				t.*
@@ -84,11 +73,8 @@ module.exports = function(app, passport, db, redisClient) {
 			UNION
 			SELECT COUNT(q.account_id), 0 as id, 'My queries' as tag
 			FROM queries q
-			ORDER BY tags_count DESC`,
-		(err, results) => {
-			if (err) console.log(err)
-			res.status(200).send(results)
-		})
+			ORDER BY tags_count DESC`)
+		res.status(200).send(results)
 	})
 
 	app.post('/api/tagspr', (req, res) => {
@@ -148,54 +134,38 @@ module.exports = function(app, passport, db, redisClient) {
 			return next()
 		}
 	}
-	const addWidgetConfig = (res, db, params, widget_id) => {
-		return new Promise((resolve, reject) => {
-			db.query(`UPDATE widgets SET active = FALSE WHERE query_id=${params.query_id}`, (err, _) => {
-				if (err) {
-					console.log(err)
-				}
-				db.query('INSERT INTO widgets SET ?', {...params, active: true}, (err, result) => {
-					if (err) {
-						console.log(err)
-						res.send({err})
-					} else {
-						widget_id && db.query(`update queries_to_dashboards set ? where widget_id=${widget_id}`, {
-							widget_id: result.insertId
-						}, (err, _) => {
-							if (err) console.log(err)
-						})
-						let msg = params.url ? 'Query shared!' : 'Query saved!'
-						result ? resolve({msg, id: params.query_id}) : reject('Error adding widget Config')
-					}
-				})
-		})})
+	const addWidgetConfig = async (res, params, widget_id) => {
+		await query(`UPDATE widgets SET active = FALSE WHERE query_id=?`, [params.query_id])
+		try {
+			const results = await query('INSERT INTO widgets SET ?', {...params, active: true})
+			widget_id && await query(
+				`update queries_to_dashboards set ? where widget_id=${widget_id}`,
+				{ widget_id: results.insertId }
+			)
+			let msg = params.url ? 'Query shared!' : 'Query saved!'
+			return {msg, id: params.query_id}
+		} catch (error) {
+			res.status(400).send('Error adding widget Config')
+		}
 	}
-	const handleAddQuery = (req, res, db) => {
+	const handleAddQuery = async (req, res) => {
 		let sql = `INSERT INTO queries SET ?`
-		let {executed,
-			config,
-			widget_id,
-			displayed_data,
-			isDraggable,
-			isResizable,
-			data_type,
-			tags, ...params} = req.body.params
+		let {executed, config, widget_id, displayed_data,
+			isDraggable, isResizable, data_type, tags, 
+			...params} = req.body.params
 		params.id = null
 		params.published = params.url ? true : null
-		db.query(sql, params, (err, result) => {
-			if (err) {
-				console.log(err)
-				res.send({err})
-			}
-			let newParam = {
-				displayed_data: req.body.params.displayed_data,
-				data_type: req.body.params.data_type,
-				query_id: result.insertId,
-				widget_id : req.body.params.widget_id,
-				config: JSON.stringify(req.body.params.config)
-			}
-			addWidgetConfig(res, db, newParam).then(resolve => handleTags(db, result.insertId, tags, res, resolve))
-		})
+
+		const { insertId: query_id } = await query(sql, params)
+		let newParam = { 
+			displayed_data,
+			data_type,
+			query_id,
+			widget_id,
+			config: JSON.stringify(config)
+		}
+		const msg = await addWidgetConfig(res, newParam)
+		handleTags(query_id, tags, res, msg)
 	}
 	const handleUpdateQuery = (req, res, db) => {
 		if (!req.body.params.executed) {
@@ -545,31 +515,27 @@ module.exports = function(app, passport, db, redisClient) {
 		return res.send()
 	});
 	
-	app.get("/api/user", authMiddleware, (req, res) => {
-		db.query(`SELECT a.*, ak.\`key\` FROM accounts a
-		JOIN api_keys ak
-		ON a.id = ak.user_id
-		WHERE a.id = ?
-		AND ak.active = true`, 
-			[req.session.passport.user],
-			(err, user) => {
-				if (err) console.log(err)
-				if (user.length) {
-					let userSend = [{
-						id: user[0].id,
-						key: user[0].key,
-						email: user[0].email,
-						active: user[0].active,
-						updated_at: user[0].updated_at,
-						created_at: user[0].created_at,
-						role: user[0].role
-					}]
-					res.send({user: userSend})
-				} else {
-					res.status(400).send('No user found')
-				}
-				
-			})
+	app.get("/api/user", authMiddleware, async (req, res) => {
+		const results = await query(`SELECT a.*, ak.\`key\` FROM accounts a
+			JOIN api_keys ak
+			ON a.id = ak.user_id
+			WHERE a.id = ?
+			AND ak.active = true`,
+			[req.session.passport.user])
+		if (results.length) {
+			let userSend = [{
+				id: results[0].id,
+				key: results[0].key,
+				email: results[0].email,
+				active: results[0].active,
+				updated_at: results[0].updated_at,
+				created_at: results[0].created_at,
+				role: results[0].role
+			}]
+			res.status(200).send({user: userSend})
+		} else {
+			res.status(400).send('No user found')
+		}
 	})
 	app.get('/api/getquery/:url', (req, res) => {
 		let sql = `
