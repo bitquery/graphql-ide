@@ -165,7 +165,8 @@ module.exports = function(app, passport, db, redisClient) {
 			displayed_data,
 			isDraggable,
 			isResizable,
-			data_type, ...params} = req.body.params
+			data_type,
+			tags, ...params} = req.body.params
 		params.id = null
 		params.published = params.url ? true : null
 		db.query(sql, params, (err, result) => {
@@ -181,6 +182,7 @@ module.exports = function(app, passport, db, redisClient) {
 				config: JSON.stringify(req.body.params.config)
 			}
 			addWidgetConfig(res, db, newParam)
+			handleTags(db, result.insertId, tags, res)
 		})
 	}
 	const handleUpdateQuery = (req, res, db) => {
