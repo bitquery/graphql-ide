@@ -44,19 +44,27 @@ const handleTags = (db, query_id, tags, res) => {
 module.exports = function(app, passport, db, redisClient) {
 
 	app.get('/api/taggedqueries/:tag', (req, res) => {
-		db.query(`
-		SELECT * from queries q
-		LEFT JOIN (
-			Select query_id , GROUP_CONCAT(t.tag) as tags from bitquery.tags_to_queries tq
-			inner join bitquery.tags t on t.id  = tq.tag_id
-			group by query_id
-		) t
-		ON q.id = t.query_id
-		where t.tags LIKE ?
-		LIMIT 0, 11`, [`%${req.params.tag}%`], (err, results) => {
-				if (err) console.log(err)
-				res.status(200).send(results)
-			})
+		const makesql = (patch = '', limit = 0) => `SELECT * from queries q
+			LEFT JOIN (
+				Select query_id , GROUP_CONCAT(t.tag) as tags from bitquery.tags_to_queries tq
+				inner join bitquery.tags t on t.id  = tq.tag_id
+				group by query_id
+			) t
+			ON q.id = t.query_id
+			${patch}
+			LIMIT ${limit}, 11`
+		let sql = {}
+		if (req.params.tag === 'My queries') {
+			sql.query = makesql('WHERE q.account_id = ?')
+			sql.param = [req.session.passport.user]
+		} else {
+			sql.query = makesql('WHERE t.tags LIKE ?')
+			sql.param = [`%${req.params.tag}%`]
+		}
+		db.query(sql.query, sql.param, (err, results) => {
+			if (err) console.log(err)
+			res.status(200).send(results)
+		})
 	})
 
 	app.get('/api/tags', (req, res) => {
