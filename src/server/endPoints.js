@@ -23,7 +23,7 @@ module.exports = function(app, passport, db, redisClient) {
 		tags.forEach(async (tag, i, arr) => {
 			const results = await query('SELECT id FROM tags WHERE tag = ?', [tag])
 			if (!results.length) {
-				const { insertId } = await query('INSERT INTO tags SET ?', { tag })
+				const { insertId: tag_id } = await query('INSERT INTO tags SET ?', { tag })
 				await query('INSERT INTO tags_to_queries SET ?', { query_id, tag_id })
 				msg ? res.status(201).send(msg) : res.sendStatus(201)
 			} else {
