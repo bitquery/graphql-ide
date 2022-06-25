@@ -1,15 +1,12 @@
-import React from 'react'
-import { useState } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { useRouteMatch } from 'react-router-dom'
 import { useToasts } from 'react-toast-notifications'
 import modalStore from '../../store/modalStore'
 import { QueriesStore, TabsStore } from '../../store/queriesStore'
 import copy from 'copy-to-clipboard'
 import { deleteQuery } from '../../api/api'
-import { useEffect } from 'react'
 import ReactTooltip from 'react-tooltip'
 import ConfirmationWindow from '../modal/ConfirmationWindow'
-import { useRef } from 'react'
 import { observer } from 'mobx-react-lite'
 import { generateTags } from '../../utils/generateTags'
 import useEventListener from '../../utils/useEventListener'
@@ -28,6 +25,7 @@ const EditDialog = observer(function EditDialog({active}) {
 	const { toggleEditDialog, toggleModal, toggleConfirmation } = modalStore
 	const { renameCurrentTab } = TabsStore
 	const nameInput = useRef('')
+	const tagsInput = useRef(null)
 	const closeHandler = () => {
 		toggleModal()
 		toggleEditDialog()		
@@ -37,11 +35,14 @@ const EditDialog = observer(function EditDialog({active}) {
 		autoTags && setTags(autoTags)
 	}, [])
 	const addOrDeleteTag = ({ key }) => {
-		if (key === 'Enter' && inputTagValue) {
-			setTags(prev => [...prev, inputTagValue])
-			setInputTagValue('')
-		} else if (key === 'Backspace' && !inputTagValue) {
-			setTags(prev => prev.slice(0, -1))
+		const isCurrentlyFocused = element => element === document.activeElement
+		if (isCurrentlyFocused(tagsInput.current)) {
+			if (key === 'Enter' && inputTagValue) {
+				setTags(prev => [...new Set( [ ...prev, inputTagValue ] )])
+				setInputTagValue('')
+			} else if (key === 'Backspace' && !inputTagValue) {
+				setTags(prev => prev.slice(0, -1))
+			}
 		}
 	}
 	useEventListener('keydown', addOrDeleteTag)
@@ -131,6 +132,7 @@ const EditDialog = observer(function EditDialog({active}) {
 				<div className="access-control__tags flex">
 					{ tags.length ? tags.map(tag => <div className="access-control__tags__tag">{tag}</div>) : null }
 					<input 
+						ref={tagsInput}
 						type="text"
 						className="access-control__tags__input"
 						value={inputTagValue}
