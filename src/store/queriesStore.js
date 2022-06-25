@@ -105,7 +105,7 @@ class Queries {
 			id: this.currentQuery.id,
 			account_id: UserStore.user && (UserStore.user.id || null),
 			query: this.currentQuery.query,
-			arguments: this.currentQuery.variables,
+			variables: this.currentQuery.variables,
 			config: this.currentQuery.config,
 			widget_id: this.currentQuery.widget_id,
 			displayed_data: this.currentQuery.displayed_data,

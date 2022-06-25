@@ -17,9 +17,7 @@ function LinkComponent({ propquery, as }) {
 	}
 	const handleClick = (queryFromGallery) => {
 		if (query.map(query => query.id).indexOf(queryFromGallery.id) === -1) {
-			let data = {...queryFromGallery, variables: queryFromGallery.arguments}
-			
-			setQuery(data, queryFromGallery.id)
+			setQuery(queryFromGallery, queryFromGallery.id)
 		} else {
 			let tabID = query.map(query => query.id).indexOf(queryFromGallery.id)
 			switchTab(tabs[tabID].id)

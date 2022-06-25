@@ -91,7 +91,7 @@ module.exports = function(app, passport, db, redisClient) {
 	})
 	
 	app.get('/api/dbcode/:url', (req, response) => {
-		db.query(`SELECT rd.id, rd.account_id, null as query, null as arguments, 
+		db.query(`SELECT rd.id, rd.account_id, null as query, null as variables, 
 			rd.url, rd.name, rd.description , rd.published, rd.created_at , 
 			rd.deleted, rd.javascript, rd.updated_at , null as endpoint_url, 
 			null as displayed_data, null as widget_id ,qtd.widget_id as widget_ids, null as config, rd.layout, null as widget_number 
@@ -172,7 +172,7 @@ module.exports = function(app, passport, db, redisClient) {
 			let params = {
 				name: req.body.params.name && req.body.params.name,
 				description: req.body.params.description && req.body.params.description,
-				arguments: req.body.params.arguments || req.body.params.variables,
+				variables: req.body.params.variables,
 				query: req.body.params.query && req.body.params.query,
 				url: req.body.params.url ? req.body.params.url : null,
 				endpoint_url: req.body.params.endpoint_url,
@@ -220,7 +220,7 @@ module.exports = function(app, passport, db, redisClient) {
 	}
 
 	app.get('/api/getw/:url', (req, response) => {
-		db.query(`SELECT rd.id, rd.account_id, null as query, null as arguments, 
+		db.query(`SELECT rd.id, rd.account_id, null as query, null as variables, 
 			rd.url, rd.name, rd.description , rd.published, rd.created_at , 
 			rd.deleted, rd.javascript, rd.updated_at , null as endpoint_url, 
 			null as displayed_data, null as widget_id ,qtd.widget_id as widget_ids, null as config, rd.layout, null as widget_number 
