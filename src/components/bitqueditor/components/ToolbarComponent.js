@@ -2,14 +2,17 @@ import { observer } from 'mobx-react-lite'
 import { QueriesStore, UserStore, TabsStore } from '../../../store/queriesStore'
 import modalStore from '../../../store/modalStore'
 import { useToasts } from 'react-toast-notifications'
+import { useRouteMatch } from 'react-router-dom'
 import { parse as parseGql } from 'graphql/language'
 import { print } from 'graphql'
 import React, { useState, useEffect } from 'react'
 import StatisticsButton from './StatisticsButton'
 import { GalleryStore } from '../../../store/galleryStore'
 import ToolbarButton from './ToolbarButton'
+import copy from 'copy-to-clipboard'
 
 const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOpen, toggleDocExplorer, number}) => {
+	const { url } = useRouteMatch()
 	const { currentQuery, saveQuery, updateQuery, setQuery,
 		isLoaded, queryIsTransfered, setQueryIsTransfered } = QueriesStore
 	const { tagListIsOpen, toggleTagsList } = GalleryStore
@@ -94,13 +97,18 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 			url: null
 		})
 	}
+	const handleCopy = () => {
+		copy(`${window.location.protocol}//${window.location.host}${url.match(/^\/([^?\/]+)/)[0]}/${currentQuery.url}`)
+		addToast('Link copied to clipboard', {appearance: 'success'})
+	}
+
 	const toolbar = (!dashboardOwner || !isLoaded) ? null : <div className="topBarWrap">
 		<div className="topBar">
 			{!tagListIsOpen &&<i className="open fas fa-angle-double-right" onClick={toggleTagsList} />}
 			{dashboardOwner && !(!currentQuery.id || !currentQuery.saved) && currentQuery.layout 
 				&& <button type="button" className="topBar__button" onClick={switchMode}>Edit</button>}
 			<ToolbarButton
-				title={!currentQuery.id ? 'Save' : 'Update'}
+				title='Save'
 				onClick={saveHandle}
 				disabled={currentQuery.saved}
 				visible={!currentQuery.id || !currentQuery.saved}
@@ -124,6 +132,16 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 				title='Fork'
 				onClick={handleFork}
 				visible={currentQuery.id}
+			/>
+			<ToolbarButton 
+				title='Edit'
+				onClick={()=>{toggleModal();toggleEditDialog();}}
+				visible={currentQuery.account_id===user?.id}
+			/>
+			<ToolbarButton 
+				title='Copy query URL'
+				onClick={handleCopy}
+				visible={!!currentQuery.url}
 			/>
 			{!currentQuery.layout && <input 
 				className="endpointURL"

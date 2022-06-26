@@ -213,7 +213,6 @@ class Queries {
 			let id = TabsStore.tabs.map(tab => tab.id).indexOf(TabsStore.currentTab)
 			this.updateQuery({...params, account_id: UserStore.user.id, saved: true}, id, data.id)
 			this.queryJustSaved = !this.queryJustSaved
-			this.query[id].saved = true
 			this.currentQuery.layout && window.dispatchEvent(new Event('updateInitialDashboard'))
 			return data
 		} catch (e) {
