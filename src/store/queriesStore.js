@@ -170,9 +170,7 @@ class Queries {
 		if ('isDraggable' in params) this.query[index].isDraggable = params.isDraggable
 		if ('isResizable' in params) this.query[index].isResizable = params.isResizable
 		this.query[index].id = id || id===null ? id : this.query[index].id
-		this.query[index].saved = false
-		// if (params.saved) this.query[index].saved = params.saved
-		this.query[index].saved = false
+		this.query[index].saved = !!params?.saved
 		this.setCurrentQuery(index)
 	}
 	removeQuery = index => {
@@ -213,7 +211,7 @@ class Queries {
 				})
 				: await setDashboard(params)
 			let id = TabsStore.tabs.map(tab => tab.id).indexOf(TabsStore.currentTab)
-			this.updateQuery({...params, account_id: UserStore.user.id}, id, data.id)
+			this.updateQuery({...params, account_id: UserStore.user.id, saved: true}, id, data.id)
 			this.queryJustSaved = !this.queryJustSaved
 			this.query[id].saved = true
 			this.currentQuery.layout && window.dispatchEvent(new Event('updateInitialDashboard'))
