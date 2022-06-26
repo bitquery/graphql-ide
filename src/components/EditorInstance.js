@@ -46,7 +46,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 	const { tagListIsOpen } = GalleryStore
 	const { user }  = UserStore
 	const { query, updateQuery, currentQuery, isMobile,
-		setMobile, showSideBar, schema, setSchema, isLoaded } = QueriesStore
+		setMobile, showSideBar, schema, setSchema, isLoaded, logQuery } = QueriesStore
 	const [docExplorerOpen, toggleDocExplorer] = useState(false)
 	const [_variableToType, _setVariableToType] = useState(null)
 	const [loading, setLoading] = useState(false)
@@ -244,7 +244,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 			}, index)
 		}
 		fetcher({query: currentQuery.query, variables: currentQuery.variables}).then(data => {
-			const graphqlRequested = data.headers.get('X-GraphQL-Requested') === 'true' ? true : false
+			const graphqlRequested = data.headers.get('X-GraphQL-Requested') === 'true'
 			updateQuery(
 				{
 					graphqlQueryID: data.headers.get('X-GraphQL-Query-ID'),
@@ -252,7 +252,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 					points: graphqlRequested ? undefined : 0,
 					saved: currentQuery.saved
 				}, index)
-			data.json().then(json => {
+			data.json().then(async json => {
 				let values = null
 				if ('data' in json) {
 					if (currentQuery.displayed_data && currentQuery.displayed_data !== 'data') {
@@ -268,6 +268,12 @@ const EditorInstance = observer(function EditorInstance({number})  {
 						}
 					}
 				}
+				currentQuery.id && await logQuery({
+					id: currentQuery.id,
+					account_id: currentQuery.account_id,
+					success: !json.errors,
+					error: JSON.stringify(json.errors)
+				})
 				setDataSource({
 					data: ('data' in json) ? json.data : null,
 					extensions: ('extensions' in json) ? json.extensions : null,

@@ -226,7 +226,7 @@ class Queries {
 	}
 	logQuery = async params => {
 		try {
-			const { data } = await axios.post('/api/addquerylog', { 
+			const { data } = await axios.post('/api/querylog', { 
 				params
 			})
 			console.log(data)

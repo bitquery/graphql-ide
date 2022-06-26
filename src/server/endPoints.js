@@ -495,18 +495,13 @@ module.exports = function(app, passport, db, redisClient) {
 			})
 	})
 
-	app.post('/api/addquerylog', (req, response) => {
-		let value = req.body.params
-			db.query(`INSERT INTO query_logs SET ?`, {
-				id: value.id,
-				account_id: value.account_id,
-				success: value.success || 0,
-				error: value.error || 0
-			}, (err, res) => {
-				if (err) console.log(err)
-				console.log(res)
-				response.send('Query logged')
-			})
+	app.post('/api/querylog', (req, response) => {
+		db.query(`INSERT INTO query_logs SET ?`, { ...req.body.params },
+		(err, res) => {
+			if (err) console.log(err)
+			console.log(res)
+			response.send('Query logged')
+		})
 	}) 
 
 	app.get('/api/logout', (req, res) => {
