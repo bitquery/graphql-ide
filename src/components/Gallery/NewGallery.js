@@ -54,7 +54,7 @@ const NewGallery = observer(function NewGallery() {
 							key={`${id}-${tags_count}`}
 							onClick={() => handleClick(tag)}
 						>
-							{`#${tag} (${tags_count})`}
+							{`${id ? '#' : ''}${tag} (${tags_count})`}
 						</li>
 					))
 				}
