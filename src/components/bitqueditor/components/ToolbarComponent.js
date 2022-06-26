@@ -10,7 +10,7 @@ import { GalleryStore } from '../../../store/galleryStore'
 import ToolbarButton from './ToolbarButton'
 
 const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOpen, toggleDocExplorer, number}) => {
-	const { currentQuery, saveQuery, updateQuery, 
+	const { currentQuery, saveQuery, updateQuery, setQuery,
 		isLoaded, queryIsTransfered, setQueryIsTransfered } = QueriesStore
 	const { tagListIsOpen, toggleTagsList } = GalleryStore
 	const { index } = TabsStore
@@ -85,6 +85,15 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 		switchMode()
 		window.dispatchEvent(new Event('setInitialDashboard'))
 	}
+	const handleFork = () => {
+		setQuery({
+			...currentQuery,
+			id: null,
+			name: `Copy of ${currentQuery.name}`,
+			saved: false,
+			url: null
+		})
+	}
 	const toolbar = (!dashboardOwner || !isLoaded) ? null : <div className="topBarWrap">
 		<div className="topBar">
 			{!tagListIsOpen &&<i className="open fas fa-angle-double-right" onClick={toggleTagsList} />}
@@ -107,11 +116,15 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 				>Text Block</div>}
 			{dashboardOwner && (!currentQuery.id || !currentQuery.saved) && currentQuery.layout 
 				&& <button type="button" className="topBar__button" onClick={openDashboardSettings}>Settings</button>}
-			{!currentQuery.layout && <button className="topBar__button"
+			<ToolbarButton 
+				title='Prettify'
 				onClick={prettifyQuery}
-			>
-				Prettify
-			</button>}
+			/>
+			<ToolbarButton 
+				title='Fork'
+				onClick={handleFork}
+				visible={currentQuery.id}
+			/>
 			{!currentQuery.layout && <input 
 				className="endpointURL"
 				type="text" 
