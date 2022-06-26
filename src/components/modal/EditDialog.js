@@ -108,6 +108,10 @@ const EditDialog = observer(function EditDialog({active}) {
 		addToast(data.data, {appearance: 'success'})
 	}
 
+	const deleteTag = tag => {
+		setTags(prev => prev.filter(prevTag => prevTag !== tag))
+	}
+
 	return (
 		<div className={'modal__form '+(!active && 'modal__form_hide')}>
 			<ConfirmationWindow 
@@ -128,17 +132,23 @@ const EditDialog = observer(function EditDialog({active}) {
 					style={{'marginBottom': '1rem'}}
 					value={description} onChange={e => setDescription(e.target.value)} 
 				/>
-				{/* tags tags tags */}
-				<div className="access-control__tags flex">
-					{ tags.length ? tags.map(tag => <div className="access-control__tags__tag">{tag}</div>) : null }
-					<input 
-						ref={tagsInput}
-						type="text"
-						className="access-control__tags__input"
-						value={inputTagValue}
-						onChange={e => setInputTagValue(e.target.value)}
-					/>
+				<div className="tags__list">
+					{ tags.length ? tags.map(tag => 
+						<div 
+							className="tags__tag"
+							onClick={() => deleteTag(tag)}
+						>
+							#{tag}
+						</div>) : null }
 				</div>
+				{/* tags tags tags */}
+				<input 
+					ref={tagsInput}
+					type="text"
+					className="tags__input"
+					value={inputTagValue}
+					onChange={e => setInputTagValue(e.target.value)}
+				/>
 				{/* tags tags tags */}
 				<div className="access-control flex"
 					style={{'justifyContent': 'space-evenly', 'width': '100%'}}
