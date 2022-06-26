@@ -50,7 +50,7 @@ const NewGallery = observer(function NewGallery() {
 				{
 					tagsList.map(({tag, id, tags_count}) => (
 						<li 
-							className="newGallery__listItem" 
+							className={"newGallery__listItem"+((currentTag===tag&&queriesListIsOpen)?' newGallery__listItem_active':'')}
 							key={`${id}-${tags_count}`}
 							onClick={() => handleClick(tag)}
 						>

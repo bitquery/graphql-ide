@@ -1,3 +1,8 @@
+@mixin choosen_tag {
+	background-color: hsl(90, 100%, 50%, 50%);
+	font-size: 20px;
+}
+
 .newGallery {
 	&__root {
 		display: flex;
@@ -34,9 +39,8 @@
 		min-height: 70px;
 		cursor: pointer;
 		font-weight: bold;
-		&:hover {
-			background-color: chartreuse;
-			font-size: 20px;
+		&:hover, &_active {
+			@include choosen_tag;
 		}
 		transition: all .15s ease;
 	}
