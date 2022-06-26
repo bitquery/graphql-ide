@@ -26,6 +26,7 @@ module.exports = function(app, passport, db, redisClient) {
 			? db.query(sql, values, callback)
 			: db.query(sql, callback)
 	})
+	
 	const handleTags = async (query_id, tags, res, msg) => {
 		tags.forEach(async (tag, i, arr) => {
 			const results = await query('SELECT id FROM tags WHERE tag = ?', [tag])
@@ -133,7 +134,6 @@ module.exports = function(app, passport, db, redisClient) {
 		console.log(req.protocol, req.get('Host'))
 		
 	}) 
-
 	
 	const addWidgetConfig = async (res, params, widget_id) => {
 		await query(`UPDATE widgets SET active = FALSE WHERE query_id=?`, [params.query_id])
@@ -179,7 +179,7 @@ module.exports = function(app, passport, db, redisClient) {
 				endpoint_url: req.body.params.endpoint_url,
 				updated_at: new Date()
 			}
-			params.published = params.url
+			params.published = !!params.url
 			await query(`UPDATE queries SET ? where id=${req.body.params.id}`, params)
 			let newParam = {
 				data_type: req.body.params.data_type,
@@ -188,7 +188,8 @@ module.exports = function(app, passport, db, redisClient) {
 				widget_id: req.body.params.widget_id,
 				config: JSON.stringify(req.body.params.config)
 			}
-			addWidgetConfig(res, db, newParam, req.body.params.widget_number)
+			const msg = await addWidgetConfig(res, newParam)
+			msg ? res.status(201).send(msg) : res.sendStatus(201)
 		}
 	}
 	const sendActivationLink = (userID, userEmail, req) => {

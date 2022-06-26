@@ -10,11 +10,11 @@ import { GalleryStore } from '../../../store/galleryStore'
 
 const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOpen, toggleDocExplorer, number}) => {
 	const { currentQuery, saveQuery, updateQuery, 
-		showSideBar, toggleSideBar, isLoaded, queryIsTransfered, setQueryIsTransfered } = QueriesStore
+		isLoaded, queryIsTransfered, setQueryIsTransfered } = QueriesStore
 	const { tagListIsOpen, toggleTagsList } = GalleryStore
 	const { index } = TabsStore
 	const { user }  = UserStore
-	const { toggleModal, toggleEditDialog, toggleDashboardSettings, toggleStatisticsModal } = modalStore
+	const { toggleModal, toggleEditDialog, toggleDashboardSettings } = modalStore
 	const { addToast } = useToasts()
 	const [mode, setMode] = useState(false)
 	const [dashboardOwner,setOwner] = useState(false)
@@ -32,10 +32,6 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 	const openDashboardSettings = () => {
 		toggleDashboardSettings()
 		toggleModal()
-	}
-	const switchView = () => {
-		const layout = currentQuery.layout ? null : {}
-		updateQuery({ layout, isDraggable: true, isResizable: true, name: !currentQuery.layout ? 'New Dashboard' : 'New Query' }, index)
 	}
 	const switchMode = () => {
 		setMode(!mode)
@@ -91,10 +87,6 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 	const toolbar = (!dashboardOwner || !isLoaded) ? null : <div className="topBarWrap">
 		<div className="topBar">
 			{!tagListIsOpen &&<i className="open fas fa-angle-double-right" onClick={toggleTagsList} />}
-			{/* {!showSideBar && <i 
-				className="gallery__toggle fas fa-angle-double-right" 
-				onClick={()=>toggleSideBar(!showSideBar)}
-			/>} */}
 			{dashboardOwner && !(!currentQuery.id || !currentQuery.saved) && currentQuery.layout 
 				&& <button type="button" className="topBar__button" onClick={switchMode}>Edit</button>}
 			{(!currentQuery.id || !currentQuery.saved) && <button 

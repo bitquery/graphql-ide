@@ -171,7 +171,8 @@ class Queries {
 		if ('isResizable' in params) this.query[index].isResizable = params.isResizable
 		this.query[index].id = id || id===null ? id : this.query[index].id
 		this.query[index].saved = false
-		if (params.saved) this.query[index].saved = params.saved
+		// if (params.saved) this.query[index].saved = params.saved
+		this.query[index].saved = false
 		this.setCurrentQuery(index)
 	}
 	removeQuery = index => {
@@ -213,10 +214,8 @@ class Queries {
 				: await setDashboard(params)
 			let id = TabsStore.tabs.map(tab => tab.id).indexOf(TabsStore.currentTab)
 			this.updateQuery({...params, account_id: UserStore.user.id}, id, data.id)
-			console.log(data)
 			this.queryJustSaved = !this.queryJustSaved
 			this.query[id].saved = true
-			this.setCurrentQuery(id)
 			this.currentQuery.layout && window.dispatchEvent(new Event('updateInitialDashboard'))
 			return data
 		} catch (e) {
