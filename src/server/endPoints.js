@@ -5,8 +5,15 @@ const fs = require('fs')
 const path = require('path')
 const axios = require('axios')
 
+const authMiddleware = (req, res, next) => {
+	if (!req.isAuthenticated()) {
+		res.status(401).send('You are not authenticated')
+	} else {
+		return next()
+	}
+}
 module.exports = function(app, passport, db, redisClient) {
-	
+
 	const query = (sql, values) => new Promise((resolve, reject) => {
 		const callback = (err, results) => {
 			if (err) {
@@ -51,7 +58,7 @@ module.exports = function(app, passport, db, redisClient) {
 			LIMIT ${limit}, 11`
 		let sql = {}
 		if (req.params.tag === 'My queries') {
-			sql.query = makesql('WHERE q.account_id = ?')
+			sql.query = makesql('WHERE q.account_id = ? ORDER BY q.updated_at DESC')
 			sql.param = [req.session.passport.user]
 		} else {
 			sql.query = makesql('WHERE t.tags LIKE ?')
@@ -77,12 +84,12 @@ module.exports = function(app, passport, db, redisClient) {
 		res.status(200).send(results)
 	})
 
-	app.post('/api/tagspr', (req, res) => {
+	app.post('/api/tagspr', authMiddleware, (req, res) => {
 		const { query_id, tags } = req.body.params
 		handleTags(db, query_id, tags, res)
 	})
 
-	app.put('/api/tagspr', (req, res) => {
+	app.put('/api/tagspr', authMiddleware, (req, res) => {
 		const { query_id, tags } = req.body.params
 		db.query('DELETE FROM tags_to_queries WHERE query_id = ?', [query_id], (err, _) => {
 			if (err) console.log(err)
@@ -127,13 +134,7 @@ module.exports = function(app, passport, db, redisClient) {
 		
 	}) 
 
-	const authMiddleware = (req, res, next) => {
-		if (!req.isAuthenticated()) {
-			res.status(401).send('You are not authenticated')
-		} else {
-			return next()
-		}
-	}
+	
 	const addWidgetConfig = async (res, params, widget_id) => {
 		await query(`UPDATE widgets SET active = FALSE WHERE query_id=?`, [params.query_id])
 		try {
@@ -167,7 +168,7 @@ module.exports = function(app, passport, db, redisClient) {
 		const msg = await addWidgetConfig(res, newParam)
 		handleTags(query_id, tags, res, msg)
 	}
-	const handleUpdateQuery = (req, res, db) => {
+	const handleUpdateQuery = async (req, res, db) => {
 		if (!req.body.params.executed) {
 			let params = {
 				name: req.body.params.name && req.body.params.name,
@@ -178,19 +179,16 @@ module.exports = function(app, passport, db, redisClient) {
 				endpoint_url: req.body.params.endpoint_url,
 				updated_at: new Date()
 			}
-			console.log(params)
-			params.published = params.url ? true : null
-			db.query(`UPDATE queries SET ? where id=${req.body.params.id}`, params, (err, _) => {
-				if (err) console.log(err)
-				let newParam = {
-					data_type: req.body.params.data_type,
-					displayed_data: req.body.params.displayed_data,
-					query_id: req.body.params.id,
-					widget_id: req.body.params.widget_id,
-					config: JSON.stringify(req.body.params.config)
-				}
-				addWidgetConfig(res, db, newParam, req.body.params.widget_number)
-			})
+			params.published = params.url
+			await query(`UPDATE queries SET ? where id=${req.body.params.id}`, params)
+			let newParam = {
+				data_type: req.body.params.data_type,
+				displayed_data: req.body.params.displayed_data,
+				query_id: req.body.params.id,
+				widget_id: req.body.params.widget_id,
+				config: JSON.stringify(req.body.params.config)
+			}
+			addWidgetConfig(res, db, newParam, req.body.params.widget_number)
 		}
 	}
 	const sendActivationLink = (userID, userEmail, req) => {
