@@ -7,12 +7,40 @@
 		z-index: 10;
 		right: 0;
 		display: flex;
+		flex-direction: column;
 		transition: width .1s ease-out;
 		&.active {
 			width: calc(100% - 300px);
 		}
 		&.fullwidth {
 			width: 100%;
+		}
+	}
+	&__buttons {
+		justify-content: space-evenly;
+		padding: 10px 0;
+	}
+	&__item {
+		&__name {
+			margin: 0;
+			font-size: 20px;
+			text-transform: capitalize;
+			cursor: pointer;
+		}
+		&__header {
+			display: flex;
+			align-items: center;
+			gap: 10px;
+		}
+		display: flex;
+		flex-direction: column;
+		flex: 1;
+		padding: 5px 20px;
+		border-bottom: 1px solid black;
+		&__tag {
+			color: rgb(73, 80, 87);
+			margin: 5px 2px;
+			background-color: antiquewhite;
 		}
 	}
 }

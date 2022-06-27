@@ -47,7 +47,7 @@ module.exports = function(app, passport, db, redisClient) {
 		})
 	}
 	
-	app.get('/api/taggedqueries/:tag', async (req, res) => {
+	app.get('/api/taggedqueries/:tag/:page', async (req, res) => {
 		const makesql = (patch = '', limit = 0) => `SELECT * from queries q
 		LEFT JOIN (
 				Select query_id , GROUP_CONCAT(t.tag) as tags from bitquery.tags_to_queries tq
@@ -59,10 +59,10 @@ module.exports = function(app, passport, db, redisClient) {
 			LIMIT ${limit}, 11`
 		let sql = {}
 		if (req.params.tag === 'My queries') {
-			sql.query = makesql('WHERE q.account_id = ? ORDER BY q.updated_at DESC')
+			sql.query = makesql('WHERE q.account_id = ? ORDER BY q.updated_at DESC', req.params.page)
 			sql.param = [req.session.passport.user]
 		} else {
-			sql.query = makesql('WHERE t.tags LIKE ?')
+			sql.query = makesql('WHERE t.tags LIKE ?', req.params.page)
 			sql.param = [`%${req.params.tag}%`]
 		}
 		const results = await query(sql.query, sql.param)

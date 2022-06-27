@@ -61,6 +61,8 @@ class Queries {
 	}
 	dashboardQuery = this.currentQuery
 	query = [this.currentQuery]
+	currentPage = 0
+	queriesOnPage = 10
 	
 	constructor() {
 		makeObservable(this, {
@@ -86,6 +88,7 @@ class Queries {
 			setSharedQueires: action,
 			setGettingResult: action,
 			setCurrentQuery: action,
+			setCurrentPage: action,
 			toggleSideBar: action,
 			setIsLoaded: action,
 			updateQuery: action,
@@ -115,6 +118,10 @@ class Queries {
 			url: this.currentQuery.url && this.currentQuery.url,
 			endpoint_url: this.currentQuery.endpoint_url && this.currentQuery.endpoint_url
 		}
+	}
+	setCurrentPage = page => {
+		this.currentPage = page
+		return this.currentPage
 	}
 	setGettingResult = state => this.gettingResult = state
 	setQueryIsTransfered = isTransfered => this.queryIsTransfered = isTransfered

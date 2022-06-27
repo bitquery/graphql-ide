@@ -6,22 +6,26 @@ import { GalleryStore } from '../../store/galleryStore'
 import { QueriesStore } from '../../store/queriesStore'
 import { TabsStore } from '../../store/queriesStore'
 import { useHistory } from 'react-router-dom'
+import ToolbarButton  from '../../components/bitqueditor/components/ToolbarButton'
 
 const QueriesList = observer(function QueriesList() {
 
 	const history = useHistory()
 	const { queriesListIsOpen, toggleQueriesList, currentTag, tagListIsOpen } = GalleryStore
-	const { setQuery, query, currentQuery } = QueriesStore
+	const { setQuery, query, currentQuery, currentPage, queriesOnPage, setCurrentPage } = QueriesStore
 	const { switchTab, tabs } = TabsStore
 
 	const [list, setList] = useState([])
+	const [thereIsNext, setNext] = useState(false)
+
+	const main = async (page) => {
+		const { data } = await getTaggedQueriesList(currentTag, page * queriesOnPage)
+		data.length > queriesOnPage ? setNext(true) : setNext(false)
+		setList(data)
+	} 
 
 	useEffect(() => {
-		const main = async () => {
-			const { data } = await getTaggedQueriesList(currentTag)
-			setList(data)
-		} 
-		currentTag && main()
+		currentTag && main(currentPage)
 	}, [currentTag])
 
 	const handleClick = queryFromGallery => {
@@ -33,33 +37,50 @@ const QueriesList = observer(function QueriesList() {
 		}
 		toggleQueriesList()
 	}
+	const nextPage = () => {
+		main(currentPage + 1)
+		setCurrentPage(currentPage + 1)
+	}
+	const prevPage = () => {
+		main(currentPage - 1)
+		setCurrentPage(currentPage - 1)
+	}
 	
 	return (
 		<div className={'querylist__root' + (queriesListIsOpen ? ' active' : '') + (!tagListIsOpen && queriesListIsOpen  ? ' fullwidth' : '')}>
-			<Table striped bordered hover size="sm">
-				<thead>
-					<tr>
-						<th>Name</th>
-						<th>Tag</th>
-						<th>Description</th>
-						<th>Author</th>
-					</tr>
-				</thead>
-				<tbody>
-					{
-						list && list.map((item, i, arr) => {
-							if (i+1 !== arr.length) {
-								return (<tr key={item.name+i}>
-											<td onClick={() => handleClick(item)}>{item.name}</td>
-											<td>{item.tags}</td>
-											<td>{item.description}</td>
-											<td>{item.account_id}</td>
-										</tr>)
-							} 
-						})
-					}
-				</tbody>
-			</Table>
+			{list && list.map((item, i, arr) => {
+				if (arr.length <= queriesOnPage || i+1 !== arr.length) {
+					return (
+						<div className="querylist__item" key={item.name+item.tags+i}>
+							<div className="querylist__item__header">
+								<p className="querylist__item__name" onClick={() => handleClick(item)}>{item.name}</p>
+								<div className="tags">
+									{item.tags && item.tags.split(',').map(tag => (
+										<span className="querylist__item__tag">
+											#{tag}
+										</span>
+									))}
+								</div>
+							</div>
+							<div className="querylist__item__footer">
+								Created by {item.account_id}
+							</div>
+						</div>
+					)
+				}
+			})}
+			<div className="flex querylist__buttons">
+				<ToolbarButton 
+					title='Previous'
+					onClick={prevPage}
+					disabled={!currentPage}
+				/>
+				<ToolbarButton 
+					title='Next'
+					onClick={nextPage}
+					disabled={!thereIsNext}
+				/>
+			</div>
 		</div>
 	)
 })
