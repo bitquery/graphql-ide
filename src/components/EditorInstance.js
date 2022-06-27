@@ -317,9 +317,9 @@ const EditorInstance = observer(function EditorInstance({number})  {
 			}
 		}
 		if (user && query[index].account_id === user.id ) {
-			updateQuery(handleSubject, index)
+			updateQuery({...handleSubject, saved: false}, index)
 		} else {
-			updateQuery({...handleSubject, url: null}, index, null)
+			updateQuery({...handleSubject, saved: false, url: null, account_id: user.id}, index, null)
 		}
 		setAccordance(false)
 		// eslint-disable-next-line 

@@ -43,7 +43,7 @@ const DisplayedData = observer(function DisplayedData({model, dataWidgets, setDa
 			updateQuery({
 				displayed_data: Object.keys(model)[Object.keys(model).length-1],
 				widget_id: defaultWidget,
-				saved: currentQuery.id && true
+				saved: false
 			}, index)
 		}
 		// eslint-disable-next-line 

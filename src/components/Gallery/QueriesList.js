@@ -1,18 +1,15 @@
 import React, { useEffect, useState } from 'react'
 import { observer } from 'mobx-react'
-import { Table } from 'react-bootstrap'
 import { getTaggedQueriesList } from '../../api/api'
 import { GalleryStore } from '../../store/galleryStore'
 import { QueriesStore } from '../../store/queriesStore'
 import { TabsStore } from '../../store/queriesStore'
-import { useHistory } from 'react-router-dom'
 import ToolbarButton  from '../../components/bitqueditor/components/ToolbarButton'
 
 const QueriesList = observer(function QueriesList() {
 
-	const history = useHistory()
 	const { queriesListIsOpen, toggleQueriesList, currentTag, tagListIsOpen } = GalleryStore
-	const { setQuery, query, currentQuery, currentPage, queriesOnPage, setCurrentPage } = QueriesStore
+	const { setQuery, query, currentPage, queriesOnPage, setCurrentPage } = QueriesStore
 	const { switchTab, tabs } = TabsStore
 
 	const [list, setList] = useState([])

@@ -1,6 +1,7 @@
 import { makeObservable, observable, action, computed } from "mobx"
 import axios from 'axios'
 import { getUser, regenerateKey, setDashboard } from "../api/api"
+import { GalleryStore } from './galleryStore'
 
 class User {
 	user = null
@@ -132,8 +133,7 @@ class Queries {
 	setQuery = (params, id) => {
 		this.query.push({ id: id ? id : null })
 		this.query[this.query.length-1].data_type = 'response'
-		if (this.query[this.query.length-1].id && !('saved' in params)) 
-			{this.query[this.query.length-1].saved = true}
+		this.query[this.query.length-1].saved = true
 		this.query[this.query.length-1] = {...this.query[this.query.length-1], ...params}
 		if (this.query[this.query.length-1].config && typeof this.query[this.query.length-1].config === 'string') {
 			this.query[this.query.length-1].config = JSON.parse(this.query[this.query.length-1].config)
@@ -177,7 +177,8 @@ class Queries {
 		if ('isDraggable' in params) this.query[index].isDraggable = params.isDraggable
 		if ('isResizable' in params) this.query[index].isResizable = params.isResizable
 		this.query[index].id = id || id===null ? id : this.query[index].id
-		this.query[index].saved = !!params?.saved
+		this.query[index].saved = ('saved' in params) ? params.saved : this.query[index].saved
+		console.log('query saved - ', this.query[index].saved)
 		this.setCurrentQuery(index)
 	}
 	removeQuery = index => {
@@ -220,6 +221,7 @@ class Queries {
 			let id = TabsStore.tabs.map(tab => tab.id).indexOf(TabsStore.currentTab)
 			this.updateQuery({...params, account_id: UserStore.user.id, saved: true}, id, data.id)
 			this.queryJustSaved = !this.queryJustSaved
+			GalleryStore.setCurrentTag('')
 			this.currentQuery.layout && window.dispatchEvent(new Event('updateInitialDashboard'))
 			return data
 		} catch (e) {

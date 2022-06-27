@@ -8,9 +8,9 @@ import QueryBuilder from '../Gallery/QueryBuilder/index'
 
 const NewGallery = observer(function NewGallery() {
 
-	const { tagListIsOpen, queriesListIsOpen, currentTag,
+	const { queriesListIsOpen, currentTag,
 		toggleQueriesList, toggleTagsList, setCurrentTag } = GalleryStore
-	const { currentQuery, updateQuery, schema } = QueriesStore
+	const { currentQuery, updateQuery, schema, queryJustSaved } = QueriesStore
 	const { index } = TabsStore
 	const [tagsList, setTagsList] = useState([])
 	const [showBuilder, toggleBuilder] = useState(false)
@@ -25,7 +25,7 @@ const NewGallery = observer(function NewGallery() {
 			}
 		}
 		onload()
-	}, [])
+	}, [queryJustSaved])
 
 	const handleClick = tag => {
 		setCurrentTag(tag)

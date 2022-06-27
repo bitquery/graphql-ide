@@ -111,7 +111,7 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 				title='Save'
 				onClick={saveHandle}
 				disabled={currentQuery.saved}
-				visible={!currentQuery.id || !currentQuery.saved}
+				visible={(currentQuery.account_id===user?.id && !currentQuery.saved) || (!currentQuery.id && !currentQuery.account_id)}
 			/>
 			{!currentQuery.saved && currentQuery.layout && <button type="button" className="topBar__button" onClick={cancelHandle}>Cancel</button>}
 			{dashboardOwner && currentQuery.layout &&
@@ -136,7 +136,7 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 			<ToolbarButton 
 				title='Edit'
 				onClick={()=>{toggleModal();toggleEditDialog();}}
-				visible={currentQuery.account_id===user?.id}
+				visible={currentQuery.account_id===user?.id && currentQuery.id}
 			/>
 			<ToolbarButton 
 				title='Copy query URL'
