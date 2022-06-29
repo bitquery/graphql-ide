@@ -15,7 +15,7 @@ exports.setup = function (options, seedLink) {
 };
 
 exports.up = function (db) {
-	return db.runSql('SELECT query, id from queries WHERE published = 1 ')
+	return db.runSql('SELECT query, id from queries')
 		.then(result => {
 			if (result.length) {
 				const regex = new RegExp('([a-z]+)(?=[(]|[{]|[ ])', 'gmi')
@@ -23,7 +23,7 @@ exports.up = function (db) {
 				result.forEach(({ query, id }) => {
 					let tags = query.match(regex)
 					if (tags) {
-						tags = tags.filter(tag => tag !== 'query').slice(0, 2)
+						tags = tags.filter(tag => tag !== 'query' && tag !== 'MyQuery').slice(0, 2)
 						uniqueTags = uniqueTags.concat(tags)
 					}
 				})
@@ -39,14 +39,14 @@ exports.up = function (db) {
 							const { id: query_id, query } = result[k]
 							let tags = query.match(regex)
 							if (tags) {
-								tags = tags.filter(tag => tag !== 'query').slice(0, 2)
+								tags = tags.filter(tag => tag !== 'query' && tag !== 'MyQuery').slice(0, 2)
 								for (let j = 0; j < tags.length; j++) {
 									const tag_id = uniqueTags.indexOf(tags[j]) + 1
 									values.push({query_id, tag_id})
 								}
 							}
 						}
-						let sql = 'INSERT INTO tags_to_queries (query_id, tag_id) VALUES'
+						let sql = 'INSERT IGNORE INTO tags_to_queries (query_id, tag_id) VALUES'
 						for (let i = 0; i < values.length; i++) {
 							sql += ` (${values[i].query_id}, ${values[i].tag_id})`
 							if (i !== values.length - 1) sql +=','
