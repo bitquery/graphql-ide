@@ -55,6 +55,11 @@ module.exports = function(app, passport, db, redisClient) {
 				group by query_id
 			) t
 			ON q.id = t.query_id
+			LEFT JOIN (
+				select id as noid, count(1) cnt
+				from query_logs where success  =1
+				GROUP by id
+			) q_cnt on q_cnt.noid =  q.id
 			${patch}
 			LIMIT ${limit}, 11`
 		let sql = {}
@@ -62,7 +67,7 @@ module.exports = function(app, passport, db, redisClient) {
 			sql.query = makesql('WHERE q.account_id = ? ORDER BY q.updated_at DESC', req.params.page)
 			sql.param = [req.session.passport.user]
 		} else {
-			sql.query = makesql('WHERE t.tags LIKE ?', req.params.page)
+			sql.query = makesql('WHERE t.tags LIKE ? ORDER  by q_cnt.cnt DESC', req.params.page)
 			sql.param = [`%${req.params.tag}%`]
 		}
 		const results = await query(sql.query, sql.param)
@@ -181,16 +186,20 @@ module.exports = function(app, passport, db, redisClient) {
 				updated_at: new Date()
 			}
 			params.published = !!params.url
-			await query(`UPDATE queries SET ? where id=${req.body.params.id}`, params)
-			let newParam = {
-				data_type: req.body.params.data_type,
-				displayed_data: req.body.params.displayed_data,
-				query_id: req.body.params.id,
-				widget_id: req.body.params.widget_id,
-				config: JSON.stringify(req.body.params.config)
+			if (params.published) {
+				await query(`UPDATE queries SET ? where id=${req.body.params.id}`, params)
+				let newParam = {
+					data_type: req.body.params.data_type,
+					displayed_data: req.body.params.displayed_data,
+					query_id: req.body.params.id,
+					widget_id: req.body.params.widget_id,
+					config: JSON.stringify(req.body.params.config)
+				}
+				const msg = await addWidgetConfig(res, newParam)
+				msg ? res.status(201).send(msg) : res.sendStatus(201)
+			} else {
+				res.status(400).send('Error updating query')
 			}
-			const msg = await addWidgetConfig(res, newParam)
-			msg ? res.status(201).send(msg) : res.sendStatus(201)
 		}
 	}
 	const sendActivationLink = (userID, userEmail, req) => {

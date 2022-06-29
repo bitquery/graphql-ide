@@ -136,7 +136,7 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 			<ToolbarButton 
 				title='Edit'
 				onClick={()=>{toggleModal();toggleEditDialog();}}
-				visible={currentQuery.account_id===user?.id && currentQuery.id}
+				visible={currentQuery.account_id===user?.id && currentQuery.id && !currentQuery.publish}
 			/>
 			<ToolbarButton 
 				title='Copy query URL'

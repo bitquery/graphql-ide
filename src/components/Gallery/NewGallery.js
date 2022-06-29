@@ -3,11 +3,13 @@ import { observer } from 'mobx-react'
 import { getTagsList } from "../../api/api"
 import { GalleryStore } from '../../store/galleryStore'
 import { QueriesStore, TabsStore } from '../../store/queriesStore'
+import { UserStore } from '../../store/queriesStore'
 import { makeDefaultArg, getDefaultScalarArgValue } from "../Gallery/QueryBuilder/CustomArgs"
 import QueryBuilder from '../Gallery/QueryBuilder/index'
 
 const NewGallery = observer(function NewGallery() {
 
+	const { user } = UserStore
 	const { queriesListIsOpen, currentTag,
 		toggleQueriesList, toggleTagsList, setCurrentTag } = GalleryStore
 	const { currentQuery, updateQuery, schema, queryJustSaved } = QueriesStore
@@ -24,8 +26,8 @@ const NewGallery = observer(function NewGallery() {
 				console.log(error)				
 			}
 		}
-		onload()
-	}, [queryJustSaved])
+		user && onload()
+	}, [queryJustSaved, user])
 
 	const handleClick = tag => {
 		setCurrentTag(tag)
