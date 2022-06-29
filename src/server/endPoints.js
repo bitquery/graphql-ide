@@ -82,7 +82,7 @@ module.exports = function(app, passport, db, redisClient) {
 			SELECT COUNT(q.account_id), 0 as id, 'My queries' as tag
 			FROM queries q
 			WHERE q.account_id = ?
-			ORDER BY tags_count DESC`, [req.session.passport.user])
+			ORDER BY tags_count DESC`, [req?.session?.passport?.user])
 		res.status(200).send(results)
 	})
 
