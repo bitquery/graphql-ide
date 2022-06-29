@@ -1,4 +1,5 @@
 import { makeObservable, observable, action } from "mobx"
+import { QueriesStore } from './queriesStore'
 
 class Gallery {
 	tagListIsOpen = true
@@ -22,7 +23,12 @@ class Gallery {
 
 	toggleTagsList = () => this.tagListIsOpen = !this.tagListIsOpen
 	toggleQueriesList = () => this.queriesListIsOpen = !this.queriesListIsOpen
-	setCurrentTag = tag => this.currentTag = tag
+	setCurrentTag = tag => {
+		if (this.currentTag !== tag) {
+			QueriesStore.setCurrentPage(0)
+			this.currentTag = tag
+		}
+	}
 }
 
 export const GalleryStore = new Gallery()
