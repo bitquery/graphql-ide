@@ -60,7 +60,7 @@ const QueriesList = observer(function QueriesList() {
 								</div>
 							</div>
 							<div className="querylist__item__footer">
-								Created by {item.account_id}
+								Created by <span>{item.owner_name}</span>
 							</div>
 						</div>
 					)

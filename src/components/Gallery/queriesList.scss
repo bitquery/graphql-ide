@@ -35,6 +35,11 @@
 			align-items: center;
 			gap: 10px;
 		}
+		&__footer {
+			span {
+				font-style: italic;
+			}
+		}
 		display: flex;
 		flex-direction: column;
 		flex: 1;

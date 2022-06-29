@@ -49,6 +49,10 @@ module.exports = function(app, passport, db, redisClient) {
 	
 	app.get('/api/taggedqueries/:tag/:page', async (req, res) => {
 		const makesql = (patch = '', limit = 0) => `SELECT * from queries q
+		INNER JOIN (
+			SELECT name as owner_name, id as aid from accounts
+		) a
+		ON a.aid = q.account_id
 		LEFT JOIN (
 				Select query_id , GROUP_CONCAT(t.tag) as tags from bitquery.tags_to_queries tq
 				inner join bitquery.tags t on t.id  = tq.tag_id
