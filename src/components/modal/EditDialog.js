@@ -145,6 +145,7 @@ const EditDialog = observer(function EditDialog({active}) {
 				<input 
 					ref={tagsInput}
 					type="text"
+					placeholder='Add tags here'
 					className="tags__input"
 					value={inputTagValue}
 					onChange={e => setInputTagValue(e.target.value)}

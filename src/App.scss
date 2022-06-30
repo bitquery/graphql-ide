@@ -302,7 +302,7 @@ body {
 .graphiql__wrapper {
 	display: none;
 	flex: 1 1 auto;
-	max-width: calc(100% - 300px);
+	max-width: calc(100% - 150px);
 	&.fullwidth {
 		max-width: 100%;
 	}

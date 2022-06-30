@@ -50,13 +50,13 @@ const NewGallery = observer(function NewGallery() {
 			/>
 		: 	<ul className="newGallery__listWrapper">
 				{
-					tagsList.map(({tag, id, tags_count}) => (
+					tagsList.map(({tag, tag_id, tags_count}) => (
 						<li 
 							className={"newGallery__listItem"+((currentTag===tag&&queriesListIsOpen)?' newGallery__listItem_active':'')}
-							key={`${id}-${tags_count}`}
+							key={`${tag_id}-${tags_count}`}
 							onClick={() => handleClick(tag)}
 						>
-							{`${id ? '#' : ''}${tag} (${tags_count})`}
+							{`${tag_id ? '#' : ''}${tag} (${tags_count})`}
 						</li>
 					))
 				}

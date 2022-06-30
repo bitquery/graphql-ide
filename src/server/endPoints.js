@@ -54,25 +54,33 @@ module.exports = function(app, passport, db, redisClient) {
 		) a
 		ON a.aid = q.account_id
 		LEFT JOIN (
-				Select query_id , GROUP_CONCAT(t.tag) as tags from bitquery.tags_to_queries tq
-				inner join bitquery.tags t on t.id  = tq.tag_id
-				group by query_id
-			) t
-			ON q.id = t.query_id
-			LEFT JOIN (
-				select id as noid, count(1) cnt
-				from query_logs where success  =1
-				GROUP by id
-			) q_cnt on q_cnt.noid =  q.id
-			${patch}
-			LIMIT ${limit}, 11`
+			SELECT query_id , GROUP_CONCAT(t.tag) AS tags FROM bitquery.tags_to_queries tq
+			INNER JOIN bitquery.tags t ON t.id = tq.tag_id
+			GROUP BY query_id
+		) t
+		ON q.id = t.query_id
+		LEFT JOIN (
+			select id as noid, count(1) cnt
+			from query_logs where success =1
+			GROUP by id
+		) q_cnt on q_cnt.noid = q.id
+		${patch}
+		LIMIT ${limit}, 51`
 		let sql = {}
 		if (req.params.tag === 'My queries') {
 			sql.query = makesql('WHERE q.account_id = ? ORDER BY q.updated_at DESC', req.params.page)
 			sql.param = [req.session.passport.user]
 		} else {
-			sql.query = makesql('WHERE t.tags LIKE ? ORDER  by q_cnt.cnt DESC', req.params.page)
-			sql.param = [`%${req.params.tag}%`]
+			sql.query = makesql(`
+				inner join tags_to_queries ttq on ttq.query_id = q.id
+				inner join (
+					SELECT id as tag_id, tag from tags
+				) ttags
+				ON ttq.tag_id = ttags.tag_id
+				WHERE tag = ?
+				and published = 1
+				ORDER by q_cnt.cnt DESC`, req.params.page)
+			sql.param = [req.params.tag]
 		}
 		const results = await query(sql.query, sql.param)
 		res.status(200).send(results)	
@@ -80,18 +88,24 @@ module.exports = function(app, passport, db, redisClient) {
 
 	app.get('/api/tags', async (req, res) => {
 		const results = await query(
-			`SELECT
+			`select 
 				COUNT(ttq.tag_id) as tags_count,
-				t.*
-			FROM tags t
-			LEFT JOIN tags_to_queries ttq 
-			ON ttq.tag_id = t.id
-			GROUP BY tag
+				ttq.tag_id, t.tag
+			from tags_to_queries ttq 
+			inner join (
+				select id as query_id, published
+				from queries q 
+			) q 
+			on ttq.query_id = q.query_id
+			inner join tags t 
+			on t.id = ttq.tag_id 
+			where published = 1
+			group by tag
 			UNION
-			SELECT COUNT(q.account_id), 0 as id, 'My queries' as tag
+			SELECT COUNT(q.account_id) as tags_count, 0 as id, 'My queries' as tag
 			FROM queries q
-			WHERE q.account_id = ?
-			ORDER BY tags_count DESC`, [req?.session?.passport?.user])
+			where q.account_id = ?
+			order by tags_count desc`, [req?.session?.passport?.user])
 		res.status(200).send(results)
 	})
 
