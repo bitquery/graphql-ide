@@ -459,7 +459,7 @@ ${WidgetComponent.id === 'table.widget' ? '<link href="https://unpkg.com/tabulat
 						onMouseDown={workspaceResizer}
 				>
 					{!currentQuery.layout && <GraphqlEditor
-						readOnly={currentQuery?.url && currentQuery.id}
+						readOnly={!!currentQuery?.url && !!currentQuery.id}
 						schema={schema}
 						query={query[number].query}
 						number={number}

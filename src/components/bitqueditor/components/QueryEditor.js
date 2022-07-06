@@ -143,13 +143,13 @@ export default class QueryEditor extends Component {
 		const CodeMirror = require('codemirror');
 
 		this.ignoreChangeEvent = true;
+		this.editor.options.readOnly = this.props.readOnly
 		if (this.props.schema && JSON.stringify(this.props.schema) !== JSON.stringify(prevProps.schema) && this.editor) {
 			this.editor.options.lint.schema = this.props.schema;
 			this.editor.state.lint.linterOptions = { schema: this.props.schema };
 			this.editor.options.hintOptions.schema = this.props.schema;
 			this.editor.options.info.schema = this.props.schema;
 			this.editor.options.jump.schema = this.props.schema;
-			this.editor.options.readOnly = this.props.readOnly
 			CodeMirror.signal(this.editor, 'change', this.editor);
 		}
 		if (

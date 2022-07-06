@@ -149,16 +149,6 @@ const EditDialog = observer(function EditDialog({active}) {
 							onChange={e => setInputTagValue(e.target.value)}
 						/>
 				</div>
-				{/* tags tags tags */}
-				{/* <input 
-					ref={tagsInput}
-					type="text"
-					placeholder='Add tags here'
-					className="tags__input"
-					value={inputTagValue}
-					onChange={e => setInputTagValue(e.target.value)}
-				/> */}
-				{/* tags tags tags */}
 				<div className="access-control flex"
 					style={{'justifyContent': 'space-evenly', 'width': '100%'}}
 				>

@@ -213,7 +213,9 @@ module.exports = function(app, passport, db, redisClient) {
 				updated_at: new Date()
 			}
 			params.published = !!params.url
-			if (!params.published) {
+			const response = await query(`select published from queries where id = ?`, [req.body.params.id])
+			console.log(response[0].published)
+			if (!response[0].published) {
 				await query(`UPDATE queries SET ? where id=${req.body.params.id}`, params)
 				let newParam = {
 					data_type: req.body.params.data_type,
@@ -225,7 +227,7 @@ module.exports = function(app, passport, db, redisClient) {
 				const msg = await addWidgetConfig(res, newParam)
 				msg ? res.status(201).send(msg) : res.sendStatus(201)
 			} else {
-				res.status(400).send('Error updating query')
+				res.status(400).send({msg: 'Error updating query'})
 			}
 		}
 	}
