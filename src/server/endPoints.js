@@ -64,6 +64,14 @@ module.exports = function(app, passport, db, redisClient) {
 			from query_logs where success =1
 			GROUP by id
 		) q_cnt on q_cnt.noid = q.id
+		LEFT JOIN (
+			SELECT * FROM widgets
+			WHERE id IN (
+						SELECT MAX(id) AS id
+						FROM widgets 
+						GROUP BY query_id)
+		) b 
+		ON q.id=b.query_id
 		${patch}
 		LIMIT ${limit}, 51`
 		let sql = {}
