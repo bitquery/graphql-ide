@@ -28,23 +28,27 @@ module.exports = function(app, passport, db, redisClient) {
 	})
 	
 	const handleTags = async (query_id, tags, res, msg) => {
-		tags.forEach(async (tag, i, arr) => {
-			const results = await query('SELECT id FROM tags WHERE tag = ?', [tag])
-			if (!results.length) {
-				const { insertId: tag_id } = await query('INSERT INTO tags SET ?', { tag })
-				await query('INSERT INTO tags_to_queries SET ?', { query_id, tag_id })
-				msg ? res.status(201).send(msg) : res.sendStatus(201)
-			} else {
-				const tag_id = results[0].id
-				const queryInstance = await query('SELECT * from tags_to_queries WHERE tag_id = ? AND query_id = ?', [tag_id, query_id])
-				if (!queryInstance.length) {
+		if (tags) {
+			tags.forEach(async (tag, i, arr) => {
+				const results = await query('SELECT id FROM tags WHERE tag = ?', [tag])
+				if (!results.length) {
+					const { insertId: tag_id } = await query('INSERT INTO tags SET ?', { tag })
 					await query('INSERT INTO tags_to_queries SET ?', { query_id, tag_id })
-				}
-				if (i === arr.length - 1) {
 					msg ? res.status(201).send(msg) : res.sendStatus(201)
+				} else {
+					const tag_id = results[0].id
+					const queryInstance = await query('SELECT * from tags_to_queries WHERE tag_id = ? AND query_id = ?', [tag_id, query_id])
+					if (!queryInstance.length) {
+						await query('INSERT INTO tags_to_queries SET ?', { query_id, tag_id })
+					}
+					if (i === arr.length - 1) {
+						msg ? res.status(201).send(msg) : res.sendStatus(201)
+					}
 				}
-			}
-		})
+			})
+		} else {
+			res.status(400).send({msg: 'Add some tags to your query!'})
+		}
 	}
 	
 	app.get('/api/taggedqueries/:tag/:page', async (req, res) => {
