@@ -59,7 +59,7 @@ export default class VariableEditor extends Component {
 			autoCloseBrackets: true,
 			matchBrackets: true,
 			showCursorWhenSelecting: true,
-			readOnly: false,
+			readOnly: this.props.readOnly,
 			foldGutter: {
 				minFoldSize: 4,
 			},

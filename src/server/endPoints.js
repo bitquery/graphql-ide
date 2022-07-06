@@ -204,7 +204,7 @@ module.exports = function(app, passport, db, redisClient) {
 				updated_at: new Date()
 			}
 			params.published = !!params.url
-			if (params.published) {
+			if (!params.published) {
 				await query(`UPDATE queries SET ? where id=${req.body.params.id}`, params)
 				let newParam = {
 					data_type: req.body.params.data_type,

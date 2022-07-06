@@ -12,7 +12,8 @@ const GraphqlEditor = observer(function GraphqlEditor({
 	onRunQuery,
 	onEditQuery,
 	onEditVariables,
-	number
+	number,
+	readOnly
 }, { ref1, ref2 }) {
 	const { currentTab } = TabsStore
 	useEffect(() => {
@@ -22,7 +23,8 @@ const GraphqlEditor = observer(function GraphqlEditor({
 	}, [currentTab])
 	return (
 		<div className="editor__wrapper" >
-			<QueryEditor 
+			<QueryEditor
+				readOnly={readOnly}
 				onRunQuery={onRunQuery}
 				number={number}
 				ref={ref1}
@@ -31,6 +33,7 @@ const GraphqlEditor = observer(function GraphqlEditor({
 				value={query} 
 			/>
 			<VariableEditor
+				readOnly={readOnly}
 				number={number}
 				ref={ref2}
 				onEdit={onEditVariables}

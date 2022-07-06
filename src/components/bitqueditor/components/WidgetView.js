@@ -19,7 +19,7 @@ function WidgetView({ el, config, dataSource, displayedData, children, renderFun
 	return (
 		<>
 			{children}
-			{'columns' in config && <CsvIcon onClick={downloadCSV} />}
+			{config && 'columns' in config && <CsvIcon onClick={downloadCSV} />}
 			<div className="table-striped" style={{'width': '100%', 'height': '100%', 'overflowY': 'hidden'}} id={el} />
 		</>
 	)

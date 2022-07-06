@@ -11,7 +11,7 @@
 		flex-direction: column;
 		transition: width .1s ease-out;
 		&.active {
-			width: calc(100% - 150px);
+			width: calc(100% - 300px);
 		}
 		&.fullwidth {
 			width: 100%;
