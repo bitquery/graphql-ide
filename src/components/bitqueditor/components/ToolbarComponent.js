@@ -124,20 +124,23 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 				>Text Block</div>}
 			{dashboardOwner && (!currentQuery.id || !currentQuery.saved) && currentQuery.layout 
 				&& <button type="button" className="topBar__button" onClick={openDashboardSettings}>Settings</button>}
-			<ToolbarButton 
+			{(currentQuery?.url && currentQuery.id) 
+			? null 
+			: <ToolbarButton 
 				title='Prettify'
 				onClick={prettifyQuery}
-			/>
+			/> }
 			<ToolbarButton 
 				title='Fork'
 				onClick={handleFork}
 				visible={currentQuery.id}
 			/>
-			<ToolbarButton 
+			{(currentQuery?.url && currentQuery.id) 
+			? null 
+			: <ToolbarButton 
 				title='Edit'
 				onClick={()=>{toggleModal();toggleEditDialog();}}
-				visible={currentQuery.account_id===user?.id && currentQuery.id && !currentQuery.publish}
-			/>
+			/> }
 			<ToolbarButton 
 				title='Copy query URL'
 				onClick={handleCopy}
