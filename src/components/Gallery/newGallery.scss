@@ -10,7 +10,6 @@
 		flex-basis: 15%;
 		min-width: 300px;
 		max-width: 300px;
-		overflow: auto;
 	}
 	&__close {
 		margin-right: auto;
@@ -28,6 +27,7 @@
 	}
 	&__listWrapper {
 		display: flex;
+		overflow: auto;
 		flex-direction: column;
 		padding: 0;
 	}
