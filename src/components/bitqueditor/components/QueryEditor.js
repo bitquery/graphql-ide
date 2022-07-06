@@ -149,6 +149,7 @@ export default class QueryEditor extends Component {
 			this.editor.options.hintOptions.schema = this.props.schema;
 			this.editor.options.info.schema = this.props.schema;
 			this.editor.options.jump.schema = this.props.schema;
+			this.editor.options.readOnly = this.props.readOnly
 			CodeMirror.signal(this.editor, 'change', this.editor);
 		}
 		if (

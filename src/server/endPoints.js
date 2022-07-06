@@ -65,7 +65,8 @@ module.exports = function(app, passport, db, redisClient) {
 			GROUP by id
 		) q_cnt on q_cnt.noid = q.id
 		LEFT JOIN (
-			SELECT * FROM widgets
+			SELECT w.id as w_id, w.widget_id, w.displayed_data, w.query_id, w.config, w.active, w.data_type 
+			FROM widgets w
 			WHERE id IN (
 						SELECT MAX(id) AS id
 						FROM widgets 

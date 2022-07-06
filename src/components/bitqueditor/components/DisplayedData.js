@@ -68,6 +68,7 @@ const DisplayedData = observer(function DisplayedData({model, dataWidgets, setDa
 						<a 	className="nav-link dropdown-toggle" 
 							href="# "
 							id="navbarDropdown" 
+							disabled
 							role="button" 
 							data-toggle="dropdown" 
 							aria-haspopup="true" 
@@ -77,7 +78,7 @@ const DisplayedData = observer(function DisplayedData({model, dataWidgets, setDa
 								: 'Displayed Data'
 							}
 						</a>
-						<div className="dropdown-menu" aria-labelledby="navbarDropdown">
+						<div className="dropdown-menu" aria-labelledby="navbarDropdown" disabled>
 							{dataWidgets && dataWidgets.length 
 								? 	dataWidgets.map((node, i) => 
 										node.some(widget => widget)
