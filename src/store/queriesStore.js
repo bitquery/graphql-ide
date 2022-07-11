@@ -117,7 +117,7 @@ class Queries {
 			name: this.currentQuery.name && this.currentQuery.name,
 			description: this.currentQuery.description && this.currentQuery.description,
 			url: this.currentQuery.url && this.currentQuery.url,
-			endpoint_url: this.currentQuery.endpoint_url && this.currentQuery.endpoint_url
+			endpoint_url: this.currentQuery.endpoint_url && this.currentQuery.endpoint_url.trim()
 		}
 	}
 	setCurrentPage = page => {

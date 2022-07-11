@@ -85,6 +85,9 @@ const EditDialog = observer(function EditDialog({active}) {
 			}
 			if (description) params.description = description
 			if (tags.length) params.tags = tags
+			if (params.endpoint_url !== 'https://graphql.bitquery.io') {
+				addToast('You can not save query with non-https://graphql.bitquery.io URL', {appearance: 'error'})
+			}
 			data = await saveQuery({...params, isDraggable: false, isResizable: false})
 			if (data.status !== 400) {
 				renameCurrentTab(name)
