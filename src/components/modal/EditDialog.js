@@ -4,7 +4,7 @@ import { useToasts } from 'react-toast-notifications'
 import modalStore from '../../store/modalStore'
 import { QueriesStore, TabsStore } from '../../store/queriesStore'
 import copy from 'copy-to-clipboard'
-import { deleteQuery } from '../../api/api'
+import { deleteQuery, checkUrl } from '../../api/api'
 import ReactTooltip from 'react-tooltip'
 import ConfirmationWindow from '../modal/ConfirmationWindow'
 import { observer } from 'mobx-react-lite'
@@ -62,11 +62,10 @@ const EditDialog = observer(function EditDialog({active}) {
 	}
 	const saveHandler = async (e) => {
 		e.preventDefault()
-		const fixWrongUrl = (queries, url) => {
-			const identicalUrl = queries.filter(query => query.url === url)
-			console.log(url, identicalUrl)
-			if (identicalUrl.length) {
-				return fixWrongUrl(queries ,url+'1')
+		const fixWrongUrl = async (url) => {
+			const { status } = await checkUrl(url)
+			if (status === 200) {
+				return await fixWrongUrl(`${url}_1`)
 			} else {
 				return url
 			}
@@ -77,7 +76,7 @@ const EditDialog = observer(function EditDialog({active}) {
 			params.name = name
 			if (shared) {
 				if (!params.url) {
-					params.url = fixWrongUrl(sharedQueries, queryUrl)
+					params.url = await fixWrongUrl(queryUrl)
 				}
 			} else {
 				params.url = null

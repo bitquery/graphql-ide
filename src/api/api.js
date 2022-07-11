@@ -48,3 +48,5 @@ export const getQueryForDashboard = (ids, dbid) => axios.post(`/api/getwidget`, 
 export const getTagsList = () => axios.get('/api/tags')
 
 export const getTaggedQueriesList = (tag, page) => axios.get(`/api/taggedqueries/${tag}/${page||0}`)
+
+export const checkUrl = url => axios.post('/api/checkurl', { url })

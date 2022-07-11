@@ -51,6 +51,15 @@ module.exports = function(app, passport, db, redisClient) {
 		}
 	}
 	
+	app.post('/api/checkurl', async (req, res) => {
+		const results = await query(`select id from queries where url = ?`, [req.body.url])
+		if (results.length) {
+			res.sendStatus(200)
+		} else {
+			res.sendStatus(204)
+		}
+	})
+
 	app.get('/api/taggedqueries/:tag/:page', async (req, res) => {
 		const makesql = (patch = '', limit = 0) => `SELECT * from queries q
 		INNER JOIN (
