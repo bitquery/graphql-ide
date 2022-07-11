@@ -106,6 +106,7 @@ export default class QueryEditor extends Component {
 				schema: this.props.schema,
 			},
 			hintOptions: {
+				hint: this.props.readOnly ? () => {} : undefined,
 				schema: this.props.schema,
 				closeOnUnfocus: false,
 				completeSingle: false,
@@ -144,6 +145,7 @@ export default class QueryEditor extends Component {
 
 		this.ignoreChangeEvent = true;
 		this.editor.options.readOnly = this.props.readOnly
+		this.editor.options.hintOptions.hint = this.props.readOnly ? () => {} : undefined
 		if (this.props.schema && JSON.stringify(this.props.schema) !== JSON.stringify(prevProps.schema) && this.editor) {
 			this.editor.options.lint.schema = this.props.schema;
 			this.editor.state.lint.linterOptions = { schema: this.props.schema };
