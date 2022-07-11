@@ -80,7 +80,11 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 	}
 	useEffect(() => {
 		if (queryIsTransfered) {
-			prettifyQuery()
+			try {
+				prettifyQuery()
+			} catch (error) {
+				console.log(error)
+			}
 			setQueryIsTransfered(false)
 		}
 	}, [queryIsTransfered, prettifyQuery])
