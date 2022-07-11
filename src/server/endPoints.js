@@ -51,6 +51,21 @@ module.exports = function(app, passport, db, redisClient) {
 		}
 	}
 	
+	app.get('/api/transferedquery/:query', (req, res) => {
+		redisClient.get(req.params.query, async (error, query) => {
+			if (error) console.log(error)
+			if (query !== null) {
+				console.log('there is some query')
+				res.status(200).send({transferedQuery: JSON.parse(query)})
+			} else {
+				res.status(200).send({transferedQuery: {
+					query: 'QUERY DOES NOT EXIST!',
+					variables: ''
+				}})
+			}
+		})
+	})
+
 	app.post('/api/checkurl', async (req, res) => {
 		const results = await query(`select id from queries where url = ?`, [req.body.url])
 		if (results.length) {
@@ -633,8 +648,9 @@ module.exports = function(app, passport, db, redisClient) {
 			})
 	})
 	app.post('/api/querytransfer', (req, res) => {
-		redisClient.setex('query', 10, JSON.stringify(req.body))
-		res.set('Location', process.env.IDE_URL)
+		const code = crypto.randomBytes(3).toString('hex')
+		redisClient.setex(code, 10, JSON.stringify(req.body))
+		res.set('Location', `${process.env.IDE_URL}/transfer/${code}`)
 		res.sendStatus(302)
 	})
 	app.get('/api/getmyqueries', (req, res) => {

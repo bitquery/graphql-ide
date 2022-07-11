@@ -1,8 +1,8 @@
 import { observer } from 'mobx-react-lite'
 import React, { useEffect, useState } from 'react'
 import { useCallback } from 'react'
-import { useHistory, useRouteMatch } from 'react-router-dom'
-import { getQuery, getWidget } from '../api/api'
+import { useHistory, useRouteMatch, useParams } from 'react-router-dom'
+import { getQuery, getWidget, getTransferedQuery } from '../api/api'
 import {TabsStore, QueriesStore, UserStore} from '../store/queriesStore'
 import handleState from '../utils/handleState'
 import useEventListener from '../utils/useEventListener'
@@ -16,11 +16,10 @@ const TabsComponent = observer(() => {
 	const { user } = UserStore
 	const { tabs, currentTab, switchTab, index } = TabsStore
 	const match = useRouteMatch(`${process.env.REACT_APP_IDE_URL}/:queryurl`)
-	const { setQuery, removeQuery, query, updateQuery, currentQuery, isLoaded, setIsLoaded } = QueriesStore
+	const { setQuery, removeQuery, query, updateQuery, currentQuery, isLoaded, setIsLoaded, setQueryIsTransfered } = QueriesStore
 	const [editTabName, setEditTabName] = useState(false)
 	const [queryName, setQueryName] = useState({[currentTab]: currentQuery.name})
 	const [x,setx] = useState(0)
-	const [loaded, setLoaded] = useState(false)
 
 	useEffect(() => {
 		x <=1 && setx(x => x + 1)
@@ -32,7 +31,17 @@ const TabsComponent = observer(() => {
 		// eslint-disable-next-line 
 	}, [currentQuery.url])
 	useEffect(() => {
-		if (!match) {
+		if (/^\/ide\/transfer\/[0-9a-fA-F]{6}$/.test(history.location.pathname)) {
+			const code = history.location.pathname.match(/[0-9a-fA-F]{6}/)[0]
+			const gtf = async () => {
+				const { data } = await getTransferedQuery(code)	
+				updateQuery({query: data.transferedQuery.query, variables: data.transferedQuery.variables}, index)
+				setQueryIsTransfered(true)
+				setx(2)
+				setIsLoaded()
+			}
+			gtf()
+		} else if (!match) {
 			setx(2)
 			setIsLoaded()
 		} else {
