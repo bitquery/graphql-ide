@@ -331,7 +331,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 			}
 		}
 	}
-	const fetcher = (graphQLParams) => {
+	const fetcher = (graphQLParams, cacheControl = 'no-cache') => {
 		let key = user ? user.key : null
 		let keyHeader = {'X-API-KEY': key}
 		return fetch(
@@ -341,7 +341,8 @@ const EditorInstance = observer(function EditorInstance({number})  {
 				headers: {
 					Accept: 'application/json',
 					'Content-Type': 'application/json',
-					...keyHeader
+					...keyHeader,
+					'Cache-Control': cacheControl
 				},
 				body: JSON.stringify(graphQLParams),
 				credentials: 'same-origin',
@@ -359,7 +360,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 					query: introspectionQuery,
 					operationName: introspectionQueryName,
 				}
-				fetcher(graphQLParams)
+				fetcher(graphQLParams, 'max-age=3600')
 				.then(response => {
 					if (!response.ok) {
 						throw new Error(response.status);
