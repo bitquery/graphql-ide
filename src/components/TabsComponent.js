@@ -98,8 +98,11 @@ const TabsComponent = observer(() => {
 		}
 	}
 	const renameQueryHandler = () => {
-		setEditTabName((prev)=>!prev)
-		updateIfNeeded()
+		if (!!currentQuery?.url && !!currentQuery.id) {		//if query READONLY
+		} else {
+			setEditTabName((prev)=>!prev)
+			updateIfNeeded()
+		}
 	}
 
 	return isLoaded ? (
@@ -133,7 +136,7 @@ const TabsComponent = observer(() => {
 											/>
 											<i className="fas fa-check" onClick={renameQueryHandler}/>
 										</>
-									: 	<span className={'nav-link-title ' + ((currentTab === tab.id && (!currentQuery?.id || currentQuery.account_id === user?.id)) ? 'cursor-edit' : undefined)}
+									: 	<span className={'nav-link-title ' + ((currentTab === tab.id && !(!!currentQuery?.url && !!currentQuery.id)) ? 'cursor-edit' : undefined)}
 											onClick={()=>(currentTab === tab.id && (!currentQuery.id || currentQuery.account_id === user.id)) && renameQueryHandler(currentTab, i)}
 										>
 											{(('saved' in query[i]) && query[i].saved) || !('saved' in query[i]) 
