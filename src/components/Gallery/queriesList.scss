@@ -22,6 +22,11 @@
 		padding: 10px 0;
 	}
 	&__item {
+		&__wrapper {
+			display: flex;
+			border-bottom: 1px solid black;
+			align-items: center;
+		}
 		font-size: 10px;
 		&:hover {
 			background-color: rgb(221, 221, 221);
@@ -31,6 +36,10 @@
 			font-size: 20px;
 			text-transform: capitalize;
 			cursor: pointer;
+		}
+		&__status {
+			padding-right: 10px;
+			cursor: default;
 		}
 		&__header {
 			display: flex;
@@ -46,7 +55,6 @@
 		flex-direction: column;
 		flex: 1;
 		padding: 0 20px;
-		border-bottom: 1px solid black;
 		&__tag {
 			color: rgb(73, 80, 87);
 			font-size: 14px;

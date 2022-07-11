@@ -48,20 +48,25 @@ const QueriesList = observer(function QueriesList() {
 			{list && list.map((item, i, arr) => {
 				if (arr.length <= queriesOnPage || i+1 !== arr.length) {
 					return (
-						<div className="querylist__item" key={item.name+item.tags+i}>
-							<div className="querylist__item__header">
-								<p className="querylist__item__name" onClick={() => handleClick(item)}>{item.name}</p>
-								<div className="tags">
-									{item.tags && item.tags.split(',').map(tag => (
-										<span className="querylist__item__tag">
-											#{tag}
-										</span>
-									))}
+						<div className="querylist__item__wrapper">
+							<div className="querylist__item" key={item.name+item.tags+i}>
+								<div className="querylist__item__header">
+									<p className="querylist__item__name" onClick={() => handleClick(item)}>{item.name}</p>
+									<div className="tags">
+										{item.tags && item.tags.split(',').map(tag => (
+											<span className="querylist__item__tag">
+												#{tag}
+											</span>
+										))}
+									</div>
+								</div>
+								<div className="querylist__item__footer">
+									Created by <span>{item.owner_name}</span>
 								</div>
 							</div>
-							<div className="querylist__item__footer">
-								Created by <span>{item.owner_name}</span>
-							</div>
+							{currentTag === 'My queries' && <div className="querylist__item__name querylist__item__status">
+								{item.published ? 'PUBLIC' : ''}
+							</div>}
 						</div>
 					)
 				}

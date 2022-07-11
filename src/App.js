@@ -11,7 +11,7 @@ import { GraphqlExplorer } from './components/GraphqlExplorer'
 import { observer } from 'mobx-react-lite'
 import 'react-grid-layout/css/styles.css'
 import NewGallery from "./components/Gallery/NewGallery"
-import QueryList from "./components/Gallery/QueriesList"
+import QueriesList from "./components/Gallery/QueriesList"
 import { GalleryStore } from './store/galleryStore'
 
 if (process.env.NODE_ENV === 'development') {
@@ -56,7 +56,7 @@ const App = observer(function App() {
 						{/* {showSideBar && <GalleryComponent />} */}
 						{tagListIsOpen && <NewGallery />}
 						<GraphqlExplorer />
-						<QueryList />
+						<QueriesList />
 					</div>
 				</Route>
 			</Switch>
