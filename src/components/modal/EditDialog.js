@@ -84,7 +84,7 @@ const EditDialog = observer(function EditDialog({active}) {
 			}
 			if (description) params.description = description
 			if (tags.length) params.tags = tags
-			if (params.endpoint_url !== 'https://graphql.bitquery.io') {
+			if (params.endpoint_url !== 'https://graphql.bitquery.io' && shared) {
 				addToast('You can not save query with non-https://graphql.bitquery.io URL', {appearance: 'error'})
 				return
 			}
