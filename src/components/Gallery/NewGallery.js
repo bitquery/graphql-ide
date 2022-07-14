@@ -43,7 +43,7 @@ const NewGallery = observer(function NewGallery() {
 				width={'300px'}
 				minWidth={'300px'}
 				title={'Builder'}
-				schema={schema}
+				schema={schema[currentQuery.endpoint_url]}
 				query={currentQuery.query}
 				onEdit={query=>updateQuery({query}, index)}
 				explorerIsOpen={showBuilder}

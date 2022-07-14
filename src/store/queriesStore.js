@@ -48,7 +48,7 @@ class Queries {
 	showGallery = true
 	showSideBar = true
 	queryJustSaved = false
-	schema = null
+	schema = {}
 	isMobile = window.innerWidth <= 768
 	gettingResult = false
 	isLoaded = false
@@ -101,6 +101,7 @@ class Queries {
 			setQuery: action
 		})
 	}
+
 	get queryNumber() {
 		return this.query.map(q=>q.id).indexOf(this.currentQuery.id)
 	}
@@ -158,7 +159,9 @@ class Queries {
 		if (typeof params.displayed_data === 'string') this.query[index].displayed_data = params.displayed_data
 		if (params.data_type) this.query[index].data_type = params.data_type
 		if (params.account_id) this.query[index].account_id = params.account_id
-		if (params.endpoint_url || params.endpoint_url === '')  this.query[index].endpoint_url = params.endpoint_url
+		if (params.endpoint_url || params.endpoint_url === '') {
+			this.query[index].endpoint_url = params.endpoint_url
+		} 
 		if (params.url || params.url===null) this.query[index].url = params.url
 		if (params.name) {
 			this.query[index].name = params.name || this.query[index].name
@@ -319,14 +322,12 @@ class Tabs {
 		this.tabs[this.index].name = name
 	}
 	addNewTab = name => {
-		QueriesStore.setSchema(null)
 		this.incID()
 		this.tabs.push({
 			name: name,
 			id: this.id
 		})
 		this.switchTab(this.id)
-		// QueriesStore.setCurrentQuery(this.index)
 	}
 	removeTab = (index) => {
 		this.tabs.length !==1 ? this.tabs.splice(index, 1) : console.log('xvatit')

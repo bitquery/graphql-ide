@@ -331,7 +331,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 			}
 		}
 	}
-	const fetcher = (graphQLParams, cacheControl = 'no-cache') => {
+	const fetcher = (graphQLParams) => {
 		let key = user ? user.key : null
 		let keyHeader = {'X-API-KEY': key}
 		return fetch(
@@ -341,8 +341,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 				headers: {
 					Accept: 'application/json',
 					'Content-Type': 'application/json',
-					...keyHeader,
-					'Cache-Control': cacheControl
+					...keyHeader
 				},
 				body: JSON.stringify(graphQLParams),
 				credentials: 'same-origin',
@@ -350,7 +349,8 @@ const EditorInstance = observer(function EditorInstance({number})  {
 		)
 	}
 	useEffect(() => {
-		if (number === index && user !== null) {
+		console.log(debouncedURL, Object.keys(schema), debouncedURL in schema)
+		if (number === index && user !== null && !(debouncedURL in schema)) {
 			const fetchSchema = () => {
 				setLoading(true)
 				let introspectionQuery = getIntrospectionQuery()
@@ -360,7 +360,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 					query: introspectionQuery,
 					operationName: introspectionQueryName,
 				}
-				fetcher(graphQLParams, 'max-age=3600')
+				fetcher(graphQLParams)
 				.then(response => {
 					if (!response.ok) {
 						throw new Error(response.status);
@@ -369,8 +369,8 @@ const EditorInstance = observer(function EditorInstance({number})  {
 				})
 				.then(result => {
 					if (typeof result !== 'string' && 'data' in result) {
-						let schema = buildClientSchema(result.data)
-						setSchema(schema)
+						let newSchema = buildClientSchema(result.data)
+						setSchema({...schema, [debouncedURL]: newSchema})
 					}
 					setLoading(false)
 					setErrorLoading(false)
@@ -461,7 +461,7 @@ ${WidgetComponent.id === 'table.widget' ? '<link href="https://unpkg.com/tabulat
 				>
 					{!currentQuery.layout && <GraphqlEditor
 						readOnly={!!currentQuery?.url && !!currentQuery.id}
-						schema={schema}
+						schema={schema[debouncedURL]}
 						query={query[number].query}
 						number={number}
 						variables={query[number].variables}
@@ -532,7 +532,7 @@ ${WidgetComponent.id === 'table.widget' ? '<link href="https://unpkg.com/tabulat
 							}
 					</div>
 				</div>
-				{docExplorerOpen && <DocExplorer schema={schema} />}
+				{docExplorerOpen && <DocExplorer schema={schema[debouncedURL]} />}
 			</div>
 		</div> 
 	)
