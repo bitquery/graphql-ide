@@ -146,9 +146,8 @@ class Queries {
 		this.sharedQueries = [...queries]
 	}
 	updateQuery = (params, index, id) => {
-		console.log(params)
-		if (params.query) this.query[index].query = params.query
-		if (params.variables) this.query[index].variables = params.variables
+		if (params.query || params.query === '') this.query[index].query = params.query
+		if (params.variables || params.variables === '') this.query[index].variables = params.variables
 		if (params.config) this.query[index].config = params.config
 		if (typeof params.widget_id === 'string') {
 			this.query[index].widget_id = params.widget_id
@@ -178,7 +177,6 @@ class Queries {
 		if ('isResizable' in params) this.query[index].isResizable = params.isResizable
 		this.query[index].id = id || id===null ? id : this.query[index].id
 		this.query[index].saved = ('saved' in params) ? params.saved : this.query[index].saved
-		console.log('query saved - ', this.query[index].saved)
 		this.setCurrentQuery(index)
 	}
 	removeQuery = index => {
