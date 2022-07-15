@@ -162,6 +162,9 @@ class Queries {
 		if (params.endpoint_url || params.endpoint_url === '') {
 			this.query[index].endpoint_url = params.endpoint_url
 		} 
+		if ('saved' in params && !this.query[index].url) {
+			this.query[index].saved = params.saved
+		}
 		if (params.url || params.url===null) this.query[index].url = params.url
 		if (params.name) {
 			this.query[index].name = params.name || this.query[index].name
@@ -179,7 +182,6 @@ class Queries {
 		if ('isDraggable' in params) this.query[index].isDraggable = params.isDraggable
 		if ('isResizable' in params) this.query[index].isResizable = params.isResizable
 		this.query[index].id = id || id===null ? id : this.query[index].id
-		this.query[index].saved = ('saved' in params) ? params.saved : this.query[index].saved
 		this.setCurrentQuery(index)
 	}
 	removeQuery = index => {
@@ -235,7 +237,6 @@ class Queries {
 			const { data } = await axios.post('/api/querylog', { 
 				params
 			})
-			console.log(data)
 		} catch (e) {
 			console.log(e)
 		}
@@ -313,7 +314,6 @@ class Tabs {
 		this.id = this.id + 1
 	}
 	switchTab = tabID => {	//tabID - id, not index or serial number
-		console.log('tabID - ', tabID)
 		this.currentTab = tabID
 		let id = this.index
 		QueriesStore.setCurrentQuery(id)

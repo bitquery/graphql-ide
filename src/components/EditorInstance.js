@@ -125,7 +125,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
     	overwrap.current.addEventListener('mouseup', onMouseUp);
 	}
 	const getQueryTypes = (query) => {
-		const typeInfo = new TypeInfo(schema)
+		const typeInfo = new TypeInfo(schema[debouncedURL])
 		let typesMap = {}
 		const queryNodes = []
 		let depth = 0
@@ -292,17 +292,10 @@ const EditorInstance = observer(function EditorInstance({number})  {
 		})
 		// eslint-disable-next-line 
 	}, [JSON.stringify(currentQuery), schema, JSON.stringify(queryTypes)])
-	useEffect(() => {
-		(!dataSource.values && 
-		currentQuery.query &&
-		currentQuery.saved &&
-		number === index &&
-		schema) && getResult()
-		// eslint-disable-next-line 
-	}, [schema])
+
 	const editQueryHandler = useCallback(handleSubject => {
 		if ('query' in handleSubject) {
-			const facts = getQueryFacts(schema, handleSubject.query)
+			const facts = getQueryFacts(schema[debouncedURL], handleSubject.query)
 			if (facts) {
 				const { variableToType } = facts
 				if ((JSON.stringify(variableToType) !== JSON.stringify(_variableToType)) 
@@ -349,7 +342,6 @@ const EditorInstance = observer(function EditorInstance({number})  {
 		)
 	}
 	useEffect(() => {
-		console.log(debouncedURL, Object.keys(schema), debouncedURL in schema)
 		if (number === index && user !== null && !(debouncedURL in schema)) {
 			const fetchSchema = () => {
 				setLoading(true)
@@ -453,7 +445,7 @@ ${WidgetComponent.id === 'table.widget' ? '<link href="https://unpkg.com/tabulat
 							/> 
 						: 	errorLoading	?
 								<ErrorIcon fill={'#FF2D00'} /> 	:
-								<PlayIcon fill={accordance ? '#eee' : '#14ff41'} />}
+								<PlayIcon fill={'#14ff41'} />}
 				</button>
 				<div className="workspace__wrapper" 
 						ref={workspace} 
