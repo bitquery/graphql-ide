@@ -377,8 +377,13 @@ const EditorInstance = observer(function EditorInstance({number})  {
 			}
 			fetchSchema()
 		}
+		if (number === index && user !== null && (debouncedURL in schema)) {
+			setErrorLoading(false)
+		}
 		// eslint-disable-next-line 
 	}, [debouncedURL, user])
+
+	
 	
 	const fullscreenHandle = useFullScreenHandle()
 
