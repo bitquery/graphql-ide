@@ -17,6 +17,25 @@
 			width: 100%;
 		}
 	}
+	&__search {
+		display: flex;
+		height: 42px;
+		align-items: center;
+		gap: 10px;
+		input {
+			margin: 0;
+			width: 35%;
+			height: 32px;
+			margin: 5px;
+			border: 1px solid #aaa;
+		}
+		p {
+			margin: 0;
+		}
+		i {
+			cursor: pointer;
+		}
+	}
 	&__buttons {
 		justify-content: space-evenly;
 		padding: 10px 0;

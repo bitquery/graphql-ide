@@ -16,16 +16,28 @@ const QueriesList = observer(function QueriesList() {
 	const [list, setList] = useState([])
 	const [thereIsNext, setNext] = useState(false)
 	const [search, setSearch] = useState('')
+	const [resetTrigger, setResetTrigger] = useState(false)
 
+	
+	const searchValue = useDebounce(search, 500)
+	useEffect(() => {
+		const main = async () => {
+			const { data } = await getSearchResults(searchValue)
+			setList(data)
+		}
+		searchValue && main()
+	}, [searchValue])
+	
 	const main = async (page) => {
 		const { data } = await getTaggedQueriesList(currentTag, page * queriesOnPage)
 		data.length > queriesOnPage ? setNext(true) : setNext(false)
 		setList(data)
-	} 
-
+	}
 	useEffect(() => {
-		currentTag && main(currentPage)
-	}, [currentTag])
+		(currentTag || resetTrigger) && main(currentPage)
+		resetTrigger && setResetTrigger(false)
+		setSearch('')
+	}, [currentTag, resetTrigger])
 
 	const handleClick = queryFromGallery => {
 		if (query.map(query => query.id).indexOf(queryFromGallery.id) === -1) {
@@ -44,22 +56,20 @@ const QueriesList = observer(function QueriesList() {
 		main(currentPage - 1)
 		setCurrentPage(currentPage - 1)
 	}
-	const searchValue = useDebounce(search, 500)
-	useEffect(() => {
-		const main = async () => {
-			const { data } = await getSearchResults(searchValue)
-			setList(data)
-		}
-		main()
-	}, [searchValue])
+	const clearSearch = () => {
+		setSearch('')
+		setResetTrigger(true)
+	}
 
 	return (
 		<div className={'querylist__root' + (queriesListIsOpen ? ' active' : '') + (!tagListIsOpen && queriesListIsOpen  ? ' fullwidth' : '')}>
-			<div className="querilist__search">
-				<input type="text" className="query__save"  
-					style={{'marginBottom': '1rem'}}
+			<div className="querylist__search">
+				<input type="text" className="query__save"
+					placeholder='Search'
 					value={search} onChange={e=>setSearch(e.target.value)}
 				/>
+				<i className="fas fa-times" onClick={clearSearch}/>
+				{searchValue && <p>Show results for '{searchValue}':</p>}
 			</div>
 			{list && list.map((item, i, arr) => {
 				if (arr.length <= queriesOnPage || i+1 !== arr.length) {

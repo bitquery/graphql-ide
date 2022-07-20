@@ -106,9 +106,9 @@ module.exports = function(app, passport, db, redisClient) {
 	app.post('/api/checkurl', async (req, res) => {
 		const results = await query(`select id from queries where url = ?`, [req.body.url])
 		if (results.length) {
-			res.sendStatus(200).send(results)
+			res.status(200).send(results)
 		} else {
-			res.sendStatus(400)
+			res.sendStatus(204)
 		}
 	})
 
