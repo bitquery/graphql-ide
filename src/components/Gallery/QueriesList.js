@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import { observer } from 'mobx-react'
-import { getTaggedQueriesList } from '../../api/api'
+import { getTaggedQueriesList, getSearchResults } from '../../api/api'
 import { GalleryStore } from '../../store/galleryStore'
 import { QueriesStore } from '../../store/queriesStore'
 import { TabsStore } from '../../store/queriesStore'
 import ToolbarButton  from '../../components/bitqueditor/components/ToolbarButton'
+import useDebounce from '../../utils/useDebounce'
 
 const QueriesList = observer(function QueriesList() {
 
@@ -14,6 +15,7 @@ const QueriesList = observer(function QueriesList() {
 
 	const [list, setList] = useState([])
 	const [thereIsNext, setNext] = useState(false)
+	const [search, setSearch] = useState('')
 
 	const main = async (page) => {
 		const { data } = await getTaggedQueriesList(currentTag, page * queriesOnPage)
@@ -42,9 +44,23 @@ const QueriesList = observer(function QueriesList() {
 		main(currentPage - 1)
 		setCurrentPage(currentPage - 1)
 	}
-	
+	const searchValue = useDebounce(search, 500)
+	useEffect(() => {
+		const main = async () => {
+			const { data } = await getSearchResults(searchValue)
+			setList(data)
+		}
+		main()
+	}, [searchValue])
+
 	return (
 		<div className={'querylist__root' + (queriesListIsOpen ? ' active' : '') + (!tagListIsOpen && queriesListIsOpen  ? ' fullwidth' : '')}>
+			<div className="querilist__search">
+				<input type="text" className="query__save"  
+					style={{'marginBottom': '1rem'}}
+					value={search} onChange={e=>setSearch(e.target.value)}
+				/>
+			</div>
 			{list && list.map((item, i, arr) => {
 				if (arr.length <= queriesOnPage || i+1 !== arr.length) {
 					return (
