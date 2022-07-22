@@ -74,34 +74,15 @@
                 <li class="nav-item">
                     <a class="nav-link text-primary" target="_blank" href="https://angel.co/company/bitquery/jobs">We are hiring!</a>
                 </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false"><i class="bi bi-person"></i></a>
-                    <div class="dropdown-menu dropdown-menu-right">
-                        <div class="dropdown-header">andrey.sepanov@bitqery.io</div>
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="layout_test0.html">Admin</a>
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="layout_test0.html">API key</a>
-                        <a class="dropdown-item" href="layout_test0.html">Profile</a>
-                        <a class="dropdown-item" href="layout_test0.html">Change password</a>
-                        <a class="dropdown-item" href="layout_test0.html">Logout</a>
-                    </div>
+                <li class="nav-item">
+                    <a class="nav-link text-primary" target="_blank" href="layout_test.html">Login</a>
                 </li>
             </ul>
         </div>
     </div>
     <ul class="nav nav-tabs mb-2">
         <li class="nav-item">
-            <a class="nav-link" href="#"><i class="bi bi-hexagon"></i>New Query</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link active" href="#"><i class="bi bi-graph-up"></i>Binance Smart Cha...</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="#"><i class="bi bi-hexagon"></i>BTC_transactions</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="#"><i class="bi bi-hexagon"></i>New Query</a>
+            <a class="nav-link active" href="#"><i class="bi bi-hexagon"></i>New Query</a>
         </li>
         <li class="nav-item">
             <a class="nav-link"><i class="bi bi-plus"></i></a>
@@ -117,6 +98,113 @@
                 </div>
             </div>
             <div class="col-lg-9 bg-light" style="height: 600px">Main</div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="loginModal" data-backdrop="static" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <h5 class="modal-title" id="exampleModalLabel">Please login to continue</h5>
+                    <br>
+                    <form>
+                        <div class="form-group">
+                            <label>Email address</label>
+                            <input type="email" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>Password</label>
+                            <input type="password" class="form-control">
+                        </div>
+                        <div class="form-group text-center">
+                            <a href="layout_test.html" class="btn btn-primary">Submit</a>
+                        </div>
+                    </form>
+                    <div class="row">
+                        <div class="col-6">
+                            <a href="#" data-toggle="modal" data-target="#forgotModal">Forgot password?</a>
+                        </div>
+                        <div class="col-6 text-right">
+                            <a href="#" data-toggle="modal" data-target="#signupModal">Do not have account?</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        $('#loginModal').modal('show')
+    </script>
+
+    <div class="modal fade" id="forgotModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Forgot password</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Enter your email below and reset password instruction will be sent</p>
+                    <form>
+                        <div class="form-group">
+                            <label>Email address</label>
+                            <input type="email" class="form-control">
+                        </div>
+                        <div class="form-group text-center">
+                            <a href="layout_test.html" class="btn btn-primary">Submit</a>
+                        </div>
+                    </form>
+                    <div class="row">
+                        <div class="col-12">
+                            <a href="#" data-dismiss="modal">Back</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="signupModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Sign Up</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group">
+                            <label>Email address <sup class="text-danger">required</sup></label>
+                            <input type="email" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>Password <sup class="text-danger">required</sup></label>
+                            <input type="password" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>Name <sup class="text-danger">required</sup></label>
+                            <input type="text" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>Company name</label>
+                            <input type="text" class="form-control">
+                        </div>
+                        <div class="form-group text-center">
+                            <a href="layout_test.html" class="btn btn-primary">Submit</a>
+                        </div>
+                    </form>
+                    <div class="row">
+                        <div class="col-12">
+                            <a href="#" data-dismiss="modal">Back</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
