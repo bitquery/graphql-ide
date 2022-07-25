@@ -5,18 +5,15 @@ import { UserStore } from '../../store/queriesStore'
 import modalStore from '../../store/modalStore'
 import axios from 'axios'
 import { validEmail } from '../../utils/common'
+import { Button, Modal, Form, Container, Row, Col } from 'react-bootstrap';
 
 function LoginForm({ active }) {
 	const [email, setEmail] = useState('')
 	const [password, setPassword] = useState('')
 	const [resend, setResend] = useState(false)
 	const { getUser } = UserStore
-	const { fade, toggleRegister, toggleLogin, toggleModal, toggleForgotPassword } = modalStore
+	const { toggleRegister, toggleLogin, toggleModal, toggleForgotPassword } = modalStore
 	const { addToast } = useToasts()
-	const closeHandler = () => {
-		toggleModal()
-		toggleLogin()
-	}
 	const dontHaveAccountHandler = () => {
 		toggleLogin()
 		toggleRegister()
@@ -50,21 +47,39 @@ function LoginForm({ active }) {
 		}
 
 	}
-	return (
-		<form onSubmit={e => logIn(e)} className={'modal__form '+(!active && 'modal__form_hide')} >
-			{fade && <h2>Please, login to continue</h2>}
-			<p className="p-modal">Email</p>
-			<input type="text" className="query__save" value={email} onChange={e => setEmail(e.target.value)} />  
-			<p className="p-modal">Password</p>
-			<input type="password" className="query__save" value={password} onChange={e => setPassword(e.target.value)} />  
-			<button className="button button_filled"onClick={logIn}>Login</button>
-			{!fade && <i className="handler handler__close fas fa-times" onClick={closeHandler} />}
-			{resend &&<a href="# " onClick={resendActivationLink}>Check Your email or resend activation link</a>}
-			<div className="flex modal__form__options">
-				<a href="# " onClick={forgotPasswordHandler} >Forgot password?</a>
-				<a href="# " onClick={dontHaveAccountHandler}>Do not have account? Sign Up</a>
-			</div>
-		</form>
+	
+	return active && (
+		<>
+			<Modal.Header>
+				<Modal.Title>Please login to continue</Modal.Title>
+			</Modal.Header>
+			<Modal.Body>
+				<Form onSubmit={logIn}>
+					<Form.Group>
+						<Form.Label>Email address</Form.Label>
+						<Form.Control type="email" value={email} onChange={e => setEmail(e.target.value)} />
+					</Form.Group>
+					<Form.Group>
+						<Form.Label>Password</Form.Label>
+						<Form.Control type="password" value={password} onChange={e => setPassword(e.target.value)} />
+					</Form.Group>
+					<Form.Group className="text-center">
+						<Button variant="primary" type="submit" >Submit</Button>
+					</Form.Group>
+					{resend &&<a href="# " onClick={resendActivationLink}>Check Your email or resend activation link</a>}
+				</Form>
+				<Container>
+					<Row>
+						<Col>
+							<a href="# " data-toggle="modal" data-target="#forgotModal" onClick={forgotPasswordHandler}>Forgot password?</a>
+						</Col>
+						<Col className="text-right">
+							<a href="# " data-toggle="modal" data-target="#signupModal" onClick={dontHaveAccountHandler}>Do not have account?</a>
+						</Col>
+					</Row>
+				</Container>
+			</Modal.Body>
+		</>
 	)
 }
 
