@@ -14,6 +14,7 @@ import NewGallery from "./components/Gallery/NewGallery"
 import QueriesList from "./components/Gallery/QueriesList"
 import { GalleryStore } from './store/galleryStore'
 import TabsComponent from './components/TabsComponent'
+import ExploreComponent from './components/ExploreComponent'
 
 if (process.env.NODE_ENV === 'development') {
 	/* require('@welldone-software/why-did-you-render')(React, {
@@ -46,13 +47,16 @@ const App = observer(function App() {
 	
 	return (
 		<div className="App">
+			<ControlPanel />
 			<Switch>
 				<Route path={`${process.env.REACT_APP_IDE_URL}/reset`} >
 					<ResetPassword />
 				</Route>
+				<Route exact path={`${process.env.REACT_APP_IDE_URL}/explore`} >
+					<ExploreComponent />
+				</Route>
 				<Route path={[`${process.env.REACT_APP_IDE_URL}/:queryurl`, `${process.env.REACT_APP_IDE_URL}`]} >
 					<ModalWindow />
-					<ControlPanel />
 					<TabsComponent />
 					<div className="content flex">
 						{tagListIsOpen && <NewGallery />}

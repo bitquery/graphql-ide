@@ -3,6 +3,7 @@ import TabsComponent from './TabsComponent'
 import ProfileComponent from './ProfileComponent'
 import {QueriesStore} from '../store/queriesStore'
 import { observer } from 'mobx-react-lite'
+import { Link } from 'react-router-dom'
 import logo from '../assets/images/bitquery_logo_w.png'
 
 const ControlPanel = observer(function ControlPanel() {
@@ -25,10 +26,10 @@ const ControlPanel = observer(function ControlPanel() {
 				</form>
 				<ul class="navbar-nav mr-auto mt-2 mt-lg-0">
 					<li class="nav-item active">
-						<a class="nav-link text-secondary" href="layout_test.html"><i class="bi bi-play"></i>Develop</a>
+						<Link class="nav-link text-secondary" to={"/graphql"}><i class="bi bi-play"></i>Develop</Link>
 					</li>
 					<li class="nav-item">
-						<a class="nav-link text-primary" href="layout_test2.html"><i class="bi bi-terminal"></i>Explore</a>
+						<Link class="nav-link text-primary" to={"/graphql/explore"} ><i class="bi bi-terminal"></i>Explore</Link>
 					</li>
 					<li class="nav-item">
 						<a class="nav-link text-primary" href="layout_test2.html"><i class="bi bi-star"></i>My Queries</a>

@@ -4,7 +4,7 @@ import { getTaggedQueriesList } from '../../api/api'
 import { GalleryStore } from '../../store/galleryStore'
 import { QueriesStore } from '../../store/queriesStore'
 import { TabsStore } from '../../store/queriesStore'
-import ToolbarButton  from '../../components/bitqueditor/components/ToolbarButton'
+import ToolbarButton from '../../components/bitqueditor/components/ToolbarButton'
 
 const QueriesList = observer(function QueriesList() {
 
@@ -19,7 +19,7 @@ const QueriesList = observer(function QueriesList() {
 		const { data } = await getTaggedQueriesList(currentTag, page * queriesOnPage)
 		data.length > queriesOnPage ? setNext(true) : setNext(false)
 		setList(data)
-	} 
+	}
 
 	useEffect(() => {
 		currentTag && main(currentPage)
@@ -42,47 +42,41 @@ const QueriesList = observer(function QueriesList() {
 		main(currentPage - 1)
 		setCurrentPage(currentPage - 1)
 	}
-	
+
 	return (
-		<div className={'querylist__root' + (queriesListIsOpen ? ' active' : '') + (!tagListIsOpen && queriesListIsOpen  ? ' fullwidth' : '')}>
-			{list && list.map((item, i, arr) => {
-				if (arr.length <= queriesOnPage || i+1 !== arr.length) {
-					return (
-						<div className="querylist__item__wrapper">
-							<div className="querylist__item" key={item.name+item.tags+i}>
-								<div className="querylist__item__header">
-									<p className="querylist__item__name" onClick={() => handleClick(item)}>{item.name}</p>
-									<div className="tags">
-										{item.tags && item.tags.split(',').map(tag => (
-											<span className="querylist__item__tag">
-												#{tag}
-											</span>
-										))}
+		<div class="col-lg-9 mb-3">
+			<ul class="list-group">
+				{list && list.map((item, i, arr) => {
+					if (arr.length <= queriesOnPage || i + 1 !== arr.length) {
+						return (
+							<li class="list-group-item list-group-item-action">
+								<div class="d-flex w-100 justify-content-between">
+									<div>
+										<div>
+											{item.name}
+											{item.tags.split(',').map(tag => <span class="badge badge-secondary">#{tag}</span>)}
+										</div>
+										<small>Created by <strong>{item.owner_name}</strong> at 434 days ago</small>
 									</div>
 								</div>
-								<div className="querylist__item__footer">
-									Created by <span>{item.owner_name}</span>
-								</div>
-							</div>
-							{currentTag === 'My queries' && <div className="querylist__item__name querylist__item__status">
-								{item.published ? 'PUBLIC' : ''}
-							</div>}
-						</div>
-					)
-				}
-			})}
-			<div className="flex querylist__buttons">
-				<ToolbarButton 
-					title='Previous'
-					onClick={prevPage}
-					disabled={!currentPage}
-				/>
-				<ToolbarButton 
-					title='Next'
-					onClick={nextPage}
-					disabled={!thereIsNext}
-				/>
-			</div>
+							</li>
+						)
+					}
+				})}
+			</ul>
+			<nav class="mt-3">
+				<ul class="pagination justify-content-center">
+					<li class="page-item disabled">
+						<a class="page-link">&larr;</a>
+					</li>
+					<li class="page-item active"><a class="page-link" href="#">1</a></li>
+					<li class="page-item"><a class="page-link" href="#">2</a></li>
+					<li class="page-item"><a class="page-link" href="#">3</a></li>
+					<li class="page-item">
+						<a class="page-link" href="#">&rarr;</a>
+					</li>
+				</ul>
+			</nav>
 		</div>
 	)
 })
