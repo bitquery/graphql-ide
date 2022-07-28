@@ -138,10 +138,6 @@ module.exports = function(app, passport, db, redisClient) {
 			on t.id = ttq.tag_id 
 			where published = 1
 			group by tag
-			UNION
-			SELECT COUNT(q.account_id) as tags_count, 0 as id, 'My queries' as tag
-			FROM queries q
-			where q.account_id = ?
 			order by tags_count desc`, [req?.session?.passport?.user])
 		res.status(200).send(results)
 	})

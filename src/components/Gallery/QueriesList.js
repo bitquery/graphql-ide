@@ -5,12 +5,14 @@ import { GalleryStore } from '../../store/galleryStore'
 import { QueriesStore } from '../../store/queriesStore'
 import { TabsStore } from '../../store/queriesStore'
 import ToolbarButton from '../../components/bitqueditor/components/ToolbarButton'
+import { useHistory } from 'react-router-dom'
 
 const QueriesList = observer(function QueriesList() {
 
 	const { queriesListIsOpen, toggleQueriesList, currentTag, tagListIsOpen } = GalleryStore
 	const { setQuery, query, currentPage, queriesOnPage, setCurrentPage } = QueriesStore
 	const { switchTab, tabs } = TabsStore
+	const history = useHistory()
 
 	const [list, setList] = useState([])
 	const [thereIsNext, setNext] = useState(false)
@@ -32,7 +34,8 @@ const QueriesList = observer(function QueriesList() {
 			let tabID = query.map(query => query.id).indexOf(queryFromGallery.id)
 			switchTab(tabs[tabID].id)
 		}
-		toggleQueriesList()
+		history.push(`/graphql/${queryFromGallery.url || ''}`)
+		// toggleQueriesList()
 	}
 	const nextPage = () => {
 		main(currentPage + 1)
@@ -50,11 +53,11 @@ const QueriesList = observer(function QueriesList() {
 					if (arr.length <= queriesOnPage || i + 1 !== arr.length) {
 						return (
 							<li class="list-group-item list-group-item-action">
-								<div class="d-flex w-100 justify-content-between">
+								<div class="d-flex w-100 justify-content-between cursor-pointer" onClick={()=>handleClick(item)}>
 									<div>
 										<div>
 											{item.name}
-											{item.tags.split(',').map(tag => <span class="badge badge-secondary">#{tag}</span>)}
+											{typeof item.tags === 'string' && item.tags.split(',').map(tag => <span class="badge badge-secondary">#{tag}</span>)}
 										</div>
 										<small>Created by <strong>{item.owner_name}</strong> at 434 days ago</small>
 									</div>

@@ -55,13 +55,15 @@ const App = observer(function App() {
 				<Route exact path={`${process.env.REACT_APP_IDE_URL}/explore`} >
 					<ExploreComponent />
 				</Route>
+				<Route exact path={`${process.env.REACT_APP_IDE_URL}/myqueries`} >
+					
+				</Route>
 				<Route path={[`${process.env.REACT_APP_IDE_URL}/:queryurl`, `${process.env.REACT_APP_IDE_URL}`]} >
 					<ModalWindow />
 					<TabsComponent />
 					<div className="content flex">
 						{tagListIsOpen && <NewGallery />}
 						<GraphqlExplorer />
-						<QueriesList />
 					</div>
 				</Route>
 			</Switch>

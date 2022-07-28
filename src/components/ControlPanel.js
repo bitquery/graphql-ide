@@ -5,9 +5,11 @@ import {QueriesStore} from '../store/queriesStore'
 import { observer } from 'mobx-react-lite'
 import { Link } from 'react-router-dom'
 import logo from '../assets/images/bitquery_logo_w.png'
+import { GalleryStore } from '../store/galleryStore'
 
 const ControlPanel = observer(function ControlPanel() {
 	const { isMobile } = QueriesStore
+	const { setCurrentTag } = GalleryStore
 	return (
 		<div class="navbar navbar-expand-md navbar-light bg-white mb-2">
 			<a href="https://bitquery.io" className="navbar-brand topBar__logo">
@@ -32,7 +34,7 @@ const ControlPanel = observer(function ControlPanel() {
 						<Link class="nav-link text-primary" to={"/graphql/explore"} ><i class="bi bi-terminal"></i>Explore</Link>
 					</li>
 					<li class="nav-item">
-						<a class="nav-link text-primary" href="layout_test2.html"><i class="bi bi-star"></i>My Queries</a>
+						<a class="nav-link text-primary" href="# " onClick={()=>setCurrentTag('My queries')}><i class="bi bi-star"></i>My Queries</a>
 					</li>
 				</ul>
 				<ProfileComponent />

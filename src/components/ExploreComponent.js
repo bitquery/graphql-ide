@@ -14,8 +14,6 @@ function ExploreComponent() {
 		const onload = async () => {
 			try {
 				const { data } = await getTagsList()
-				const idx = data.map(tag => tag.tag).indexOf('My queries')
-				data.unshift(data.splice(idx, 1)[0])
 				setTagsList(data)
 			} catch (error) {
 				console.log(error)
