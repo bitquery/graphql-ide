@@ -47,12 +47,16 @@ const QueriesList = observer(function QueriesList() {
 		// toggleQueriesList()
 	}
 	const nextPage = () => {
-		main(currentPage + 1)
-		setCurrentPage(currentPage + 1)
+		if (thereIsNext) {
+			main(currentPage + 1)
+			setCurrentPage(currentPage + 1)
+		}
 	}
 	const prevPage = () => {
-		main(currentPage - 1)
-		setCurrentPage(currentPage - 1)
+		if (currentPage) {
+			main(currentPage - 1)
+			setCurrentPage(currentPage - 1)
+		}
 	}
 
 	return (
@@ -78,13 +82,10 @@ const QueriesList = observer(function QueriesList() {
 			</ul>
 			<nav class="mt-3">
 				<ul class="pagination justify-content-center">
-					<li class="page-item disabled">
+					<li className={`page-item ${!currentPage ? 'disabled' : null}`} onClick={prevPage}>
 						<a class="page-link">&larr;</a>
 					</li>
-					<li class="page-item active"><a class="page-link" href="#">1</a></li>
-					<li class="page-item"><a class="page-link" href="#">2</a></li>
-					<li class="page-item"><a class="page-link" href="#">3</a></li>
-					<li class="page-item">
+					<li className={`page-item ${!thereIsNext ? 'disabled' : null}`} onClick={nextPage}>
 						<a class="page-link" href="#">&rarr;</a>
 					</li>
 				</ul>
