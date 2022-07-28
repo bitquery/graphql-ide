@@ -37,7 +37,7 @@ function ExploreComponent() {
 								{
 									tagsList.map(({ tag, tag_id, tags_count }) => (
 										<li
-											className="list-group-item d-flex justify-content-between align-items-center list-group-item-action"
+											className="list-group-item d-flex justify-content-between align-items-center list-group-item-action cursor-pointer"
 											key={`${tag_id}-${tags_count}`}
 											onClick={() => handleClick(tag)}
 										>

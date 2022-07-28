@@ -47,13 +47,13 @@ const ControlPanel = observer(function ControlPanel() {
 				</form>
 				<ul className="navbar-nav mr-auto mt-2 mt-lg-0">
 					<li className='nav-item'>
-						<Link className={`nav-link ${active === 1 ? 'text-secondary' : 'text-primary'}`} to={process.env.REACT_APP_IDE_URL} onClick={() => setActive(1)} ><i className="bi bi-play"></i>Develop</Link>
+						<Link className={`nav-link ${active === 1 ? 'text-secondary' : 'text-primary'}`} to={process.env.REACT_APP_IDE_URL} onClick={() => setActive(1)} ><i className="bi bi-play mr-2"></i>Develop</Link>
 					</li>
 					<li className='nav-item'>
-						<Link className={`nav-link ${active === 2 ? 'text-secondary' : 'text-primary'}`} to={`${process.env.REACT_APP_IDE_URL}/explore`} onClick={() => setActive(2)} ><i className="bi bi-terminal"></i>Explore</Link>
+						<Link className={`nav-link ${active === 2 ? 'text-secondary' : 'text-primary'}`} to={`${process.env.REACT_APP_IDE_URL}/explore`} onClick={() => setActive(2)} ><i className="bi bi-terminal mr-2"></i>Explore</Link>
 					</li>
 					<li className='nav-item'>
-						<Link className={`nav-link ${active === 3 ? 'text-secondary' : 'text-primary'}`} to={`${process.env.REACT_APP_IDE_URL}/explore`} onClick={() => {setCurrentTag('My queries');setActive(3);}}><i className="bi bi-star"></i>My Queries</Link>
+						<Link className={`nav-link ${active === 3 ? 'text-secondary' : 'text-primary'}`} to={`${process.env.REACT_APP_IDE_URL}/explore`} onClick={() => {setCurrentTag('My queries');setActive(3);}}><i className="bi bi-star mr-2"></i>My Queries</Link>
 					</li>
 				</ul>
 				<ProfileComponent />

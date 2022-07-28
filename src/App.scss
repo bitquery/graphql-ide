@@ -2,10 +2,6 @@
 @import "./components/Gallery/queriesList.scss";
 @import "./components/modal/editDialog.scss";
 
-@font-face {
-	font-family: 'Nunito';
-	src: url('./assets/fonts/Nunito-Regular.ttf') format('truetype')
-}
 body {
 	overflow: hidden;
 }

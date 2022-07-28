@@ -144,6 +144,9 @@ module.exports = function(app, passport, db, redisClient) {
 		if (req.params.tag === 'My queries') {
 			sql.query = makesql('WHERE q.account_id = ? ORDER BY q.updated_at DESC', req.params.page)
 			sql.param = [req.session.passport.user]
+		} else if (req.params.tag === 'All queries') {
+			sql.query = makesql('WHERE published = 1 ORDER BY q_cnt.cnt DESC', req.params.page)
+			sql.param = [req.session.passport.user]
 		} else {
 			sql.query = makesql(`
 				inner join tags_to_queries ttq on ttq.query_id = q.id
@@ -172,9 +175,13 @@ module.exports = function(app, passport, db, redisClient) {
 			) q 
 			on ttq.query_id = q.query_id
 			inner join tags t 
-			on t.id = ttq.tag_id 
-			where published = 1
+			on t.id = ttq.tag_id
+			where published = 1 
 			group by tag
+			union
+			select COUNT(*) as tags_count, 0 as tag_id, 'All queries' as tag
+			from queries q2 
+			where q2.published = 1
 			order by tags_count desc`, [req?.session?.passport?.user])
 		res.status(200).send(results)
 	})
