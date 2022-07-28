@@ -64,6 +64,7 @@ class Queries {
 	query = [this.currentQuery]
 	currentPage = 0
 	queriesOnPage = 50
+	searchValue = ''
 	
 	constructor() {
 		makeObservable(this, {
@@ -76,6 +77,7 @@ class Queries {
 			gettingResult: observable,
 			currentQuery: observable,
 			showSideBar: observable,
+			searchValue: observable,
 			isMobile: observable,
 			isLoaded: observable,
 			schema: observable,
@@ -90,6 +92,7 @@ class Queries {
 			setGettingResult: action,
 			setCurrentQuery: action,
 			setCurrentPage: action,
+			setSearchValue: action,
 			toggleSideBar: action,
 			setIsLoaded: action,
 			updateQuery: action,
@@ -119,6 +122,9 @@ class Queries {
 			url: this.currentQuery.url && this.currentQuery.url,
 			endpoint_url: this.currentQuery.endpoint_url && this.currentQuery.endpoint_url.trim()
 		}
+	}
+	setSearchValue = value => {
+		this.searchValue = value
 	}
 	setCurrentPage = page => {
 		this.currentPage = page

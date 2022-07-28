@@ -6,23 +6,32 @@ import { QueriesStore } from '../../store/queriesStore'
 import { TabsStore } from '../../store/queriesStore'
 import ToolbarButton from '../../components/bitqueditor/components/ToolbarButton'
 import { useHistory } from 'react-router-dom'
+import { getSearchResults } from '../../api/api'
 
 const QueriesList = observer(function QueriesList() {
 
 	const { queriesListIsOpen, toggleQueriesList, currentTag, tagListIsOpen } = GalleryStore
-	const { setQuery, query, currentPage, queriesOnPage, setCurrentPage } = QueriesStore
+	const { setQuery, query, currentPage, queriesOnPage, setCurrentPage, searchValue } = QueriesStore
 	const { switchTab, tabs } = TabsStore
 	const history = useHistory()
 
 	const [list, setList] = useState([])
 	const [thereIsNext, setNext] = useState(false)
+	
+	useEffect(() => {
+		const main = async () => {
+			const { data } = await getSearchResults(searchValue)
+			history.push('/graphql/explore')
+			setList(data)
+		}
+		searchValue && main()
+	}, [searchValue])
 
 	const main = async (page) => {
 		const { data } = await getTaggedQueriesList(currentTag, page * queriesOnPage)
 		data.length > queriesOnPage ? setNext(true) : setNext(false)
 		setList(data)
 	}
-
 	useEffect(() => {
 		currentTag && main(currentPage)
 	}, [currentTag])
@@ -59,7 +68,7 @@ const QueriesList = observer(function QueriesList() {
 											{item.name}
 											{typeof item.tags === 'string' && item.tags.split(',').map(tag => <span class="badge badge-secondary">#{tag}</span>)}
 										</div>
-										<small>Created by <strong>{item.owner_name}</strong> at 434 days ago</small>
+										<small>Created by <strong>{item.owner_name}</strong> at {Math.floor((new Date().getTime() - new Date(item.created_at).getTime()) / (1000*60*60*24))} days ago</small>
 									</div>
 								</div>
 							</li>

@@ -51,6 +51,43 @@ module.exports = function(app, passport, db, redisClient) {
 		}
 	}
 	
+	app.post('/api/search', async (req, res) => {
+        try {
+            const results = await query(`SELECT DISTINCT * from queries q
+            INNER JOIN (
+                SELECT name as owner_name, id as aid from accounts
+            ) a
+            ON a.aid = q.account_id
+            LEFT JOIN (
+                SELECT query_id , GROUP_CONCAT(t.tag) AS tags FROM bitquery.tags_to_queries tq
+                INNER JOIN bitquery.tags t ON t.id = tq.tag_id
+                GROUP BY query_id
+            ) t
+            ON q.id = t.query_id
+            LEFT JOIN (
+                select id as noid, count(1) cnt
+                from query_logs where success =1
+                GROUP by id
+            ) q_cnt on q_cnt.noid = q.id
+            LEFT JOIN (
+                SELECT w.id as w_id, w.widget_id, w.displayed_data, w.query_id, w.config, w.active, w.data_type 
+                FROM widgets w
+                WHERE id IN (
+                            SELECT MAX(id) AS id
+                            FROM widgets 
+                            GROUP BY query_id)
+            ) b 
+            ON q.id=b.query_id
+            where match (q.name, q.description) against (?)
+            or q.name like '%${req.body.search}%' or q.description like '%${req.body.search}%'
+            ORDER BY q.updated_at DESC`, [req.body.search])
+            res.status(200).send(results)
+        } catch (error) {
+            console.log(error)
+            res.sendStatus(400)
+        }
+    })
+
 	app.get('/api/transferedquery/:query', (req, res) => {
 		redisClient.get(req.params.query, async (error, query) => {
 			if (error) console.log(error)

@@ -52,3 +52,5 @@ export const getTaggedQueriesList = (tag, page) => axios.get(`/api/taggedqueries
 export const checkUrl = url => axios.post('/api/checkurl', { url })
 
 export const getTransferedQuery = query => axios.get(`/api/transferedquery/${query}`)
+
+export const getSearchResults = search => axios.post('/api/search', {search})
