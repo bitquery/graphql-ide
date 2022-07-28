@@ -53,7 +53,6 @@ const App = observer(function App() {
 					<ModalWindow />
 					<ControlPanel />
 					<div className="content flex">
-						{/* {showSideBar && <GalleryComponent />} */}
 						{tagListIsOpen && <NewGallery />}
 						<GraphqlExplorer />
 						<QueriesList />

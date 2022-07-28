@@ -41,15 +41,17 @@ const Profile = observer(() => {
 	) : <Dropdown className={'profile__menu'}>
 			<a className='link__hire' target='_blank' href='https://community.bitquery.io/t/how-to-get-started-with-bitquerys-blockchain-graphql-apis/13'>Getting started</a>
 			<a className='link__hire' target='_blank' href='https://angel.co/company/bitquery/jobs'>We are hiring!</a>
-			<p className="profile__email"> {user.email} </p> 
 			<Dropdown.Toggle id="dropdown-basic" as={'span'} >
 				<UserIcon />
 			</Dropdown.Toggle>
 		
 			<Dropdown.Menu>
+				<Dropdown.Header>{user.email}</Dropdown.Header>
+				<Dropdown.Divider/>
+				{ user.role === 'admin' &&  <Dropdown.Item href="https://graphql.bitquery.io/admin/accounts">Admin</Dropdown.Item>}
+				{ user.role === 'admin' && <Dropdown.Divider/> }
 				<Dropdown.Item href="# " onClick={apiKeyHandler}>API Key</Dropdown.Item>
 				<Dropdown.Item href="https://graphql.bitquery.io/user/account">Profile</Dropdown.Item>
-				{ user.role === 'admin' &&  <Dropdown.Item href="https://graphql.bitquery.io/admin/accounts">Admin</Dropdown.Item>}
 				<Dropdown.Item href="# " onClick={changePasswordHadler}>Change password</Dropdown.Item>
 				<Dropdown.Item href="# "onClick={logOut}>Logout</Dropdown.Item>
 			</Dropdown.Menu>
