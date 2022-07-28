@@ -28,12 +28,12 @@ function ExploreComponent() {
 		}
 	}
 	return (
-		<div class="container-fluid overflow-auto">
-			<div class="row">
-				<div class="col-lg-3 mb-3">
-					<div class="card">
-						<div class="card-body">
-							<ul class="list-group list-group-flush">
+		<div className="container-fluid overflow-auto">
+			<div className="row">
+				<div className="col-lg-3 mb-3">
+					<div className="card">
+						<div className="card-body">
+							<ul className="list-group list-group-flush">
 								{
 									tagsList.map(({ tag, tag_id, tags_count }) => (
 										<li
@@ -41,8 +41,8 @@ function ExploreComponent() {
 											key={`${tag_id}-${tags_count}`}
 											onClick={() => handleClick(tag)}
 										>
-											<span><i class="bi bi-tag"></i> { tag } </span>
-											<span class="badge badge-primary badge-pill"> { tags_count } </span>
+											<span><i className="bi bi-tag"></i> { tag } </span>
+											<span className="badge badge-primary badge-pill"> { tags_count } </span>
 										</li>
 									))
 								}

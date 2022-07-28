@@ -38,10 +38,6 @@ const NewGallery = observer(function NewGallery() {
 
 	return (
 		<div className="newGallery__root">
-			<div className="newGallery__header flex">
-				<i className="newGallery__close fas fa-angle-double-left" onClick={toggleTagsList} />
-				<i className="newGallery__close_helper fas fa-angle-double-left"/>
-			</div>
 			<QueryBuilder
 				width={'300px'}
 				minWidth={'300px'}

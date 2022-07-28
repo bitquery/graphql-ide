@@ -60,17 +60,17 @@ const QueriesList = observer(function QueriesList() {
 	}
 
 	return (
-		<div class="col-lg-9 mb-3">
-			<ul class="list-group">
+		<div className="col-lg-9 mb-3">
+			<ul className="list-group">
 				{list && list.map((item, i, arr) => {
 					if (arr.length <= queriesOnPage || i + 1 !== arr.length) {
 						return (
-							<li class="list-group-item list-group-item-action">
-								<div class="d-flex w-100 justify-content-between cursor-pointer" onClick={()=>handleClick(item)}>
+							<li className="list-group-item list-group-item-action">
+								<div className="d-flex w-100 justify-content-between cursor-pointer" onClick={()=>handleClick(item)}>
 									<div>
 										<div>
-											{item.name}
-											{typeof item.tags === 'string' && item.tags.split(',').map(tag => <span class="badge badge-secondary">#{tag}</span>)}
+											<span className="mr-2">{item.name}</span>
+											{typeof item.tags === 'string' && item.tags.split(',').map(tag => <span className="badge badge-secondary mr-2">#{tag}</span>)}
 										</div>
 										<small>Created by <strong>{item.owner_name}</strong> at {Math.floor((new Date().getTime() - new Date(item.created_at).getTime()) / (1000*60*60*24))} days ago</small>
 									</div>
@@ -80,13 +80,13 @@ const QueriesList = observer(function QueriesList() {
 					}
 				})}
 			</ul>
-			<nav class="mt-3">
-				<ul class="pagination justify-content-center">
+			<nav className="mt-3">
+				<ul className="pagination justify-content-center">
 					<li className={`page-item ${!currentPage ? 'disabled' : null}`} onClick={prevPage}>
-						<a class="page-link">&larr;</a>
+						<a className="page-link">&larr;</a>
 					</li>
 					<li className={`page-item ${!thereIsNext ? 'disabled' : null}`} onClick={nextPage}>
-						<a class="page-link" href="#">&rarr;</a>
+						<a className="page-link" href="#">&rarr;</a>
 					</li>
 				</ul>
 			</nav>
