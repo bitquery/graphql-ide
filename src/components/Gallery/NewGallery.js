@@ -36,47 +36,23 @@ const NewGallery = observer(function NewGallery() {
 		}
 	}
 
-	const Component = showBuilder 
-		? 	<QueryBuilder
+	return (
+		<div className="newGallery__root">
+			<div className="newGallery__header flex">
+				<i className="newGallery__close fas fa-angle-double-left" onClick={toggleTagsList} />
+				<i className="newGallery__close_helper fas fa-angle-double-left"/>
+			</div>
+			<QueryBuilder
 				width={'300px'}
 				minWidth={'300px'}
 				title={'Builder'}
 				schema={schema}
 				query={currentQuery.query}
 				onEdit={query=>updateQuery({query}, index)}
-				explorerIsOpen={showBuilder}
+				explorerIsOpen={true}
 				getDefaultScalarArgValue={getDefaultScalarArgValue}
 				makeDefaultArg={makeDefaultArg}
 			/>
-		: 	<ul className="newGallery__listWrapper">
-				{
-					tagsList.map(({tag, tag_id, tags_count}) => (
-						<li 
-							className={"newGallery__listItem"+((currentTag===tag&&queriesListIsOpen)?' newGallery__listItem_active':'')}
-							key={`${tag_id}-${tags_count}`}
-							onClick={() => handleClick(tag)}
-						>
-							{`${tag_id ? '#' : ''}${tag} (${tags_count})`}
-						</li>
-					))
-				}
-			</ul>		
-	
-	return (
-		<div className="newGallery__root">
-			<div className="newGallery__header flex">
-				<i className="newGallery__close fas fa-angle-double-left" onClick={toggleTagsList} />
-				<ul className="nav nav-tabs">
-					<li className="nav-item" onClick={() => toggleBuilder(true)}>
-						<a className={"nav-link " + (showBuilder && 'active')} href="# ">Builder</a>
-					</li>
-					<li className="nav-item" onClick={() => toggleBuilder(false)}>
-						<a className={"nav-link " + (!showBuilder && 'active')} href="# ">Queries</a>
-					</li>
-				</ul>
-				<i className="newGallery__close_helper fas fa-angle-double-left"/>
-			</div>
-			{ Component }
 		</div>
 	)
 }) 
