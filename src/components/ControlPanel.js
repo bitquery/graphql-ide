@@ -8,7 +8,7 @@ import logo from '../assets/images/bitquery_logo_w.png'
 const ControlPanel = observer(function ControlPanel() {
 	const { isMobile } = QueriesStore
 	return (
-		<div class="navbar navbar-expand-xl navbar-light bg-white mb-2">
+		<div class="navbar navbar-expand-md navbar-light bg-white mb-2">
 			<a href="https://bitquery.io" className="navbar-brand topBar__logo">
 				<img 
 					className="topBar__logo__img" 
@@ -16,6 +16,9 @@ const ControlPanel = observer(function ControlPanel() {
 					alt="logo"
 				/>
 			</a>
+			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
 			<div class="collapse navbar-collapse" id="navbarSupportedContent">
 				<form class="form-inline my-2 my-lg-0">
 					<input class="form-control form-control-sm mr-sm-2" type="search" placeholder="Search" aria-label="Search" />

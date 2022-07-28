@@ -372,9 +372,6 @@ body {
 		}
 	}
 	.nav {
-		&-tabs {
-			border: none;
-		}
 		&-link {
 			.cursor-edit {
 				cursor: url('https://cdn.jsdelivr.net/gh/bitquery/graphql-ide@1.1.19/src/assets/images/pencil-alt-solid.svg') 0 20, auto;

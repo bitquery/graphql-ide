@@ -117,13 +117,6 @@ const TabsComponent = observer(() => {
 	return isLoaded ? (
 		<div className="tabs">
 			<ul className="nav nav-tabs" >
-				<a href="https://bitquery.io" className="topBar__logo">
-					<img 
-						className="topBar__logo__img" 
-						src={logo}
-						alt="logo"
-					/>
-				</a>
 				{
 					tabs.map((tab, i) => (
 						<li 
@@ -133,8 +126,8 @@ const TabsComponent = observer(() => {
 							<a href="# " className={'nav-link '+(currentTab === tab.id && 'active')} key={i}>
 								{query[i].layout ? <i className="fas fa-th"></i> 
 								: query[i].widget_id==='json.widget' || !query[i].widget_id 
-								? <GraphqlIcon fill={'#000000'} width={'16px'} height={'16px'}/>
-								: <i className="fas fa-chart-bar"></i>}
+								? <i class="bi bi-hexagon"></i>
+								: <i class="bi bi-graph-up"></i>}
 								{
 								(editTabName && currentTab === tab.id) 
 									? 	<>
@@ -160,7 +153,7 @@ const TabsComponent = observer(() => {
 				<li 
 					className="nav-item"
 					onClick={addNewTabHandler}
-				><a href="# " className="nav-link nav-link-add"><i className="tab__add fas fa-plus"/></a></li>
+				><a href="# " className="nav-link nav-link-add"><i className="tab__add bi bi-plus"/></a></li>
 			</ul>
 		</div>
 	) : <div className="tabs">

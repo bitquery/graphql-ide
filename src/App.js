@@ -13,6 +13,7 @@ import 'react-grid-layout/css/styles.css'
 import NewGallery from "./components/Gallery/NewGallery"
 import QueriesList from "./components/Gallery/QueriesList"
 import { GalleryStore } from './store/galleryStore'
+import TabsComponent from './components/TabsComponent'
 
 if (process.env.NODE_ENV === 'development') {
 	/* require('@welldone-software/why-did-you-render')(React, {
@@ -52,6 +53,7 @@ const App = observer(function App() {
 				<Route path={[`${process.env.REACT_APP_IDE_URL}/:queryurl`, `${process.env.REACT_APP_IDE_URL}`]} >
 					<ModalWindow />
 					<ControlPanel />
+					<TabsComponent />
 					<div className="content flex">
 						{tagListIsOpen && <NewGallery />}
 						<GraphqlExplorer />
