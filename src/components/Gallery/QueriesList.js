@@ -21,7 +21,7 @@ const QueriesList = observer(function QueriesList() {
 	useEffect(() => {
 		const main = async () => {
 			const { data } = await getSearchResults(searchValue)
-			history.push('/graphql/explore')
+			history.push(`${process.env.REACT_APP_IDE_URL}/explore`)
 			setList(data)
 		}
 		searchValue && main()
