@@ -34,11 +34,11 @@ const Profile = observer(() => {
 	}, [])
 
 	return !user ? (
-		<div className="flex profile__menu" onClick={clickHandler}>
+		<div className="flex profile__menu d-none d-lg-block" onClick={clickHandler}>
 			<a className="profile__email" href="# ">Login</a>
 			<UserIcon />
 		</div>
-	) : <Dropdown className={'profile__menu'}>
+	) : <Dropdown className={'profile__menu d-none d-lg-block'}>
 			<a className='link__hire' target='_blank' href='https://community.bitquery.io/t/how-to-get-started-with-bitquerys-blockchain-graphql-apis/13'>Getting started</a>
 			<a className='link__hire' target='_blank' href='https://angel.co/company/bitquery/jobs'>We are hiring!</a>
 			<Dropdown.Toggle id="dropdown-basic" as={'span'} >
@@ -53,7 +53,7 @@ const Profile = observer(() => {
 				<Dropdown.Item href="# " onClick={apiKeyHandler}>API Key</Dropdown.Item>
 				<Dropdown.Item href="https://graphql.bitquery.io/user/account">Profile</Dropdown.Item>
 				<Dropdown.Item href="# " onClick={changePasswordHadler}>Change password</Dropdown.Item>
-				<Dropdown.Item href="# "onClick={logOut}>Logout</Dropdown.Item>
+				<Dropdown.Item href="# " onClick={logOut}>Logout</Dropdown.Item>
 			</Dropdown.Menu>
 		</Dropdown>
 })

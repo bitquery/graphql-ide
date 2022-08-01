@@ -48,6 +48,7 @@ const App = observer(function App() {
 	return (
 		<div className="App">
 			<ControlPanel />
+			<ModalWindow />
 			<Switch>
 				<Route path={`${process.env.REACT_APP_IDE_URL}/reset`} >
 					<ResetPassword />
@@ -59,7 +60,6 @@ const App = observer(function App() {
 					<ExploreComponent />
 				</Route>
 				<Route path={[`${process.env.REACT_APP_IDE_URL}/:queryurl`, `${process.env.REACT_APP_IDE_URL}`]} >
-					<ModalWindow />
 					<TabsComponent />
 					<div className="content flex">
 						{tagListIsOpen && <NewGallery />}
