@@ -10,7 +10,7 @@ import QueryBuilder from '../Gallery/QueryBuilder/index'
 const NewGallery = observer(function NewGallery() {
 
 	const { user } = UserStore
-	const { queriesListIsOpen, currentTag,
+	const { queriesListIsOpen, currentTag, tagListIsOpen,
 		toggleQueriesList, toggleTagsList, setCurrentTag } = GalleryStore
 	const { currentQuery, updateQuery, schema, queryJustSaved } = QueriesStore
 	const { index } = TabsStore
@@ -38,6 +38,10 @@ const NewGallery = observer(function NewGallery() {
 
 	return (
 		<div className="newGallery__root">
+			<div className="newGallery__topbar">
+				<i className="bi bi-chevron-double-left cursor-pointer" onClick={toggleTagsList} />
+				<div className="newGallery__topbar__label">Builder</div>
+			</div>
 			<QueryBuilder
 				width={'300px'}
 				minWidth={'300px'}

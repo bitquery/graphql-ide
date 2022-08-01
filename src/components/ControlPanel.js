@@ -20,7 +20,6 @@ const ControlPanel = observer(function ControlPanel() {
 
 	useEffect(() => {
 		setSearchValue(searchValue)
-		searchValue && history.push(`${process.env.REACT_APP_IDE_URL}/explore`)
 		if (searchValue) {
 			history.push(`${process.env.REACT_APP_IDE_URL}/explore`)
 			setActive(2)

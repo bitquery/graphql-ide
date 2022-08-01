@@ -21,7 +21,6 @@ const QueriesList = observer(function QueriesList() {
 	
 	useEffect(() => {
 		const main = async () => {
-			setCurrentTag('All queries')
 			const { data } = await getSearchResults(searchValue)
 			history.push(`${process.env.REACT_APP_IDE_URL}/explore`)
 			setList(data)
@@ -46,8 +45,7 @@ const QueriesList = observer(function QueriesList() {
 			let tabID = query.map(query => query.id).indexOf(queryFromGallery.id)
 			switchTab(tabs[tabID].id)
 		}
-		history.push(`/graphql/${queryFromGallery.url || ''}`)
-		// toggleQueriesList()
+		history.push(`${process.env.REACT_APP_IDE_URL}/${queryFromGallery.url || ''}`)
 	}
 	const nextPage = () => {
 		if (thereIsNext) {

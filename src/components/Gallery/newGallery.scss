@@ -11,6 +11,18 @@
 		min-width: 300px;
 		max-width: 300px;
 	}
+	&__topbar {
+		min-height: 44px;
+		display: flex;
+		align-items: center;
+		border-bottom: 1px solid #d0d0d0;
+		padding-left: 14px;
+		&__label{
+			display: flex;
+			justify-content: center;
+			flex: 1;
+		}
+	}
 	&__close {
 		margin-right: auto;
 		cursor: pointer;

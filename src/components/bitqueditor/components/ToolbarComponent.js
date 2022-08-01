@@ -109,7 +109,6 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 	const toolbar = (!dashboardOwner || !isLoaded) ? null : <div className="topBarWrap">
 		<div className="topBar">
 			{!tagListIsOpen &&<i className="bi bi-chevron-double-right cursor-pointer" onClick={toggleTagsList} />}
-			{tagListIsOpen &&<i className="bi bi-chevron-double-left cursor-pointer" onClick={toggleTagsList} />}
 			{dashboardOwner && !(!currentQuery.id || !currentQuery.saved) && currentQuery.layout 
 				&& <button type="button" className="topBar__button" onClick={switchMode}>Edit</button>}
 			<ToolbarButton
