@@ -145,7 +145,7 @@ module.exports = function(app, passport, db, redisClient) {
 		) ttags
 		ON ttq.tag_id = ttags.tag_id
 		${patch}
-		LIMIT ${limit}, 51`
+		LIMIT ${limit}, 11`
 		let sql = {}
 		if (req.params.tag === 'All queries') {
 			sql.query = makesql(`WHERE ${explore ? 'published = 1' : 'account_id = ?'} ORDER BY q_cnt.cnt DESC`, req.params.page)

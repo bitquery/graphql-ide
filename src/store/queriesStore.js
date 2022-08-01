@@ -63,7 +63,7 @@ class Queries {
 	dashboardQuery = this.currentQuery
 	query = [this.currentQuery]
 	currentPage = 0
-	queriesOnPage = 50
+	queriesOnPage = 10
 	searchValue = ''
 	
 	constructor() {
