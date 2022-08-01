@@ -2,6 +2,15 @@
 @import "./components/Gallery/queriesList.scss";
 @import "./components/modal/editDialog.scss";
 
+.tag-active, .tag-active:hover {
+	background-color: #ddd;
+}
+.nav-active {
+	background-color: #ddd;
+	border-radius: 10px;
+	font-weight: bold;
+	color: #000 !important;
+}
 body {
 	overflow: hidden;
 }

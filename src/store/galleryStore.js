@@ -6,7 +6,7 @@ class Gallery {
 	queriesListIsOpen = false
 	tagList = []
 	queryList = []
-	currentTag = ''
+	currentTag = 'All queries'
 
 	constructor() {
 		makeObservable(this, {

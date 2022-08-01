@@ -56,7 +56,7 @@ const App = observer(function App() {
 					<ExploreComponent />
 				</Route>
 				<Route exact path={`${process.env.REACT_APP_IDE_URL}/myqueries`} >
-					
+					<ExploreComponent />
 				</Route>
 				<Route path={[`${process.env.REACT_APP_IDE_URL}/:queryurl`, `${process.env.REACT_APP_IDE_URL}`]} >
 					<ModalWindow />

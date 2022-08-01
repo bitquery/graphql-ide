@@ -112,7 +112,8 @@ module.exports = function(app, passport, db, redisClient) {
 		}
 	})
 
-	app.get('/api/taggedqueries/:tag/:page', async (req, res) => {
+	app.post('/api/taggedqueries/:tag/:page', async (req, res) => {
+		const explore = req.body.explore
 		const makesql = (patch = '', limit = 0) => `SELECT * from queries q
 		INNER JOIN (
 			SELECT name as owner_name, id as aid from accounts
@@ -138,26 +139,23 @@ module.exports = function(app, passport, db, redisClient) {
 						GROUP BY query_id)
 		) b 
 		ON q.id=b.query_id
+		inner join tags_to_queries ttq on ttq.query_id = q.id
+		inner join (
+			SELECT id as tag_id, tag from tags
+		) ttags
+		ON ttq.tag_id = ttags.tag_id
 		${patch}
 		LIMIT ${limit}, 51`
 		let sql = {}
-		if (req.params.tag === 'My queries') {
-			sql.query = makesql('WHERE q.account_id = ? ORDER BY q.updated_at DESC', req.params.page)
-			sql.param = [req.session.passport.user]
-		} else if (req.params.tag === 'All queries') {
-			sql.query = makesql('WHERE published = 1 ORDER BY q_cnt.cnt DESC', req.params.page)
+		if (req.params.tag === 'All queries') {
+			sql.query = makesql(`WHERE ${explore ? 'published = 1' : 'account_id = ?'} ORDER BY q_cnt.cnt DESC`, req.params.page)
 			sql.param = [req.session.passport.user]
 		} else {
 			sql.query = makesql(`
-				inner join tags_to_queries ttq on ttq.query_id = q.id
-				inner join (
-					SELECT id as tag_id, tag from tags
-				) ttags
-				ON ttq.tag_id = ttags.tag_id
-				WHERE tag = ?
-				and published = 1
+				WHERE ${explore ? 'published = 1' : 'account_id = ?'}
+				AND tag = ?
 				ORDER by q_cnt.cnt DESC`, req.params.page)
-			sql.param = [req.params.tag]
+			sql.param = explore ? [req.params.tag] : [req.session.passport.user, req.params.tag]
 		}
 		const results = await query(sql.query, sql.param)
 		res.status(200).send(results)	

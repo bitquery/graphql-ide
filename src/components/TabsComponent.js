@@ -126,8 +126,8 @@ const TabsComponent = observer(() => {
 							<a href="# " className={'nav-link '+(currentTab === tab.id && 'active')} key={i}>
 								{query[i].layout ? <i className="fas fa-th"></i> 
 								: query[i].widget_id==='json.widget' || !query[i].widget_id 
-								? <i className="bi bi-hexagon"></i>
-								: <i className="bi bi-graph-up"></i>}
+								? <GraphqlIcon fill={'#000000'} width={'16px'} height={'16px'}/>
+								: <i className="fas fa-chart-bar"></i>}
 								{
 								(editTabName && currentTab === tab.id) 
 									? 	<>

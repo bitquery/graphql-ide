@@ -3,8 +3,11 @@ import { QueriesStore, TabsStore, UserStore } from '../store/queriesStore'
 import { GalleryStore } from '../store/galleryStore'
 import { getTagsList } from '../api/api'
 import QueriesList from './Gallery/QueriesList'
+import { observer } from 'mobx-react'
+import { useLocation } from 'react-router-dom'
 
-function ExploreComponent() {
+const ExploreComponent = observer(function ExploreComponent() {
+	const location = useLocation()
 	const { user } = UserStore
 	const { queriesListIsOpen, currentTag,
 		toggleQueriesList, toggleTagsList, setCurrentTag } = GalleryStore
@@ -12,21 +15,24 @@ function ExploreComponent() {
 	const [tagsList, setTagsList] = useState([])
 	useEffect(() => {
 		const onload = async () => {
+			const explore = location.pathname === `${process.env.REACT_APP_IDE_URL}/explore` ? true : false
 			try {
-				const { data } = await getTagsList()
+				const { data } = await getTagsList(explore)
 				setTagsList(data)
 			} catch (error) {
 				console.log(error)
 			}
 		}
 		user && onload()
-	}, [queryJustSaved, user])
+	}, [queryJustSaved, user, location.pathname])
+
 	const handleClick = tag => {
 		setCurrentTag(tag)
 		if (queriesListIsOpen && tag === currentTag || !queriesListIsOpen) {
 			toggleQueriesList()
 		}
 	}
+
 	return (
 		<div className="container-fluid overflow-auto">
 			<div className="row">
@@ -37,7 +43,7 @@ function ExploreComponent() {
 								{
 									tagsList.map(({ tag, tag_id, tags_count }) => (
 										<li
-											className="list-group-item d-flex justify-content-between align-items-center list-group-item-action cursor-pointer"
+											className={`list-group-item d-flex justify-content-between align-items-center list-group-item-action cursor-pointer ${currentTag === tag ? 'tag-active' : ''}`}
 											key={`${tag_id}-${tags_count}`}
 											onClick={() => handleClick(tag)}
 										>
@@ -54,6 +60,6 @@ function ExploreComponent() {
 			</div>
 		</div>
 	)
-}
+})
 
 export default ExploreComponent
