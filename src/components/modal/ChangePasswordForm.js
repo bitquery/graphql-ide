@@ -1,6 +1,7 @@
 import axios from 'axios'
 import React from 'react'
 import { useState } from 'react'
+import { Button, Form, Modal } from 'react-bootstrap'
 import { useToasts } from 'react-toast-notifications'
 import modalStore from '../../store/modalStore'
 
@@ -32,18 +33,26 @@ function ChangePassword({active}) {
 		}
 	}
 	
-	return (
-		<div className="reset__password">
-			<form onSubmit={changePwd} className={'modal__form '+(!active && 'modal__form_hide')} >
-				<h2>Here you can change password</h2>
-				<p className="p-modal">Old Password</p>
-				<input type="password" className="query__save" value={oldPwd} onChange={e => setOldPwd(e.target.value)} />  
-				<p className="p-modal">New Password</p>
-				<input type="password" className="query__save" value={newPwd} onChange={e => setNewPwd(e.target.value)} />  
-				<i className="handler handler__close fas fa-times" onClick={closeHandler} />
-				<button className="button button_filled" type="submit">Apply</button>
-			</form>
-		</div>
+	return active && (
+		<>
+			<Modal.Header>Here you can change password</Modal.Header>
+			<Modal.Body>
+				<Form onSubmit={changePwd} >
+					<Form.Group>
+						<Form.Label>Old Password</Form.Label>
+						<Form.Control type="password" value={oldPwd} onChange={e => setOldPwd(e.target.value)} />
+					</Form.Group>
+					<Form.Group>
+						<Form.Label>New Password</Form.Label>
+						<Form.Control type="password" value={newPwd} onChange={e => setNewPwd(e.target.value)} />
+					</Form.Group>
+					<Form.Group className="d-flex justify-content-around">
+						<Button variant="primary" type="cancel" onClick={closeHandler} >Cancel</Button>
+						<Button variant="primary" type="submit" >Submit</Button>
+					</Form.Group>
+				</Form>	
+			</Modal.Body>
+		</>
 	)
 }
 
