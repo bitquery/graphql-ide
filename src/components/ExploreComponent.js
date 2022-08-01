@@ -11,7 +11,7 @@ const ExploreComponent = observer(function ExploreComponent() {
 	const { user } = UserStore
 	const { queriesListIsOpen, currentTag,
 		toggleQueriesList, toggleTagsList, setCurrentTag } = GalleryStore
-	const { currentQuery, updateQuery, schema, queryJustSaved } = QueriesStore
+	const { currentQuery, updateQuery, schema, queryJustSaved, setSearchValue } = QueriesStore
 	const [tagsList, setTagsList] = useState([])
 	useEffect(() => {
 		const onload = async () => {
@@ -27,6 +27,7 @@ const ExploreComponent = observer(function ExploreComponent() {
 	}, [queryJustSaved, user, location.pathname])
 
 	const handleClick = tag => {
+		setSearchValue('')
 		setCurrentTag(tag)
 		if (queriesListIsOpen && tag === currentTag || !queriesListIsOpen) {
 			toggleQueriesList()

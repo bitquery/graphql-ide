@@ -4,13 +4,12 @@ import { getTaggedQueriesList } from '../../api/api'
 import { GalleryStore } from '../../store/galleryStore'
 import { QueriesStore } from '../../store/queriesStore'
 import { TabsStore } from '../../store/queriesStore'
-import ToolbarButton from '../../components/bitqueditor/components/ToolbarButton'
 import { useHistory, useLocation } from 'react-router-dom'
 import { getSearchResults } from '../../api/api'
 
 const QueriesList = observer(function QueriesList() {
 
-	const { queriesListIsOpen, toggleQueriesList, currentTag, tagListIsOpen, setCurrentTag } = GalleryStore
+	const { currentTag } = GalleryStore
 	const { setQuery, query, currentPage, queriesOnPage, setCurrentPage, searchValue } = QueriesStore
 	const { switchTab, tabs } = TabsStore
 	const history = useHistory()
@@ -18,15 +17,6 @@ const QueriesList = observer(function QueriesList() {
 
 	const [list, setList] = useState([])
 	const [thereIsNext, setNext] = useState(false)
-	
-	useEffect(() => {
-		const main = async () => {
-			const { data } = await getSearchResults(searchValue)
-			history.push(`${process.env.REACT_APP_IDE_URL}/explore`)
-			setList(data)
-		}
-		searchValue && main()
-	}, [searchValue])
 
 	const main = async (page) => {
 		const explore = location.pathname === `${process.env.REACT_APP_IDE_URL}/explore` ? true : false
@@ -35,8 +25,20 @@ const QueriesList = observer(function QueriesList() {
 		setList(data)
 	}
 	useEffect(() => {
-		currentTag && main(currentPage)
+		if (currentTag && location?.state?.detail !== 'search') {
+			main(currentPage)
+		}
 	}, [currentTag, location.pathname])
+
+	useEffect(() => {
+		const main = async () => {
+			setNext(false)
+			const { data } = await getSearchResults(searchValue)
+			history.push(`${process.env.REACT_APP_IDE_URL}/explore`)
+			setList(data)
+		}
+		searchValue && main()
+	}, [searchValue])
 
 	const handleClick = queryFromGallery => {
 		if (query.map(query => query.id).indexOf(queryFromGallery.id) === -1) {

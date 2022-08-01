@@ -15,7 +15,7 @@ const ControlPanel = observer(function ControlPanel() {
 	const { user, setUser } = UserStore
 	const { isMobile, setSearchValue } = QueriesStore
 	const { fade, toggleModal, toggleLogin, toggleChangePassword, toggleApiKey } = ModalStore
-	const { setCurrentTag } = GalleryStore
+	const { setCurrentTag, currentTag } = GalleryStore
 	const [search, setSearch] = useState('')
 	const [active, setActive] = useState(1)
 	const searchValue = useDebounce(search, 500)
@@ -25,10 +25,15 @@ const ControlPanel = observer(function ControlPanel() {
 	useEffect(() => {
 		setSearchValue(searchValue)
 		if (searchValue) {
-			history.push(`${process.env.REACT_APP_IDE_URL}/explore`)
+			setCurrentTag('All queries')
+			history.push(`${process.env.REACT_APP_IDE_URL}/explore`, {detail: 'search'}	)
 			setActive(2)
 		}
 	}, [searchValue])
+
+	useEffect(() => {
+		currentTag !== 'All queries' && searchHandler()
+	}, [currentTag])
 	
 	useEffect(() => {
 		if (history.location.pathname === `${process.env.REACT_APP_IDE_URL}/explore`) {
@@ -80,10 +85,10 @@ const ControlPanel = observer(function ControlPanel() {
 						<Link className={`nav-link ${active === 1 ? 'nav-active' : 'text-primary'}`} to={process.env.REACT_APP_IDE_URL}  ><i className="bi bi-play mr-2"></i>Develop</Link>
 					</li>
 					<li className='nav-item'>
-						<Link className={`nav-link ${active === 2 ? 'nav-active' : 'text-primary'}`} to={`${process.env.REACT_APP_IDE_URL}/explore`}  ><i className="bi bi-terminal mr-2"></i>Explore</Link>
+						<Link className={`nav-link ${active === 2 ? 'nav-active' : 'text-primary'}`} to={`${process.env.REACT_APP_IDE_URL}/explore`} onClick={searchHandler} ><i className="bi bi-terminal mr-2"></i>Explore</Link>
 					</li>
 					<li className='nav-item'>
-						<Link className={`nav-link ${active === 3 ? 'nav-active' : 'text-primary'}`} to={`${process.env.REACT_APP_IDE_URL}/myqueries`} ><i className="bi bi-star mr-2"></i>My Queries</Link>
+						<Link className={`nav-link ${active === 3 ? 'nav-active' : 'text-primary'}`} to={`${process.env.REACT_APP_IDE_URL}/myqueries`} onClick={searchHandler}><i className="bi bi-star mr-2"></i>My Queries</Link>
 					</li>
 					<li className="nav-item d-lg-none">
 						<a className="nav-link text-primary" href="https://community.bitquery.io/t/how-to-get-started-with-bitquerys-blockchain-graphql-apis/13">Getting started</a>
