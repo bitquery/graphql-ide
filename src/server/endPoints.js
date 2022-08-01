@@ -163,26 +163,27 @@ module.exports = function(app, passport, db, redisClient) {
 		res.status(200).send(results)	
 	})
 
-	app.get('/api/tags', async (req, res) => {
+	app.post('/api/tags', async (req, res) => {
+		const there = req.body.explore ? 'published = 1' : 'account_id = ?'
 		const results = await query(
 			`select 
 				COUNT(ttq.tag_id) as tags_count,
 				ttq.tag_id, t.tag
 			from tags_to_queries ttq 
 			inner join (
-				select id as query_id, published
+				select id as query_id, published, account_id
 				from queries q 
 			) q 
 			on ttq.query_id = q.query_id
 			inner join tags t 
 			on t.id = ttq.tag_id
-			where published = 1 
+			where ${there} 
 			group by tag
 			union
 			select COUNT(*) as tags_count, 0 as tag_id, 'All queries' as tag
 			from queries q2 
-			where q2.published = 1
-			order by tags_count desc`, [req?.session?.passport?.user])
+			where q2.${there}
+			order by tags_count desc`, [req?.session?.passport?.user, req?.session?.passport?.user])
 		res.status(200).send(results)
 	})
 
