@@ -10,6 +10,7 @@ import StatisticsButton from './StatisticsButton'
 import { GalleryStore } from '../../../store/galleryStore'
 import ToolbarButton from './ToolbarButton'
 import copy from 'copy-to-clipboard'
+import { Form } from 'react-bootstrap'
 
 const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOpen, toggleDocExplorer, number}) => {
 	const { url } = useRouteMatch()
@@ -143,12 +144,11 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 				onClick={handleCopy}
 				visible={!!currentQuery.url}
 			/>
-			{!currentQuery.layout && <input 
-				className="endpointURL"
+			<Form.Control 
 				type="text" 
 				value={currentQuery.endpoint_url}
-				onChange={handleInputURLChange}
-			/>}
+				onChange={handleInputURLChange} 
+			/>
 			{user?.id && currentQuery.graphqlQueryID && <StatisticsButton number={number} />}
 			{!docExplorerOpen ? currentQuery.layout ? <></> : 
 			<button

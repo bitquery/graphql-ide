@@ -78,9 +78,9 @@ module.exports = function(app, passport, db, redisClient) {
                             GROUP BY query_id)
             ) b 
             ON q.id=b.query_id
-            where match (q.name, q.description) against (?)
-            or q.name like '%${req.body.search}%' or q.description like '%${req.body.search}%'
-            ORDER BY q.updated_at DESC`, [req.body.search])
+            where (q.published = 1 or q.account_id = ?) AND (match (q.name, q.description) against (?)
+            or q.name like ? or q.description like ?)
+            ORDER BY q.updated_at DESC`, [req.session.passport.user, req.body.search, `%${req.body.search}%`, `%${req.body.search}%`])
             res.status(200).send(results)
         } catch (error) {
             console.log(error)
@@ -139,11 +139,11 @@ module.exports = function(app, passport, db, redisClient) {
 						GROUP BY query_id)
 		) b 
 		ON q.id=b.query_id
-		inner join tags_to_queries ttq on ttq.query_id = q.id
+		${req.params.tag === 'All queries' ? '' : `inner join tags_to_queries ttq on ttq.query_id = q.id
 		inner join (
 			SELECT id as tag_id, tag from tags
 		) ttags
-		ON ttq.tag_id = ttags.tag_id
+		ON ttq.tag_id = ttags.tag_id`}
 		${patch}
 		LIMIT ${limit}, 11`
 		let sql = {}

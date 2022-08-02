@@ -6,10 +6,13 @@
 	background-color: #ddd;
 }
 .nav-active {
-	background-color: #ddd;
-	border-radius: 10px;
-	font-weight: bold;
 	color: #000 !important;
+}
+.dropdown-toggler {
+	color: rgba(0,0,0,.5);
+	&:hover {
+		color: rgba(0,0,0,.7);
+	}
 }
 body {
 	overflow: hidden;
@@ -306,7 +309,7 @@ body {
 .graphiql__wrapper {
 	display: none;
 	flex: 1 1 auto;
-	max-width: calc(100% - 150px);
+	max-width: calc(100% - 300px);
 	&.fullwidth {
 		max-width: 100%;
 	}
@@ -424,6 +427,12 @@ body {
 		height: 0;
 	}
 }
+.link__hire {
+	padding: 0 .5rem;
+	&:hover {
+		text-decoration: none;
+	}
+}
 .profile{
 	align-items: center;
 	flex-direction: row-reverse;
@@ -431,9 +440,6 @@ body {
 	position: relative;
 	margin: 0 5px 0 0;
 	&__menu {
-		.link__hire {
-			margin: auto 1em auto 0;
-		}
 		justify-content: center;
 		padding-bottom: 5px;
 		&.dropdown{
