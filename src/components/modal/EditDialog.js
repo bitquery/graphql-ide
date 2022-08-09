@@ -10,6 +10,7 @@ import ConfirmationWindow from '../modal/ConfirmationWindow'
 import { observer } from 'mobx-react-lite'
 import { generateTags } from '../../utils/generateTags'
 import useEventListener from '../../utils/useEventListener'
+import { Modal, Form, Button } from 'react-bootstrap'
 
 const EditDialog = observer(function EditDialog({active}) {
 	const { addToast } = useToasts()
@@ -53,6 +54,7 @@ const EditDialog = observer(function EditDialog({active}) {
 		// eslint-disable-next-line 
 	}, [shared])
 	const handleCopy = () => {
+		console.log(url)
 		copy(`${window.location.protocol}//${window.location.host}${url.match(/^\/([^?\/]+)/)[0]}/${queryUrl}`)
 		addToast('Link Copied to clipboard', {appearance: 'success'})
 	}
@@ -114,26 +116,30 @@ const EditDialog = observer(function EditDialog({active}) {
 		setTags(prev => prev.filter(prevTag => prevTag !== tag))
 	}
 
-	return (
-		<div className={'modal__form '+(!active && 'modal__form_hide')}>
+	return active && (
+		<>
 			<ConfirmationWindow 
 				message={'Are you sure you want to delete this query?'} 
 				action={deleteHandler}
 			/>
-			<p>Query attributes and access control</p>
-			<div className="access-control__wrapper">
-				<i className="handler handler__close fas fa-times" onClick={closeHandler}></i>
-				<p style={{'marginBottom': '.5rem'}}>Query name (required)</p>
-				<input type="text" className="query__save"  
-					style={{'marginBottom': '1rem'}}
-					ref={nameInput}
-					value={name==='New Query' ? '' : name} onChange={queryNameHandler}
-				/>  
-				<p style={{'marginBottom': '.5rem'}}>Description (optional)</p>
-				<textarea className="query__save" rows="4"
-					style={{'marginBottom': '1rem'}}
-					value={description} onChange={e => setDescription(e.target.value)} 
-				/>
+			<Modal.Header>
+				<Modal.Title> Query attributes and access control </Modal.Title>
+			</Modal.Header>
+			<Modal.Body>
+				<Form.Group>
+					<Form.Label>Query name (required)</Form.Label>
+					<Form.Control ref={nameInput} type="email" 
+						value={name==='New Query' ? '' : name}
+						onChange={queryNameHandler} 
+					/>
+				</Form.Group>
+				<Form.Group>
+					<Form.Label>Description (optional)</Form.Label>
+					<Form.Control as="textarea" rows={4}
+						value={description}
+						onChange={e => setDescription(e.target.value)} 
+					/>
+				</Form.Group>
 				<div className="tags__list">
 					{ tags.length ? tags.map(tag => 
 						<div 
@@ -142,9 +148,9 @@ const EditDialog = observer(function EditDialog({active}) {
 						>
 							#{tag}
 						</div>) : null }
-						<input 
+						<Form.Control
 							ref={tagsInput}
-							type="tags"
+							type="text"
 							placeholder='Add tags here'
 							className="tags__input"
 							value={inputTagValue}
@@ -192,27 +198,20 @@ const EditDialog = observer(function EditDialog({active}) {
 						<ReactTooltip id="getlinkbutton" place="top"/>
 					</div>
 				</div>}
-				<div className="buttons flex" style={{'justifyContent': 'space-between', 'width': '100%'}}>
-					<button type="button" className="btn btn-secondary btn-sm" onClick={closeHandler}>
-						Cancel
-					</button>
+				<Form.Group className="d-flex justify-content-between">
+					<Button variant="secondary" onClick={closeHandler} >Cancel</Button>
 					<span data-tip={!name ? 'Name is required' : ''} data-for="savequerybutton">
-						<button  type="button" className="btn btn-primary btn-sm" 
-							onClick={saveHandler} 
+						<Button 
+							variant="primary"
+							onClick={saveHandler}
 							disabled={(!nameInput.current.value && !name) || name==='New Query' ? true : false}
-						>
-							Save
-						</button>
+						>Save</Button>
 					</span>
 					<ReactTooltip id="savequerybutton" place="top"/>
-					<button type="button" className="btn btn-outline-danger btn-sm" 
-						onClick={confirm} disabled={!currentQuery.id ? true : false} 
-					>
-						Delete
-					</button>
-				</div>	
-			</div>
-		</div>
+					<Button variant="outline-danger" onClick={confirm} disabled={!currentQuery.id ? true : false} >Delete</Button>
+				</Form.Group>
+			</Modal.Body>
+		</>
 	)
 })
 

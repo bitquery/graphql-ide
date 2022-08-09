@@ -48,7 +48,7 @@ const ExploreComponent = observer(function ExploreComponent() {
 											key={`${tag_id}-${tags_count}`}
 											onClick={() => handleClick(tag)}
 										>
-											<span><i className="bi bi-tag"></i> { tag } </span>
+											<span>{tag_id !==0 && <i className="bi bi-tag"></i>} { tag } </span>
 											<span className="badge badge-primary badge-pill"> { tags_count } </span>
 										</li>
 									))

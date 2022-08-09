@@ -115,7 +115,7 @@ const StatisticsModal = observer(function StatisticsModal({active}) {
 		}
 	}
 	
-	return modal
+	return active && modal
 })
 
 export default StatisticsModal

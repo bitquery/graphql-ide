@@ -8,20 +8,31 @@
 		padding-left: 2px;
 		padding-right: 2px;
 		background-color: #fff;
-		border-radius: 5px;
-		border-bottom: 1px solid #aaa;
+		border: 1px solid #ced4da;
+		border-radius: 0.25rem;
 	}
 	&__input {
 		display: flex;
 		flex: 1;
 		min-width: 120px;
-		font-size: 14px;
-		padding: 10px;
+		display: block;
+		height: calc(1.5em + 0.75rem + 2px);
+		padding: 0.375rem 0.75rem;
+		font-size: 1rem;
+		font-weight: 400;
+		line-height: 1.5;
+		color: #495057;
 		background-color: #fff;
-		border-radius: 5px;
+		background-clip: padding-box;
 		border: none;
-		outline: none;
-		height: 42px;
+		transition: none;
+		&:focus {
+			color: #495057;
+			background-color: #fff;
+			border-color: none !important;
+			outline: 0;
+			box-shadow: none !important;
+		}
 	}
 	&__tag {
 		height: 24px;
