@@ -180,24 +180,6 @@ const EditDialog = observer(function EditDialog({active}) {
 						</div>
 					</div>
 				</div>
-				{shared && <div className="input-group mb-3">
-					<input type="text" className="form-control query-link" 
-						value={queryUrl && (`${window.location.protocol}://${window.location.host}${url.match(/^\/([^?\/]+)/)[0]}/${queryUrl}`||'')} 
-						readOnly 
-						placeholder="Query link" aria-label="Query link" aria-describedby="basic-addon2"
-					/>
-					<div className="input-group-append">
-						<button className="btn btn-outline-secondary"
-							data-tip="Get query link"
-							data-for="getlinkbutton"
-							type="button" 
-							onClick={handleCopy}
-						>
-								<i className="fas fa-link" />
-						</button>
-						<ReactTooltip id="getlinkbutton" place="top"/>
-					</div>
-				</div>}
 				<Form.Group className="d-flex justify-content-between">
 					<Button variant="secondary" onClick={closeHandler} >Cancel</Button>
 					<span data-tip={!name ? 'Name is required' : ''} data-for="savequerybutton">

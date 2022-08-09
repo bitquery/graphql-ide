@@ -615,6 +615,11 @@ body {
 	border-radius: 10px;
 }
 .statisticsTable {
+	tr:nth-child(even) {
+		td:before {
+			background-color: #fff;
+		}
+	}
 	.metrics {
 		&__helper {
 			background: linear-gradient(#f9f9f9,#ececec);
@@ -633,6 +638,7 @@ body {
 	td {
 		position: relative;
 		vertical-align: inherit;
+		z-index: 0;
 	}
 	tbody {
 		td:nth-child(2):after {
@@ -657,7 +663,6 @@ body {
 		width: calc(100% - var(--part));
 		left: var(--part);
 		height: 100%;
-
 		background-color: rgb(240, 240, 240);
 	}
 }

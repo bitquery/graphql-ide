@@ -66,10 +66,9 @@ const StatisticsModal = observer(function StatisticsModal({active}) {
 					</div>
 		} else
 		if (metrics) {
-			modal = <div className={'modal__form '+(!active && 'modal__form_hide')}>
-						
+			modal = <div className={'modal__form m-4 '+(!active && 'modal__form_hide')}>
 						<i className="handler handler__close fas fa-times" onClick={closeHandler} />
-						<table className="table table-bordered table-striped statisticsTable mt-4">
+						<table className="table table-bordered table-striped statisticsTable">
 							<thead>
 								<tr>
 									<th scope="col">Metric</th>
