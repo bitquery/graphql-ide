@@ -109,7 +109,7 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 
 	const toolbar = (!dashboardOwner || !isLoaded) ? null : <div className="topBarWrap">
 		<div className="topBar">
-			{!tagListIsOpen &&<i className="bi bi-chevron-double-right cursor-pointer" onClick={toggleTagsList} />}
+			{!tagListIsOpen &&<i className="bi bi-chevron-double-right cursor-pointer ml-2" onClick={toggleTagsList} />}
 			{dashboardOwner && !(!currentQuery.id || !currentQuery.saved) && currentQuery.layout 
 				&& <button type="button" className="topBar__button" onClick={switchMode}>Edit</button>}
 			<ToolbarButton
@@ -150,13 +150,11 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 				onChange={handleInputURLChange} 
 			/>
 			{user?.id && currentQuery.graphqlQueryID && <StatisticsButton number={number} />}
-			{!docExplorerOpen ? currentQuery.layout ? <></> : 
-			<button
-				className="docExplorerShow"
-				onClick={() => toggleDocExplorer(prev => !prev)}
-				aria-label="Open Documentation Explorer">
+			{!docExplorerOpen ? currentQuery.layout ? <></> :
+			<div className="newGallery__topbar" aria-label="Open Documentation Explorer">
+				<i className="bi bi-chevron-double-left cursor-pointer mr-2 text-primary" onClick={() => toggleDocExplorer(prev => !prev)} />
 				Docs
-			</button> : currentQuery.layout ? <></> :
+			</div> : currentQuery.layout ? <></> :
 			<div className="doc-explorer-title-bar">
 				<div className="doc-explorer-title">
 					Documentation Explorer

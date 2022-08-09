@@ -75,7 +75,7 @@ const QueriesList = observer(function QueriesList() {
 											<span className="mr-2">{item.name}</span>
 											{typeof item.tags === 'string' && item.tags.split(',').map(tag => <span className="badge badge-secondary mr-2">#{tag}</span>)}
 										</div>
-										<small>{`${item.description}. `}Created by <strong>{item.owner_name}</strong> at {Math.floor((new Date().getTime() - new Date(item.created_at).getTime()) / (1000*60*60*24))} days ago</small>
+										<small>{item.description !== null && `${item.description}. `}Created by <strong>{item.owner_name}</strong> at {Math.floor((new Date().getTime() - new Date(item.created_at).getTime()) / (1000*60*60*24))} days ago</small>
 									</div>
 								</div>
 							</li>
