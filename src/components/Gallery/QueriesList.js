@@ -32,12 +32,19 @@ const QueriesList = observer(function QueriesList() {
 
 	useEffect(() => {
 		const main = async () => {
-			setNext(false)
-			const { data } = await getSearchResults(searchValue)
-			history.push(`${process.env.REACT_APP_IDE_URL}/explore`)
-			setList(data)
+			if (searchValue === '') {
+				const explore = location.pathname === `${process.env.REACT_APP_IDE_URL}/explore` ? true : false
+				const { data } = await getTaggedQueriesList(currentTag, currentPage * queriesOnPage, explore)
+				data.length > queriesOnPage ? setNext(true) : setNext(false)
+				setList(data)
+			} else if (searchValue) {
+				setNext(false)
+				const { data } = await getSearchResults(searchValue)
+				history.push(`${process.env.REACT_APP_IDE_URL}/explore`)
+				setList(data)
+			}
 		}
-		searchValue && main()
+		main()
 	}, [searchValue])
 
 	const handleClick = queryFromGallery => {
