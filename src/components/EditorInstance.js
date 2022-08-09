@@ -125,7 +125,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
     	overwrap.current.addEventListener('mouseup', onMouseUp);
 	}
 	const getQueryTypes = (query) => {
-		const typeInfo = new TypeInfo(schema)
+		const typeInfo = new TypeInfo(schema[debouncedURL])
 		let typesMap = {}
 		const queryNodes = []
 		let depth = 0
@@ -236,6 +236,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 		let indexOfWidget = plugins.map(p => p.id).indexOf(currentQuery.widget_id)
 		const unusablePair = indexOfData < 0 || indexOfWidget < 0
 		let displayed_data = unusablePair ? Object.keys(queryType)[Object.keys(queryType).length-1] : currentQuery.displayed_data
+		console.log(displayed_data)
 		if (unusablePair) {
 			updateQuery({
 				displayed_data,
@@ -259,6 +260,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 						if (currentQuery.data_type === 'flatten') {
 							values = flattenData(json.data)
 						} else {
+							console.log(json.data, displayed_data)
 							values = getValueFrom(json.data, displayed_data)
 						}
 					} else {
@@ -291,18 +293,11 @@ const EditorInstance = observer(function EditorInstance({number})  {
 			ReactTooltip.hide(executeButton.current)
 		})
 		// eslint-disable-next-line 
-	}, [JSON.stringify(currentQuery), schema, JSON.stringify(queryTypes)])
-	useEffect(() => {
-		(!dataSource.values && 
-		currentQuery.query &&
-		currentQuery.saved &&
-		number === index &&
-		schema) && getResult()
-		// eslint-disable-next-line 
-	}, [schema])
+	}, [JSON.stringify(currentQuery), schema[debouncedURL], JSON.stringify(queryTypes)])
+	
 	const editQueryHandler = useCallback(handleSubject => {
 		if ('query' in handleSubject) {
-			const facts = getQueryFacts(schema, handleSubject.query)
+			const facts = getQueryFacts(schema[debouncedURL], handleSubject.query)
 			if (facts) {
 				const { variableToType } = facts
 				if ((JSON.stringify(variableToType) !== JSON.stringify(_variableToType)) 
@@ -323,7 +318,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 		}
 		setAccordance(false)
 		// eslint-disable-next-line 
-	}, [user, schema, queryTypes, index])
+	}, [user, schema[debouncedURL], queryTypes, index])
 	const setConfig = (config) => {
 		if (number === index) {
 			if (JSON.stringify(currentQuery.config) !== JSON.stringify(config, stringifyIncludesFunction)) {
@@ -331,7 +326,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 			}
 		}
 	}
-	const fetcher = (graphQLParams, cacheControl = 'no-cache') => {
+	const fetcher = (graphQLParams) => {
 		let key = user ? user.key : null
 		let keyHeader = {'X-API-KEY': key}
 		return fetch(
@@ -341,8 +336,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 				headers: {
 					Accept: 'application/json',
 					'Content-Type': 'application/json',
-					...keyHeader,
-					'Cache-Control': cacheControl
+					...keyHeader
 				},
 				body: JSON.stringify(graphQLParams),
 				credentials: 'same-origin',
@@ -350,7 +344,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 		)
 	}
 	useEffect(() => {
-		if (number === index && user !== null) {
+		if (number === index && user !== null && !(debouncedURL in schema)) {
 			const fetchSchema = () => {
 				setLoading(true)
 				let introspectionQuery = getIntrospectionQuery()
@@ -360,7 +354,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 					query: introspectionQuery,
 					operationName: introspectionQueryName,
 				}
-				fetcher(graphQLParams, 'max-age=3600')
+				fetcher(graphQLParams)
 				.then(response => {
 					if (!response.ok) {
 						throw new Error(response.status);
@@ -369,8 +363,8 @@ const EditorInstance = observer(function EditorInstance({number})  {
 				})
 				.then(result => {
 					if (typeof result !== 'string' && 'data' in result) {
-						let schema = buildClientSchema(result.data)
-						setSchema(schema)
+						let newSchema = buildClientSchema(result.data)
+						setSchema({...schema, [debouncedURL]: newSchema})
 					}
 					setLoading(false)
 					setErrorLoading(false)
@@ -461,7 +455,7 @@ ${WidgetComponent.id === 'table.widget' ? '<link href="https://unpkg.com/tabulat
 				>
 					{!currentQuery.layout && <GraphqlEditor
 						readOnly={!!currentQuery?.url && !!currentQuery.id}
-						schema={schema}
+						schema={schema[debouncedURL]}
 						query={query[number].query}
 						number={number}
 						variables={query[number].variables}
@@ -532,7 +526,7 @@ ${WidgetComponent.id === 'table.widget' ? '<link href="https://unpkg.com/tabulat
 							}
 					</div>
 				</div>
-				{docExplorerOpen && <DocExplorer schema={schema} />}
+				{docExplorerOpen && <DocExplorer schema={schema[debouncedURL]} />}
 			</div>
 		</div> 
 	)

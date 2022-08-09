@@ -48,7 +48,7 @@ class Queries {
 	showGallery = true
 	showSideBar = true
 	queryJustSaved = false
-	schema = null
+	schema = {}
 	isMobile = window.innerWidth <= 768
 	gettingResult = false
 	isLoaded = false
@@ -152,7 +152,6 @@ class Queries {
 		this.sharedQueries = [...queries]
 	}
 	updateQuery = (params, index, id) => {
-		console.log(params)
 		if (params.query) this.query[index].query = params.query
 		if (params.variables) this.query[index].variables = params.variables
 		if (params.config) this.query[index].config = params.config
@@ -184,7 +183,6 @@ class Queries {
 		if ('isResizable' in params) this.query[index].isResizable = params.isResizable
 		this.query[index].id = id || id===null ? id : this.query[index].id
 		this.query[index].saved = ('saved' in params) ? params.saved : this.query[index].saved
-		console.log('query saved - ', this.query[index].saved)
 		this.setCurrentQuery(index)
 	}
 	removeQuery = index => {
@@ -327,7 +325,6 @@ class Tabs {
 		this.tabs[this.index].name = name
 	}
 	addNewTab = name => {
-		QueriesStore.setSchema(null)
 		this.incID()
 		this.tabs.push({
 			name: name,

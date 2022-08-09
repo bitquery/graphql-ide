@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import 'codemirror/lib/codemirror.css'
 import { height_of } from '../../../utils/common'
+import { TabsStore } from '../../../store/queriesStore'
 
 const AUTO_COMPLETE_AFTER_KEY = /^[a-zA-Z0-9_@(]$/;
 
@@ -144,8 +145,11 @@ export default class QueryEditor extends Component {
 		const CodeMirror = require('codemirror');
 
 		this.ignoreChangeEvent = true;
-		this.editor.options.readOnly = this.props.readOnly
-		this.editor.options.hintOptions.hint = this.props.readOnly ? () => {} : undefined
+		if (TabsStore.index === this.props.number) {
+			this.editor.setOption('readOnly', this.props.readOnly)
+			this.editor.options.hintOptions.hint = this.props.readOnly ? () => {} : undefined
+			CodeMirror.signal(this.editor, 'optionChange', this.editor);
+		}
 		if (this.props.schema && JSON.stringify(this.props.schema) !== JSON.stringify(prevProps.schema) && this.editor) {
 			this.editor.options.lint.schema = this.props.schema;
 			this.editor.state.lint.linterOptions = { schema: this.props.schema };

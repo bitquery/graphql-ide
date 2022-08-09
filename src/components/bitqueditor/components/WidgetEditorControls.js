@@ -28,11 +28,11 @@ const WidgetEditorControls = observer(
 
 	return (
 		<nav className="navbar navbar-expand-lg navbar-light bg-light">
-			{!currentQuery?.url && <ResponseDataType 
+			{<ResponseDataType 
 				dataSource={dataSource}
 				setDataSource={setDataSource}
 			/>}
-			{!currentQuery?.url && <DisplayedData 
+			{<DisplayedData 
 				model={model}
 				number={number}
 				dataWidgets={dataWidgets}
@@ -41,7 +41,7 @@ const WidgetEditorControls = observer(
 				dataSource={dataSource}
 				setDataSource={setDataSource}
 			/>}
-			{!currentQuery?.url && <WidgetSelect 
+			{<WidgetSelect 
 				name={name}
 				dataWidgets={dataWidgets}
 				dataIndexInModel={dataIndexInModel}
