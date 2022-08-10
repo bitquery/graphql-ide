@@ -39,6 +39,7 @@ const QueriesList = observer(function QueriesList() {
 				setList(data)
 			} else if (searchValue) {
 				setNext(false)
+				setCurrentPage(0)
 				const { data } = await getSearchResults(searchValue)
 				history.push(`${process.env.REACT_APP_IDE_URL}/explore`)
 				setList(data)

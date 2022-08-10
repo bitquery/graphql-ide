@@ -32,7 +32,7 @@ const ControlPanel = observer(function ControlPanel() {
 	}, [searchValue])
 
 	useEffect(() => {
-		currentTag !== 'All queries' && searchHandler()
+		currentTag !== 'All queries' && setSearch('')
 	}, [currentTag])
 	
 	useEffect(() => {
@@ -45,8 +45,13 @@ const ControlPanel = observer(function ControlPanel() {
 		}
 	}, [location.pathname])
 
-	const searchHandler = () => {
-		setSearch('')
+	const searchHandler = (e) => {
+		e.preventDefault()
+		if (e.which = 13) {
+			return false
+		} else {
+			setSearch('')
+		}
 	}
 
 	const changePasswordHadler = () => {
@@ -76,19 +81,19 @@ const ControlPanel = observer(function ControlPanel() {
 			<button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 				<span className="navbar-toggler-icon"></span>
 			</button>
-			<div className="collapse navbar-collapse" id="navbarSupportedContent">
-				<form className="form-inline my-2 my-lg-0">
-					<input value={search} onChange={e=>setSearch(e.target.value)} ref={element=>(element||{}).onsearch=searchHandler} className="form-control form-control-sm mr-sm-2" type="search" placeholder="Search" aria-label="Search" />
+			<div className="collapse navbar-collapse" id="navbarSupportedContent" >
+				<form className="form-inline my-2 my-lg-0" onSubmit={searchHandler} action="search">
+					<input value={search} onChange={e=>setSearch(e.target.value)} className="form-control form-control-sm mr-sm-2" type="search" placeholder="Search" aria-label="Search" />
 				</form>
 				<ul className="navbar-nav mr-auto mt-2 mt-lg-0">
 					<li className='nav-item'>
 						<Link className={`nav-link ${active === 1 ? 'nav-active' : 'text-primary'}`} to={process.env.REACT_APP_IDE_URL}  ><i className="bi bi-play mr-2"></i>Develop</Link>
 					</li>
 					<li className='nav-item'>
-						<Link className={`nav-link ${active === 2 ? 'nav-active' : 'text-primary'}`} to={`${process.env.REACT_APP_IDE_URL}/explore`} onClick={searchHandler} ><i className="bi bi-terminal mr-2"></i>Explore</Link>
+						<Link className={`nav-link ${active === 2 ? 'nav-active' : 'text-primary'}`} to={`${process.env.REACT_APP_IDE_URL}/explore`} onClick={()=>setSearch('')} ><i className="bi bi-terminal mr-2"></i>Explore</Link>
 					</li>
 					<li className='nav-item'>
-						<Link className={`nav-link ${active === 3 ? 'nav-active' : 'text-primary'}`} to={`${process.env.REACT_APP_IDE_URL}/myqueries`} onClick={searchHandler}><i className="bi bi-star mr-2"></i>My Queries</Link>
+						<Link className={`nav-link ${active === 3 ? 'nav-active' : 'text-primary'}`} to={`${process.env.REACT_APP_IDE_URL}/myqueries`} onClick={()=>setSearch('')}><i className="bi bi-star mr-2"></i>My Queries</Link>
 					</li>
 					<li className="nav-item d-lg-none">
 						<a className="nav-link text-primary" href="https://community.bitquery.io/t/how-to-get-started-with-bitquerys-blockchain-graphql-apis/13">Getting started</a>
@@ -103,7 +108,7 @@ const ControlPanel = observer(function ControlPanel() {
 						<a className="nav-link text-primary" href="# " onClick={apiKeyHandler}>API Key</a>
 					</li>
 					<li className="nav-item d-lg-none">
-						<a className="nav-link text-primary" href="https://graphql.bitquery.io/user/account">Profile</a>
+						<a className="nav-link text-primary" href="https://graphql.bitquery.io/user/account">Account</a>
 					</li>
 					<li className="nav-item d-lg-none">
 						<a className="nav-link text-primary" href="# " onClick={changePasswordHadler}>Change password</a>

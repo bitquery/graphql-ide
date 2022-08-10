@@ -145,7 +145,7 @@ const TabsComponent = observer(() => {
 											? tab.name : `*${tab.name}`}
 										</span>
 								}
-								<i className="tab__close fas fa-times" onClick={e=>removeTabHandler(i, e)} />
+								<i className="tab__close bi bi-x" onClick={e=>removeTabHandler(i, e)} />
 							</a>
 						</li>
 					))

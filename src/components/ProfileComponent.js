@@ -51,7 +51,7 @@ const Profile = observer(() => {
 				{ user.role === 'admin' &&  <Dropdown.Item href="https://graphql.bitquery.io/admin/accounts">Admin</Dropdown.Item>}
 				{ user.role === 'admin' && <Dropdown.Divider/> }
 				<Dropdown.Item href="# " onClick={apiKeyHandler}>API Key</Dropdown.Item>
-				<Dropdown.Item href="https://graphql.bitquery.io/user/account">Profile</Dropdown.Item>
+				<Dropdown.Item href="https://graphql.bitquery.io/user/account">Account</Dropdown.Item>
 				<Dropdown.Item href="# " onClick={changePasswordHadler}>Change password</Dropdown.Item>
 				<Dropdown.Item href="# " onClick={logOut}>Logout</Dropdown.Item>
 			</Dropdown.Menu>

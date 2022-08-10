@@ -377,6 +377,10 @@ body {
 		&__close{
 			margin-left: 15px;
 			padding-left: 12px;
+			&:hover:before {
+				background-color: #ececec;
+				border-radius: 5px;
+			}
 		}
 		&__add {
 			opacity: 0.5;
