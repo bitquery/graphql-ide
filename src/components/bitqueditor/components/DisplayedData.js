@@ -9,11 +9,7 @@ const DisplayedData = observer(function DisplayedData({model, dataWidgets, setDa
 	const { index } = TabsStore
 	const { user } = UserStore
 	const onChangeHandle = (value, i) => {
-		if (user && currentQuery.account_id === user.id ) {
-			updateQuery({displayed_data: value, saved: false}, index)
-		} else {
-			updateQuery({displayed_data: value, saved: false, url: null, account_id: user.id}, index, null)
-		}
+		updateQuery({displayed_data: value, saved: false}, index)
 		let currentNodeNumber = Object.keys(model).indexOf(value)
 		let currentWidgetNubmer = plugins.map(plugin => plugin.id).indexOf(currentQuery.widget_id)
 		let availableWidgetNumbers = dataWidgets[currentNodeNumber].map(

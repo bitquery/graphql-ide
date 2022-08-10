@@ -182,7 +182,9 @@ class Queries {
 		if ('isDraggable' in params) this.query[index].isDraggable = params.isDraggable
 		if ('isResizable' in params) this.query[index].isResizable = params.isResizable
 		this.query[index].id = id || id===null ? id : this.query[index].id
-		this.query[index].saved = ('saved' in params) ? params.saved : this.query[index].saved
+		if (!this.query[index].url && 'saved' in params) {
+			this.query[index].saved = params.saved
+		}
 		this.setCurrentQuery(index)
 	}
 	removeQuery = index => {
