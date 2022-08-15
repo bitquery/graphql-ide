@@ -1,6 +1,7 @@
 @import "./components/Gallery/newGallery.scss";
 @import "./components/Gallery/queriesList.scss";
 @import "./components/modal/editDialog.scss";
+@import "./components/codeSnippet.scss";
 
 .tag-active, .tag-active:hover {
 	background-color: #ddd;
@@ -349,6 +350,30 @@ body {
 	}
 	.editorWrap {
 		overflow-y: hidden;
+	}
+}
+.docs_icon {
+	height: 35px;
+	width: 25px;
+	padding: 10px 5px;
+	cursor: pointer;
+	border-radius: 5px;
+	&.active {
+		background-color: #ececec;
+	}
+	&:hover {
+		background-color: #ececec;
+	}
+}
+.bi-code-slash {
+	cursor: pointer;
+	padding: 5px;
+	border-radius: 5px;
+	&.active {
+		background-color: #ececec;
+	}
+	&:hover {
+		background-color: #ececec;
 	}
 }
 .tabs {
@@ -704,6 +729,7 @@ body {
     height: 100%;
     overflow: auto;
 	background: white;
+	border-left: 1px solid #d0d0d0;
   }
   
   .doc-explorer-title-bar,

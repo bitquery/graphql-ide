@@ -152,8 +152,8 @@ class Queries {
 		this.sharedQueries = [...queries]
 	}
 	updateQuery = (params, index, id) => {
-		if (params.query) this.query[index].query = params.query
-		if (params.variables) this.query[index].variables = params.variables
+		if (params.query || params.query === '') this.query[index].query = params.query
+		if (params.variables || params.variables === '') this.query[index].variables = params.variables
 		if (params.config) this.query[index].config = params.config
 		if (typeof params.widget_id === 'string') {
 			this.query[index].widget_id = params.widget_id

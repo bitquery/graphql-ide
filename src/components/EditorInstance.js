@@ -38,6 +38,7 @@ import { flattenData } from './flattenData.js'
 import { stringifyIncludesFunction } from '../utils/common';
 import modalStore from '../store/modalStore.js';
 import { GalleryStore } from '../store/galleryStore.js';
+import CodeSnippetComponent from './CodeSnippetComponent.js';
 
 
 const EditorInstance = observer(function EditorInstance({number})  {
@@ -47,7 +48,8 @@ const EditorInstance = observer(function EditorInstance({number})  {
 	const { user }  = UserStore
 	const { query, updateQuery, currentQuery, isMobile,
 		setMobile, showSideBar, schema, setSchema, isLoaded, logQuery } = QueriesStore
-	const [docExplorerOpen, toggleDocExplorer] = useState(false)
+	const [docExplorerOpen, setDocExplorerOpen] = useState(false)
+	const [codeSnippetOpen, setCodeSnippetOpen] = useState(false)
 	const [_variableToType, _setVariableToType] = useState(null)
 	const [loading, setLoading] = useState(false)
 	const [errorLoading, setErrorLoading] = useState(false)
@@ -97,7 +99,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 	}
 	useEffect(() => {
 		setupExecButtonPosition()
-	}, [docExplorerOpen])
+	}, [docExplorerOpen, codeSnippetOpen])
 	const workspaceResizer = e => {
 		if (e.target && e.target.className && typeof e.target.className.indexOf === 'function') { 
 			if (e.target.className.indexOf('workspace__sizechanger') !== 0) return 
@@ -407,6 +409,15 @@ ${WidgetComponent.id === 'table.widget' ? '<link href="https://unpkg.com/tabulat
 		// eslint-disable-next-line 
 	}, [WidgetComponent.id, JSON.stringify(currentQuery), user])
 
+	const toggleDocs = () => {
+		codeSnippetOpen && setCodeSnippetOpen(false)
+		setDocExplorerOpen(prev => !prev)
+	}
+	const toggleCodeSnippet = () => {
+		docExplorerOpen && setDocExplorerOpen(false)
+		setCodeSnippetOpen(prev => !prev)
+	}
+
 	return (
 		<div 
 			className={'graphiql__wrapper ' + 
@@ -420,7 +431,9 @@ ${WidgetComponent.id === 'table.widget' ? '<link href="https://unpkg.com/tabulat
 				queryEditor={queryEditor}
 				variablesEditor={variablesEditor}
 				docExplorerOpen={docExplorerOpen}
-				toggleDocExplorer={toggleDocExplorer}
+				toggleDocExplorer={toggleDocs}
+				toggleCodeSnippet={toggleCodeSnippet}
+				codeSnippetOpen={codeSnippetOpen}
 			/>
 			<div className={'over-wrapper ' + (!currentQuery.layout ? 'active' : '')}  ref={overwrap}>
 				<ReactTooltip 
@@ -527,6 +540,7 @@ ${WidgetComponent.id === 'table.widget' ? '<link href="https://unpkg.com/tabulat
 					</div>
 				</div>
 				{docExplorerOpen && <DocExplorer schema={schema[debouncedURL]} />}
+				{codeSnippetOpen && <CodeSnippetComponent />}
 			</div>
 		</div> 
 	)

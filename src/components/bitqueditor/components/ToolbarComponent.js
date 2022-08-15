@@ -11,8 +11,9 @@ import { GalleryStore } from '../../../store/galleryStore'
 import ToolbarButton from './ToolbarButton'
 import copy from 'copy-to-clipboard'
 import { Form } from 'react-bootstrap'
+import DocsIcon from '../../icons/DocsIcon'
 
-const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOpen, toggleDocExplorer, number}) => {
+const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOpen, toggleDocExplorer, toggleCodeSnippet, codeSnippetOpen, number}) => {
 	const { url } = useRouteMatch()
 	const { currentQuery, saveQuery, updateQuery, setQuery,
 		isLoaded, queryIsTransfered, setQueryIsTransfered } = QueriesStore
@@ -41,20 +42,6 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 	const switchMode = () => {
 		setMode(!mode)
 		updateQuery({isDraggable: !currentQuery.isDraggable, isResizable: !currentQuery.isResizable}, index)
-	}
-	const saveHandle = () => {
-		if (user) {
-			if (currentQuery.id === null) {
-				toggleEditDialog()
-				toggleModal()
-			} else if (!currentQuery.saved) {
-				!currentQuery.layout ? saveQuery(currentQuery) 
-					: saveQuery({...currentQuery, isDraggable: false, isResizable: false})
-				currentQuery.layout && setMode(!mode)
-			}
-		} else {
-			addToast('Login required to save or share queries', {appearance: 'error'})
-		}
 	}
 	const prettifyQuery = () => {
 		const editor = queryEditor.current.getEditor()
@@ -150,25 +137,10 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 				onChange={handleInputURLChange} 
 			/>
 			{user?.id && currentQuery.graphqlQueryID && <StatisticsButton number={number} />}
-			{!docExplorerOpen ? currentQuery.layout ? <></> :
 			<div className="newGallery__topbar" aria-label="Open Documentation Explorer">
-				<i className="bi bi-chevron-double-left cursor-pointer mr-2 text-primary" onClick={() => toggleDocExplorer(prev => !prev)} />
-				Docs
-			</div> : currentQuery.layout ? <></> :
-			<div className="doc-explorer-title-bar">
-				<div className="doc-explorer-title">
-					Documentation Explorer
-				</div>
-				<div className="doc-explorer-rhs">
-					<button 
-						className="docExplorerHide" 
-						aria-label="Close Documentation Explorer"
-						onClick={() => toggleDocExplorer(prev => !prev)}
-					>
-						{'\u2715'}
-					</button>
-				</div>
-			</div>}
+				<DocsIcon className={"docs_icon"+(docExplorerOpen ? " active" : '')} onClick={toggleDocExplorer} data-toggle="tooltip" data-placement="top" title="Tooltip on top" />
+			</div>
+			<i className={"bi bi-code-slash ml-2" + (codeSnippetOpen ? " active" : '')} onClick={toggleCodeSnippet} />
 		</div>
 	</div>
 	return toolbar

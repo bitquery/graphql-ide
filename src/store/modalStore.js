@@ -48,7 +48,7 @@ class Modal {
 		if (settings) {
 			this.fade = settings.fade
 		} else {
-			this.fade &&= false
+			this.fade = this.fade && false
 		}
 	}
 	toggleLogin = (e) => {
