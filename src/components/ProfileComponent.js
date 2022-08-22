@@ -39,6 +39,10 @@ const Profile = observer(() => {
 			<UserIcon />
 		</div>
 	) : <Dropdown className={'d-none d-lg-block'}>
+			<a className='link__hire' target='_blank' href='https://t.me/bloxy_info/'>
+				<i class="bi bi-telegram"></i>
+			</a>
+			<a className='link__hire' target='_blank' href='https://community.bitquery.io/'>Forum</a>
 			<a className='link__hire' target='_blank' href='https://community.bitquery.io/t/how-to-get-started-with-bitquerys-blockchain-graphql-apis/13'>Getting started</a>
 			<a className='link__hire' target='_blank' href='https://angel.co/company/bitquery/jobs'>We are hiring!</a>
 			<Dropdown.Toggle className="cursor-pointer dropdown-toggler" as={'a'} >
@@ -52,6 +56,7 @@ const Profile = observer(() => {
 				{ user.role === 'admin' && <Dropdown.Divider/> }
 				<Dropdown.Item href="# " onClick={apiKeyHandler}>API Key</Dropdown.Item>
 				<Dropdown.Item href="https://graphql.bitquery.io/user/account">Account</Dropdown.Item>
+				<Dropdown.Item href="https://graphql.bitquery.io/user/billing">Billing</Dropdown.Item>
 				<Dropdown.Item href="# " onClick={changePasswordHadler}>Change password</Dropdown.Item>
 				<Dropdown.Item href="# " onClick={logOut}>Logout</Dropdown.Item>
 			</Dropdown.Menu>

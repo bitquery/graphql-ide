@@ -71,7 +71,7 @@ const ControlPanel = observer(function ControlPanel() {
 
 	return (
 		<div className="navbar navbar-expand-lg navbar-light bg-white mb-2">
-			<a href="https://bitquery.io" className="navbar-brand topBar__logo">
+			<a href="https://graphql.bitquery.io" className="navbar-brand topBar__logo">
 				<img
 					className="topBar__logo__img"
 					src={logo}
@@ -83,7 +83,7 @@ const ControlPanel = observer(function ControlPanel() {
 			</button>
 			<div className="collapse navbar-collapse" id="navbarSupportedContent" >
 				<form className="form-inline my-2 my-lg-0" onSubmit={searchHandler} action="search">
-					<input value={search} onChange={e=>setSearch(e.target.value)} className="form-control form-control-sm mr-sm-2" type="search" placeholder="Search" aria-label="Search" />
+					<input value={search} onChange={e=>setSearch(e.target.value)} className="form-control form-control-sm mr-sm-2" type="search" placeholder="Search Queries" aria-label="Search" />
 				</form>
 				<ul className="navbar-nav mr-auto mt-2 mt-lg-0">
 					<li className='nav-item'>
@@ -94,6 +94,12 @@ const ControlPanel = observer(function ControlPanel() {
 					</li>
 					<li className='nav-item'>
 						<Link className={`nav-link ${active === 3 ? 'nav-active' : 'text-primary'}`} to={`${process.env.REACT_APP_IDE_URL}/myqueries`} onClick={()=>setSearch('')}><i className="bi bi-star mr-2"></i>My Queries</Link>
+					</li>
+					<li className="nav-item d-lg-none">
+						<a className="nav-link text-primary" href="https://t.me/bloxy_info//"><i class="bi bi-telegram mr-2"></i>Telegram</a>
+					</li>
+					<li className="nav-item d-lg-none">
+						<a className="nav-link text-primary" href="https://community.bitquery.io/">Forum</a>
 					</li>
 					<li className="nav-item d-lg-none">
 						<a className="nav-link text-primary" href="https://community.bitquery.io/t/how-to-get-started-with-bitquerys-blockchain-graphql-apis/13">Getting started</a>
@@ -109,6 +115,9 @@ const ControlPanel = observer(function ControlPanel() {
 					</li>
 					<li className="nav-item d-lg-none">
 						<a className="nav-link text-primary" href="https://graphql.bitquery.io/user/account">Account</a>
+					</li>
+					<li className="nav-item d-lg-none">
+						<a className="nav-link text-primary" href="https://graphql.bitquery.io/user/billing">Billing</a>
 					</li>
 					<li className="nav-item d-lg-none">
 						<a className="nav-link text-primary" href="# " onClick={changePasswordHadler}>Change password</a>

@@ -11,8 +11,13 @@
 }
 .dropdown-toggler {
 	color: rgba(0,0,0,.5);
+	border: 1px solid #fff;
+	padding: 0.5rem;
 	&:hover {
+		border: 1px solid #ececec;
+    	border-radius: 50%;
 		color: rgba(0,0,0,.7);
+		background-color: #ececec;
 	}
 }
 body {
@@ -630,6 +635,9 @@ body {
 			}
 		}
 	}
+}
+.profile-toggler:hover {
+	background-color: #ececec;
 }
 .metrics__info {
 	position: absolute;
