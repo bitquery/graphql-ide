@@ -2,6 +2,7 @@ const LocalStrategy = require('passport-local').Strategy
 const bcrypt = require('bcrypt')
 const fs = require('fs')
 const path = require('path')
+const axios = require('axios')
 const fileName = 'disposable-email-provider-domains'
 const filePath = path.join(__dirname, '..', '..', fileName)
 const fileCache = {}
@@ -14,8 +15,26 @@ const checkDisposableEmail = (email, disposableDomains, done, cb) => {
 		return done(null, false, {
 			message: 'You cannot register with this email address'
 		})
+	} else {
+		axios.get(`https://block-temporary-email.com/check/email/${emailTrim}`, {
+			headers: {
+				'x-api-key': process.env.TEMPORARY_EMAIL_KEY
+			}
+		}).then(({ data }) => {
+			if (data.temporary) {
+				return done(null, false, {
+					message: 'You cannot register with this email address'
+				})
+			} else {
+				return cb()
+			}
+		}).catch(error => {
+			console.log(error)
+			return done(null, false, {
+				message: 'Something went wrong'
+			})
+		})
 	}
-	return cb()
 }
 
 const getFileFromCache = (email, done, cb) => {
