@@ -6,6 +6,7 @@ import copy from 'copy-to-clipboard'
 import { useToasts } from 'react-toast-notifications'
 import { observer } from 'mobx-react-lite'
 import { Button, Form, Modal } from 'react-bootstrap'
+import ConfirmationWindow from './ConfirmationWindow'
 
 const ApiKeyModal = observer(function ApiKeyModal({ active }) {
     const { user, regenKey } = UserStore
@@ -26,6 +27,7 @@ const ApiKeyModal = observer(function ApiKeyModal({ active }) {
 	}
 	return active && (
 		<>
+			<ConfirmationWindow />
 			<Modal.Header>
 				API key must be included as HTTP header in every GraphQL request. Header name is X-API-KEY
 			</Modal.Header>
