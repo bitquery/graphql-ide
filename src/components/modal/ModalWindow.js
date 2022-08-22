@@ -38,6 +38,7 @@ const ModalWindow = observer(() => {
 			centered
 			fade
 			show={modalIsOpen}
+			size={statisticsModalIsOpen ? 'lg' : 'md'}
 			onHide={fade ? null : onRequestClose}
 		>
 			<LoginForm active={loginIsOpen} />
