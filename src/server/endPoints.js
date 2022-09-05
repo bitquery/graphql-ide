@@ -4,6 +4,33 @@ const bcrypt = require('bcrypt')
 const fs = require('fs')
 const path = require('path')
 const axios = require('axios')
+const sdk = require('postman-collection')
+const codegen = require('postman-code-generators')
+
+const getCodeSnippet = (lang, query, variables, key, endpoint_url) => 
+	new Promise((resolve, reject) => {
+		const request = new sdk.Request({
+			url: endpoint_url,
+			method: 'POST',
+			header: { 'Content-Type': 'application/json', 'X-API-KEY': key },
+			body: JSON.stringify({ query, variables })
+		})
+		const language = lang.key
+		const variant = lang.variant
+		const options = {
+			indentCount: 3,
+			indentType: 'Space',
+			trimRequestBody: true,
+			followRedirect: true
+		}
+		codegen.convert(language, variant, request, options, function(error, snippet) {
+			if (error) {
+				reject(error)
+			}
+			resolve(snippet)
+		})
+	}
+)
 
 const authMiddleware = (req, res, next) => {
 	if (!req.isAuthenticated()) {
@@ -51,6 +78,12 @@ module.exports = function(app, passport, db, redisClient) {
 		}
 	}
 	
+	app.post('/api/codesnippet', async (req, res) => {
+		const { language, query, variables, endpoint_url, key } = req.body
+		const snippet = await getCodeSnippet(language, query, variables, key, endpoint_url)
+		res.status(200).send({ snippet })
+	})
+
 	app.post('/api/search', async (req, res) => {
         try {
             const results = await query(`SELECT DISTINCT * from queries q

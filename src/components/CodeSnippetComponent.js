@@ -1,13 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import { observer } from 'mobx-react'
-import codegen from "postman-code-generators"
 import { QueriesStore, UserStore } from '../store/queriesStore'
-import { getCodeSnippet } from '../utils/getCodeSnippet'
 import RawCodeMirror from './bitqueditor/components/RawCodeMirror'
 import copy from 'copy-to-clipboard'
 import { useToasts } from 'react-toast-notifications'
-
-const languageList = codegen.getLanguageList()
+import { getCodeSnippet } from '../api/api'
+import { languageList } from '../utils/snippetLanguageList'
 
 const CodeSnippetComponent = observer(function CodeSnippetComponent() {
 
@@ -15,7 +13,7 @@ const CodeSnippetComponent = observer(function CodeSnippetComponent() {
 	const { user } = UserStore
 	const { addToast } = useToasts()
 
-	const [selectedLanguage, setSelectedLanguage] = useState(
+	const [language, setLanguage] = useState(
 		{
 			"key": "curl",
 			"label": "cURL",
@@ -32,13 +30,16 @@ const CodeSnippetComponent = observer(function CodeSnippetComponent() {
 
 	const main = async () => {
 		if (!user) return
-		const snippet = await getCodeSnippet(selectedLanguage, query, variables, user.key, endpoint_url)
+		const body = {
+			language, query, variables, endpoint_url, key: user.key
+		}
+		const { data : { snippet } } = await getCodeSnippet(body)
 		setSnippet(snippet)
 	}
 
 	useEffect(() => {
 		main()
-	}, [selectedLanguage, user, query, variables, endpoint_url])
+	}, [language, user, query, variables, endpoint_url])
 
 	return (
 		<section className='codesnippet__root'>
@@ -57,11 +58,11 @@ const CodeSnippetComponent = observer(function CodeSnippetComponent() {
 								aria-haspopup="true" 
 								aria-expanded="false"
 							>
-								{ `${selectedLanguage.label}` } { selectedLanguage.variant !== selectedLanguage.label && ` - ${selectedLanguage.variant}` }
+								{ `${language.label}` } { language.variant !== language.label && ` - ${language.variant}` }
 							</a>
 							<div className="dropdown-menu" disabled>
 								{languageList.map(item => item.variants.map(( { key }, i ) => (
-									<a  className="dropdown-item" href="# " key={key} onClick={() => setSelectedLanguage({...item, variant: key})}>
+									<a  className="dropdown-item" href="# " key={key} onClick={() => setLanguage({...item, variant: key})}>
 										{ item.label } { key !== item.key && ` - ${key}` }
 									</a>
 								)))}
@@ -74,7 +75,7 @@ const CodeSnippetComponent = observer(function CodeSnippetComponent() {
 				</div>
 			</div>
 			<div className='card'>
-				<RawCodeMirror mode={selectedLanguage.syntax_mode} value={snippet}/>
+				<RawCodeMirror mode={language.syntax_mode} value={snippet}/>
 			</div>
 		</section>
 	)

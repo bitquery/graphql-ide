@@ -54,3 +54,5 @@ export const checkUrl = url => axios.post('/api/checkurl', { url })
 export const getTransferedQuery = query => axios.get(`/api/transferedquery/${query}`)
 
 export const getSearchResults = search => axios.post('/api/search', {search})
+
+export const getCodeSnippet = body => axios.post('/api/codesnippet', body)
