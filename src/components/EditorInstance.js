@@ -381,6 +381,9 @@ const EditorInstance = observer(function EditorInstance({number})  {
 			}
 			fetchSchema()
 		}
+		if (debouncedURL in schema && errorLoading) {
+			setErrorLoading(false)
+		}
 		// eslint-disable-next-line 
 	}, [debouncedURL, user])
 	
