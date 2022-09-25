@@ -39,7 +39,7 @@ import { stringifyIncludesFunction } from '../utils/common';
 import modalStore from '../store/modalStore.js';
 import { GalleryStore } from '../store/galleryStore.js';
 import CodeSnippetComponent from './CodeSnippetComponent.js';
-
+import { createClient } from "graphql-ws"
 
 const EditorInstance = observer(function EditorInstance({number})  {
 	const { tabs, currentTab, index, jsonMode, codeMode } = TabsStore
@@ -57,6 +57,8 @@ const EditorInstance = observer(function EditorInstance({number})  {
 	const [dataSource, setDataSource] = useState({})
 	const [accordance, setAccordance] = useState(true)
 	const [checkoutCode, setCheckOutCode] = useState('')
+	const [wsClean, setWsClean] = useState(null)
+	const [wsClient, setWsClient] = useState(null)
 	const debouncedURL = useDebounce(currentQuery.endpoint_url, 500)
 	const workspace = useRef(null)
 	const overwrap = useRef(null)
@@ -227,6 +229,15 @@ const EditorInstance = observer(function EditorInstance({number})  {
 	const WidgetComponent = indexx>=0 ? plugins[indexx] : plugins[0]
 
 	const getResult = useCallback(() => {
+		if (wsClean) {
+			// wsClient.terminate()
+			console.log('here')
+			// wsClean.f()
+			// setWsClient(null)
+			wsClean.f()
+			setWsClean(null)
+			return
+		}
 		ReactTooltip.hide(executeButton.current)
 		updateQuery({points: undefined, graphqlRequested: undefined, saved: currentQuery.saved}, index)
 		setLoading(true)
@@ -238,13 +249,54 @@ const EditorInstance = observer(function EditorInstance({number})  {
 		let indexOfWidget = plugins.map(p => p.id).indexOf(currentQuery.widget_id)
 		const unusablePair = indexOfData < 0 || indexOfWidget < 0
 		let displayed_data = unusablePair ? Object.keys(queryType)[Object.keys(queryType).length-1] : currentQuery.displayed_data
-		console.log(displayed_data)
 		if (unusablePair) {
 			updateQuery({
 				displayed_data,
 				widget_id: 'json.widget',
 				saved: currentQuery.id && true
 			}, index)
+		}
+		if (currentQuery.query.match(/subscription[^a-zA-z0-9]/gm)) {
+			console.log('match')
+			const client = wsClient ? wsClient : createClient({
+				url: currentQuery.endpoint_url.replace('https', 'wss'),
+				shouldRetry: false
+			});
+			setWsClient(client)
+			async function execute(payload) {
+				return new Promise((resolve, reject) => {
+					let result;
+					const cleanup = client.subscribe(payload, {
+						next: ({data}) => {
+							console.log(data)
+							let values
+							if (currentQuery.displayed_data && currentQuery.displayed_data !== 'data') {
+								if (currentQuery.data_type === 'flatten') {
+									values = flattenData(data)
+								} else {
+									console.log(data, displayed_data)
+									values = getValueFrom(data, displayed_data)
+								}
+							} else {
+								values = data
+							}
+							setDataSource({
+								data: data || null,
+								extensions: null,
+								displayed_data: displayed_data || '',
+								values,
+								error: ('errors' in data) ? data.errors : null,
+								query: toJS(currentQuery.query), 
+								variables: toJS(currentQuery.variables)
+							})
+						},
+						error: reject,
+						complete: () => resolve(result),
+					});
+					setWsClean({f: cleanup})
+				});
+			}
+			execute({query: currentQuery.query}).then(whatAFuck => console.log('what a fuck it is ?  -- ', whatAFuck))
 		}
 		fetcher({query: currentQuery.query, variables: currentQuery.variables}).then(data => {
 			const graphqlRequested = data.headers.get('X-GraphQL-Requested') === 'true'
@@ -295,7 +347,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 			ReactTooltip.hide(executeButton.current)
 		})
 		// eslint-disable-next-line 
-	}, [JSON.stringify(currentQuery), schema[debouncedURL], JSON.stringify(queryTypes)])
+	}, [JSON.stringify(currentQuery), schema[debouncedURL], JSON.stringify(queryTypes), wsClean])
 	
 	const editQueryHandler = useCallback(handleSubject => {
 		if ('query' in handleSubject) {
@@ -462,8 +514,12 @@ ${WidgetComponent.id === 'table.widget' ? '<link href="https://unpkg.com/tabulat
 								width={25}
 							/> 
 						: 	errorLoading	?
-								<ErrorIcon fill={'#FF2D00'} /> 	:
-								<PlayIcon fill={accordance ? '#eee' : '#14ff41'} />}
+								<ErrorIcon fill={'#FF2D00'} /> : wsClean ? <Loader type={'Grid'} color="#3d77b6"
+								height={25}
+								width={25} 
+								/> :
+								<PlayIcon fill={accordance ? '#eee' : '#14ff41'} />
+					}
 				</button>
 				<div className="workspace__wrapper" 
 						ref={workspace} 
