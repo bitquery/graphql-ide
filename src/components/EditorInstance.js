@@ -230,10 +230,6 @@ const EditorInstance = observer(function EditorInstance({number})  {
 
 	const getResult = useCallback(() => {
 		if (wsClean) {
-			// wsClient.terminate()
-			console.log('here')
-			// wsClean.f()
-			// setWsClient(null)
 			wsClean.f()
 			setWsClean(null)
 			return
@@ -260,25 +256,24 @@ const EditorInstance = observer(function EditorInstance({number})  {
 			console.log('match')
 			const client = wsClient ? wsClient : createClient({
 				url: currentQuery.endpoint_url.replace('https', 'wss'),
-				shouldRetry: false
+				shouldRetry: () => false
 			});
 			setWsClient(client)
 			async function execute(payload) {
 				return new Promise((resolve, reject) => {
 					let result;
+					let values = []
 					const cleanup = client.subscribe(payload, {
 						next: ({data}) => {
-							console.log(data)
-							let values
+							setLoading(false)
 							if (currentQuery.displayed_data && currentQuery.displayed_data !== 'data') {
 								if (currentQuery.data_type === 'flatten') {
 									values = flattenData(data)
 								} else {
-									console.log(data, displayed_data)
-									values = getValueFrom(data, displayed_data)
+									values.unshift(getValueFrom(data, displayed_data))
 								}
 							} else {
-								values = data
+								values.unshift(data)
 							}
 							setDataSource({
 								data: data || null,
@@ -296,58 +291,59 @@ const EditorInstance = observer(function EditorInstance({number})  {
 					setWsClean({f: cleanup})
 				});
 			}
-			execute({query: currentQuery.query}).then(whatAFuck => console.log('what a fuck it is ?  -- ', whatAFuck))
-		}
-		fetcher({query: currentQuery.query, variables: currentQuery.variables}).then(data => {
-			const graphqlRequested = data.headers.get('X-GraphQL-Requested') === 'true'
-			updateQuery(
-				{
-					graphqlQueryID: data.headers.get('X-GraphQL-Query-ID'),
-					graphqlRequested: graphqlRequested,
-					points: graphqlRequested ? undefined : 0,
-					saved: currentQuery.saved
-				}, index)
-			data.json().then(async json => {
-				let values = null
-				if ('data' in json) {
-					if (currentQuery.displayed_data && currentQuery.displayed_data !== 'data') {
-						if (currentQuery.data_type === 'flatten') {
-							values = flattenData(json.data)
+			execute({query: currentQuery.query}).then(res => console.log('complete - ', res))
+		} else {
+			fetcher({query: currentQuery.query, variables: currentQuery.variables}).then(data => {
+				const graphqlRequested = data.headers.get('X-GraphQL-Requested') === 'true'
+				updateQuery(
+					{
+						graphqlQueryID: data.headers.get('X-GraphQL-Query-ID'),
+						graphqlRequested: graphqlRequested,
+						points: graphqlRequested ? undefined : 0,
+						saved: currentQuery.saved
+					}, index)
+				data.json().then(async json => {
+					let values = null
+					if ('data' in json) {
+						if (currentQuery.displayed_data && currentQuery.displayed_data !== 'data') {
+							if (currentQuery.data_type === 'flatten') {
+								values = flattenData(json.data)
+							} else {
+								console.log(json.data, displayed_data)
+								values = getValueFrom(json.data, displayed_data)
+							}
 						} else {
-							console.log(json.data, displayed_data)
-							values = getValueFrom(json.data, displayed_data)
-						}
-					} else {
-						values = json.data
-						if ('extensions' in json) {
-							values.extensions = json.extensions
+							values = json.data
+							if ('extensions' in json) {
+								values.extensions = json.extensions
+							}
 						}
 					}
-				}
-				currentQuery.id && await logQuery({
-					id: currentQuery.id,
-					account_id: currentQuery.account_id,
-					success: !json.errors,
-					error: JSON.stringify(json.errors)
+					currentQuery.id && await logQuery({
+						id: currentQuery.id,
+						account_id: currentQuery.account_id,
+						success: !json.errors,
+						error: JSON.stringify(json.errors)
+					})
+					setDataSource({
+						data: ('data' in json) ? json.data : null,
+						extensions: ('extensions' in json) ? json.extensions : null,
+						displayed_data: displayed_data || '',
+						values,
+						error: ('errors' in json) ? json.errors : null,
+						query: toJS(currentQuery.query), 
+						variables: toJS(currentQuery.variables)
+					})
+					if (!('data' in json)) updateQuery({widget_id: 'json.widget'}, index)
 				})
-				setDataSource({
-					data: ('data' in json) ? json.data : null,
-					extensions: ('extensions' in json) ? json.extensions : null,
-					displayed_data: displayed_data || '',
-					values,
-					error: ('errors' in json) ? json.errors : null,
-					query: toJS(currentQuery.query), 
-					variables: toJS(currentQuery.variables)
-				})
-				if (!('data' in json)) updateQuery({widget_id: 'json.widget'}, index)
+				
+				setLoading(false)
+				setAccordance(true)
+				ReactTooltip.hide(executeButton.current)
 			})
-			
-			setLoading(false)
-			setAccordance(true)
-			ReactTooltip.hide(executeButton.current)
-		})
+		}
 		// eslint-disable-next-line 
-	}, [JSON.stringify(currentQuery), schema[debouncedURL], JSON.stringify(queryTypes), wsClean])
+	}, [JSON.stringify(currentQuery), schema[debouncedURL], JSON.stringify(queryTypes), wsClean, dataSource.values])
 	
 	const editQueryHandler = useCallback(handleSubject => {
 		if ('query' in handleSubject) {
@@ -565,7 +561,7 @@ ${WidgetComponent.id === 'table.widget' ? '<link href="https://unpkg.com/tabulat
 						onMouseDown={handleResizer}
 					>
 					</div>
-					<div className="flex-col w-100">
+					<div className="flex-col w-100 result-wrapper">
 						<QueryErrorIndicator 
 							error={dataSource.error}
 							removeError={setDataSource}

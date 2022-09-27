@@ -3,6 +3,10 @@
 @import "./components/modal/editDialog.scss";
 @import "./components/codeSnippet.scss";
 
+.result-wrapper {
+	height: 100%;
+	overflow: auto;
+}
 .tag-active, .tag-active:hover {
 	background-color: #ddd;
 }

@@ -57,13 +57,13 @@ class JsonWidget extends Component {
 	render() {
 		return (
 			<section
-			className="result-window"
-			aria-label="Result Window"
-			aria-live="polite"
-			aria-atomic="true"
-			ref={node => {
-				this._node = node;
-			}}
+				className="result-window"
+				aria-label="Result Window"
+				aria-live="polite"
+				aria-atomic="true"
+				ref={node => {
+					this._node = node;
+				}}
 			/>
 		);
 	}

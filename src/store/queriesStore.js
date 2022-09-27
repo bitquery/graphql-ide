@@ -57,7 +57,7 @@ class Queries {
 		variables: '{}',
 		data_type: 'response',
 		config: {},
-		endpoint_url: 'https://graphql.bitquery.io',
+		endpoint_url: 'https://streaming.bitquery.io/graphql',
 		id: null
 	}
 	dashboardQuery = this.currentQuery
