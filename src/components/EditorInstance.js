@@ -270,10 +270,10 @@ const EditorInstance = observer(function EditorInstance({number})  {
 								if (currentQuery.data_type === 'flatten') {
 									values = flattenData(data)
 								} else {
-									values.unshift(data)
+									values.push(data)
 								}
 							} else {
-								values.unshift(data)
+								values.push(data)
 							}
 							setDataSource({
 								data: data || null,
@@ -561,25 +561,27 @@ ${WidgetComponent.id === 'table.widget' ? '<link href="https://unpkg.com/tabulat
 						onMouseDown={handleResizer}
 					>
 					</div>
-					<div className="flex-col w-100 result-wrapper">
+					<div className="w-100 result-wrapper col-reverse">
 						<QueryErrorIndicator 
 							error={dataSource.error}
 							removeError={setDataSource}
 						/>
 						{currentQuery.widget_id==='json.widget' || jsonMode || codeMode ?
 							Array.isArray(dataSource.values) ?
-							dataSource.values.map(values => (
+							dataSource.values.map(values => {
+								const dateAdded = new Date().getTime()
+								return (
 								<JsonPlugin.renderer
 								code={checkoutCode}
 								getCode={getCode}
 								mode={jsonMode ? 'json' : codeMode ? 'code' : ''}
 								dataSource={dataSource} 
 								values={values}
-								displayed_data={dataSource.displayed_data}
+								dateAdded={dateAdded}				
 								displayedData={toJS(currentQuery.displayed_data)}
 								config={toJS(query[index].config)} 
 							/>	
-							))
+							)})
 							 : <JsonPlugin.renderer
 							code={checkoutCode}
 							getCode={getCode}

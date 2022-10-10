@@ -7,6 +7,9 @@
 	height: 100%;
 	overflow: auto;
 }
+.result-time {
+	background-color: #f6f7f8;
+}
 .tag-active, .tag-active:hover {
 	background-color: #ddd;
 }
@@ -32,6 +35,11 @@ body {
 }
 .item_high {
 	z-index: 9;
+}
+.col-reverse {
+	display: flex;
+	flex-direction: column-reverse;
+	justify-content: flex-end;
 }
 .oyh {
 	overflow-y: hidden;
