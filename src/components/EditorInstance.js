@@ -270,7 +270,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 								if (currentQuery.data_type === 'flatten') {
 									values = flattenData(data)
 								} else {
-									values.unshift(getValueFrom(data, displayed_data))
+									values.unshift(data)
 								}
 							} else {
 								values.unshift(data)
@@ -566,15 +566,28 @@ ${WidgetComponent.id === 'table.widget' ? '<link href="https://unpkg.com/tabulat
 							error={dataSource.error}
 							removeError={setDataSource}
 						/>
-						{currentQuery.widget_id==='json.widget' || jsonMode || codeMode ? 
-							<JsonPlugin.renderer
+						{currentQuery.widget_id==='json.widget' || jsonMode || codeMode ?
+							Array.isArray(dataSource.values) ?
+							dataSource.values.map(values => (
+								<JsonPlugin.renderer
 								code={checkoutCode}
 								getCode={getCode}
 								mode={jsonMode ? 'json' : codeMode ? 'code' : ''}
 								dataSource={dataSource} 
+								values={values}
+								displayed_data={dataSource.displayed_data}
 								displayedData={toJS(currentQuery.displayed_data)}
 								config={toJS(query[index].config)} 
-							/> : 
+							/>	
+							))
+							 : <JsonPlugin.renderer
+							code={checkoutCode}
+							getCode={getCode}
+							mode={jsonMode ? 'json' : codeMode ? 'code' : ''}
+							dataSource={dataSource} 
+							displayedData={toJS(currentQuery.displayed_data)}
+							config={toJS(query[index].config)} 
+						/> :
 							<FullScreen className="widget-display" handle={fullscreenHandle}>
 							<WidgetView 
 								renderFunc={WidgetComponent.renderer}
