@@ -111,3 +111,5 @@ shipitfile*.js
 
 # Build folder
 build/
+
+api.http
