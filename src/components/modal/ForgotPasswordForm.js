@@ -3,6 +3,7 @@ import axios from 'axios'
 import { useToasts } from 'react-toast-notifications'
 import { validEmail } from '../../utils/common'
 import modalStore from '../../store/modalStore'
+import { Button, Form, Modal } from 'react-bootstrap'
 
 function ResetPassword({active}) {
 	const [email, setEmail] = useState('')
@@ -29,16 +30,23 @@ function ResetPassword({active}) {
 		}
 	}
 
-	return (
-		<form onSubmit={sendPasswordResetLink} className={'modal__form '+(!active && 'modal__form_hide')} >
-			<h2>Forgot password</h2>
-			<p>Enter your email below and reset password instruction will be sent </p>
-			<p className="p-modal">Email</p>
-			<input type="text" className="query__save" value={email} onChange={e => setEmail(e.target.value)} />
-			<i className="handler handler__back fas fa-chevron-left" onClick={backHandler} />
-			{!fade && <i className="handler handler__close fas fa-times" onClick={closeHandler} />}
-			<button className="button button_filled" type="submit">GO</button>
-		</form>
+	return active && (
+		<>
+			<Modal.Header>Forgot password</Modal.Header>
+			<Modal.Body>
+				<Form onSubmit={sendPasswordResetLink} >
+					<p>Enter your email below and reset password instruction will be sent </p>
+					<Form.Group>
+						<Form.Label>Email</Form.Label>
+						<Form.Control type="email" value={email} onChange={e => setEmail(e.target.value)} />
+					</Form.Group>
+					<Form.Group className="d-flex justify-content-around">
+						<Button type="cancel" onClick={backHandler}>Back</Button>
+						<Button type="submit">Submit</Button>
+					</Form.Group>
+				</Form>
+			</Modal.Body>
+		</>
 	)
 }
 

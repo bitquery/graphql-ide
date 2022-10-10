@@ -28,11 +28,11 @@ const WidgetEditorControls = observer(
 
 	return (
 		<nav className="navbar navbar-expand-lg navbar-light bg-light">
-			<ResponseDataType 
+			{<ResponseDataType 
 				dataSource={dataSource}
 				setDataSource={setDataSource}
-			/>
-			<DisplayedData 
+			/>}
+			{<DisplayedData 
 				model={model}
 				number={number}
 				dataWidgets={dataWidgets}
@@ -40,13 +40,13 @@ const WidgetEditorControls = observer(
 				plugins={plugins}
 				dataSource={dataSource}
 				setDataSource={setDataSource}
-			/>
-			<WidgetSelect 
+			/>}
+			{<WidgetSelect 
 				name={name}
 				dataWidgets={dataWidgets}
 				dataIndexInModel={dataIndexInModel}
 				plugins={plugins} 
-			/>
+			/>}
 			{(('widget_id' in currentQuery) && currentQuery.widget_id !== defaultWidget) && 
 				<div className="btn-group btn-group-toggle" data-toggle="buttons">
 					<label className={"btn btn-secondary topBar__button "+(viewMode && 'active')}>

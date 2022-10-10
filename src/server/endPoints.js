@@ -4,11 +4,235 @@ const bcrypt = require('bcrypt')
 const fs = require('fs')
 const path = require('path')
 const axios = require('axios')
+const sdk = require('postman-collection')
+const codegen = require('postman-code-generators')
 
+const getCodeSnippet = (lang, query, variables, key, endpoint_url) => 
+	new Promise((resolve, reject) => {
+		const request = new sdk.Request({
+			url: endpoint_url,
+			method: 'POST',
+			header: { 'Content-Type': 'application/json', 'X-API-KEY': key },
+			body: JSON.stringify({ query, variables })
+		})
+		const language = lang.key
+		const variant = lang.variant
+		const options = {
+			indentCount: 3,
+			indentType: 'Space',
+			trimRequestBody: true,
+			followRedirect: true
+		}
+		codegen.convert(language, variant, request, options, function(error, snippet) {
+			if (error) {
+				reject(error)
+			}
+			resolve(snippet)
+		})
+	}
+)
+
+const authMiddleware = (req, res, next) => {
+	if (!req.isAuthenticated()) {
+		res.status(401).send('You are not authenticated')
+	} else {
+		return next()
+	}
+}
 module.exports = function(app, passport, db, redisClient) {
+
+	const query = (sql, values) => new Promise((resolve, reject) => {
+		const callback = (err, results) => {
+			if (err) {
+				console.log(err)
+				reject(err)
+			}
+			resolve(results)
+		}
+		values
+			? db.query(sql, values, callback)
+			: db.query(sql, callback)
+	})
+	
+	const handleTags = async (query_id, tags, res, msg) => {
+		if (tags) {
+			tags.forEach(async (tag, i, arr) => {
+				const results = await query('SELECT id FROM tags WHERE tag = ?', [tag])
+				if (!results.length) {
+					const { insertId: tag_id } = await query('INSERT INTO tags SET ?', { tag })
+					await query('INSERT INTO tags_to_queries SET ?', { query_id, tag_id })
+					msg ? res.status(201).send(msg) : res.sendStatus(201)
+				} else {
+					const tag_id = results[0].id
+					const queryInstance = await query('SELECT * from tags_to_queries WHERE tag_id = ? AND query_id = ?', [tag_id, query_id])
+					if (!queryInstance.length) {
+						await query('INSERT INTO tags_to_queries SET ?', { query_id, tag_id })
+					}
+					if (i === arr.length - 1) {
+						msg ? res.status(201).send(msg) : res.sendStatus(201)
+					}
+				}
+			})
+		} else {
+			res.status(400).send({msg: 'Add some tags to your query!'})
+		}
+	}
+	
+	app.post('/api/codesnippet', async (req, res) => {
+		const { language, query, variables, endpoint_url, key } = req.body
+		const snippet = await getCodeSnippet(language, query, variables, key, endpoint_url)
+		res.status(200).send({ snippet })
+	})
+
+	app.post('/api/search', async (req, res) => {
+        try {
+            const results = await query(`SELECT DISTINCT * from queries q
+            INNER JOIN (
+                SELECT name as owner_name, id as aid from accounts
+            ) a
+            ON a.aid = q.account_id
+            LEFT JOIN (
+                SELECT query_id , GROUP_CONCAT(t.tag) AS tags FROM bitquery.tags_to_queries tq
+                INNER JOIN bitquery.tags t ON t.id = tq.tag_id
+                GROUP BY query_id
+            ) t
+            ON q.id = t.query_id
+            LEFT JOIN (
+                select id as noid, count(1) cnt
+                from query_logs where success =1
+                GROUP by id
+            ) q_cnt on q_cnt.noid = q.id
+            LEFT JOIN (
+                SELECT w.id as w_id, w.widget_id, w.displayed_data, w.query_id, w.config, w.active, w.data_type 
+                FROM widgets w
+                WHERE id IN (
+                            SELECT MAX(id) AS id
+                            FROM widgets 
+                            GROUP BY query_id)
+            ) b 
+            ON q.id=b.query_id
+            where (q.published = 1 or q.account_id = ?) AND (match (q.name, q.description) against (?)
+            or q.name like ? or q.description like ?)
+            ORDER BY q.updated_at DESC`, [req.session.passport.user, req.body.search, `%${req.body.search}%`, `%${req.body.search}%`])
+            res.status(200).send(results)
+        } catch (error) {
+            console.log(error)
+            res.sendStatus(400)
+        }
+    })
+
+	app.get('/api/transferedquery/:query', (req, res) => {
+		redisClient.get(req.params.query, async (error, query) => {
+			if (error) console.log(error)
+			if (query !== null) {
+				console.log('there is some query')
+				res.status(200).send({transferedQuery: JSON.parse(query)})
+			} else {
+				res.status(200).send({transferedQuery: {
+					query: 'QUERY DOES NOT EXIST!',
+					variables: ''
+				}})
+			}
+		})
+	})
+
+	app.post('/api/checkurl', async (req, res) => {
+		const results = await query(`select id from queries where url = ?`, [req.body.url])
+		if (results.length) {
+			res.sendStatus(200)
+		} else {
+			res.sendStatus(204)
+		}
+	})
+
+	app.post('/api/taggedqueries/:tag/:page', async (req, res) => {
+		const explore = req.body.explore
+		const makesql = (patch = '', limit = 0) => `SELECT * from queries q
+		INNER JOIN (
+			SELECT name as owner_name, id as aid from accounts
+		) a
+		ON a.aid = q.account_id
+		LEFT JOIN (
+			SELECT query_id , GROUP_CONCAT(t.tag) AS tags FROM bitquery.tags_to_queries tq
+			INNER JOIN bitquery.tags t ON t.id = tq.tag_id
+			GROUP BY query_id
+		) t
+		ON q.id = t.query_id
+		LEFT JOIN (
+			select id as noid, count(1) cnt
+			from query_logs where success =1
+			GROUP by id
+		) q_cnt on q_cnt.noid = q.id
+		LEFT JOIN (
+			SELECT w.id as w_id, w.widget_id, w.displayed_data, w.query_id, w.config, w.active, w.data_type 
+			FROM widgets w
+			WHERE id IN (
+						SELECT MAX(id) AS id
+						FROM widgets 
+						GROUP BY query_id)
+		) b 
+		ON q.id=b.query_id
+		${req.params.tag === 'All queries' ? '' : `inner join tags_to_queries ttq on ttq.query_id = q.id
+		inner join (
+			SELECT id as tag_id, tag from tags
+		) ttags
+		ON ttq.tag_id = ttags.tag_id`}
+		${patch}
+		LIMIT ${limit}, 11`
+		let sql = {}
+		if (req.params.tag === 'All queries') {
+			sql.query = makesql(`WHERE ${explore ? 'published = 1' : 'account_id = ?'} ORDER BY q_cnt.cnt DESC`, req.params.page)
+			sql.param = [req.session.passport.user]
+		} else {
+			sql.query = makesql(`
+				WHERE ${explore ? 'published = 1' : 'account_id = ?'}
+				AND tag = ?
+				ORDER by q_cnt.cnt DESC`, req.params.page)
+			sql.param = explore ? [req.params.tag] : [req.session.passport.user, req.params.tag]
+		}
+		const results = await query(sql.query, sql.param)
+		res.status(200).send(results)	
+	})
+
+	app.post('/api/tags', async (req, res) => {
+		const there = req.body.explore ? 'published = 1' : 'account_id = ?'
+		const results = await query(
+			`select 
+				COUNT(ttq.tag_id) as tags_count,
+				ttq.tag_id, t.tag
+			from tags_to_queries ttq 
+			inner join (
+				select id as query_id, published, account_id
+				from queries q 
+			) q 
+			on ttq.query_id = q.query_id
+			inner join tags t 
+			on t.id = ttq.tag_id
+			where ${there} 
+			group by tag
+			union
+			select COUNT(*) as tags_count, 0 as tag_id, 'All queries' as tag
+			from queries q2 
+			where q2.${there}
+			order by tags_count desc`, [req?.session?.passport?.user, req?.session?.passport?.user])
+		res.status(200).send(results)
+	})
+
+	app.post('/api/tagspr', authMiddleware, (req, res) => {
+		const { query_id, tags } = req.body.params
+		handleTags(db, query_id, tags, res)
+	})
+
+	app.put('/api/tagspr', authMiddleware, (req, res) => {
+		const { query_id, tags } = req.body.params
+		db.query('DELETE FROM tags_to_queries WHERE query_id = ?', [query_id], (err, _) => {
+			if (err) console.log(err)
+			handleTags(db, query_id, tags, res)
+		})
+	})
 	
 	app.get('/api/dbcode/:url', (req, response) => {
-		db.query(`SELECT rd.id, rd.account_id, null as query, null as arguments, 
+		db.query(`SELECT rd.id, rd.account_id, null as query, null as variables, 
 			rd.url, rd.name, rd.description , rd.published, rd.created_at , 
 			rd.deleted, rd.javascript, rd.updated_at , null as endpoint_url, 
 			null as displayed_data, null as widget_id ,qtd.widget_id as widget_ids, null as config, rd.layout, null as widget_number 
@@ -43,77 +267,56 @@ module.exports = function(app, passport, db, redisClient) {
 		console.log(req.protocol, req.get('Host'))
 		
 	}) 
-
-	const authMiddleware = (req, res, next) => {
-		if (!req.isAuthenticated()) {
-			res.status(401).send('You are not authenticated')
-		} else {
-			return next()
+	
+	const addWidgetConfig = async (res, params, widget_id) => {
+		await query(`UPDATE widgets SET active = FALSE WHERE query_id=?`, [params.query_id])
+		try {
+			const results = await query('INSERT INTO widgets SET ?', {...params, active: true})
+			widget_id && await query(
+				`update queries_to_dashboards set ? where widget_id=${widget_id}`,
+				{ widget_id: results.insertId }
+			)
+			let msg = params.url ? 'Query shared!' : 'Query saved!'
+			return {msg, id: params.query_id}
+		} catch (error) {
+			res.status(400).send('Error adding widget Config')
 		}
 	}
-	const addWidgetConfig = (res, db, params, widget_id) => {
-		db.query(`UPDATE widgets SET active = FALSE WHERE query_id=${params.query_id}`, (err, _) => {
-			if (err) {
-				console.log(err)
-			}
-			db.query('INSERT INTO widgets SET ?', {...params, active: true}, (err, result) => {
-				if (err) {
-					console.log(err)
-					res.send({err})
-				} else {
-					widget_id && db.query(`update queries_to_dashboards set ? where widget_id=${widget_id}`, {
-						widget_id: result.insertId
-					}, (err, _) => {
-						if (err) console.log(err)
-					})
-					let msg = params.url ? 'Query shared!' : 'Query saved!'
-					result && res.send({msg, id: params.query_id})
-				}
-			})
-
-		})
-	}
-	const handleAddQuery = (req, res, db) => {
+	const handleAddQuery = async (req, res) => {
 		let sql = `INSERT INTO queries SET ?`
-		let {executed,
-			config,
-			widget_id,
-			displayed_data,
-			isDraggable,
-			isResizable,
-			data_type, ...params} = req.body.params
+		let {executed, config, widget_id, displayed_data,
+			isDraggable, isResizable, data_type, tags, 
+			...params} = req.body.params
 		params.id = null
 		params.published = params.url ? true : null
-		db.query(sql, params, (err, result) => {
-			if (err) {
-				console.log(err)
-				res.send({err})
-			}
-			let newParam = {
-				displayed_data: req.body.params.displayed_data,
-				data_type: req.body.params.data_type,
-				query_id: result.insertId,
-				widget_id : req.body.params.widget_id,
-				config: JSON.stringify(req.body.params.config)
-			}
-			addWidgetConfig(res, db, newParam)
-		})
+
+		const { insertId: query_id } = await query(sql, params)
+		let newParam = { 
+			displayed_data,
+			data_type,
+			query_id,
+			widget_id,
+			config: JSON.stringify(config)
+		}
+		const msg = await addWidgetConfig(res, newParam)
+		handleTags(query_id, tags, res, msg)
 	}
-	const handleUpdateQuery = (req, res, db) => {
+	const handleUpdateQuery = async (req, res, db) => {
 		if (!req.body.params.executed) {
 			let params = {
 				name: req.body.params.name && req.body.params.name,
 				description: req.body.params.description && req.body.params.description,
-				arguments: req.body.params.arguments || req.body.params.variables,
+				variables: req.body.params.variables,
 				query: req.body.params.query && req.body.params.query,
 				url: req.body.params.url ? req.body.params.url : null,
 				endpoint_url: req.body.params.endpoint_url,
 				updated_at: new Date()
 			}
-			console.log(params)
-			params.published = params.url ? true : null
-			db.query(`UPDATE queries SET ? where id=${req.body.params.id}`, params, (err, _) => {
-				if (err) console.log(err)
+			params.published = !!params.url
+			const response = await query(`select published from queries where id = ?`, [req.body.params.id])
+			console.log(response[0].published)
+			if (!response[0].published) {
+				await query(`UPDATE queries SET ? where id=${req.body.params.id}`, params)
 				let newParam = {
 					data_type: req.body.params.data_type,
 					displayed_data: req.body.params.displayed_data,
@@ -121,8 +324,11 @@ module.exports = function(app, passport, db, redisClient) {
 					widget_id: req.body.params.widget_id,
 					config: JSON.stringify(req.body.params.config)
 				}
-				addWidgetConfig(res, db, newParam, req.body.params.widget_number)
-			})
+				const msg = await addWidgetConfig(res, newParam)
+				msg ? res.status(201).send(msg) : res.sendStatus(201)
+			} else {
+				res.status(400).send({msg: 'Error updating query'})
+			}
 		}
 	}
 	const sendActivationLink = (userID, userEmail, req) => {
@@ -152,7 +358,7 @@ module.exports = function(app, passport, db, redisClient) {
 	}
 
 	app.get('/api/getw/:url', (req, response) => {
-		db.query(`SELECT rd.id, rd.account_id, null as query, null as arguments, 
+		db.query(`SELECT rd.id, rd.account_id, null as query, null as variables, 
 			rd.url, rd.name, rd.description , rd.published, rd.created_at , 
 			rd.deleted, rd.javascript, rd.updated_at , null as endpoint_url, 
 			null as displayed_data, null as widget_id ,qtd.widget_id as widget_ids, null as config, rd.layout, null as widget_number 
@@ -427,18 +633,13 @@ module.exports = function(app, passport, db, redisClient) {
 			})
 	})
 
-	app.post('/api/addquerylog', (req, response) => {
-		let value = req.body.params
-			db.query(`INSERT INTO query_logs SET ?`, {
-				id: value.id,
-				account_id: value.account_id,
-				success: value.success || 0,
-				error: value.error || 0
-			}, (err, res) => {
-				if (err) console.log(err)
-				console.log(res)
-				response.send('Query logged')
-			})
+	app.post('/api/querylog', (req, response) => {
+		db.query(`INSERT INTO query_logs SET ?`, { ...req.body.params },
+		(err, res) => {
+			if (err) console.log(err)
+			console.log(res)
+			response.send('Query logged')
+		})
 	}) 
 
 	app.get('/api/logout', (req, res) => {
@@ -447,31 +648,27 @@ module.exports = function(app, passport, db, redisClient) {
 		return res.send()
 	});
 	
-	app.get("/api/user", authMiddleware, (req, res) => {
-		db.query(`SELECT a.*, ak.\`key\` FROM accounts a
-		JOIN api_keys ak
-		ON a.id = ak.user_id
-		WHERE a.id = ?
-		AND ak.active = true`, 
-			[req.session.passport.user],
-			(err, user) => {
-				if (err) console.log(err)
-				if (user.length) {
-					let userSend = [{
-						id: user[0].id,
-						key: user[0].key,
-						email: user[0].email,
-						active: user[0].active,
-						updated_at: user[0].updated_at,
-						created_at: user[0].created_at,
-						role: user[0].role
-					}]
-					res.send({user: userSend})
-				} else {
-					res.status(400).send('No user found')
-				}
-				
-			})
+	app.get("/api/user", authMiddleware, async (req, res) => {
+		const results = await query(`SELECT a.*, ak.\`key\` FROM accounts a
+			JOIN api_keys ak
+			ON a.id = ak.user_id
+			WHERE a.id = ?
+			AND ak.active = true`,
+			[req.session.passport.user])
+		if (results.length) {
+			let userSend = [{
+				id: results[0].id,
+				key: results[0].key,
+				email: results[0].email,
+				active: results[0].active,
+				updated_at: results[0].updated_at,
+				created_at: results[0].created_at,
+				role: results[0].role
+			}]
+			res.status(200).send({user: userSend})
+		} else {
+			res.status(400).send('No user found')
+		}
 	})
 	app.get('/api/getquery/:url', (req, res) => {
 		let sql = `
@@ -529,10 +726,9 @@ module.exports = function(app, passport, db, redisClient) {
 	})
 		
 	app.post('/api/querytransfer', (req, res) => {
-		const key = Math.floor(Math.random()*(2**24-1)).toString(16)
-		redisClient.setex(key, 10, JSON.stringify(req.body))
-		req.session.transferedKey = key
-		res.set('Location', process.env.IDE_URL)
+		const code = crypto.randomBytes(3).toString('hex')
+		redisClient.setex(code, 10, JSON.stringify(req.body))
+		res.set('Location', `${process.env.IDE_URL}/transfer/${code}`)
 		res.sendStatus(302)
 	})
 	app.get('/api/getmyqueries', (req, res) => {

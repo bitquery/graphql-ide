@@ -18,7 +18,6 @@ const QueriesControls = observer(({query, isSaved}) => {
 		setQuery({
 			...query,
 			id: null,
-			variables: query.arguments,
 			name: `Copy of ${query.name}`,
 			saved: false,
 			url: null

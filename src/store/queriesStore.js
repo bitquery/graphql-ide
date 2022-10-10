@@ -1,6 +1,7 @@
 import { makeObservable, observable, action, computed } from "mobx"
 import axios from 'axios'
 import { getUser, regenerateKey, setDashboard } from "../api/api"
+import { GalleryStore } from './galleryStore'
 
 class User {
 	user = null
@@ -47,7 +48,7 @@ class Queries {
 	showGallery = true
 	showSideBar = true
 	queryJustSaved = false
-	schema = null
+	schema = {}
 	isMobile = window.innerWidth <= 768
 	gettingResult = false
 	isLoaded = false
@@ -61,6 +62,9 @@ class Queries {
 	}
 	dashboardQuery = this.currentQuery
 	query = [this.currentQuery]
+	currentPage = 0
+	queriesOnPage = 10
+	searchValue = ''
 	
 	constructor() {
 		makeObservable(this, {
@@ -73,6 +77,7 @@ class Queries {
 			gettingResult: observable,
 			currentQuery: observable,
 			showSideBar: observable,
+			searchValue: observable,
 			isMobile: observable,
 			isLoaded: observable,
 			schema: observable,
@@ -86,6 +91,8 @@ class Queries {
 			setSharedQueires: action,
 			setGettingResult: action,
 			setCurrentQuery: action,
+			setCurrentPage: action,
+			setSearchValue: action,
 			toggleSideBar: action,
 			setIsLoaded: action,
 			updateQuery: action,
@@ -105,7 +112,7 @@ class Queries {
 			id: this.currentQuery.id,
 			account_id: UserStore.user && (UserStore.user.id || null),
 			query: this.currentQuery.query,
-			arguments: this.currentQuery.variables,
+			variables: this.currentQuery.variables,
 			config: this.currentQuery.config,
 			widget_id: this.currentQuery.widget_id,
 			displayed_data: this.currentQuery.displayed_data,
@@ -113,8 +120,15 @@ class Queries {
 			name: this.currentQuery.name && this.currentQuery.name,
 			description: this.currentQuery.description && this.currentQuery.description,
 			url: this.currentQuery.url && this.currentQuery.url,
-			endpoint_url: this.currentQuery.endpoint_url && this.currentQuery.endpoint_url
+			endpoint_url: this.currentQuery.endpoint_url && this.currentQuery.endpoint_url.trim()
 		}
+	}
+	setSearchValue = value => {
+		this.searchValue = value
+	}
+	setCurrentPage = page => {
+		this.currentPage = page
+		return this.currentPage
 	}
 	setGettingResult = state => this.gettingResult = state
 	setQueryIsTransfered = isTransfered => this.queryIsTransfered = isTransfered
@@ -125,8 +139,7 @@ class Queries {
 	setQuery = (params, id) => {
 		this.query.push({ id: id ? id : null })
 		this.query[this.query.length-1].data_type = 'response'
-		if (this.query[this.query.length-1].id && !('saved' in params)) 
-			{this.query[this.query.length-1].saved = true}
+		this.query[this.query.length-1].saved = true
 		this.query[this.query.length-1] = {...this.query[this.query.length-1], ...params}
 		if (this.query[this.query.length-1].config && typeof this.query[this.query.length-1].config === 'string') {
 			this.query[this.query.length-1].config = JSON.parse(this.query[this.query.length-1].config)
@@ -139,9 +152,8 @@ class Queries {
 		this.sharedQueries = [...queries]
 	}
 	updateQuery = (params, index, id) => {
-		console.log(params)
-		if (params.query) this.query[index].query = params.query
-		if (params.variables) this.query[index].variables = params.variables
+		if (params.query || params.query === '') this.query[index].query = params.query
+		if (params.variables || params.variables === '') this.query[index].variables = params.variables
 		if (params.config) this.query[index].config = params.config
 		if (typeof params.widget_id === 'string') {
 			this.query[index].widget_id = params.widget_id
@@ -170,8 +182,9 @@ class Queries {
 		if ('isDraggable' in params) this.query[index].isDraggable = params.isDraggable
 		if ('isResizable' in params) this.query[index].isResizable = params.isResizable
 		this.query[index].id = id || id===null ? id : this.query[index].id
-		this.query[index].saved = false
-		if (params.saved) this.query[index].saved = params.saved
+		if (!this.query[index].url && 'saved' in params) {
+			this.query[index].saved = params.saved
+		}
 		this.setCurrentQuery(index)
 	}
 	removeQuery = index => {
@@ -212,11 +225,9 @@ class Queries {
 				})
 				: await setDashboard(params)
 			let id = TabsStore.tabs.map(tab => tab.id).indexOf(TabsStore.currentTab)
-			this.updateQuery({...params, account_id: UserStore.user.id}, id, data.id)
-			console.log(data)
+			this.updateQuery({...params, account_id: UserStore.user.id, saved: true}, id, data.id)
 			this.queryJustSaved = !this.queryJustSaved
-			this.query[id].saved = true
-			this.setCurrentQuery(id)
+			GalleryStore.setCurrentTag('')
 			this.currentQuery.layout && window.dispatchEvent(new Event('updateInitialDashboard'))
 			return data
 		} catch (e) {
@@ -226,7 +237,7 @@ class Queries {
 	}
 	logQuery = async params => {
 		try {
-			const { data } = await axios.post('/api/addquerylog', { 
+			const { data } = await axios.post('/api/querylog', { 
 				params
 			})
 			console.log(data)
@@ -316,7 +327,6 @@ class Tabs {
 		this.tabs[this.index].name = name
 	}
 	addNewTab = name => {
-		QueriesStore.setSchema(null)
 		this.incID()
 		this.tabs.push({
 			name: name,

@@ -1,24 +1,25 @@
 import { observer } from 'mobx-react-lite'
 import React, { useEffect, useState } from 'react'
 import { useCallback } from 'react'
-import { useHistory, useRouteMatch } from 'react-router-dom'
-import { getQuery, getWidget } from '../api/api'
+import { useHistory, useRouteMatch, useParams } from 'react-router-dom'
+import { getQuery, getWidget, getTransferedQuery } from '../api/api'
 import {TabsStore, QueriesStore, UserStore} from '../store/queriesStore'
 import handleState from '../utils/handleState'
 import useEventListener from '../utils/useEventListener'
 import logo from '../assets/images/bitquery_logo_w.png'
 import GraphqlIcon from './icons/GraphqlIcon'
+import { GalleryStore } from '../store/galleryStore'
 
 const TabsComponent = observer(() => {
 	const history = useHistory()
+	const { queriesListIsOpen, toggleQueriesList } = GalleryStore
 	const { user } = UserStore
 	const { tabs, currentTab, switchTab, index } = TabsStore
 	const match = useRouteMatch(`${process.env.REACT_APP_IDE_URL}/:queryurl`)
-	const { setQuery, removeQuery, query, updateQuery, currentQuery, isLoaded, setIsLoaded } = QueriesStore
+	const { setQuery, removeQuery, query, updateQuery, currentQuery, isLoaded, setIsLoaded, setQueryIsTransfered } = QueriesStore
 	const [editTabName, setEditTabName] = useState(false)
 	const [queryName, setQueryName] = useState({[currentTab]: currentQuery.name})
 	const [x,setx] = useState(0)
-	const [loaded, setLoaded] = useState(false)
 
 	useEffect(() => {
 		x <=1 && setx(x => x + 1)
@@ -30,7 +31,17 @@ const TabsComponent = observer(() => {
 		// eslint-disable-next-line 
 	}, [currentQuery.url])
 	useEffect(() => {
-		if (!match) {
+		if (/^\/ide\/transfer\/[0-9a-fA-F]{6}$/.test(history.location.pathname)) {
+			const code = history.location.pathname.match(/[0-9a-fA-F]{6}/)[0]
+			const gtf = async () => {
+				const { data } = await getTransferedQuery(code)	
+				updateQuery({query: data.transferedQuery.query, variables: data.transferedQuery.variables}, index)
+				setQueryIsTransfered(true)
+				setx(2)
+				setIsLoaded()
+			}
+			gtf()
+		} else if (!match) {
 			setx(2)
 			setIsLoaded()
 		} else {
@@ -38,7 +49,7 @@ const TabsComponent = observer(() => {
 				const { data } = await getWidget(match.params.queryurl)
 				if (typeof data === 'object') {
 					if (query.map(query=>query.id).indexOf(data.id) === -1) {
-						updateQuery({...data, variables: data.arguments, config: JSON.parse(data.config), javascript: JSON.parse(data.javascript),  saved: true}, index, data.id)
+						updateQuery({...data, config: JSON.parse(data.config), javascript: JSON.parse(data.javascript),  saved: true}, index, data.id)
 						setQueryName({[currentTab]: data.name})
 						setIsLoaded()
 					}
@@ -46,7 +57,7 @@ const TabsComponent = observer(() => {
 					const { data } = await getQuery(match.params.queryurl)
 					if (typeof data === 'object') {
 						if (query.map(query=>query.id).indexOf(data.id) === -1) {
-							updateQuery({...data, variables: data.arguments, config: JSON.parse(data.config), saved: true}, index, data.id)
+							updateQuery({...data, config: JSON.parse(data.config), saved: true}, index, data.id)
 							setQueryName({[currentTab]: data.name})
 							setIsLoaded()
 						}
@@ -75,12 +86,14 @@ const TabsComponent = observer(() => {
 	}, [tabs.length])
 	const handleEdit = e => setQueryName({...queryName, [currentTab]: e.target.value})
 	const switchTabHandler = (tabid) => {
+		queriesListIsOpen && toggleQueriesList()
 		switchTab(tabid)
 		let id = tabs.map(tab => tab.id).indexOf(tabid)
 		query[id].url ? history.push(`${process.env.REACT_APP_IDE_URL}/${query[id].url}`) : history.push(`${process.env.REACT_APP_IDE_URL}`)
 		setEditTabName(false)
 	}
 	const addNewTabHandler = () => {
+		queriesListIsOpen && toggleQueriesList()
 		setQuery({query: '', variables: '{}', name: 'New Query', endpoint_url: currentQuery.endpoint_url, config: '{}'})
 	}
 	const removeTabHandler = (index, event) => {
@@ -94,20 +107,16 @@ const TabsComponent = observer(() => {
 		}
 	}
 	const renameQueryHandler = () => {
-		setEditTabName((prev)=>!prev)
-		updateIfNeeded()
+		if (!!currentQuery?.url && !!currentQuery.id) {		//if query READONLY
+		} else {
+			setEditTabName((prev)=>!prev)
+			updateIfNeeded()
+		}
 	}
 
 	return isLoaded ? (
 		<div className="tabs">
 			<ul className="nav nav-tabs" >
-				<a href="https://bitquery.io" className="topBar__logo">
-					<img 
-						className="topBar__logo__img" 
-						src={logo}
-						alt="logo"
-					/>
-				</a>
 				{
 					tabs.map((tab, i) => (
 						<li 
@@ -129,14 +138,14 @@ const TabsComponent = observer(() => {
 											/>
 											<i className="fas fa-check" onClick={renameQueryHandler}/>
 										</>
-									: 	<span className={'nav-link-title ' + ((currentTab === tab.id && (!currentQuery?.id || currentQuery.account_id === user?.id)) ? 'cursor-edit' : undefined)}
+									: 	<span className={'nav-link-title ' + ((currentTab === tab.id && !(!!currentQuery?.url && !!currentQuery.id)) ? 'cursor-edit' : undefined)}
 											onClick={()=>(currentTab === tab.id && (!currentQuery.id || currentQuery.account_id === user.id)) && renameQueryHandler(currentTab, i)}
 										>
 											{(('saved' in query[i]) && query[i].saved) || !('saved' in query[i]) 
 											? tab.name : `*${tab.name}`}
 										</span>
 								}
-								<i className="tab__close fas fa-times" onClick={e=>removeTabHandler(i, e)} />
+								<i className="tab__close bi bi-x" onClick={e=>removeTabHandler(i, e)} />
 							</a>
 						</li>
 					))
@@ -144,7 +153,7 @@ const TabsComponent = observer(() => {
 				<li 
 					className="nav-item"
 					onClick={addNewTabHandler}
-				><a href="# " className="nav-link nav-link-add"><i className="tab__add fas fa-plus"/></a></li>
+				><a href="# " className="nav-link nav-link-add"><i className="tab__add bi bi-plus"/></a></li>
 			</ul>
 		</div>
 	) : <div className="tabs">

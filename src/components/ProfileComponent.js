@@ -34,24 +34,31 @@ const Profile = observer(() => {
 	}, [])
 
 	return !user ? (
-		<div className="flex profile__menu" onClick={clickHandler}>
+		<div className="flex profile__menu d-none d-lg-block" onClick={clickHandler}>
 			<a className="profile__email" href="# ">Login</a>
 			<UserIcon />
 		</div>
-	) : <Dropdown className={'profile__menu'}>
+	) : <Dropdown className={'d-none d-lg-block'}>
+			<a className='link__hire' target='_blank' href='https://t.me/bloxy_info/'>
+				<i class="bi bi-telegram"></i>
+			</a>
+			<a className='link__hire' target='_blank' href='https://community.bitquery.io/'>Forum</a>
 			<a className='link__hire' target='_blank' href='https://community.bitquery.io/t/how-to-get-started-with-bitquerys-blockchain-graphql-apis/13'>Getting started</a>
 			<a className='link__hire' target='_blank' href='https://angel.co/company/bitquery/jobs'>We are hiring!</a>
-			<p className="profile__email"> {user.email} </p> 
-			<Dropdown.Toggle id="dropdown-basic" as={'span'} >
-				<UserIcon />
+			<Dropdown.Toggle className="cursor-pointer dropdown-toggler" as={'a'} >
+				<i className="bi bi-person"></i>
 			</Dropdown.Toggle>
 		
-			<Dropdown.Menu>
-				<Dropdown.Item href="# " onClick={apiKeyHandler}>API Key</Dropdown.Item>
-				<Dropdown.Item href="https://graphql.bitquery.io/user/account">Profile</Dropdown.Item>
+			<Dropdown.Menu className="dropdown-menu dropdown-menu-right">
+				<Dropdown.Header>{user.email}</Dropdown.Header>
+				<Dropdown.Divider/>
 				{ user.role === 'admin' &&  <Dropdown.Item href="https://graphql.bitquery.io/admin/accounts">Admin</Dropdown.Item>}
+				{ user.role === 'admin' && <Dropdown.Divider/> }
+				<Dropdown.Item href="# " onClick={apiKeyHandler}>API Key</Dropdown.Item>
+				<Dropdown.Item href="https://graphql.bitquery.io/user/account">Account</Dropdown.Item>
+				<Dropdown.Item href="https://graphql.bitquery.io/user/billing">Billing</Dropdown.Item>
 				<Dropdown.Item href="# " onClick={changePasswordHadler}>Change password</Dropdown.Item>
-				<Dropdown.Item href="# "onClick={logOut}>Logout</Dropdown.Item>
+				<Dropdown.Item href="# " onClick={logOut}>Logout</Dropdown.Item>
 			</Dropdown.Menu>
 		</Dropdown>
 })

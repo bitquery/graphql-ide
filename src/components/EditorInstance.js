@@ -37,15 +37,19 @@ import { getCheckoutCode } from '../api/api'
 import { flattenData } from './flattenData.js'
 import { stringifyIncludesFunction } from '../utils/common';
 import modalStore from '../store/modalStore.js';
+import { GalleryStore } from '../store/galleryStore.js';
+import CodeSnippetComponent from './CodeSnippetComponent.js';
 
 
 const EditorInstance = observer(function EditorInstance({number})  {
 	const { tabs, currentTab, index, jsonMode, codeMode } = TabsStore
 	const { toggleModal, toggleLogin, modalIsOpen } = modalStore
+	const { tagListIsOpen } = GalleryStore
 	const { user }  = UserStore
 	const { query, updateQuery, currentQuery, isMobile,
-		setMobile, showSideBar, schema, setSchema, isLoaded } = QueriesStore
-	const [docExplorerOpen, toggleDocExplorer] = useState(false)
+		setMobile, showSideBar, schema, setSchema, isLoaded, logQuery } = QueriesStore
+	const [docExplorerOpen, setDocExplorerOpen] = useState(false)
+	const [codeSnippetOpen, setCodeSnippetOpen] = useState(false)
 	const [_variableToType, _setVariableToType] = useState(null)
 	const [loading, setLoading] = useState(false)
 	const [errorLoading, setErrorLoading] = useState(false)
@@ -95,7 +99,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 	}
 	useEffect(() => {
 		setupExecButtonPosition()
-	}, [docExplorerOpen])
+	}, [docExplorerOpen, codeSnippetOpen])
 	const workspaceResizer = e => {
 		if (e.target && e.target.className && typeof e.target.className.indexOf === 'function') { 
 			if (e.target.className.indexOf('workspace__sizechanger') !== 0) return 
@@ -123,8 +127,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
     	overwrap.current.addEventListener('mouseup', onMouseUp);
 	}
 	const getQueryTypes = (query) => {
-		console.log('get model')
-		const typeInfo = new TypeInfo(schema)
+		const typeInfo = new TypeInfo(schema[debouncedURL])
 		let typesMap = {}
 		const queryNodes = []
 		let depth = 0
@@ -163,7 +166,6 @@ const EditorInstance = observer(function EditorInstance({number})  {
 						}
 					}
 					depth++
-					// console.log(typeInfo.getFieldDef().name, typeInfo.getType().toString())
 					return {...node, typeInfo: typeInfo.getType()}
 				}
 			},
@@ -195,7 +197,6 @@ const EditorInstance = observer(function EditorInstance({number})  {
 		if (stop) {
 			let flattenModel = {}
 			Object.keys(typesMap).forEach((key, i) => {
-				console.log(key, typesMap[key].typeInfo.toString(), i)
 				if (key === 'data') {
 					flattenModel[key] = typesMap[key]
 				} else if ( ['Int', 'String'].some(value => typesMap[key].typeInfo.toString().includes(value)) ) { 
@@ -230,7 +231,6 @@ const EditorInstance = observer(function EditorInstance({number})  {
 		updateQuery({points: undefined, graphqlRequested: undefined, saved: currentQuery.saved}, index)
 		setLoading(true)
 		let queryType = getQueryTypes(currentQuery.query)
-		console.log(queryType)
 		if (JSON.stringify(queryType) !== JSON.stringify(queryTypes)) {
 			setQueryTypes(queryType)
 		}
@@ -238,6 +238,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 		let indexOfWidget = plugins.map(p => p.id).indexOf(currentQuery.widget_id)
 		const unusablePair = indexOfData < 0 || indexOfWidget < 0
 		let displayed_data = unusablePair ? Object.keys(queryType)[Object.keys(queryType).length-1] : currentQuery.displayed_data
+		console.log(displayed_data)
 		if (unusablePair) {
 			updateQuery({
 				displayed_data,
@@ -246,7 +247,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 			}, index)
 		}
 		fetcher({query: currentQuery.query, variables: currentQuery.variables}).then(data => {
-			const graphqlRequested = data.headers.get('X-GraphQL-Requested') === 'true' ? true : false
+			const graphqlRequested = data.headers.get('X-GraphQL-Requested') === 'true'
 			updateQuery(
 				{
 					graphqlQueryID: data.headers.get('X-GraphQL-Query-ID'),
@@ -254,13 +255,14 @@ const EditorInstance = observer(function EditorInstance({number})  {
 					points: graphqlRequested ? undefined : 0,
 					saved: currentQuery.saved
 				}, index)
-			data.json().then(json => {
+			data.json().then(async json => {
 				let values = null
 				if ('data' in json) {
 					if (currentQuery.displayed_data && currentQuery.displayed_data !== 'data') {
 						if (currentQuery.data_type === 'flatten') {
 							values = flattenData(json.data)
 						} else {
+							console.log(json.data, displayed_data)
 							values = getValueFrom(json.data, displayed_data)
 						}
 					} else {
@@ -270,6 +272,12 @@ const EditorInstance = observer(function EditorInstance({number})  {
 						}
 					}
 				}
+				currentQuery.id && await logQuery({
+					id: currentQuery.id,
+					account_id: currentQuery.account_id,
+					success: !json.errors,
+					error: JSON.stringify(json.errors)
+				})
 				setDataSource({
 					data: ('data' in json) ? json.data : null,
 					extensions: ('extensions' in json) ? json.extensions : null,
@@ -287,19 +295,11 @@ const EditorInstance = observer(function EditorInstance({number})  {
 			ReactTooltip.hide(executeButton.current)
 		})
 		// eslint-disable-next-line 
-	}, [JSON.stringify(currentQuery), schema, JSON.stringify(queryTypes)])
-	useEffect(() => {
-		number === index && console.log(!dataSource.values, !!currentQuery.query, !!currentQuery.saved, number === index, !!schema);
-		(!dataSource.values && 
-		currentQuery.query &&
-		currentQuery.saved &&
-		number === index &&
-		schema) && getResult()
-		// eslint-disable-next-line 
-	}, [schema])
+	}, [JSON.stringify(currentQuery), schema[debouncedURL], JSON.stringify(queryTypes)])
+	
 	const editQueryHandler = useCallback(handleSubject => {
 		if ('query' in handleSubject) {
-			const facts = getQueryFacts(schema, handleSubject.query)
+			const facts = getQueryFacts(schema[debouncedURL], handleSubject.query)
 			if (facts) {
 				const { variableToType } = facts
 				if ((JSON.stringify(variableToType) !== JSON.stringify(_variableToType)) 
@@ -314,19 +314,17 @@ const EditorInstance = observer(function EditorInstance({number})  {
 			}
 		}
 		if (user && query[index].account_id === user.id ) {
-			updateQuery(handleSubject, index)
+			updateQuery({...handleSubject, saved: false}, index)
 		} else {
-			updateQuery({...handleSubject, url: null}, index, null)
+			updateQuery({...handleSubject, saved: false, url: null, account_id: user.id}, index, null)
 		}
 		setAccordance(false)
 		// eslint-disable-next-line 
-	}, [user, schema, queryTypes, index])
+	}, [user, schema[debouncedURL], queryTypes, index])
 	const setConfig = (config) => {
 		if (number === index) {
 			if (JSON.stringify(currentQuery.config) !== JSON.stringify(config, stringifyIncludesFunction)) {
-				console.log(config)
 				updateQuery({config}, index)
-				console.log('setconfig')
 			}
 		}
 	}
@@ -348,7 +346,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 		)
 	}
 	useEffect(() => {
-		if (number === index && user !== null) {
+		if (number === index && user !== null && !(debouncedURL in schema)) {
 			const fetchSchema = () => {
 				setLoading(true)
 				let introspectionQuery = getIntrospectionQuery()
@@ -367,8 +365,8 @@ const EditorInstance = observer(function EditorInstance({number})  {
 				})
 				.then(result => {
 					if (typeof result !== 'string' && 'data' in result) {
-						let schema = buildClientSchema(result.data)
-						setSchema(schema)
+						let newSchema = buildClientSchema(result.data)
+						setSchema({...schema, [debouncedURL]: newSchema})
 					}
 					setLoading(false)
 					setErrorLoading(false)
@@ -382,6 +380,9 @@ const EditorInstance = observer(function EditorInstance({number})  {
 				})
 			}
 			fetchSchema()
+		}
+		if (debouncedURL in schema && errorLoading) {
+			setErrorLoading(false)
 		}
 		// eslint-disable-next-line 
 	}, [debouncedURL, user])
@@ -411,11 +412,21 @@ ${WidgetComponent.id === 'table.widget' ? '<link href="https://unpkg.com/tabulat
 		// eslint-disable-next-line 
 	}, [WidgetComponent.id, JSON.stringify(currentQuery), user])
 
+	const toggleDocs = () => {
+		codeSnippetOpen && setCodeSnippetOpen(false)
+		setDocExplorerOpen(prev => !prev)
+	}
+	const toggleCodeSnippet = () => {
+		docExplorerOpen && setDocExplorerOpen(false)
+		setCodeSnippetOpen(prev => !prev)
+	}
+
 	return (
 		<div 
 			className={'graphiql__wrapper ' + 
 				(currentTab === tabs[number].id ? 'graphiql__wrapper_active' : '')
 				+ (!showSideBar ? ' graphiql__wrapper_wide' : '')
+				+ (!tagListIsOpen ? ' fullwidth' : '')
 			}
 		>
 			<ToolbarComponent 
@@ -423,7 +434,9 @@ ${WidgetComponent.id === 'table.widget' ? '<link href="https://unpkg.com/tabulat
 				queryEditor={queryEditor}
 				variablesEditor={variablesEditor}
 				docExplorerOpen={docExplorerOpen}
-				toggleDocExplorer={toggleDocExplorer}
+				toggleDocExplorer={toggleDocs}
+				toggleCodeSnippet={toggleCodeSnippet}
+				codeSnippetOpen={codeSnippetOpen}
 			/>
 			<div className={'over-wrapper ' + (!currentQuery.layout ? 'active' : '')}  ref={overwrap}>
 				<ReactTooltip 
@@ -456,8 +469,9 @@ ${WidgetComponent.id === 'table.widget' ? '<link href="https://unpkg.com/tabulat
 						ref={workspace} 
 						onMouseDown={workspaceResizer}
 				>
-					{!currentQuery.layout && <GraphqlEditor 
-						schema={schema}
+					{!currentQuery.layout && <GraphqlEditor
+						readOnly={!!currentQuery?.url && !!currentQuery.id}
+						schema={schema[debouncedURL]}
 						query={query[number].query}
 						number={number}
 						variables={query[number].variables}
@@ -528,7 +542,8 @@ ${WidgetComponent.id === 'table.widget' ? '<link href="https://unpkg.com/tabulat
 							}
 					</div>
 				</div>
-				{docExplorerOpen && <DocExplorer schema={schema} />}
+				{docExplorerOpen && <DocExplorer schema={schema[debouncedURL]} />}
+				{codeSnippetOpen && <CodeSnippetComponent />}
 			</div>
 		</div> 
 	)

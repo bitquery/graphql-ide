@@ -341,6 +341,7 @@ div.CodeMirror span.CodeMirror-matchingbracket {
   height: $top-bar-height;
   overflow-y: visible;
   padding: 7px 14px 6px;
+  padding-left: 0;
   -webkit-user-select: none;
   -ms-user-select: none;
   user-select: none;
@@ -382,9 +383,6 @@ div.CodeMirror span.CodeMirror-matchingbracket {
     flex: 1 1 auto
   }
 }
-.form-control {
-  width: auto;
-}
 .icon_fullscreen, .icon_csv {
   position: absolute;
   z-index: 9;
@@ -415,4 +413,7 @@ div.CodeMirror span.CodeMirror-matchingbracket {
       }
     }
   }
+}
+.rawcode {
+  height: 100%;
 }

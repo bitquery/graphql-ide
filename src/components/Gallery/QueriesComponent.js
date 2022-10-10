@@ -17,11 +17,11 @@ const QueriesComponent = observer(function QueriesComponent({ queries }) {
 	const showDescription = (i1, i2) => i1===i2 ? true : false
 	const handleClick = (queryFromGallery) => {
 		if (query.map(query => query.id).indexOf(queryFromGallery.id) === -1) {
-			let data = {...queryFromGallery, variables: queryFromGallery.arguments}
+			let data = {...queryFromGallery}
 			if (queryFromGallery.widget_ids) {
 				let widget_ids = queryFromGallery.widget_ids.split(',')
 				let dbqueries = queries.queries.filter(query => query.widget_number && widget_ids.includes((query.widget_number).toString()))
-				data = {...data, dbqueries}
+				data = {...queryFromGallery, dbqueries}
 			}
 			let newQuery = {...data}
 			if ('layout' in newQuery) newQuery = {...newQuery, isDraggable: false, isResizable: false}
@@ -33,7 +33,7 @@ const QueriesComponent = observer(function QueriesComponent({ queries }) {
 		}
 	}
 	const dragEnd = (queryFromGallery) => {
-		setDashboardQuery({...queryFromGallery, variables: queryFromGallery.arguments}, queryFromGallery.id)
+		setDashboardQuery(queryFromGallery, queryFromGallery.id)
 		window.dispatchEvent(new CustomEvent('query-request', {detail: queryFromGallery}))
 	}
 	const queryUrl = queryUrl => queryUrl ? `${process.env.REACT_APP_IDE_URL}/${queryUrl}` : `${process.env.REACT_APP_IDE_URL}`

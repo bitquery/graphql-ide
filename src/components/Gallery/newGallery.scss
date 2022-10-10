@@ -1,0 +1,58 @@
+@mixin choosen_tag {
+	background-color: hsl(90, 100%, 50%, 50%);
+	font-size: 20px;
+}
+
+.newGallery {
+	&__root {
+		display: flex;
+		flex-direction: column;
+		flex-basis: 15%;
+		min-width: 300px;
+		max-width: 300px;
+	}
+	&__topbar {
+		min-height: 44px;
+		display: flex;
+		align-items: center;
+		border-bottom: 1px solid #d0d0d0;
+		padding-left: 14px;
+		i:hover {
+			color: #000 !important;
+		} 
+	}
+	&__close {
+		margin-right: auto;
+		cursor: pointer;
+		margin-left: 15px;
+		&_helper {
+			visibility: hidden;
+			margin-left: auto;
+			margin-right: 15px;
+		}
+	}
+	&__header {
+		justify-content: center;
+		align-items: center;
+	}
+	&__listWrapper {
+		display: flex;
+		overflow: auto;
+		flex-direction: column;
+		padding: 0;
+	}
+	&__listItem {
+		display: flex;
+		align-items: center;
+		justify-content: flex-start;
+		padding: 5px;
+		min-height: 30px;
+		word-break: break-all;
+		cursor: pointer;
+		font-weight: bold;
+		&:hover, &_active {
+			@include choosen_tag;
+		}
+		transition: all .15s ease;
+	}
+}

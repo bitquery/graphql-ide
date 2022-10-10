@@ -59,7 +59,7 @@ export default class VariableEditor extends Component {
 			autoCloseBrackets: true,
 			matchBrackets: true,
 			showCursorWhenSelecting: true,
-			readOnly: false,
+			readOnly: this.props.readOnly,
 			foldGutter: {
 				minFoldSize: 4,
 			},
@@ -88,6 +88,7 @@ export default class VariableEditor extends Component {
 		  return;
 		}
 		this.ignoreChangeEvent = true;
+		this.editor.options.readOnly = this.props.readOnly
 		if (this.props.variableToType !== prevProps.variableToType) {
 		  this.editor.options.lint.variableToType = this.props.variableToType;
 		  this.editor.options.hintOptions.variableToType = this.props.variableToType;

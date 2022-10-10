@@ -11,7 +11,7 @@ connection.query(`
 		id INT(10) not null auto_increment primary key,
 		account_id INT(10) not null,
 		query LONGTEXT not null,
-		arguments LONGTEXT not null,
+		variables LONGTEXT not null,
 		url VARCHAR(200),
 		name VARCHAR(200),
 		endpoint_url VARCHAR(200) not null,

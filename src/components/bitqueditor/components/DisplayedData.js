@@ -1,14 +1,15 @@
 import { observer } from 'mobx-react-lite'
 import React, { useEffect } from 'react'
-import { QueriesStore, TabsStore } from '../../../store/queriesStore'
+import { QueriesStore, TabsStore, UserStore } from '../../../store/queriesStore'
 import { getValueFrom } from '../../../utils/common'
 import { useFirstUpdate } from '../../../utils/useFirstUpdate'
 
 const DisplayedData = observer(function DisplayedData({model, dataWidgets, setDataIndexInModel, dataSource, setDataSource, plugins, number}) {
 	const { updateQuery, currentQuery, defaultWidget } = QueriesStore
 	const { index } = TabsStore
+	const { user } = UserStore
 	const onChangeHandle = (value, i) => {
-		updateQuery({displayed_data: value}, index)
+		updateQuery({displayed_data: value, saved: false}, index)
 		let currentNodeNumber = Object.keys(model).indexOf(value)
 		let currentWidgetNubmer = plugins.map(plugin => plugin.id).indexOf(currentQuery.widget_id)
 		let availableWidgetNumbers = dataWidgets[currentNodeNumber].map(
@@ -43,7 +44,7 @@ const DisplayedData = observer(function DisplayedData({model, dataWidgets, setDa
 			updateQuery({
 				displayed_data: Object.keys(model)[Object.keys(model).length-1],
 				widget_id: defaultWidget,
-				saved: currentQuery.id && true
+				saved: false
 			}, index)
 		}
 		// eslint-disable-next-line 
@@ -63,6 +64,7 @@ const DisplayedData = observer(function DisplayedData({model, dataWidgets, setDa
 						<a 	className="nav-link dropdown-toggle" 
 							href="# "
 							id="navbarDropdown" 
+							disabled
 							role="button" 
 							data-toggle="dropdown" 
 							aria-haspopup="true" 
@@ -72,7 +74,7 @@ const DisplayedData = observer(function DisplayedData({model, dataWidgets, setDa
 								: 'Displayed Data'
 							}
 						</a>
-						<div className="dropdown-menu" aria-labelledby="navbarDropdown">
+						<div className="dropdown-menu" aria-labelledby="navbarDropdown" disabled>
 							{dataWidgets && dataWidgets.length 
 								? 	dataWidgets.map((node, i) => 
 										node.some(widget => widget)

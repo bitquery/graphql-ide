@@ -1,16 +1,16 @@
-import React from 'react'
-import { useState } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { useRouteMatch } from 'react-router-dom'
 import { useToasts } from 'react-toast-notifications'
 import modalStore from '../../store/modalStore'
 import { QueriesStore, TabsStore } from '../../store/queriesStore'
 import copy from 'copy-to-clipboard'
-import { deleteQuery } from '../../api/api'
-import { useEffect } from 'react'
+import { deleteQuery, checkUrl } from '../../api/api'
 import ReactTooltip from 'react-tooltip'
 import ConfirmationWindow from '../modal/ConfirmationWindow'
-import { useRef } from 'react'
 import { observer } from 'mobx-react-lite'
+import { generateTags } from '../../utils/generateTags'
+import useEventListener from '../../utils/useEventListener'
+import { Modal, Form, Button } from 'react-bootstrap'
 
 const EditDialog = observer(function EditDialog({active}) {
 	const { addToast } = useToasts()
@@ -21,13 +21,32 @@ const EditDialog = observer(function EditDialog({active}) {
 	const [description, setDescription] = useState(currentQuery.description)
 	const [shared, setShared] = useState(!!currentQuery.url)
 	const [queryUrl, setQueryUrl] = useState(currentQuery.url)
+	const [tags, setTags] = useState([])
+	const [inputTagValue, setInputTagValue] = useState('')
 	const { toggleEditDialog, toggleModal, toggleConfirmation } = modalStore
 	const { renameCurrentTab } = TabsStore
 	const nameInput = useRef('')
+	const tagsInput = useRef(null)
 	const closeHandler = () => {
 		toggleModal()
 		toggleEditDialog()		
 	}
+	useEffect(() => {
+		const autoTags = generateTags(currentQuery.query)
+		autoTags && setTags(autoTags)
+	}, [])
+	const addOrDeleteTag = ({ key }) => {
+		const isCurrentlyFocused = element => element === document.activeElement
+		if (isCurrentlyFocused(tagsInput.current)) {
+			if (key === 'Enter' && inputTagValue) {
+				setTags(prev => [...new Set( [ ...prev, inputTagValue ] )])
+				setInputTagValue('')
+			} else if (key === 'Backspace' && !inputTagValue) {
+				setTags(prev => prev.slice(0, -1))
+			}
+		}
+	}
+	useEventListener('keydown', addOrDeleteTag)
 	useEffect(() => {
 		if (shared && !currentQuery.url) {
 			setQueryUrl(name.trim().replaceAll(' ', '-').replace(/[^a-zA-Z0-9-_]/g, ''))
@@ -35,6 +54,7 @@ const EditDialog = observer(function EditDialog({active}) {
 		// eslint-disable-next-line 
 	}, [shared])
 	const handleCopy = () => {
+		console.log(url)
 		copy(`${window.location.protocol}//${window.location.host}${url.match(/^\/([^?\/]+)/)[0]}/${queryUrl}`)
 		addToast('Link Copied to clipboard', {appearance: 'success'})
 	}
@@ -44,11 +64,10 @@ const EditDialog = observer(function EditDialog({active}) {
 	}
 	const saveHandler = async (e) => {
 		e.preventDefault()
-		const fixWrongUrl = (queries, url) => {
-			const identicalUrl = queries.filter(query => query.url === url)
-			console.log(url, identicalUrl)
-			if (identicalUrl.length) {
-				return fixWrongUrl(queries ,url+'1')
+		const fixWrongUrl = async (url) => {
+			const { status } = await checkUrl(url)
+			if (status === 200) {
+				return await fixWrongUrl(`${url}_1`)
 			} else {
 				return url
 			}
@@ -59,13 +78,17 @@ const EditDialog = observer(function EditDialog({active}) {
 			params.name = name
 			if (shared) {
 				if (!params.url) {
-					params.url = fixWrongUrl(sharedQueries, queryUrl)
+					params.url = await fixWrongUrl(queryUrl)
 				}
 			} else {
 				params.url = null
 				setQueryUrl('')
 			}
 			if (description) params.description = description
+			if (tags.length) params.tags = tags
+			if (params.endpoint_url !== 'https://graphql.bitquery.io') {
+				addToast('You can not save query with non-https://graphql.bitquery.io URL', {appearance: 'error'})
+			}
 			data = await saveQuery({...params, isDraggable: false, isResizable: false})
 			if (data.status !== 400) {
 				renameCurrentTab(name)
@@ -89,27 +112,51 @@ const EditDialog = observer(function EditDialog({active}) {
 		addToast(data.data, {appearance: 'success'})
 	}
 
-	return (
-		<div className={'modal__form '+(!active && 'modal__form_hide')}>
-			
+	const deleteTag = tag => {
+		setTags(prev => prev.filter(prevTag => prevTag !== tag))
+	}
+
+	return active && (
+		<>
 			<ConfirmationWindow 
 				message={'Are you sure you want to delete this query?'} 
 				action={deleteHandler}
 			/>
-			<p>Query attributes and access control</p>
-			<div className="access-control__wrapper">
-				<p style={{'marginBottom': '.5rem'}}>Query name (required)</p>
-				<input type="text" className="query__save"  
-					style={{'marginBottom': '1rem'}}
-					ref={nameInput}
-					value={name==='New Query' ? '' : name} onChange={/* e => setName(e.target.value) */queryNameHandler}
-				/>  
-				<p style={{'marginBottom': '.5rem'}}>Description (optional)</p>
-				<textarea className="query__save" rows="4"
-					style={{'marginBottom': '1rem'}}
-					value={description} onChange={e => setDescription(e.target.value)} 
-				/>
-				<i className="handler handler__close fas fa-times" onClick={closeHandler}></i>
+			<Modal.Header>
+				<Modal.Title> Query attributes and access control </Modal.Title>
+			</Modal.Header>
+			<Modal.Body>
+				<Form.Group>
+					<Form.Label>Query name (required)</Form.Label>
+					<Form.Control ref={nameInput} type="email" 
+						value={name==='New Query' ? '' : name}
+						onChange={queryNameHandler} 
+					/>
+				</Form.Group>
+				<Form.Group>
+					<Form.Label>Description (optional)</Form.Label>
+					<Form.Control as="textarea" rows={4}
+						value={description}
+						onChange={e => setDescription(e.target.value)} 
+					/>
+				</Form.Group>
+				<div className="tags__list">
+					{ tags.length ? tags.map(tag => 
+						<div 
+							className="tags__tag"
+							onClick={() => deleteTag(tag)}
+						>
+							#{tag}
+						</div>) : null }
+						<Form.Control
+							ref={tagsInput}
+							type="text"
+							placeholder='Add tags here'
+							className="tags__input"
+							value={inputTagValue}
+							onChange={e => setInputTagValue(e.target.value)}
+						/>
+				</div>
 				<div className="access-control flex"
 					style={{'justifyContent': 'space-evenly', 'width': '100%'}}
 				>
@@ -133,45 +180,20 @@ const EditDialog = observer(function EditDialog({active}) {
 						</div>
 					</div>
 				</div>
-				{shared && <div className="input-group mb-3">
-					<input type="text" className="form-control query-link" 
-						value={queryUrl && (`${window.location.protocol}://${window.location.host}${url.match(/^\/([^?\/]+)/)[0]}/${queryUrl}`||'')} 
-						readOnly 
-						placeholder="Query link" aria-label="Query link" aria-describedby="basic-addon2"
-					/>
-					<div className="input-group-append">
-						<button className="btn btn-outline-secondary"
-							data-tip="Get query link"
-							data-for="getlinkbutton"
-							type="button" 
-							onClick={handleCopy}
-						>
-								<i className="fas fa-link" />
-						</button>
-						<ReactTooltip id="getlinkbutton" place="top"/>
-					</div>
-				</div>}
-				<div className="buttons flex" style={{'justifyContent': 'space-between', 'width': '100%'}}>
-					<button type="button" className="btn btn-secondary btn-sm" onClick={closeHandler}>
-						Cancel
-					</button>
+				<Form.Group className="d-flex justify-content-between">
+					<Button variant="secondary" onClick={closeHandler} >Cancel</Button>
 					<span data-tip={!name ? 'Name is required' : ''} data-for="savequerybutton">
-						<button  type="button" className="btn btn-primary btn-sm" 
-							onClick={saveHandler} 
+						<Button 
+							variant="primary"
+							onClick={saveHandler}
 							disabled={(!nameInput.current.value && !name) || name==='New Query' ? true : false}
-						>
-							Save
-						</button>
+						>Save</Button>
 					</span>
 					<ReactTooltip id="savequerybutton" place="top"/>
-					<button type="button" className="btn btn-outline-danger btn-sm" 
-						onClick={confirm} disabled={!currentQuery.id ? true : false} 
-					>
-						Delete
-					</button>
-				</div>	
-			</div>
-		</div>
+					<Button variant="outline-danger" onClick={confirm} disabled={!currentQuery.id ? true : false} >Delete</Button>
+				</Form.Group>
+			</Modal.Body>
+		</>
 	)
 })
 

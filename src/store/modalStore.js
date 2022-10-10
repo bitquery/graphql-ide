@@ -6,7 +6,6 @@ class Modal {
 	loginIsOpen = false
 	apiKeyIsOpen = false
 	registerIsOpen = false
-	saveQueryIsOpen = false
 	shareQueryIsOpen = false
 	editDialogIsOpen = false
 	confirmationIsOpen = false
@@ -24,7 +23,6 @@ class Modal {
 			loginIsOpen: observable,
 			apiKeyIsOpen: observable,
 			registerIsOpen: observable,
-			saveQueryIsOpen: observable,
 			shareQueryIsOpen: observable,
 			confirmationAction: observable,
 			confirmationIsOpen: observable,
@@ -36,7 +34,6 @@ class Modal {
 			toggleModal: action,
 			toggleLogin: action,
 			toggleRegister: action,
-			toggleSaveQuery: action,
 			toggleShareQuery: action,
 			toggleConfirmation: action,
 			toggleForgotPassword: action,
@@ -51,7 +48,7 @@ class Modal {
 		if (settings) {
 			this.fade = settings.fade
 		} else {
-			this.fade &&= false
+			this.fade = this.fade && false
 		}
 	}
 	toggleLogin = (e) => {
@@ -63,9 +60,6 @@ class Modal {
 	}
 	toggleRegister = () => {
 		this.registerIsOpen = !this.registerIsOpen
-	}
-	toggleSaveQuery = () => {
-		this.saveQueryIsOpen = !this.saveQueryIsOpen
 	}
 	toggleShareQuery = () => {
 		this.shareQueryIsOpen = !this.shareQueryIsOpen

@@ -10,6 +10,11 @@ import { QueriesStore } from './store/queriesStore'
 import { GraphqlExplorer } from './components/GraphqlExplorer'
 import { observer } from 'mobx-react-lite'
 import 'react-grid-layout/css/styles.css'
+import NewGallery from "./components/Gallery/NewGallery"
+import QueriesList from "./components/Gallery/QueriesList"
+import { GalleryStore } from './store/galleryStore'
+import TabsComponent from './components/TabsComponent'
+import ExploreComponent from './components/ExploreComponent'
 
 if (process.env.NODE_ENV === 'development') {
 	/* require('@welldone-software/why-did-you-render')(React, {
@@ -23,6 +28,7 @@ if (process.env.NODE_ENV === 'development') {
 
 const App = observer(function App() {
 	const { query, showSideBar } = QueriesStore
+	const { tagListIsOpen } = GalleryStore
 	useEffect(() => {
 		const handleUnload = e => {
 			for (let i=0; i<query.length; i++) {
@@ -41,15 +47,22 @@ const App = observer(function App() {
 	
 	return (
 		<div className="App">
+			<ControlPanel />
+			<ModalWindow />
 			<Switch>
 				<Route path={`${process.env.REACT_APP_IDE_URL}/reset`} >
 					<ResetPassword />
 				</Route>
+				<Route exact path={`${process.env.REACT_APP_IDE_URL}/explore`} >
+					<ExploreComponent />
+				</Route>
+				<Route exact path={`${process.env.REACT_APP_IDE_URL}/myqueries`} >
+					<ExploreComponent />
+				</Route>
 				<Route path={[`${process.env.REACT_APP_IDE_URL}/:queryurl`, `${process.env.REACT_APP_IDE_URL}`]} >
-					<ModalWindow />
-					<ControlPanel />
+					<TabsComponent />
 					<div className="content flex">
-						{showSideBar && <GalleryComponent />}
+						{tagListIsOpen && <NewGallery />}
 						<GraphqlExplorer />
 					</div>
 				</Route>

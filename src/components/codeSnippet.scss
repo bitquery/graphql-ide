@@ -1,0 +1,40 @@
+.codesnippet {
+	&__root {
+		width: 33%;
+		height: 100%;
+		border-left: 1px solid #d0d0d0;
+		.options {
+			padding: 10px;
+			margin-top: 13px;
+			border-top: 1px solid #d0d0d0;
+		}
+		.dropdown-menu {
+			height: 500px;
+			overflow: auto;
+		}
+		.CodeMirror {
+			height: 100%;
+		}
+		.card {
+			margin: 10px;
+			margin-top: 0;
+			height: 80%;
+		}
+		.navbar-collapse {
+			flex-basis: 0;
+			flex-grow: 0;
+		}
+		.buttons {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			.bi {
+				padding: 10px;
+				cursor: pointer;
+				&:hover {
+					background-color: #ececec;
+				}
+			}
+		}
+	}
+}

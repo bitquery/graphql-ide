@@ -1,5 +1,6 @@
 **/.DS_Store
 disposable-email-provider-domains
+api.http
 # Logs
 logs
 *.log

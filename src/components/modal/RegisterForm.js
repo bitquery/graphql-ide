@@ -4,6 +4,7 @@ import { useToasts } from 'react-toast-notifications'
 import modalStore from '../../store/modalStore'
 import { validEmail } from '../../utils/common'
 import ReCAPTCHA from "react-google-recaptcha"
+import { Button, Form, Modal } from 'react-bootstrap'
 
 function RegisterForm({ active }) {
 	const recaptchaRef = createRef()
@@ -41,34 +42,44 @@ function RegisterForm({ active }) {
 			addToast('Email is not valid or fill all required fields', {appearance: 'error'})
 		}
 	}
-	return (
-		<form className={'modal__form '+(!active && 'modal__form_hide')} >
-			<div style={{'display': 'flex', 'width': '100%', 'justifyContent': 'center', 'position': 'relative'}}>
-				<div className="p-modal">Email (used for login)</div>
-				{!email && <div className="required">*required</div>}
-			</div>
-			<input type="text" className="query__save" value={email} onChange={e => setEmail(e.target.value)} />  
-			<div style={{'display': 'flex', 'width': '100%', 'justifyContent': 'center', 'position': 'relative'}}>
-				<div className="p-modal">Password</div>
-				{!password && <div className="required">*required</div>}
-			</div>
-			<input type="password" className="query__save" value={password} onChange={e => setPassword(e.target.value)} />  
-			<div style={{'display': 'flex', 'width': '100%', 'justifyContent': 'center', 'position': 'relative'}}>
-				<div className="p-modal">Name</div>
-				{!accountName && <div className="required">*required</div>}
-			</div>
-			<input type="text" className="query__save" value={accountName} onChange={e => setName((e.target.value).trim())} />  
-			<div className="p-modal">Company Name</div>
-			<input type="text" className="query__save mb-3" value={companyName} onChange={e => setCompanyName(e.target.value)} />
-			<ReCAPTCHA
-				ref={recaptchaRef}
-				sitekey="6LfZXscaAAAAAPTYeT0IbcFE1-2v-MlJ3aAj5SaY"
-				onChange={onChange}
-			/>  
-			<button className="button button_filled mt-3" onClick={register}>Sign Up</button>
-			<i className="handler handler__back fas fa-chevron-left" onClick={backHandler} />
-			{!fade && <i className="handler handler__close fas fa-times" onClick={closeHandler} />}
-		</form>
+	return active && (
+		<>
+			<Modal.Body>
+				<Form onSubmit={register} className="d-flex flex-column" >
+					<Form.Group>
+						<Form.Label>Email (used for login)</Form.Label>
+						{!email && <div className="required">*required</div>}
+						<Form.Control type="email" value={email} onChange={e => setEmail(e.target.value)} />
+					</Form.Group>
+					<Form.Group>
+						<Form.Label>Password</Form.Label>
+						{!password && <div className="required">*required</div>}
+						<Form.Control type="password" value={password} onChange={e => setPassword(e.target.value)} />
+					</Form.Group>
+					<Form.Group>
+						<Form.Label>Name</Form.Label>
+						{!accountName && <div className="required">*required</div>}
+						<Form.Control type="text" value={accountName} onChange={e => setName((e.target.value).trim())} />
+					</Form.Group>
+					<Form.Group>
+						<Form.Label>Company Name</Form.Label>
+						{!accountName && <div className="required">*required</div>}
+						<Form.Control type="text" value={companyName} onChange={e => setCompanyName(e.target.value)} />
+					</Form.Group>
+					<Form.Group className="d-flex justify-content-center">
+						<ReCAPTCHA
+							ref={recaptchaRef}
+							sitekey="6LfZXscaAAAAAPTYeT0IbcFE1-2v-MlJ3aAj5SaY"
+							onChange={onChange}
+						/>
+					</Form.Group>
+					<Form.Group className="d-flex justify-content-around">
+						<Button type="cancel" onClick={backHandler} > Back </Button>
+						<Button type="submit" > Sign Up </Button>
+					</Form.Group>
+				</Form>
+			</Modal.Body>
+		</>
 	)
 }
 
