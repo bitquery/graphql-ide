@@ -96,7 +96,7 @@ const ControlPanel = observer(function ControlPanel() {
 						<Link className={`nav-link ${active === 3 ? 'nav-active' : 'text-primary'}`} to={`${process.env.REACT_APP_IDE_URL}/myqueries`} onClick={()=>setSearch('')}><i className="bi bi-star mr-2"></i>My Queries</Link>
 					</li>
 					<li className="nav-item d-lg-none">
-						<a className="nav-link text-primary" href="https://t.me/bloxy_info//"><i class="bi bi-telegram mr-2"></i>Telegram</a>
+						<a className="nav-link text-primary" href="https://t.me/bloxy_info//"><i className="bi bi-telegram mr-2"></i>Telegram</a>
 					</li>
 					<li className="nav-item d-lg-none">
 						<a className="nav-link text-primary" href="https://community.bitquery.io/">Forum</a>

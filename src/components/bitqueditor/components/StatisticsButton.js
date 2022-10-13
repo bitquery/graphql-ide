@@ -5,7 +5,7 @@ import { QueriesStore, UserStore, TabsStore } from '../../../store/queriesStore'
 
 function StatisticsButton({number}) {
 	const { toggleModal, toggleStatisticsModal } = modalStore
-	const { currentQuery: { points, graphqlQueryID, graphqlRequested, saved }, updateQuery } = QueriesStore
+	const { currentQuery: { points, graphqlQueryID, graphqlRequested, saved, gettingPointsCount }, updateQuery } = QueriesStore
 	const { user } = UserStore
 	const { index } = TabsStore
 	const [count, setCount] = useState(0)
@@ -18,22 +18,32 @@ function StatisticsButton({number}) {
 					"content-type": "application/json",
 					"x-api-key": user.key
 				},
-				"body": `{\"query\":\"query MyQuery {\\n  metrics(queryId: \\\"${graphqlQueryID}\\\", options: {seed: ${new Date().getTime()}}) {\\n    points\\n  }\\n}\\n\",\"variables\":\"{}\"}`,
+				"body": `{\"query\":\"query MyQuery {\\n utilities {\\n  metrics(queryId: \\\"${graphqlQueryID}\\\", options: {seed: ${new Date().getTime()}}) {\\n    points\\n  \\n}}\\n}\\n\",\"variables\":\"{}\"}`,
 				"method": "POST"
 			})
 			const { data } = await response.json()
-			if (data.metrics && 'points' in data.metrics) {
-				updateQuery({points: data.metrics.points, saved}, index)
+			if (data?.utilities?.metrics && 'points' in data.utilities.metrics) {
+				const patch = {}
+				patch.points = data.utilities.metrics.points
+				patch.saved = saved
+				patch.gettingPointsCount = gettingPointsCount + 1 || 0
+				updateQuery(patch, index)
 			}
 		}
 	}
 
 	useEffect(() => {
-		graphqlRequested ? setCount(0) : setCount(10)
+		(graphqlRequested || gettingPointsCount < 9 ) ? setCount(0) : setCount(10)
 	}, [points, graphqlRequested])
 
 	useInterval(() => {
-		setCount(prev => prev + 1)
+		setCount(prev => {
+			const newValue = prev + 1
+			if (newValue >= 9) {
+				updateQuery({graphqlRequested: undefined}, index)
+			}
+			return newValue
+		})
 		getPoints()
 	}, count < 10 ? 2000 : null)
 

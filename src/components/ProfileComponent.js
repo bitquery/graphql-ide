@@ -40,7 +40,7 @@ const Profile = observer(() => {
 		</div>
 	) : <Dropdown className={'d-none d-lg-block'}>
 			<a className='link__hire' target='_blank' href='https://t.me/bloxy_info/'>
-				<i class="bi bi-telegram"></i>
+				<i className="bi bi-telegram"></i>
 			</a>
 			<a className='link__hire' target='_blank' href='https://community.bitquery.io/'>Forum</a>
 			<a className='link__hire' target='_blank' href='https://community.bitquery.io/t/how-to-get-started-with-bitquerys-blockchain-graphql-apis/13'>Getting started</a>

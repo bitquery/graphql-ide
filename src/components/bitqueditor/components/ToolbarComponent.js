@@ -16,7 +16,7 @@ import DocsIcon from '../../icons/DocsIcon'
 const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOpen, toggleDocExplorer, toggleCodeSnippet, codeSnippetOpen, number}) => {
 	const { url } = useRouteMatch()
 	const { currentQuery, saveQuery, updateQuery, setQuery,
-		isLoaded, queryIsTransfered, setQueryIsTransfered } = QueriesStore
+		isLoaded, queryIsTransfered, setQueryIsTransfered, query } = QueriesStore
 	const { tagListIsOpen, toggleTagsList } = GalleryStore
 	const { index } = TabsStore
 	const { user }  = UserStore
@@ -136,7 +136,7 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 				value={currentQuery.endpoint_url}
 				onChange={handleInputURLChange} 
 			/>
-			{user?.id && currentQuery.graphqlQueryID && <StatisticsButton number={number} />}
+			{user?.id && query[number].graphqlQueryID && <StatisticsButton number={number} />}
 			<div className="newGallery__topbar" aria-label="Open Documentation Explorer">
 				<DocsIcon className={"docs_icon"+(docExplorerOpen ? " active" : '')} onClick={toggleDocExplorer} data-toggle="tooltip" data-placement="top" title="Tooltip on top" />
 			</div>

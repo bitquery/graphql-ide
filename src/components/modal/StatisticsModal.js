@@ -31,13 +31,13 @@ const StatisticsModal = observer(function StatisticsModal({active}) {
 					"content-type": "application/json",
 					"x-api-key": user.key
 				},
-				"body": `{\"query\":\"query MyQuery {\\n  metrics(queryId: \\\"${graphqlQueryID}\\\", options: {seed: ${new Date().getTime()}}) {\\n    points\\n    id\\n    sqlRequestsCount\\n    list {\\n      cost\\n      max\\n      min\\n      name\\n      price\\n      value\\n      divider\\n      maxUnit\\n      minUnit\\n      valueUnit\\n    }\\n  }\\n}\\n\",\"variables\":\"{}\"}`,
+				"body": `{\"query\":\"query MyQuery {\\n utilities {\\n  metrics(queryId: \\\"${graphqlQueryID}\\\", options: {seed: ${new Date().getTime()}}) {\\n    points\\n    id\\n    sqlRequestsCount\\n    list {\\n      cost\\n      max\\n      min\\n      name\\n      price\\n      value\\n      divider\\n      maxUnit\\n      minUnit\\n      valueUnit\\n    \\n} }\\n  }\\n}\\n\",\"variables\":\"{}\"}`,
 				"method": "POST",
 				"mode": "cors",
 			})
 			const { data } = await response.json()
-			if (data.metrics && 'points' in data.metrics) {
-				setMetrics(data.metrics)
+			if (data?.utilities?.metrics && 'points' in data.utilities.metrics) {
+				setMetrics(data.utilities.metrics)
 			}
 		}
 	}
