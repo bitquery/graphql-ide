@@ -54,9 +54,10 @@ module.exports = function(app, passport, db, redisClient) {
 			: db.query(sql, callback)
 	})
 	
-	const handleTags = async (query_id, tags, res, msg) => {
+	const handleTags = async (query_id, tags, res, msg, update = false) => {
 		if (tags) {
 			tags.forEach(async (tag, i, arr) => {
+				if (update) await query('DELETE FROM tags_to_queries WHERE query_id = ?', [query_id])
 				const results = await query('SELECT id FROM tags WHERE tag = ?', [tag])
 				if (!results.length) {
 					const { insertId: tag_id } = await query('INSERT INTO tags SET ?', { tag })
@@ -312,6 +313,7 @@ module.exports = function(app, passport, db, redisClient) {
 				endpoint_url: req.body.params.endpoint_url,
 				updated_at: new Date()
 			}
+			const tags = req.body.params.tags
 			params.published = !!params.url
 			const response = await query(`select published from queries where id = ?`, [req.body.params.id])
 			console.log(response[0].published)
@@ -325,7 +327,8 @@ module.exports = function(app, passport, db, redisClient) {
 					config: JSON.stringify(req.body.params.config)
 				}
 				const msg = await addWidgetConfig(res, newParam)
-				msg ? res.status(201).send(msg) : res.sendStatus(201)
+				handleTags(req.body.params.id, tags, res, msg, true)
+				// msg ? res.status(201).send(msg) : res.sendStatus(201)
 			} else {
 				res.status(400).send({msg: 'Error updating query'})
 			}
