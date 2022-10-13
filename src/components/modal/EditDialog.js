@@ -36,8 +36,8 @@ const EditDialog = observer(function EditDialog({active}) {
 		if (currentQuery.saved) {
 			setTags(currentQuery.tags.split(','))
 		} else {
-			const autoTags = generateTags(currentQuery.query)
-			autoTags && setTags(autoTags)
+			const autoTags = generateTags(currentQuery.query, currentQuery.variables)
+			autoTags && setTags([...new Set(autoTags)])
 		}
 	}, [])
 	const addOrDeleteTag = ({ key }) => {
