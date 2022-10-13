@@ -1,17 +1,18 @@
-import React, { useEffect, useState } from 'react'
 import { useInterval } from '../../../utils/useInterval'
 import modalStore from '../../../store/modalStore';
 import { QueriesStore, UserStore, TabsStore } from '../../../store/queriesStore';
+import { observer } from 'mobx-react';
 
-function StatisticsButton({number}) {
+const StatisticsButton = observer(function StatisticsButton({number}) {
 	const { toggleModal, toggleStatisticsModal } = modalStore
-	const { currentQuery: { points, graphqlQueryID, graphqlRequested, saved, gettingPointsCount }, updateQuery } = QueriesStore
+	const { currentQuery: { points, graphqlQueryID, saved, gettingPointsCount, graphqlRequested }, updateQuery } = QueriesStore
 	const { user } = UserStore
 	const { index } = TabsStore
-	const [count, setCount] = useState(0)
+	const { statisticsModalIsOpen } = modalStore
 	
 	const getPoints = async () => {
 		if (user.key && number === index ) {
+			updateQuery({gettingPointsCount: gettingPointsCount + 1 || 0}, index)
 			const response = await fetch("https://graphql.bitquery.io/", {
 				"headers": {
 					"accept": "application/json",
@@ -23,29 +24,14 @@ function StatisticsButton({number}) {
 			})
 			const { data } = await response.json()
 			if (data?.utilities?.metrics && 'points' in data.utilities.metrics) {
-				const patch = {}
-				patch.points = data.utilities.metrics.points
-				patch.saved = saved
-				patch.gettingPointsCount = gettingPointsCount + 1 || 0
-				updateQuery(patch, index)
+				updateQuery({points: data.utilities.metrics.points, saved}, index)
 			}
 		}
 	}
 
-	useEffect(() => {
-		(graphqlRequested || gettingPointsCount < 9 ) ? setCount(0) : setCount(10)
-	}, [points, graphqlRequested])
-
 	useInterval(() => {
-		setCount(prev => {
-			const newValue = prev + 1
-			if (newValue >= 9) {
-				updateQuery({graphqlRequested: undefined}, index)
-			}
-			return newValue
-		})
 		getPoints()
-	}, count < 10 ? 2000 : null)
+	}, (gettingPointsCount >= 9 || !graphqlRequested || statisticsModalIsOpen) ? null : 2000)
 
 	return (
 		<button 
@@ -55,6 +41,6 @@ function StatisticsButton({number}) {
 			{typeof points === 'number' ? `Points consumed: ${(Math.round(points * 100) / 100).toFixed(2)}` : 'Calculating points...'}
 		</button>
 	)
-}
+})
 
 export default StatisticsButton

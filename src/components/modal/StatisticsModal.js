@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { observer } from 'mobx-react'
-import { QueriesStore, UserStore } from '../../store/queriesStore'
+import { QueriesStore, TabsStore, UserStore } from '../../store/queriesStore'
 import { useInterval } from '../../utils/useInterval'
 import modalStore from '../../store/modalStore'
 import Loader from "react-loader-spinner"
@@ -16,15 +16,16 @@ const METRICS_INFO = [
 ]
   
 const StatisticsModal = observer(function StatisticsModal({active}) {
-	const { currentQuery: { points, graphqlQueryID, graphqlRequested } } = QueriesStore
+	const { currentQuery: { graphqlQueryID, graphqlRequested, gettingPointsCount }, updateQuery } = QueriesStore
 	const { user } = UserStore
+	const { index } = TabsStore
 	const { toggleModal, toggleStatisticsModal } = modalStore
 	const [metrics, setMetrics] = useState(undefined)
-	const [count, setCount] = useState(0)
 	const [metricNumber, setMetricNumber] = useState(null)
 
 	const getMetrics = async () => {
-		if (user.key) {
+		if (user.key && active) {
+			updateQuery({gettingPointsCount: gettingPointsCount + 1 || 0}, index)
 			const response = await fetch("https://graphql.bitquery.io/", {
 				"headers": {
 					"accept": "application/json",
@@ -42,14 +43,9 @@ const StatisticsModal = observer(function StatisticsModal({active}) {
 		}
 	}
 
-	useEffect(() => {
-		graphqlRequested ? setCount(0) : setCount(10)
-	}, [points, graphqlRequested])
-
 	useInterval(() => {
-		setCount(prev => prev + 1)
 		getMetrics()
-	}, count < 10 ? 2000 : null)
+	}, (!metrics || gettingPointsCount < 9) ? 2000 : null)
 
 	const closeHandler = () => {
 		toggleModal()

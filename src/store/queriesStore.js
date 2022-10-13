@@ -165,7 +165,7 @@ class Queries {
 		if (params.data_type) this.query[index].data_type = params.data_type
 		if (params.account_id) this.query[index].account_id = params.account_id
 		if (params.endpoint_url || params.endpoint_url === '')  this.query[index].endpoint_url = params.endpoint_url
-		if (params.gettingPointsCount) this.query[index].gettingPointsCount = params.gettingPointsCount
+		if ('gettingPointsCount' in params) this.query[index].gettingPointsCount = params.gettingPointsCount
 		if (params.url || params.url===null) this.query[index].url = params.url
 		if (params.name) {
 			this.query[index].name = params.name || this.query[index].name
