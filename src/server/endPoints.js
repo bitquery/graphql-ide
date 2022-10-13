@@ -328,7 +328,6 @@ module.exports = function(app, passport, db, redisClient) {
 				}
 				const msg = await addWidgetConfig(res, newParam)
 				handleTags(req.body.params.id, tags, res, msg, true)
-				// msg ? res.status(201).send(msg) : res.sendStatus(201)
 			} else {
 				res.status(400).send({msg: 'Error updating query'})
 			}

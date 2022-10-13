@@ -171,6 +171,7 @@ class Queries {
 			this.query[index].name = params.name || this.query[index].name
 			TabsStore.renameCurrentTab(params.name)
 		}
+		if ('tags' in params) this.query[index].tags = params.tags
 		if (params.javascript) this.query[index].javascript = params.javascript
 		if (params.description) this.query[index].description = params.description || this.query[index].description
 		if (params.widget_ids) this.query[index].widget_ids = params.widget_ids

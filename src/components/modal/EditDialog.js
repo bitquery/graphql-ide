@@ -16,7 +16,8 @@ const EditDialog = observer(function EditDialog({active}) {
 	const { addToast } = useToasts()
 	const { url } = useRouteMatch()
 	const { saveQuery, queryParams, currentQuery, sharedQueries,
-		saveToggle, query, removeQuery } = QueriesStore
+		saveToggle, query, removeQuery, updateQuery } = QueriesStore
+	const { index } = TabsStore
 	const [name, setName] = useState(currentQuery.name||'')
 	const [description, setDescription] = useState(currentQuery.description)
 	const [shared, setShared] = useState(!!currentQuery.url)
@@ -32,8 +33,12 @@ const EditDialog = observer(function EditDialog({active}) {
 		toggleEditDialog()		
 	}
 	useEffect(() => {
-		const autoTags = generateTags(currentQuery.query)
-		autoTags && setTags(autoTags)
+		if (currentQuery.saved) {
+			setTags(currentQuery.tags.split(','))
+		} else {
+			const autoTags = generateTags(currentQuery.query)
+			autoTags && setTags(autoTags)
+		}
 	}, [])
 	const addOrDeleteTag = ({ key }) => {
 		const isCurrentlyFocused = element => element === document.activeElement
@@ -92,6 +97,7 @@ const EditDialog = observer(function EditDialog({active}) {
 			data = await saveQuery({...params, isDraggable: false, isResizable: false})
 			if (data.status !== 400) {
 				renameCurrentTab(name)
+				updateQuery({tags: tags.join(',')}, index)
 				data.msg && addToast(data.msg, {appearance: 'success'})
 				closeHandler()
 			} else { 
