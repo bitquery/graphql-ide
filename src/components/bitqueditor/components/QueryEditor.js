@@ -99,7 +99,6 @@ export default class QueryEditor extends Component {
 			autoCloseBrackets: true,
 			matchBrackets: true,
 			showCursorWhenSelecting: true,
-			readOnly: this.props.readOnly,
 			foldGutter: {
 				minFoldSize: 4,
 			},
@@ -107,7 +106,6 @@ export default class QueryEditor extends Component {
 				schema: this.props.schema,
 			},
 			hintOptions: {
-				hint: this.props.readOnly ? () => {} : undefined,
 				schema: this.props.schema,
 				closeOnUnfocus: false,
 				completeSingle: false,
@@ -146,8 +144,6 @@ export default class QueryEditor extends Component {
 
 		this.ignoreChangeEvent = true;
 		if (TabsStore.index === this.props.number) {
-			this.editor.setOption('readOnly', this.props.readOnly)
-			this.editor.options.hintOptions.hint = this.props.readOnly ? () => {} : undefined
 			CodeMirror.signal(this.editor, 'optionChange', this.editor);
 		}
 		if (this.props.schema && JSON.stringify(this.props.schema) !== JSON.stringify(prevProps.schema) && this.editor) {

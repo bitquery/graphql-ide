@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { useRouteMatch } from 'react-router-dom'
+import { useHistory, useRouteMatch } from 'react-router-dom'
 import { useToasts } from 'react-toast-notifications'
 import modalStore from '../../store/modalStore'
 import { QueriesStore, TabsStore } from '../../store/queriesStore'
@@ -32,8 +32,9 @@ const EditDialog = observer(function EditDialog({active}) {
 		toggleModal()
 		toggleEditDialog()		
 	}
+	const history = useHistory()
 	useEffect(() => {
-		if (currentQuery.saved) {
+		if (currentQuery.tags) {
 			setTags(currentQuery.tags.split(','))
 		} else {
 			const autoTags = generateTags(currentQuery.query, currentQuery.variables)
@@ -97,6 +98,7 @@ const EditDialog = observer(function EditDialog({active}) {
 			data = await saveQuery({...params, isDraggable: false, isResizable: false})
 			if (data.status !== 400) {
 				renameCurrentTab(name)
+				params.url && history.push(`${process.env.REACT_APP_IDE_URL}/${params.url}`)
 				updateQuery({tags: tags.join(',')}, index)
 				data.msg && addToast(data.msg, {appearance: 'success'})
 				closeHandler()
