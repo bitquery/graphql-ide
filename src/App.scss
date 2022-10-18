@@ -4,7 +4,7 @@
 @import "./components/codeSnippet.scss";
 
 .result-wrapper {
-	height: 100%;
+	height: fit-content;
 	overflow: auto;
 }
 .result-time {
