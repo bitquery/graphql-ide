@@ -24,7 +24,8 @@ const StatisticsModal = observer(function StatisticsModal({active}) {
 	const [metricNumber, setMetricNumber] = useState(null)
 
 	const getMetrics = async () => {
-		if (user.key && active) {
+		if (user?.key && active) {
+			console.log('sss')
 			updateQuery({gettingPointsCount: gettingPointsCount + 1 || 0}, index)
 			const response = await fetch("https://graphql.bitquery.io/", {
 				"headers": {
@@ -110,7 +111,7 @@ const StatisticsModal = observer(function StatisticsModal({active}) {
 		}
 	}
 	
-	return active && modal
+	return active ? modal : null
 })
 
 export default StatisticsModal
