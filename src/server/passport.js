@@ -75,12 +75,17 @@ module.exports = function(passport, db) {
 	},
 
 	function(email, password, done) {
-		getFileFromCache(email, done, () => db.query("select * from accounts where email = ?", [email], (err,rows) => {
-			console.log(rows)
-			console.log("above row object, email already exist")
-			if (err)
-				return done(err)
-				if (rows.length) {
+		let pureEmail
+		if (email) {
+			pureEmail = email.split('@')[0].replaceAll('.', '')
+			if (pureEmail.includes('+')) {
+				pureEmail = pureEmail.split('+')[0]
+			}
+			pureEmail += '@' + email.split('@')[1]
+		}
+		getFileFromCache(email, done, () => db.query("select * from accounts where email = ?", [pureEmail], (err,rows) => {
+			if (err) return done(err)
+			if (rows.length) {
 				return done(null, false)
 			} else {
 				let newUser = [{}]
@@ -88,17 +93,13 @@ module.exports = function(passport, db) {
 				newUser[0].authenticated_by = 'local_email'
 				bcrypt.hash(password, 5, (err, hash) => {
 					if (err) console.log(err)
-					console.log('hash', hash)
 					newUser[0].password = hash
 					let insertQuery = "INSERT INTO accounts ( email, encrypted_credentials, authenticated_by ) values ('" + email +"','"+ hash +"', 'local_email')"
-					console.log(insertQuery)
 					db.query(insertQuery, (err,rows) => {
 						if (err) console.log(err)
-						console.log(rows)
 						newUser[0].id = rows.insertId
 						db.query(`INSERT INTO api_keys SET ?`, {user_id: rows.insertId, key: makekey(), active: true}, (err, result) => {
 							if (err) console.log(err)
-							console.log(newUser)
 							return done(null, newUser)
 						})
 					})
