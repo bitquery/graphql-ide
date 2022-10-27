@@ -222,7 +222,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 			const model = getQueryTypes(query[index].query)
 			setQueryTypes(model)
 		}
-	}, [currentQuery.data_type,currentQuery.saved, dataSource.values])
+	}, [currentQuery.data_type,currentQuery.saved, dataSource.values, index, schema[debouncedURL]])
 
 	const plugins = useMemo(()=> [JsonPlugin, tradingView,  ...vegaPlugins, ...graphPlugins, ...timeChartPlugins, tablePlugin], [])
 	let indexx = plugins.map(plugin => plugin.id).indexOf(currentQuery.widget_id)
@@ -561,7 +561,7 @@ ${WidgetComponent.id === 'table.widget' ? '<link href="https://unpkg.com/tabulat
 						onMouseDown={handleResizer}
 					>
 					</div>
-					<div className={"w-100 result-wrapper col-reverse " + (currentQuery.widget_id==='json.widget' ? '' : 'h-100')}>
+					<div className={"w-100 result-wrapper col-reverse " + ((currentQuery.widget_id==='json.widget') || dataSource.values ? '' : 'h-100')}>
 						<QueryErrorIndicator 
 							error={dataSource.error}
 							removeError={setDataSource}

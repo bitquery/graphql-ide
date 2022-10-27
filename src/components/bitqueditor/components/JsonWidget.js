@@ -3,6 +3,12 @@ import React, { Component } from 'react'
 class JsonWidget extends Component {
 	viewer= null
 	_node= null
+	ref = React.createRef()
+	interval
+
+	state = {
+		time: 0
+	}
 
 	async componentDidMount() {
 		const CodeMirror = require('codemirror');
@@ -21,6 +27,7 @@ class JsonWidget extends Component {
 			lineWrapping: true,
 			value: value || this.formatResult() || '',
 			readOnly: true,
+			scrollbarStyle: null,
 			theme: 'graphiql',
 			mode: this.props.mode !== 'json' ? 'htmlmixed' : 'graphql-results',
 			keyMap: 'sublime',
@@ -29,42 +36,61 @@ class JsonWidget extends Component {
 			},
 			gutters: ['CodeMirror-foldgutter'],
 		});
+		this.ref.current = this.ref.current ? this.ref.current : this.props.dateAdded
+		if (this.props.values) {
+			this.interval = setInterval(() => this.setState({time: this.ref.current ? Math.floor((new Date().getTime() - this.ref.current)/1000) : 0}), 1000)
+		}
 	}
 
-	shouldComponentUpdate(nextProps) {
-		return this.props.dataSource !== nextProps.dataSource || this.props.mode !== nextProps.mode;
+	shouldComponentUpdate(nextProps, nextState) {
+		return this.props.dataSource !== nextProps.dataSource || this.props.mode !== nextProps.mode || this.state.time !== nextState.time;
 	}
 
 	async componentDidUpdate(prevProps) {
 		if (this.viewer) {
-			const value = this.props.mode === 'code' ? await this.props.getCode() : this.formatResult()
-			const mode = this.props.mode === 'code' ? 'htmlmixed' : 'graphql-results'
-			this.viewer.setValue(value || '')
-			this.viewer.setOption('mode', mode)
+			if (JSON.stringify(prevProps.values) !== JSON.stringify(this.props.values)) {
+				const value = this.props.mode === 'code' ? await this.props.getCode() : this.formatResult()
+				this.viewer.setValue(value || '')
+			} else if (prevProps.dataSource.values !== this.props.dataSource.values) {
+				const value = this.props.mode === 'code' ? await this.props.getCode() : this.formatResult()
+				this.viewer.setValue(value || '')
+			}
+			if (this.props.mode !== prevProps.mode) {
+				const mode = this.props.mode === 'code' ? 'htmlmixed' : 'graphql-results'
+				this.viewer.setOption('mode', mode)
+			}
 		}
 	}
 
 	componentWillUnmount() {
 		this.viewer = null;
+		clearInterval(this.interval)
 	}
 
 	formatResult() {
-		return JSON.stringify({
-			[this.props.dataSource.displayed_data]: this.props.dataSource.values}, 
-			null, 2
-		)}
+		if (this.props.values) {
+			return JSON.stringify(this.props.values, null, 2)
+		} else {
+			return JSON.stringify({
+				[this.props.dataSource.displayed_data]: this.props.dataSource.values}, 
+				null, 2
+			)}
+		}
 
 	render() {
 		return (
-			<section
-			className="result-window"
-			aria-label="Result Window"
-			aria-live="polite"
-			aria-atomic="true"
-			ref={node => {
-				this._node = node;
-			}}
-			/>
+			<div className='flex-col flex' style={{height: !this.props.displayedData && '100%'}}>
+				{this.props.values && <div className='result-time'>{this.state.time} seconds ago</div>}
+				<section
+					className="result-window"
+					aria-label="Result Window"
+					aria-live="polite"
+					aria-atomic="true"
+					ref={node => {
+						this._node = node;
+					}}
+				/>
+			</div>
 		);
 	}
 }
