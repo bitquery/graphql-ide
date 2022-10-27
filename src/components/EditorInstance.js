@@ -39,7 +39,7 @@ import { stringifyIncludesFunction } from '../utils/common';
 import modalStore from '../store/modalStore.js';
 import { GalleryStore } from '../store/galleryStore.js';
 import CodeSnippetComponent from './CodeSnippetComponent.js';
-
+import { createClient } from "graphql-ws"
 
 const EditorInstance = observer(function EditorInstance({number})  {
 	const { tabs, currentTab, index, jsonMode, codeMode } = TabsStore
@@ -57,6 +57,8 @@ const EditorInstance = observer(function EditorInstance({number})  {
 	const [dataSource, setDataSource] = useState({})
 	const [accordance, setAccordance] = useState(true)
 	const [checkoutCode, setCheckOutCode] = useState('')
+	const [wsClean, setWsClean] = useState(null)
+	const [wsClient, setWsClient] = useState(null)
 	const debouncedURL = useDebounce(currentQuery.endpoint_url, 500)
 	const workspace = useRef(null)
 	const overwrap = useRef(null)
@@ -227,6 +229,11 @@ const EditorInstance = observer(function EditorInstance({number})  {
 	const WidgetComponent = indexx>=0 ? plugins[indexx] : plugins[0]
 
 	const getResult = useCallback(() => {
+		if (wsClean) {
+			wsClean.f()
+			setWsClean(null)
+			return
+		}
 		ReactTooltip.hide(executeButton.current)
 		updateQuery({points: undefined, graphqlRequested: undefined, saved: currentQuery.saved}, index)
 		setLoading(true)
@@ -238,7 +245,6 @@ const EditorInstance = observer(function EditorInstance({number})  {
 		let indexOfWidget = plugins.map(p => p.id).indexOf(currentQuery.widget_id)
 		const unusablePair = indexOfData < 0 || indexOfWidget < 0
 		let displayed_data = unusablePair ? Object.keys(queryType)[Object.keys(queryType).length-1] : currentQuery.displayed_data
-		console.log(displayed_data)
 		if (unusablePair) {
 			updateQuery({
 				displayed_data,
@@ -246,56 +252,98 @@ const EditorInstance = observer(function EditorInstance({number})  {
 				saved: currentQuery.id && true
 			}, index)
 		}
-		fetcher({query: currentQuery.query, variables: currentQuery.variables}).then(data => {
-			const graphqlRequested = data.headers.get('X-GraphQL-Requested') === 'true'
-			updateQuery(
-				{
-					graphqlQueryID: data.headers.get('X-GraphQL-Query-ID'),
-					graphqlRequested: graphqlRequested,
-					points: graphqlRequested ? undefined : 0,
-					saved: currentQuery.saved
-				}, index)
-			data.json().then(async json => {
-				let values = null
-				if ('data' in json) {
-					if (currentQuery.displayed_data && currentQuery.displayed_data !== 'data') {
-						if (currentQuery.data_type === 'flatten') {
-							values = flattenData(json.data)
+		if (currentQuery.query.match(/subscription[^a-zA-z0-9]/gm)) {
+			console.log('match')
+			const client = wsClient ? wsClient : createClient({
+				url: currentQuery.endpoint_url.replace('https', 'wss'),
+				shouldRetry: () => false
+			});
+			setWsClient(client)
+			async function execute(payload) {
+				return new Promise((resolve, reject) => {
+					let result;
+					let values = []
+					const cleanup = client.subscribe(payload, {
+						next: ({data}) => {
+							setLoading(false)
+							if (currentQuery.displayed_data && currentQuery.displayed_data !== 'data') {
+								if (currentQuery.data_type === 'flatten') {
+									values = flattenData(data)
+								} else {
+									values.push(data)
+								}
+							} else {
+								values.push(data)
+							}
+							setDataSource({
+								data: data || null,
+								extensions: null,
+								displayed_data: displayed_data || '',
+								values,
+								error: ('errors' in data) ? data.errors : null,
+								query: toJS(currentQuery.query), 
+								variables: toJS(currentQuery.variables)
+							})
+						},
+						error: reject,
+						complete: () => resolve(result),
+					});
+					setWsClean({f: cleanup})
+				});
+			}
+			execute({query: currentQuery.query}).then(res => console.log('complete - ', res))
+		} else {
+			fetcher({query: currentQuery.query, variables: currentQuery.variables}).then(data => {
+				const graphqlRequested = data.headers.get('X-GraphQL-Requested') === 'true'
+				updateQuery(
+					{
+						graphqlQueryID: data.headers.get('X-GraphQL-Query-ID'),
+						graphqlRequested: graphqlRequested,
+						points: graphqlRequested ? undefined : 0,
+						saved: currentQuery.saved
+					}, index)
+				data.json().then(async json => {
+					let values = null
+					if ('data' in json) {
+						if (currentQuery.displayed_data && currentQuery.displayed_data !== 'data') {
+							if (currentQuery.data_type === 'flatten') {
+								values = flattenData(json.data)
+							} else {
+								console.log(json.data, displayed_data)
+								values = getValueFrom(json.data, displayed_data)
+							}
 						} else {
-							console.log(json.data, displayed_data)
-							values = getValueFrom(json.data, displayed_data)
-						}
-					} else {
-						values = json.data
-						if ('extensions' in json) {
-							values.extensions = json.extensions
+							values = json.data
+							if ('extensions' in json) {
+								values.extensions = json.extensions
+							}
 						}
 					}
-				}
-				currentQuery.id && await logQuery({
-					id: currentQuery.id,
-					account_id: currentQuery.account_id,
-					success: !json.errors,
-					error: JSON.stringify(json.errors)
+					currentQuery.id && await logQuery({
+						id: currentQuery.id,
+						account_id: currentQuery.account_id,
+						success: !json.errors,
+						error: JSON.stringify(json.errors)
+					})
+					setDataSource({
+						data: ('data' in json) ? json.data : null,
+						extensions: ('extensions' in json) ? json.extensions : null,
+						displayed_data: displayed_data || '',
+						values,
+						error: ('errors' in json) ? json.errors : null,
+						query: toJS(currentQuery.query), 
+						variables: toJS(currentQuery.variables)
+					})
+					if (!('data' in json)) updateQuery({widget_id: 'json.widget'}, index)
 				})
-				setDataSource({
-					data: ('data' in json) ? json.data : null,
-					extensions: ('extensions' in json) ? json.extensions : null,
-					displayed_data: displayed_data || '',
-					values,
-					error: ('errors' in json) ? json.errors : null,
-					query: toJS(currentQuery.query), 
-					variables: toJS(currentQuery.variables)
-				})
-				if (!('data' in json)) updateQuery({widget_id: 'json.widget'}, index)
+				
+				setLoading(false)
+				setAccordance(true)
+				ReactTooltip.hide(executeButton.current)
 			})
-			
-			setLoading(false)
-			setAccordance(true)
-			ReactTooltip.hide(executeButton.current)
-		})
+		}
 		// eslint-disable-next-line 
-	}, [JSON.stringify(currentQuery), schema[debouncedURL], JSON.stringify(queryTypes)])
+	}, [JSON.stringify(currentQuery), schema[debouncedURL], JSON.stringify(queryTypes), wsClean, dataSource.values])
 	
 	const editQueryHandler = useCallback(handleSubject => {
 		if ('query' in handleSubject) {
@@ -462,8 +510,12 @@ ${WidgetComponent.id === 'table.widget' ? '<link href="https://unpkg.com/tabulat
 								width={25}
 							/> 
 						: 	errorLoading	?
-								<ErrorIcon fill={'#FF2D00'} /> 	:
-								<PlayIcon fill={accordance ? '#eee' : '#14ff41'} />}
+								<ErrorIcon fill={'#FF2D00'} /> : wsClean ? <Loader type={'Grid'} color="#3d77b6"
+								height={25}
+								width={25} 
+								/> :
+								<PlayIcon fill={accordance ? '#eee' : '#14ff41'} />
+					}
 				</button>
 				<div className="workspace__wrapper" 
 						ref={workspace} 
@@ -509,20 +561,35 @@ ${WidgetComponent.id === 'table.widget' ? '<link href="https://unpkg.com/tabulat
 						onMouseDown={handleResizer}
 					>
 					</div>
-					<div className="flex-col w-100">
+					<div className={"w-100 result-wrapper col-reverse " + (currentQuery.widget_id==='json.widget' ? '' : 'h-100')}>
 						<QueryErrorIndicator 
 							error={dataSource.error}
 							removeError={setDataSource}
 						/>
-						{currentQuery.widget_id==='json.widget' || jsonMode || codeMode ? 
-							<JsonPlugin.renderer
-								code={checkoutCode}
-								getCode={getCode}
-								mode={jsonMode ? 'json' : codeMode ? 'code' : ''}
-								dataSource={dataSource} 
-								displayedData={toJS(currentQuery.displayed_data)}
-								config={toJS(query[index].config)} 
-							/> : 
+						{currentQuery.widget_id==='json.widget' || jsonMode || codeMode ?
+							Array.isArray(dataSource.values) ?
+							dataSource.values.map(values => {
+								const dateAdded = new Date().getTime()
+								return (
+								<JsonPlugin.renderer
+									code={checkoutCode}
+									getCode={getCode}
+									mode={jsonMode ? 'json' : codeMode ? 'code' : ''}
+									dataSource={dataSource} 
+									values={values}
+									dateAdded={dateAdded}				
+									displayedData={toJS(currentQuery.displayed_data)}
+									config={toJS(query[index].config)} 
+								/>	
+							)})
+							 : <JsonPlugin.renderer
+							code={checkoutCode}
+							getCode={getCode}
+							mode={jsonMode ? 'json' : codeMode ? 'code' : ''}
+							dataSource={dataSource} 
+							displayedData={toJS(currentQuery.displayed_data)}
+							config={toJS(query[index].config)} 
+						/> :
 							<FullScreen className="widget-display" handle={fullscreenHandle}>
 							<WidgetView 
 								renderFunc={WidgetComponent.renderer}
