@@ -77,7 +77,7 @@ module.exports = function(passport, db) {
 	function(email, password, done) {
 		let pureEmail
 		if (email) {
-			pureEmail = email.split('@')[0].replaceAll('.', '')
+			pureEmail = email.split('@')[0].replace('/\./g', '')
 			if (pureEmail.includes('+')) {
 				pureEmail = pureEmail.split('+')[0]
 			}

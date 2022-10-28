@@ -114,3 +114,4 @@ shipitfile*.js
 build/
 
 api.http
+.vscode
