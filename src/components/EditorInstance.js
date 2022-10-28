@@ -129,7 +129,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
     	overwrap.current.addEventListener('mouseup', onMouseUp);
 	}
 	const getQueryTypes = (query) => {
-		const typeInfo = new TypeInfo(schema[debouncedURL])
+		const typeInfo = new TypeInfo(schema[currentQuery.endpoint_url])
 		let typesMap = {}
 		const queryNodes = []
 		let depth = 0
@@ -222,7 +222,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 			const model = getQueryTypes(query[index].query)
 			setQueryTypes(model)
 		}
-	}, [currentQuery.data_type,currentQuery.saved, dataSource.values, index, schema[debouncedURL]])
+	}, [currentQuery.data_type,currentQuery.saved, dataSource.values, dataSource.streamingValues, schema[currentQuery.endpoint_url]])
 
 	const plugins = useMemo(()=> [JsonPlugin, tradingView,  ...vegaPlugins, ...graphPlugins, ...timeChartPlugins, tablePlugin], [])
 	let indexx = plugins.map(plugin => plugin.id).indexOf(currentQuery.widget_id)
@@ -279,7 +279,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 								data: data || null,
 								extensions: null,
 								displayed_data: displayed_data || '',
-								values,
+								streamingValues: values,
 								error: ('errors' in data) ? data.errors : null,
 								query: toJS(currentQuery.query), 
 								variables: toJS(currentQuery.variables)
@@ -567,8 +567,8 @@ ${WidgetComponent.id === 'table.widget' ? '<link href="https://unpkg.com/tabulat
 							removeError={setDataSource}
 						/>
 						{currentQuery.widget_id==='json.widget' || jsonMode || codeMode ?
-							Array.isArray(dataSource.values) ?
-							dataSource.values.map(values => {
+							('streamingValues' in dataSource) ?
+							dataSource.streamingValues.map(values => {
 								const dateAdded = new Date().getTime()
 								return (
 								<JsonPlugin.renderer

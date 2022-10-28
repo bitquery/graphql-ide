@@ -119,7 +119,8 @@ $top-bar-height: 44px;
   flex: 1 1;
   width: 100%;
   height: 100%;
-  overflow: scroll;
+  overflow-y: scroll;
+  overflow-x: hidden;
   &-container {
     width: 100%;
     display: flex;
