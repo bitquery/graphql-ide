@@ -1,0 +1,38 @@
+x-common-dns: &common-dns
+  dns: 10.0.0.254
+x-common-network: &common-network
+  network_mode: bridge
+x-common-restart: &common-restart
+  restart: on-failure
+x-graceful-stop: &graceful-stop
+  stop_grace_period: 1m
+  stop_signal: SIGINT
+
+services:
+  redis:
+    image: redis:7.0.5-alpine
+    volumes:
+      - redis-data:/data
+    ports:
+      - ${LC_COMPOSE_IPADDR}:6379:6379
+    <<: *graceful-stop
+    <<: *common-dns
+    <<: *common-network
+    <<: *common-restart
+  ide:
+    image: ${LC_COMPOSE_IMAGE}:${LC_COMPOSE_IMAGE_TAG}
+    command: [
+      "node", "./src/server/server.js"
+    ] 
+    ports:
+      - ${LC_COMPOSE_IPADDR}:${LC_COMPOSE_WEB_PORT}:4000
+    environment:
+      - NODE_ENV=production
+    <<: *graceful-stop
+    <<: *common-dns
+    <<: *common-network
+    <<: *common-restart
+
+volumes:
+  redis-data:
+
