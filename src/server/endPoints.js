@@ -32,13 +32,6 @@ const getCodeSnippet = (lang, query, variables, key, endpoint_url) =>
 	}
 )
 
-const authMiddleware = (req, res, next) => {
-	if (!req.isAuthenticated()) {
-		res.status(401).send('You are not authenticated')
-	} else {
-		return next()
-	}
-}
 module.exports = function(app, passport, db, redisClient) {
 
 	const query = (sql, values) => new Promise((resolve, reject) => {
@@ -219,12 +212,12 @@ module.exports = function(app, passport, db, redisClient) {
 		res.status(200).send(results)
 	})
 
-	app.post('/api/tagspr', authMiddleware, (req, res) => {
+	app.post('/api/tagspr', (req, res) => {
 		const { query_id, tags } = req.body.params
 		handleTags(db, query_id, tags, res)
 	})
 
-	app.put('/api/tagspr', authMiddleware, (req, res) => {
+	app.put('/api/tagspr', (req, res) => {
 		const { query_id, tags } = req.body.params
 		db.query('DELETE FROM tags_to_queries WHERE query_id = ?', [query_id], (err, _) => {
 			if (err) console.log(err)
@@ -650,13 +643,14 @@ module.exports = function(app, passport, db, redisClient) {
 		return res.send()
 	});
 	
-	app.get("/api/user", authMiddleware, async (req, res) => {
+	app.get("/api/user", async (req, res) => {
+
 		const results = await query(`SELECT a.*, ak.\`key\` FROM accounts a
 			JOIN api_keys ak
 			ON a.id = ak.user_id
 			WHERE a.id = ?
 			AND ak.active = true`,
-			[req.session.passport.user])
+			[req.account_id])
 		if (results.length) {
 			let userSend = [{
 				id: results[0].id,
@@ -857,7 +851,7 @@ module.exports = function(app, passport, db, redisClient) {
 		})
 	})
 
-	app.post('/api/changepassword', authMiddleware, (req, res) => {
+	app.post('/api/changepassword', (req, res) => {
 		db.query(`select encrypted_credentials from accounts where id = ?`, [req.session.passport.user], (err, pass) => {
 			bcrypt.compare(req.body.oldPwd, pass[0][Object.keys(pass[0])[0]], (err, result) => {
 				if (err) console.log(err)

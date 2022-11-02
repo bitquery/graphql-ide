@@ -4,7 +4,9 @@ const path = require('path')
 const fs = require('fs')
 const cors = require('cors')
 const mysql = require('mysql')
+const cookieParser = require('cookie-parser')
 const dbconfig = require('./databaseConfig')
+const redis = require('redis')
 const db = mysql.createPool({
 	...dbconfig.connection,
 	'connectionLimit': 100,
@@ -17,25 +19,37 @@ const defaultmeta = require('./defaultMeta')
 app.use(bodyParser.json())
 app.use(express.static(path.join(__dirname, '../../build')))
 app.use(cors())
-const redis = require('redis')
-const session = require('express-session')
-let RedisStore = require('connect-redis')(session)
+app.use(cookieParser())
 let redisClient = redis.createClient({ 
 	url: process.env.NODE_ENV === 'production' 
 		? 'redis://redis1:6379/10' 
 		: 'redis://127.0.0.1:6379'
 })
-app.use(
-  session({
-    store: new RedisStore({ client: redisClient, ttl: 60 * 60 * 24 * 7 * 1000 }),
-    saveUninitialized: false,
-    secret: process.env.CAT,
-    resave: false,
-	cookie: { path: '/', httpOnly: true, secure: process.env.NODE_ENV === 'production', maxAge: 60 * 60 * 24 * 7 * 1000}
-  })
-)
-app.use(passport.initialize());
-app.use(passport.session());
+
+const getAccountIdFromSession = req =>
+		new Promise(resolve => {
+			const session = req.cookies['session']
+			if (session) {
+				redisClient.get(`session:${session}`, (error, account_id) => {
+					resolve(account_id)
+				})
+			} else {
+				resolve(undefined)
+			}
+		}
+	)
+
+const authMiddleware = async (req, res, next) => {
+	const account_id = await getAccountIdFromSession(req)
+	if (account_id) {
+		req.account_id = +account_id
+		return next()
+	} else {
+		res.status(401).send('You are not authenticated')
+	}
+}
+
+app.use( authMiddleware )
 app.enable('trust proxy');
 
 require('./passport')(passport, db)
