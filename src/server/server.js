@@ -22,7 +22,7 @@ const session = require('express-session')
 let RedisStore = require('connect-redis')(session)
 let redisClient = redis.createClient({ 
 	url: process.env.NODE_ENV === 'production' 
-                ? 'redis://'+ process.env.redis_host + ':' + process.env.redis_port + '/' + process.env.redis_db
+                ? 'redis://' + process.env.REDIS_HOST + ':' + process.env.REDIS_PORT + '/' + process.env.REDIS_DB
 		: 'redis://127.0.0.1:6379'
 })
 app.use(
@@ -91,5 +91,5 @@ if (process.env.NODE_ENV==='production') {
 } 
 
 app.listen(+process.env.PORT || 4000, () => {
-	console.log("Example app listening on port 4000")
+	console.log("The app listening on port " + process.env.PORT)
 })
