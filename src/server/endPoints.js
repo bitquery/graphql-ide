@@ -513,7 +513,7 @@ module.exports = function(app, passport, db, redisClient) {
 
 		const results = await query(`SELECT a.*, ak.\`key\` FROM accounts a
 			JOIN api_keys ak
-			ON a.id = ak.user_id
+			ON a.id = ak.account_id
 			WHERE a.id = ?
 			AND ak.active = true`,
 			[req.account_id])
