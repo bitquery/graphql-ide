@@ -27,7 +27,15 @@ services:
     ports:
       - ${LC_COMPOSE_IPADDR}:${LC_COMPOSE_WEB_PORT}:4000
     environment:
-      - NODE_ENV=production
+      - NODE_ENV=${LC_COMPOSE_NODE_ENV}
+      - DB_HOST=${LC_COMPOSE_DB_HOST}
+      - DB_USER=${LC_COMPOSE_DB_USER}
+      - DB_PASSWORD=${LC_COMPOSE_DB_PASSWORD}
+      - DB_PORT=${LC_COMPOSE_DB_PORT}
+      - BACKEND_URL=${LC_COMPOSE_BACKEND_URL}
+      - IDE_URL=${LC_COMPOSE_IDE_URL}
+      - REACT_APP_IDE_URL=${LC_COMPOSE_REACT_APP_IDE_URL}
+      - REACT_APP_ENDPOINT_URL=${LC_COMPOSE_REACT_APP_ENDPOINT_URL}
     <<: *graceful-stop
     <<: *common-dns
     <<: *common-network
