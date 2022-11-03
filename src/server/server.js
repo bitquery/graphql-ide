@@ -14,7 +14,6 @@ const db = mysql.createPool({
 })
 const app = express()
 const bodyParser = require('body-parser')
-const passport = require('passport')
 const defaultmeta = require('./defaultMeta')
 app.use(bodyParser.json())
 app.use(express.static(path.join(__dirname, '../../build')))
@@ -52,8 +51,7 @@ const authMiddleware = async (req, res, next) => {
 app.use( authMiddleware )
 app.enable('trust proxy');
 
-require('./passport')(passport, db)
-require('./endPoints')(app, passport, db, redisClient)
+require('./endPoints')(app, db, redisClient)
 
 if (process.env.NODE_ENV==='production') {
 	app.get('*', (req,res) => {

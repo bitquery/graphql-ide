@@ -29,7 +29,7 @@ const getCodeSnippet = (lang, query, variables, key, endpoint_url) =>
 	}
 )
 
-module.exports = function(app, passport, db, redisClient) {
+module.exports = function(app, db, redisClient) {
 
 	const query = (sql, values) => new Promise((resolve, reject) => {
 		const callback = (err, results) => {
