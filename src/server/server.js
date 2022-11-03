@@ -22,7 +22,7 @@ const session = require('express-session')
 let RedisStore = require('connect-redis')(session)
 let redisClient = redis.createClient({ 
 	url: process.env.NODE_ENV === 'production' 
-		? 'redis://redis1:6379/10' 
+                ? 'redis://'+ process.env.redis_host + ':' + process.env.redis_port + '/' + process.env.redis_db
 		: 'redis://127.0.0.1:6379'
 })
 app.use(
