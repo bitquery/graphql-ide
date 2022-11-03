@@ -27,9 +27,10 @@ services:
       "node", "./src/server/server.js"
     ] 
     ports:
-      - ${LC_COMPOSE_IPADDR}:${LC_COMPOSE_WEB_PORT}:4000
+      - ${LC_COMPOSE_IPADDR}:${LC_COMPOSE_WEB_PORT}:${LC_COMPOSE_WEB_PORT}
     environment:
       - NODE_ENV=${LC_COMPOSE_NODE_ENV}
+      - PORT=${LC_COMPOSE_WEB_PORT}
       - DB_HOST=${LC_COMPOSE_DB_HOST}
       - DB_USER=${LC_COMPOSE_DB_USER}
       - DB_PASSWORD=${LC_COMPOSE_DB_PASSWORD}
