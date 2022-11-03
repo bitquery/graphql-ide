@@ -29,6 +29,6 @@ RUN npm run build
 
 RUN chmod +x ./entrypoint.sh
 
-EXPOSE ${PORT}
+#EXPOSE ${PORT}
 
 ENTRYPOINT ["./entrypoint.sh"]
