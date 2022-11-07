@@ -11,16 +11,6 @@ x-graceful-stop: &graceful-stop
   stop_signal: SIGINT
 
 services:
-  redis:
-    image: redis:7.0.5-alpine
-    volumes:
-      - redis-data:/data
-    ports:
-      - ${LC_COMPOSE_IPADDR}:6379:6379
-    <<: *graceful-stop
-    <<: *common-dns
-    <<: *common-network
-    <<: *common-restart
   ide:
     image: ${LC_COMPOSE_IMAGE}:${LC_COMPOSE_IMAGE_TAG}
     command: [
@@ -49,7 +39,3 @@ services:
     <<: *common-dns
     <<: *common-network
     <<: *common-restart
-
-volumes:
-  redis-data:
-
