@@ -27,7 +27,7 @@ let redisClient = redis.createClient({
 
 const getAccountIdFromSession = req =>
 		new Promise(resolve => {
-			const session = req.cookies['session']
+			const session = req.cookies['_app_session_key']
 			if (session) {
 				redisClient.get(`session:${session}`, (error, account_id) => {
 					resolve(account_id)
