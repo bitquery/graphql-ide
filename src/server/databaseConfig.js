@@ -5,7 +5,7 @@ module.exports = {
         'password': process.env.DB_PASSWORD,
         'port': process.env.DB_PORT
     },
-    'database': 'bitquery',
+    'database': process.env.DB_NAME,
     'queries_table': 'queries',
     'query_logs_table': 'query_logs',
     'users_table': 'accounts',

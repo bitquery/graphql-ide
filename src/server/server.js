@@ -21,7 +21,7 @@ app.use(cors())
 app.use(cookieParser())
 let redisClient = redis.createClient({ 
 	url: process.env.NODE_ENV === 'production' 
-		? 'redis://redis1:6379/10' 
+                ? String('redis://' + process.env.REDIS_HOST + ':' + process.env.REDIS_PORT + '/' + process.env.REDIS_DB)
 		: 'redis://127.0.0.1:6379'
 })
 
@@ -109,5 +109,5 @@ if (process.env.NODE_ENV==='production') {
 } 
 
 app.listen(+process.env.PORT || 4000, () => {
-	console.log("Example app listening on port 4000")
+	console.log("The app listening on port " + process.env.PORT)
 })
