@@ -104,7 +104,7 @@ module.exports = function(app, db, redisClient) {
             ON q.id=b.query_id
             where (q.published = 1 or q.account_id = ?) AND (match (q.name, q.description) against (?)
             or q.name like ? or q.description like ?)
-            ORDER BY q.updated_at DESC`, [req.session.passport.user, req.body.search, `%${req.body.search}%`, `%${req.body.search}%`])
+            ORDER BY q.updated_at DESC`, [req.account_id, req.body.search, `%${req.body.search}%`, `%${req.body.search}%`])
             res.status(200).send(results)
         } catch (error) {
             console.log(error)
@@ -173,13 +173,13 @@ module.exports = function(app, db, redisClient) {
 		let sql = {}
 		if (req.params.tag === 'All queries') {
 			sql.query = makesql(`WHERE ${explore ? 'published = 1' : 'account_id = ?'} ORDER BY q_cnt.cnt DESC`, req.params.page)
-			sql.param = [req.session.passport.user]
+			sql.param = [req.account_id]
 		} else {
 			sql.query = makesql(`
 				WHERE ${explore ? 'published = 1' : 'account_id = ?'}
 				AND tag = ?
 				ORDER by q_cnt.cnt DESC`, req.params.page)
-			sql.param = explore ? [req.params.tag] : [req.session.passport.user, req.params.tag]
+			sql.param = explore ? [req.params.tag] : [req.account_id, req.params.tag]
 		}
 		const results = await query(sql.query, sql.param)
 		res.status(200).send(results)	
@@ -205,7 +205,7 @@ module.exports = function(app, db, redisClient) {
 			select COUNT(*) as tags_count, 0 as tag_id, 'All queries' as tag
 			from queries q2 
 			where q2.${there}
-			order by tags_count desc`, [req?.session?.passport?.user, req?.session?.passport?.user])
+			order by tags_count desc`, [req.account_id, req.account_id])
 		res.status(200).send(results)
 	})
 
@@ -369,7 +369,7 @@ module.exports = function(app, db, redisClient) {
 		if (req.body.id) {
 			params.updated_at = new Date()
 		} else {
-			params.account_id = req.session.passport.user
+			params.account_id = req.account_id
 		}
 		req.body.id ?
 		db.query(`update dashboards set ? WHERE id = ${req.body.id}`, params, (err, res) => {
@@ -472,13 +472,11 @@ module.exports = function(app, db, redisClient) {
 	}) 
 	
 	app.post('/api/addquery', (req, res) => {
-		if (req.session.passport.user) {
-			let query = req.body.params
-			if (!query.id || query.account_id !== req.session.passport.user) {
-				handleAddQuery(req, res, db)
-			} else {
-				handleUpdateQuery(req, res, db)
-			}
+		let query = req.body.params
+		if (!query.id || query.account_id !== req.account_id) {
+			handleAddQuery(req, res, db)
+		} else {
+			handleUpdateQuery(req, res, db)
 		}
 	})
 
@@ -607,7 +605,7 @@ module.exports = function(app, db, redisClient) {
 			ON a.id=b.query_id
 			WHERE a.account_id=?
 			AND a.deleted=false
-			ORDER BY a.updated_at DESC`, [req.session?.passport?.user || undefined], (err, queries) => {
+			ORDER BY a.updated_at DESC`, [req.account_id], (err, queries) => {
 				if (err) console.log(err)
 				res.send(queries)
 		})
