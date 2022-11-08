@@ -83,8 +83,8 @@ module.exports = function(app, db, redisClient) {
             ) a
             ON a.aid = q.account_id
             LEFT JOIN (
-                SELECT query_id , GROUP_CONCAT(t.tag) AS tags FROM bitquery.tags_to_queries tq
-                INNER JOIN bitquery.tags t ON t.id = tq.tag_id
+                SELECT query_id , GROUP_CONCAT(t.tag) AS tags FROM tags_to_queries tq
+                INNER JOIN tags t ON t.id = tq.tag_id
                 GROUP BY query_id
             ) t
             ON q.id = t.query_id
@@ -144,8 +144,8 @@ module.exports = function(app, db, redisClient) {
 		) a
 		ON a.aid = q.account_id
 		LEFT JOIN (
-			SELECT query_id , GROUP_CONCAT(t.tag) AS tags FROM bitquery.tags_to_queries tq
-			INNER JOIN bitquery.tags t ON t.id = tq.tag_id
+			SELECT query_id , GROUP_CONCAT(t.tag) AS tags FROM tags_to_queries tq
+			INNER JOIN tags t ON t.id = tq.tag_id
 			GROUP BY query_id
 		) t
 		ON q.id = t.query_id
@@ -238,10 +238,10 @@ module.exports = function(app, db, redisClient) {
 				if (err) console.log(err)
 				/* response.send(result[0]) */
 				db.query(`SELECT a.dashboard_id , a.widget_id as widget_number, a.query_index, b.*, q.*
-					FROM bitquery.queries_to_dashboards a
-					LEFT JOIN (SELECT * FROM bitquery.widgets) b
+					FROM queries_to_dashboards a
+					LEFT JOIN (SELECT * FROM widgets) b
 					ON a.widget_id = b.id
-					LEFT JOIN (SELECT * FROM bitquery.queries) q
+					LEFT JOIN (SELECT * FROM queries) q
 					ON q.id=b.query_id
 					WHERE dashboard_id = ?`, [result[0].id], (err, res) => {
 						if (err) console.log(err)
@@ -345,10 +345,10 @@ module.exports = function(app, db, redisClient) {
 	app.post('/api/getwidget', (req, response) => {
 		console.log(req.body)
 		db.query(`SELECT a.dashboard_id , a.widget_id as widget_number, a.query_index, b.*, q.*
-		FROM bitquery.queries_to_dashboards a
-		LEFT JOIN (SELECT * FROM bitquery.widgets) b
+		FROM queries_to_dashboards a
+		LEFT JOIN (SELECT * FROM widgets) b
 		ON a.widget_id = b.id
-		LEFT JOIN (SELECT * FROM bitquery.queries) q
+		LEFT JOIN (SELECT * FROM queries) q
 		ON q.id=b.query_id
 		WHERE dashboard_id = ?`, [req.body.dbid], (err, res) => {
 			if (err) console.log(err)
