@@ -36,14 +36,13 @@ import WidgetView from './bitqueditor/components/WidgetView'
 import { getCheckoutCode } from '../api/api'
 import { flattenData } from './flattenData.js'
 import { stringifyIncludesFunction } from '../utils/common';
-import modalStore from '../store/modalStore.js';
 import { GalleryStore } from '../store/galleryStore.js';
 import CodeSnippetComponent from './CodeSnippetComponent.js';
+import { useHistory } from 'react-router-dom';
 
 
 const EditorInstance = observer(function EditorInstance({number})  {
 	const { tabs, currentTab, index, jsonMode, codeMode } = TabsStore
-	const { toggleModal, toggleLogin, modalIsOpen } = modalStore
 	const { tagListIsOpen } = GalleryStore
 	const { user }  = UserStore
 	const { query, updateQuery, currentQuery, isMobile,
@@ -64,6 +63,8 @@ const EditorInstance = observer(function EditorInstance({number})  {
 	const queryEditor = useRef(null)
 	const variablesEditor = useRef(null)
 	const widgetDisplay = useRef(null)
+
+	const history = useHistory()
 
 	useEffect(() => {
 		if (currentTab === tabs[number].id) window.dispatchEvent(new Event('resize'))
@@ -373,9 +374,8 @@ const EditorInstance = observer(function EditorInstance({number})  {
 				}).catch(error => {
 					setLoading(false)
 					setErrorLoading(true)
-					if (error.message === '401' && !modalIsOpen) {
-						toggleModal({fade: true})
-						toggleLogin()
+					if (error.message === '401') {
+						history.push('/auth/login')
 					}
 				})
 			}

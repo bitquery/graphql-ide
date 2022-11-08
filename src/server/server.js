@@ -29,8 +29,13 @@ const getAccountIdFromSession = req =>
 		new Promise(resolve => {
 			const session = req.cookies['_app_session_key']
 			if (session) {
-				redisClient.get(`session:${session}`, (error, account_id) => {
-					resolve(account_id)
+				redisClient.get(`session:${session}`, (error, result) => {
+					if (result) {
+						const json = JSON.parse(result)
+						resolve(json?.account_id)
+					} else {
+						resolve(undefined)
+					}
 				})
 			} else {
 				resolve(undefined)
@@ -44,7 +49,8 @@ const authMiddleware = async (req, res, next) => {
 		req.account_id = +account_id
 		return next()
 	} else {
-		res.status(401).send('You are not authenticated')
+		res.set('Location', `${process.env.BACKEND_URL}/auth/login`)
+		res.sendStatus(302)
 	}
 }
 
