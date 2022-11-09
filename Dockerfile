@@ -10,7 +10,7 @@ ARG ENV=production
 ENV NODE_ENV="${ENV}" \
     BACKEND_URL="${SCHEME}://${HOST}:${PORT}" \
     IDE_URL="${SCHEME}://${HOST}:${PORT}/" \
-    REACT_APP_IDE_URL="/api" \
+    REACT_APP_IDE_URL="/ide" \
     PORT="${PORT}"
 
 WORKDIR /app
