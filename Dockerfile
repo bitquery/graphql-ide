@@ -3,14 +3,17 @@ FROM node:14.15-alpine AS builder
 LABEL maintainer="Andrey Gridin <andrey@bitquery.io>"
 
 ARG SCHEME=https
-ARG HOST=localhost
-ARG PORT=5000
+ARG DOMAIN=graphql.staging.bitq.dev
+ARG REACT_APP_IDE_URL=/ide
 ARG ENV=production
 
 ENV NODE_ENV="${ENV}" \
-    BACKEND_URL="${SCHEME}://${HOST}:${PORT}" \
-    IDE_URL="${SCHEME}://${HOST}:${PORT}/" \
-    REACT_APP_IDE_URL="/ide" \
+    BACKEND_URL="${SCHEME}://${DOMAIN}" \
+    PUBLIC_URL="${SCHEME}://${DOMAIN}${REACT_APP_IDE_URL}" \
+    IDE_URL="${SCHEME}://${DOMAIN}${REACT_APP_IDE_URL}" \
+    REACT_APP_ENDPOINT_URL="${SCHEME}://${DOMAIN}${REACT_APP_IDE_URL}" \
+    REACT_APP_IDE_URL="${REACT_APP_IDE_URL}" \
+    
     PORT="${PORT}"
 
 WORKDIR /app
@@ -28,7 +31,5 @@ COPY --chown=node:node . .
 RUN npm run build
 
 RUN chmod +x ./entrypoint.sh
-
-#EXPOSE ${PORT}
 
 ENTRYPOINT ["./entrypoint.sh"]
