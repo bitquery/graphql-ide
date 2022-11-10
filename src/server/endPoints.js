@@ -500,12 +500,6 @@ module.exports = function(app, db, redisClient) {
 			response.send('Query logged')
 		})
 	}) 
-
-	app.get('/api/logout', (req, res) => {
-		req.logout()
-		console.log("logged out")
-		return res.send()
-	});
 	
 	app.get("/api/user", async (req, res) => {
 

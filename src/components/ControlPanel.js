@@ -62,9 +62,7 @@ const ControlPanel = observer(function ControlPanel() {
 	}
 	const logOut = async () => {
 		await logout().catch(e => console.log(e))
-		setUser(null)
-		toggleModal({fade: true})
-		toggleLogin()
+		history.push('/auth/login')
 	}
 
 	return (

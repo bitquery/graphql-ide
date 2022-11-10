@@ -17,7 +17,7 @@ export const login = (email, password) =>
 		password
 	})
 
-export const logout = () => axios.get('/api/logout')
+export const logout = () => axios.delete('/auth/logout')
 
 export const getUser = () => axios.get('/api/user')
 

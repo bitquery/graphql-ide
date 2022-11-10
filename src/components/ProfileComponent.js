@@ -5,8 +5,11 @@ import ModalStore from '../store/modalStore'
 import { UserStore } from '../store/queriesStore'
 import UserIcon from './icons/UserIcon'
 import { Dropdown } from 'react-bootstrap'
+import { useHistory } from 'react-router-dom'
 
 const Profile = observer(() => {
+
+	const history = useHistory()
 	const { getUser, user, setUser } = UserStore
 	const { fade, toggleModal, toggleLogin, toggleChangePassword, toggleApiKey } = ModalStore
 
@@ -24,9 +27,7 @@ const Profile = observer(() => {
 	}
 	const logOut = async () => {
 		await logout().catch(e => console.log(e))
-		setUser(null)
-		toggleModal({fade: true})
-		toggleLogin()
+		history.push('/auth/login')
 	}
 	useEffect(() => {
 		getUser()
