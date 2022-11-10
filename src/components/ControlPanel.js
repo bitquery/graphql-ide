@@ -107,16 +107,7 @@ const ControlPanel = observer(function ControlPanel() {
 						<a className="nav-link text-primary" href={`${window.location.origin}/admin/accounts`}>Admin</a>
 					</li>}
 					<li className="nav-item d-lg-none">
-						<a className="nav-link text-primary" href="# " onClick={apiKeyHandler}>API Key</a>
-					</li>
-					<li className="nav-item d-lg-none">
 						<a className="nav-link text-primary" href={`${window.location.origin}/user/account`}>Account</a>
-					</li>
-					<li className="nav-item d-lg-none">
-						<a className="nav-link text-primary" href={`${window.location.origin}/user/billing`}>Billing</a>
-					</li>
-					<li className="nav-item d-lg-none">
-						<a className="nav-link text-primary" href="# " onClick={changePasswordHadler}>Change password</a>
 					</li>
 					<li className="nav-item d-lg-none">
 						<a className="nav-link text-primary" href="# " onClick={logOut}>Logout</a>
