@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect } from 'react'
 import ProfileComponent from './ProfileComponent'
 import { QueriesStore, UserStore } from '../store/queriesStore'
 import { observer } from 'mobx-react-lite'
@@ -6,15 +6,13 @@ import useDebounce from '../utils/useDebounce'
 import { Link, useHistory, useLocation } from 'react-router-dom'
 import logo from '../assets/images/bitquery_logo_w.png'
 import { GalleryStore } from '../store/galleryStore'
-import { getSearchResults } from '../api/api'
 import ModalStore from '../store/modalStore'
 import { logout } from '../api/api'
 
 const ControlPanel = observer(function ControlPanel() {
-	const ref = useRef(null)
 	const { user, setUser } = UserStore
-	const { isMobile, setSearchValue } = QueriesStore
-	const { fade, toggleModal, toggleLogin, toggleChangePassword, toggleApiKey } = ModalStore
+	const { setSearchValue } = QueriesStore
+	const { toggleModal, toggleLogin, toggleChangePassword, toggleApiKey } = ModalStore
 	const { setCurrentTag, currentTag } = GalleryStore
 	const [search, setSearch] = useState('')
 	const [active, setActive] = useState(1)
@@ -71,7 +69,7 @@ const ControlPanel = observer(function ControlPanel() {
 
 	return (
 		<div className="navbar navbar-expand-lg navbar-light bg-white mb-2">
-			<a href="https://graphql.bitquery.io" className="navbar-brand topBar__logo">
+			<a href={process.env.REACT_APP_IDE_URL} className="navbar-brand topBar__logo">
 				<img
 					className="topBar__logo__img"
 					src={logo}
@@ -108,16 +106,16 @@ const ControlPanel = observer(function ControlPanel() {
 						<a className="nav-link text-primary" href="https://angel.co/company/bitquery/jobs">We are hiring!</a>
 					</li>
 					{ user?.role === 'admin' && <li className="nav-item d-lg-none">
-						<a className="nav-link text-primary" href="https://graphql.bitquery.io/admin/accounts">Admin</a>
+						<a className="nav-link text-primary" href={`${window.location.origin}/admin/accounts`}>Admin</a>
 					</li>}
 					<li className="nav-item d-lg-none">
 						<a className="nav-link text-primary" href="# " onClick={apiKeyHandler}>API Key</a>
 					</li>
 					<li className="nav-item d-lg-none">
-						<a className="nav-link text-primary" href="https://graphql.bitquery.io/user/account">Account</a>
+						<a className="nav-link text-primary" href={`${window.location.origin}/user/account`}>Account</a>
 					</li>
 					<li className="nav-item d-lg-none">
-						<a className="nav-link text-primary" href="https://graphql.bitquery.io/user/billing">Billing</a>
+						<a className="nav-link text-primary" href={`${window.location.origin}/user/billing`}>Billing</a>
 					</li>
 					<li className="nav-item d-lg-none">
 						<a className="nav-link text-primary" href="# " onClick={changePasswordHadler}>Change password</a>

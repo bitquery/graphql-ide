@@ -52,11 +52,11 @@ const Profile = observer(() => {
 			<Dropdown.Menu className="dropdown-menu dropdown-menu-right">
 				<Dropdown.Header>{user.email}</Dropdown.Header>
 				<Dropdown.Divider/>
-				{ user.role === 'admin' &&  <Dropdown.Item href="https://graphql.bitquery.io/admin/accounts">Admin</Dropdown.Item>}
+				{ user.role === 'admin' &&  <Dropdown.Item href={`${window.location.origin}/admin/accounts`}>Admin</Dropdown.Item>}
 				{ user.role === 'admin' && <Dropdown.Divider/> }
 				<Dropdown.Item href="# " onClick={apiKeyHandler}>API Key</Dropdown.Item>
-				<Dropdown.Item href="https://graphql.bitquery.io/user/account">Account</Dropdown.Item>
-				<Dropdown.Item href="https://graphql.bitquery.io/user/billing">Billing</Dropdown.Item>
+				<Dropdown.Item href={`${window.location.origin}/user/account`}>Account</Dropdown.Item>
+				<Dropdown.Item href={`${window.location.origin}/user/billing`}>Billing</Dropdown.Item>
 				<Dropdown.Item href="# " onClick={changePasswordHadler}>Change password</Dropdown.Item>
 				<Dropdown.Item href="# " onClick={logOut}>Logout</Dropdown.Item>
 			</Dropdown.Menu>
