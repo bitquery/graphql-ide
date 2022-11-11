@@ -62,6 +62,7 @@ const ControlPanel = observer(function ControlPanel() {
 	}
 	const logOut = async () => {
 		await logout().catch(e => console.log(e))
+		window.location.replace(`${window.location.origin}/auth/login`)
 	}
 
 	return (
