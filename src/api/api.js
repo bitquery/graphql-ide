@@ -1,9 +1,10 @@
 import axios from 'axios'
 axios.defaults.withCredentials = true
 axios.defaults.credentials = 'include'
+axios.defaults.baseURL = process.env.BACKEND_URL
 
 export const signUp = (email, password, accountName, companyName, captcha) => 
-	axios.post('/api/signup', {
+axios.post('/api/signup', {
 		email,
 		password,
 		accountName,
