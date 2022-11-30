@@ -335,15 +335,15 @@ module.exports = function(app, passport, db, redisClient) {
 	}
 	const sendActivationLink = (userID, userEmail, req) => {
 		let code = crypto.randomBytes(60).toString('hex')
-		db.query('select * from activations where user_id=?', [userID], (err, result) => {
+		db.query('select * from activations where account_id=?', [userID], (err, result) => {
 			if (err) console.log(err)
 			console.log('result', result)
 			if (result.length) {
-				db.query('update activations set code=? where user_id=?', [code, userID], (err, _) => {
+				db.query('update activations set code=? where account_id=?', [code, userID], (err, _) => {
 					if (err) console.log(err)
 				})
 			} else {
-				db.query('INSERT INTO activations SET ?', {user_id: userID, code: code}, (err, res) => {
+				db.query('INSERT INTO activations SET ?', {account_id: userID, code: code}, (err, res) => {
 					if (err) console.log(err)
 					console.log(res)
 				})
@@ -509,11 +509,11 @@ module.exports = function(app, passport, db, redisClient) {
 	}) 
 
 	app.post('/api/regenerate', (req, res) => {
-		db.query('update api_keys set active=false, updated_at=CURRENT_TIMESTAMP where user_id=? and active=true',
+		db.query('update api_keys set active=false, updated_at=CURRENT_TIMESTAMP where account_id=? and active=true',
 		[req.session.passport.user], (error, _) => {
 			if (error) console.log(error)
 			db.query('insert into api_keys SET ?', {
-				user_id: req.session.passport.user,
+				account_id: req.session.passport.user,
 				key: req.body.key,
 				active: true
 			}, (err, _) => {
@@ -653,7 +653,7 @@ module.exports = function(app, passport, db, redisClient) {
 	app.get("/api/user", authMiddleware, async (req, res) => {
 		const results = await query(`SELECT a.*, ak.\`key\` FROM accounts a
 			JOIN api_keys ak
-			ON a.id = ak.user_id
+			ON a.id = ak.account_id
 			WHERE a.id = ?
 			AND ak.active = true`,
 			[req.session.passport.user])
@@ -757,17 +757,17 @@ module.exports = function(app, passport, db, redisClient) {
 		db.query(`select * from activations where code = ?`, [req.query.code], (err, result) => {
 			if (err) console.log(err)
 			if (result.length) {
-				const user_id = result[0].user_id
-				db.query(`update accounts set active = true where id = ?`, [user_id], (err, result) => {
+				const account_id = result[0].account_id
+				db.query(`update accounts set active = true where id = ?`, [account_id], (err, result) => {
 					if (err) console.log(err)
 					console.log('account activated', result)
 					req.session.active = true
-					db.query('SELECT * from billing_periods WHERE user_id = ?', [user_id], (err, billing_period) => {
+					db.query('SELECT * from billing_periods WHERE account_id = ?', [account_id], (err, billing_period) => {
 						if (err) console.log(err)
 						if (!billing_period.length) {
 							const billingPeriods = {}
 							const now = new Date()
-							billingPeriods.user_id = user_id
+							billingPeriods.account_id = account_id
 							billingPeriods.started_at = new Date ( now.setUTCHours(0, 0, 0, 0) ).toISOString().replace('T', ' ').replace('Z', '')
 							now.setDate( now.getDate() + 30 )
 							now.setUTCHours(23, 59, 59)

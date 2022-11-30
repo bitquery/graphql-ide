@@ -116,8 +116,8 @@ module.exports = function(passport, db) {
 				if (err) console.log(err)
 				if (!user.length) done(null, false, {message: 'Incorrect user name'})
 				if (user.length) {
-					console.log( password, user[0].encrypted_credentials )
-					bcrypt.compare(password, user[0].encrypted_credentials, (err, result) => {
+					console.log( password, user[0].password_digest )
+					bcrypt.compare(password, user[0].password_digest, (err, result) => {
 						if (err) console.log(err)
 						console.log(result)
 						return result ? done(null, user) : done(null, false, {message: 'Wrong password'})
