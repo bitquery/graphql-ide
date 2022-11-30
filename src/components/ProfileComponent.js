@@ -39,6 +39,9 @@ const Profile = observer(() => {
 			<UserIcon />
 		</div>
 	) : <Dropdown className={'d-none d-lg-block'}>
+			<a className='link__hire' target='_blank' href='https://discord.gg/EEBVTQnb2E'>
+				<i class="bi bi-discord"></i>
+			</a>
 			<a className='link__hire' target='_blank' href='https://t.me/bloxy_info/'>
 				<i className="bi bi-telegram"></i>
 			</a>
