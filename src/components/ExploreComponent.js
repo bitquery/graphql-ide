@@ -4,10 +4,12 @@ import { GalleryStore } from '../store/galleryStore'
 import { getTagsList } from '../api/api'
 import QueriesList from './Gallery/QueriesList'
 import { observer } from 'mobx-react'
-import { useLocation } from 'react-router-dom'
+import { Route, Switch, useHistory, useLocation, useRouteMatch } from 'react-router-dom'
 
 const ExploreComponent = observer(function ExploreComponent() {
 	const location = useLocation()
+	const history = useHistory()
+	const { path } = useRouteMatch()
 	const { user } = UserStore
 	const { queriesListIsOpen, currentTag,
 		toggleQueriesList, toggleTagsList, setCurrentTag } = GalleryStore
@@ -15,10 +17,13 @@ const ExploreComponent = observer(function ExploreComponent() {
 	const [tagsList, setTagsList] = useState([])
 	useEffect(() => {
 		const onload = async () => {
-			const explore = location.pathname === `${process.env.REACT_APP_IDE_URL}/explore` ? true : false
+			const explore = /\/explore\//gi.test(location.pathname)
 			try {
 				const { data } = await getTagsList(explore)
 				setTagsList(data)
+				if (location.pathname) {
+					setCurrentTag(location.pathname.split('/').at(-1))
+				}
 			} catch (error) {
 				console.log(error)
 			}
@@ -29,6 +34,7 @@ const ExploreComponent = observer(function ExploreComponent() {
 	const handleClick = tag => {
 		setSearchValue('')
 		setCurrentTag(tag)
+		history.push(tag)
 		if (queriesListIsOpen && tag === currentTag || !queriesListIsOpen) {
 			toggleQueriesList()
 		}
@@ -57,7 +63,14 @@ const ExploreComponent = observer(function ExploreComponent() {
 						</div>
 					</div>
 				</div>
-				<QueriesList />
+				<Switch>
+					<Route path={`${path}/:tag`}>
+						<QueriesList />
+					</Route>
+					<Route path={path}>
+						<QueriesList />
+					</Route>
+				</Switch>
 			</div>
 		</div>
 	)

@@ -36,9 +36,9 @@ const ControlPanel = observer(function ControlPanel() {
 	}, [currentTag])
 	
 	useEffect(() => {
-		if (history.location.pathname === `${process.env.REACT_APP_IDE_URL}/explore`) {
+		if (/\/explore\//gi.test(history.location.pathname)) {
 			setActive(2)
-		} else if (history.location.pathname === `${process.env.REACT_APP_IDE_URL}/myqueries`) {
+		} else if (/\/myqueries\//gi.test(history.location.pathname)) {
 			setActive(3)
 		} else {
 			setActive(1)
@@ -90,10 +90,10 @@ const ControlPanel = observer(function ControlPanel() {
 						<Link className={`nav-link ${active === 1 ? 'nav-active' : 'text-primary'}`} to={process.env.REACT_APP_IDE_URL}  ><i className="bi bi-play mr-2"></i>Develop</Link>
 					</li>
 					<li className='nav-item'>
-						<Link className={`nav-link ${active === 2 ? 'nav-active' : 'text-primary'}`} to={`${process.env.REACT_APP_IDE_URL}/explore`} onClick={()=>setSearch('')} ><i className="bi bi-terminal mr-2"></i>Explore</Link>
+						<Link className={`nav-link ${active === 2 ? 'nav-active' : 'text-primary'}`} to={`${process.env.REACT_APP_IDE_URL}/explore/All%20queries`} onClick={()=>setSearch('')} ><i className="bi bi-terminal mr-2"></i>Explore</Link>
 					</li>
 					<li className='nav-item'>
-						<Link className={`nav-link ${active === 3 ? 'nav-active' : 'text-primary'}`} to={`${process.env.REACT_APP_IDE_URL}/myqueries`} onClick={()=>setSearch('')}><i className="bi bi-star mr-2"></i>My Queries</Link>
+						<Link className={`nav-link ${active === 3 ? 'nav-active' : 'text-primary'}`} to={`${process.env.REACT_APP_IDE_URL}/myqueries/All%20queries`} onClick={()=>setSearch('')}><i className="bi bi-star mr-2"></i>My Queries</Link>
 					</li>
 					<li className="nav-item d-lg-none">
 						<a className="nav-link text-primary" href="https://discord.gg/EEBVTQnb2E"><i class="bi bi-discord">Discord</i></a>

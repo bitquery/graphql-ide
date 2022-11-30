@@ -4,7 +4,7 @@ import { getTaggedQueriesList } from '../../api/api'
 import { GalleryStore } from '../../store/galleryStore'
 import { QueriesStore } from '../../store/queriesStore'
 import { TabsStore } from '../../store/queriesStore'
-import { useHistory, useLocation } from 'react-router-dom'
+import { useHistory, useLocation, useParams } from 'react-router-dom'
 import { getSearchResults } from '../../api/api'
 
 const QueriesList = observer(function QueriesList() {
@@ -14,12 +14,13 @@ const QueriesList = observer(function QueriesList() {
 	const { switchTab, tabs } = TabsStore
 	const history = useHistory()
 	const location = useLocation()
+	const { tag } = useParams()
 
 	const [list, setList] = useState([])
 	const [thereIsNext, setNext] = useState(false)
 
 	const main = async (page) => {
-		const explore = location.pathname === `${process.env.REACT_APP_IDE_URL}/explore` ? true : false
+		const explore = /\/explore\//gi.test(location.pathname)
 		const { data } = await getTaggedQueriesList(currentTag, page * queriesOnPage, explore)
 		data.length > queriesOnPage ? setNext(true) : setNext(false)
 		setList(data)
