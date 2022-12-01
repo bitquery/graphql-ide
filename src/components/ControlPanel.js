@@ -26,7 +26,7 @@ const ControlPanel = observer(function ControlPanel() {
 		setSearchValue(searchValue)
 		if (searchValue) {
 			setCurrentTag('All queries')
-			history.push(`${process.env.REACT_APP_IDE_URL}/explore`, {detail: 'search'}	)
+			history.push(`${process.env.REACT_APP_IDE_URL}/explore/All%20queries`, {detail: 'search'}	)
 			setActive(2)
 		}
 	}, [searchValue])

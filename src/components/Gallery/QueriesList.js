@@ -34,7 +34,7 @@ const QueriesList = observer(function QueriesList() {
 	useEffect(() => {
 		const main = async () => {
 			if (searchValue === '') {
-				const explore = location.pathname === `${process.env.REACT_APP_IDE_URL}/explore` ? true : false
+				const explore = /\/explore\//gi.test(location.pathname)
 				const { data } = await getTaggedQueriesList(currentTag, currentPage * queriesOnPage, explore)
 				data.length > queriesOnPage ? setNext(true) : setNext(false)
 				setList(data)
@@ -42,7 +42,7 @@ const QueriesList = observer(function QueriesList() {
 				setNext(false)
 				setCurrentPage(0)
 				const { data } = await getSearchResults(searchValue)
-				history.push(`${process.env.REACT_APP_IDE_URL}/explore`)
+				history.push(`${process.env.REACT_APP_IDE_URL}/explore/All%20queries`)
 				setList(data)
 			}
 		}
