@@ -39,8 +39,10 @@ import { stringifyIncludesFunction } from '../utils/common';
 import modalStore from '../store/modalStore.js';
 import { GalleryStore } from '../store/galleryStore.js';
 import CodeSnippetComponent from './CodeSnippetComponent.js';
+import { useToasts } from 'react-toast-notifications'
 
 const EditorInstance = observer(function EditorInstance({number})  {
+	const { addToast } = useToasts()
 	const { tabs, currentTab, index, jsonMode, codeMode } = TabsStore
 	const { toggleModal, toggleLogin, modalIsOpen } = modalStore
 	const { tagListIsOpen } = GalleryStore
@@ -362,7 +364,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 				fetcher(graphQLParams)
 				.then(response => {
 					if (!response.ok) {
-						throw new Error(response.status);
+						return response.text().then(text => { throw new Error(text) })
 				  	}
 					return response.json()
 				})
@@ -374,6 +376,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 					setLoading(false)
 					setErrorLoading(false)
 				}).catch(error => {
+					addToast(error.message, { appearance: 'error' })
 					setLoading(false)
 					setErrorLoading(true)
 					if (error.message === '401' && !modalIsOpen) {
