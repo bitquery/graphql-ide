@@ -79,10 +79,13 @@ const QueriesList = observer(function QueriesList() {
 						return (
 							<li className="list-group-item list-group-item-action">
 								<div className="d-flex w-100 justify-content-between cursor-pointer" onClick={()=>handleClick(item)}>
-									<div>
+									<div className='w-100'>
 										<div>
 											<span className="mr-2">{item.name}</span>
 											{typeof item.tags === 'string' && item.tags.split(',').map(tag => <span className="badge badge-secondary mr-2">#{tag}</span>)}
+											{item.cnt && <span className="badge badge-primary badge-pill float-right">
+												<i class="bi bi-eye"/> { item.cnt }
+											</span>}
 										</div>
 										<small>{item.description !== null && `${item.description}. `}Created by <strong>{item.owner_name}</strong> at {Math.floor((new Date().getTime() - new Date(item.created_at).getTime()) / (1000*60*60*24))} days ago</small>
 									</div>
