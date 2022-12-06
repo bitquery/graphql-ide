@@ -3,7 +3,7 @@ FROM node:14.15-alpine AS builder
 LABEL maintainer="Andrey Gridin <andrey@bitquery.io>"
 
 ARG SCHEME=https
-ARG DOMAIN=graphql.staging.bitq.dev
+ARG DOMAIN=graphql.bitquery.io
 ARG REACT_APP_IDE_URL=/ide
 ARG ENV=production
 
