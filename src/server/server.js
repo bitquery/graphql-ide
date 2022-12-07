@@ -44,6 +44,9 @@ const getAccountIdFromSession = req =>
 	)
 
 const authMiddleware = async (req, res, next) => {
+	if (req.path === '/api/querytransfer') {
+		return next()
+	}
 	const account_id = await getAccountIdFromSession(req)
 	if (account_id) {
 		req.account_id = +account_id
