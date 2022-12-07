@@ -24,43 +24,7 @@ let redisClient = redis.createClient({
                 ? String('redis://' + process.env.REDIS_HOST + ':' + process.env.REDIS_PORT + '/' + process.env.REDIS_DB)
 		: 'redis://127.0.0.1:6379'
 })
-
-const getAccountIdFromSession = req =>
-		new Promise(resolve => {
-			const session = req.cookies['_app_session_key']
-			if (session) {
-				redisClient.get(`session:${session}`, (error, result) => {
-					if (result) {
-						const json = JSON.parse(result)
-						resolve(json?.account_id)
-					} else {
-						resolve(undefined)
-					}
-				})
-			} else {
-				resolve(undefined)
-			}
-		}
-	)
-
-const authMiddleware = async (req, res, next) => {
-	if (req.path === '/api/querytransfer') {
-		return next()
-	}
-	const account_id = await getAccountIdFromSession(req)
-	if (account_id) {
-		req.account_id = +account_id
-		return next()
-	} else {
-		res.set('Location', `${process.env.BACKEND_URL}/auth/login`)
-		res.cookie('redirect_to', process.env.IDE_URL, { maxAge: 300000 })
-		res.sendStatus(302)
-	}
-}
-
-app.use( authMiddleware )
 app.enable('trust proxy');
-
 require('./endPoints')(app, db, redisClient)
 
 if (process.env.NODE_ENV==='production') {
