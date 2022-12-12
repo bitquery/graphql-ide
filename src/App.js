@@ -59,6 +59,9 @@ const App = observer(function App() {
 				<Route exact path={`${process.env.REACT_APP_IDE_URL}/myqueries`} >
 					<ExploreComponent />
 				</Route>
+				<Route exact path={`${process.env.REACT_APP_IDE_URL}/team`} >
+					<ExploreComponent />
+				</Route>
 				<Route path={[`${process.env.REACT_APP_IDE_URL}/:queryurl`, `${process.env.REACT_APP_IDE_URL}`]} >
 					<TabsComponent />
 					<div className="content flex">

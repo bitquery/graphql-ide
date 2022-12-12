@@ -38,6 +38,8 @@ const ControlPanel = observer(function ControlPanel() {
 			setActive(2)
 		} else if (history.location.pathname === `${process.env.REACT_APP_IDE_URL}/myqueries`) {
 			setActive(3)
+		} else if (history.location.pathname === `${process.env.REACT_APP_IDE_URL}/team`) {
+			setActive(4)
 		} else {
 			setActive(1)
 		}
@@ -91,6 +93,9 @@ const ControlPanel = observer(function ControlPanel() {
 					<li className='nav-item'>
 						<Link className={`nav-link ${active === 3 ? 'nav-active' : 'text-primary'}`} to={`${process.env.REACT_APP_IDE_URL}/myqueries`} onClick={()=>setSearch('')}><i className="bi bi-star mr-2"></i>My Queries</Link>
 					</li>
+					{(user?.children_count || user?.ancestry) && <li className='nav-item'>
+						<Link className={`nav-link ${active === 4 ? 'nav-active' : 'text-primary'}`} to={`${process.env.REACT_APP_IDE_URL}/team`} onClick={()=>setSearch('')}><i className="bi bi-people mr-2"></i>Team</Link>
+					</li>}
 					<li className="nav-item d-lg-none">
 						<a className="nav-link text-primary" href="https://t.me/bloxy_info//"><i className="bi bi-telegram mr-2"></i>Telegram</a>
 					</li>
