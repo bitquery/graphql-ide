@@ -27,6 +27,7 @@ const Profile = observer(() => {
 	}
 	const logOut = async () => {
 		await logout().catch(e => console.log(e))
+		window.location.replace(`${window.location.origin}/auth/login`)
 	}
 	useEffect(() => {
 		getUser()

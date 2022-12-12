@@ -31,36 +31,6 @@ const getCodeSnippet = (lang, query, variables, key, endpoint_url) =>
 
 module.exports = function(app, db, redisClient) {
 
-	const getAccountIdFromSession = req =>
-		new Promise(resolve => {
-			const session = req.cookies['_app_session_key']
-			if (session) {
-				redisClient.get(`session:${session}`, (error, result) => {
-					if (result) {
-						const json = JSON.parse(result)
-						resolve(json?.account_id)
-					} else {
-						resolve(undefined)
-					}
-				})
-			} else {
-				resolve(undefined)
-			}
-		}
-	)
-
-	const authMiddleware = async (req, res, next) => {
-		const account_id = await getAccountIdFromSession(req)
-		if (account_id) {
-			req.account_id = +account_id
-			return next()
-		} else {
-			res.set('Location', `${process.env.BACKEND_URL}/auth/login`)
-			res.cookie('redirect_to', process.env.IDE_URL, { maxAge: 300000 })
-			res.sendStatus(302)
-		}
-	}
-
 	const query = (sql, values) => new Promise((resolve, reject) => {
 		const callback = (err, results) => {
 			if (err) {
@@ -99,13 +69,13 @@ module.exports = function(app, db, redisClient) {
 		}
 	}
 	
-	app.post('/api/codesnippet', authMiddleware, async (req, res) => {
+	app.post('/api/codesnippet', async (req, res) => {
 		const { language, query, variables, endpoint_url, key } = req.body
 		const snippet = await getCodeSnippet(language, query, variables, key, endpoint_url)
 		res.status(200).send({ snippet })
 	})
 
-	app.post('/api/search', authMiddleware, async (req, res) => {
+	app.post('/api/search', async (req, res) => {
         try {
             const results = await query(`SELECT DISTINCT * from queries q
             INNER JOIN (
@@ -157,7 +127,7 @@ module.exports = function(app, db, redisClient) {
 		})
 	})
 
-	app.post('/api/checkurl', authMiddleware, async (req, res) => {
+	app.post('/api/checkurl', async (req, res) => {
 		const results = await query(`select id from queries where url = ?`, [req.body.url])
 		if (results.length) {
 			res.sendStatus(200)
@@ -166,7 +136,7 @@ module.exports = function(app, db, redisClient) {
 		}
 	})
 
-	app.post('/api/taggedqueries/:tag/:page', authMiddleware, async (req, res) => {
+	app.post('/api/taggedqueries/:tag/:page', async (req, res) => {
 		const explore = req.body.explore
 		const makesql = (patch = '', limit = 0) => `SELECT * from queries q
 		INNER JOIN (
@@ -215,7 +185,7 @@ module.exports = function(app, db, redisClient) {
 		res.status(200).send(results)	
 	})
 
-	app.post('/api/tags', authMiddleware, async (req, res) => {
+	app.post('/api/tags', async (req, res) => {
 		const there = req.body.explore ? 'published = 1' : 'account_id = ?'
 		const results = await query(
 			`select 
@@ -239,12 +209,12 @@ module.exports = function(app, db, redisClient) {
 		res.status(200).send(results)
 	})
 
-	app.post('/api/tagspr', authMiddleware, (req, res) => {
+	app.post('/api/tagspr', (req, res) => {
 		const { query_id, tags } = req.body.params
 		handleTags(db, query_id, tags, res)
 	})
 
-	app.put('/api/tagspr', authMiddleware, (req, res) => {
+	app.put('/api/tagspr', (req, res) => {
 		const { query_id, tags } = req.body.params
 		db.query('DELETE FROM tags_to_queries WHERE query_id = ?', [query_id], (err, _) => {
 			if (err) console.log(err)
@@ -372,7 +342,7 @@ module.exports = function(app, db, redisClient) {
 			})
 	})
 
-	app.post('/api/getwidget', authMiddleware, (req, response) => {
+	app.post('/api/getwidget', (req, response) => {
 		console.log(req.body)
 		db.query(`SELECT a.dashboard_id , a.widget_id as widget_number, a.query_index, b.*, q.*
 		FROM queries_to_dashboards a
@@ -386,7 +356,7 @@ module.exports = function(app, db, redisClient) {
 		})
 	})
 
-	app.post('/api/savedashboard', authMiddleware, (req, response) => {
+	app.post('/api/savedashboard', (req, response) => {
 		const params = {
 			layout: JSON.stringify(req.body.layout),
 			name: req.body.name,
@@ -501,7 +471,7 @@ module.exports = function(app, db, redisClient) {
 		})	
 	}) 
 	
-	app.post('/api/addquery', authMiddleware, (req, res) => {
+	app.post('/api/addquery', (req, res) => {
 		let query = req.body.params
 		if (!query.id || query.account_id !== req.account_id) {
 			handleAddQuery(req, res, db)
@@ -510,7 +480,7 @@ module.exports = function(app, db, redisClient) {
 		}
 	})
 
-	app.post('/api/deletequery', authMiddleware, (req, res) => {
+	app.post('/api/deletequery', (req, res) => {
 		req.body.layout 
 			? db.query(`UPDATE dashboards SET deleted=?, updated_at=CURRENT_TIMESTAMP where id=?`, [true, req.body.id], (err, _) => {
 				if (err) console.log(err)
@@ -522,7 +492,7 @@ module.exports = function(app, db, redisClient) {
 			})
 	})
 
-	app.post('/api/querylog', authMiddleware, (req, response) => {
+	app.post('/api/querylog', (req, response) => {
 		db.query(`INSERT INTO query_logs SET ?`, { ...req.body.params },
 		(err, res) => {
 			if (err) console.log(err)
@@ -531,7 +501,7 @@ module.exports = function(app, db, redisClient) {
 		})
 	}) 
 	
-	app.get("/api/user", authMiddleware, async (req, res) => {
+	app.get("/api/user", async (req, res) => {
 
 		const results = await query(`SELECT a.*, ak.\`key\` FROM accounts a
 			JOIN api_keys ak
@@ -554,7 +524,7 @@ module.exports = function(app, db, redisClient) {
 			res.status(400).send('No user found')
 		}
 	})
-	app.get('/api/getquery/:url', authMiddleware, (req, res) => {
+	app.get('/api/getquery/:url', (req, res) => {
 		let sql = `
 			SELECT queries.*, widgets.id as widget_number, widgets.widget_id, widgets.config, widgets.displayed_data, widgets.data_type FROM queries
 			LEFT JOIN widgets 
@@ -570,7 +540,7 @@ module.exports = function(app, db, redisClient) {
 			}
 		})
 	})
-	app.get('/api/getqueries', authMiddleware, (req, res) => {
+	app.get('/api/getqueries', (req, res) => {
 		let checkActive = req.session.active
 		req.session.active = null
 		if (checkActive) checkActive = 'Account activated!'
