@@ -15,9 +15,9 @@ const ExploreComponent = observer(function ExploreComponent() {
 	const [tagsList, setTagsList] = useState([])
 	useEffect(() => {
 		const onload = async () => {
-			const explore = location.pathname === `${process.env.REACT_APP_IDE_URL}/explore` ? true : false
+			const queryListType = location.pathname.replace(`${process.env.REACT_APP_IDE_URL}/`, '')
 			try {
-				const { data } = await getTagsList(explore)
+				const { data } = await getTagsList(queryListType)
 				setTagsList(data)
 			} catch (error) {
 				console.log(error)

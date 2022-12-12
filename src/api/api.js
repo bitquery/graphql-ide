@@ -46,7 +46,7 @@ export const getWidget = url => axios.get(`/api/getw/${url}`)
 // export const getQueryForDashboard = ids => axios.get(`/api/getwidget/${ids}`)
 export const getQueryForDashboard = (ids, dbid) => axios.post(`/api/getwidget`, {ids, dbid})
 
-export const getTagsList = explore => axios.post('/api/tags', {explore})
+export const getTagsList = queryListType => axios.post('/api/tags', {queryListType})
 
 //queryListType = 'explore' || 'myqueries' || 'team'
 export const getTaggedQueriesList = (tag, page, queryListType) => axios.post(`/api/taggedqueries/${tag}/${page||0}`, {queryListType})

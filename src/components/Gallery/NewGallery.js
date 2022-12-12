@@ -20,7 +20,7 @@ const NewGallery = observer(function NewGallery() {
 	useEffect(() => {
 		const onload = async () => {
 			try {
-				const { data } = await getTagsList()
+				const { data } = await getTagsList('explore')
 				setTagsList(data)
 			} catch (error) {
 				console.log(error)				
