@@ -69,6 +69,31 @@ module.exports = function(app, db, redisClient) {
 		}
 	}
 	
+	app.get('/api/teamqueries', async (req, res) => {
+		const results = await query(`
+			select a.ancestry, a.children_count
+			from accounts a where a.id = ?`, [req.account_id])
+		if (!results.length) {
+			res.sendStatus(400)
+		} else {
+			let team_admin
+			//it is team admin
+			if (results[0].children_count) {
+				team_admin = req.account_id
+			//there is ancestry in results, it is team member
+			} else {
+				team_admin = results[0].ancestry
+			}
+			const results = await query(`
+				select * from queries q
+				where q.account_id in
+				(select id from accounts a
+					where a.id = ? or a.ancestry = ?
+				)`, [team_admin, team_admin])
+			res.status(200).send(results.length ? results[0] : [])
+		}
+	})
+
 	app.post('/api/codesnippet', async (req, res) => {
 		const { language, query, variables, endpoint_url, key } = req.body
 		const snippet = await getCodeSnippet(language, query, variables, key, endpoint_url)
@@ -517,7 +542,9 @@ module.exports = function(app, db, redisClient) {
 				active: results[0].active,
 				updated_at: results[0].updated_at,
 				created_at: results[0].created_at,
-				role: results[0].role
+				role: results[0].role,
+				children_count: +results[0].children_count,
+				ancestry: results[0].ancestry
 			}]
 			res.status(200).send({user: userSend})
 		} else {
