@@ -161,7 +161,8 @@ module.exports = function(app, db, redisClient) {
 		//queryListType = 'explore' || 'myqueries' || 'team'
 		const queryListType = req.body.queryListType
 		const teamAdmin = await getTeamAdmin(query, queryListType, req.account_id)
-		const makesql = (patch = '', limit = 0) => `SELECT * from queries q
+		let sql = {}
+		sql.query = `SELECT * from queries q
 		INNER JOIN (
 			SELECT name as owner_name, id as aid from accounts
 		) a
@@ -191,26 +192,17 @@ module.exports = function(app, db, redisClient) {
 			SELECT id as tag_id, tag from tags
 		) ttags
 		ON ttq.tag_id = ttags.tag_id`}
-		${patch}
-		LIMIT ${limit}, 11`
-		let sql = {}
+		WHERE ${queryListType === 'explore' 
+			? 'published = 1' 
+			: queryListType === 'myqueries'
+				? 'account_id = ?' 
+				: 'account_id in (select id from accounts a where a.id = ? or a.ancestry = ?)'}
+		${req.params.tag === 'All queries' ? '' : 'AND tag = ?'}
+		ORDER BY q_cnt.cnt DESC
+		LIMIT ${req.params.page}, 11`
 		if (req.params.tag === 'All queries') {
-			sql.query = makesql(`WHERE ${queryListType === 'explore' 
-				? 'published = 1' 
-				: queryListType === 'myqueries'
-					? 'account_id = ?' 
-					: 'account_id in (select id from accounts a where a.id = ? or a.ancestry = ?)'}
-				ORDER BY q_cnt.cnt DESC`, req.params.page)
 			sql.param = queryListType === 'team' ? [teamAdmin, teamAdmin] : [req.account_id]
 		} else {
-			sql.query = makesql(`
-				WHERE ${queryListType === 'explore' 
-					? 'published = 1'
-					: queryListType === 'myqueries'
-						? 'account_id = ?'
-						: 'account_id in (select id from accounts a where a.id = ? or a.ancestry = ?)'}
-				AND tag = ?
-				ORDER by q_cnt.cnt DESC`, req.params.page)
 			sql.param = queryListType === 'explore'
 				? [req.params.tag]
 				: queryListType === 'myqueries' 
