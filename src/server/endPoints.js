@@ -69,31 +69,6 @@ module.exports = function(app, db, redisClient) {
 		}
 	}
 	
-	app.get('/api/teamqueries', async (req, res) => {
-		const results = await query(`
-			select a.ancestry, a.children_count
-			from accounts a where a.id = ?`, [req.account_id])
-		if (!results.length) {
-			res.sendStatus(400)
-		} else {
-			let team_admin
-			//it is team admin
-			if (results[0].children_count) {
-				team_admin = req.account_id
-			//there is ancestry in results, it is team member
-			} else {
-				team_admin = results[0].ancestry
-			}
-			const results = await query(`
-				select * from queries q
-				where q.account_id in
-				(select id from accounts a
-					where a.id = ? or a.ancestry = ?
-				)`, [team_admin, team_admin])
-			res.status(200).send(results.length ? results[0] : [])
-		}
-	})
-
 	app.post('/api/codesnippet', async (req, res) => {
 		const { language, query, variables, endpoint_url, key } = req.body
 		const snippet = await getCodeSnippet(language, query, variables, key, endpoint_url)
@@ -162,7 +137,25 @@ module.exports = function(app, db, redisClient) {
 	})
 
 	app.post('/api/taggedqueries/:tag/:page', async (req, res) => {
-		const explore = req.body.explore
+		let teadAdmin
+		//queryListType = 'explore' || 'myqueries' || 'team'
+		const queryListType = req.body.queryListType
+		if (queryListType === 'team') {
+			const results = await query(`
+				select a.ancestry, a.children_count
+				from accounts a where a.id = ?`, [req.account_id])
+			if (!results.length) {
+				res.sendStatus(400)
+			} else {
+				//it is team admin
+				if (results[0].children_count) {
+					teadAdmin = req.account_id
+				//there is ancestry in results, it is team member
+				} else {
+					teadAdmin = results[0].ancestry
+				}
+			}
+		}
 		const makesql = (patch = '', limit = 0) => `SELECT * from queries q
 		INNER JOIN (
 			SELECT name as owner_name, id as aid from accounts
@@ -197,14 +190,27 @@ module.exports = function(app, db, redisClient) {
 		LIMIT ${limit}, 11`
 		let sql = {}
 		if (req.params.tag === 'All queries') {
-			sql.query = makesql(`WHERE ${explore ? 'published = 1' : 'account_id = ?'} ORDER BY q_cnt.cnt DESC`, req.params.page)
-			sql.param = [req.account_id]
+			sql.query = makesql(`WHERE ${queryListType === 'explore' 
+				? 'published = 1' 
+				: queryListType === 'myqueries'
+					? 'account_id = ?' 
+					: 'account_id in (select id from accounts a where a.id = ? or a.ancestry = ?)'}
+				ORDER BY q_cnt.cnt DESC`, req.params.page)
+			sql.param = queryListType === 'team' ? [teadAdmin, teadAdmin] : [req.account_id]
 		} else {
 			sql.query = makesql(`
-				WHERE ${explore ? 'published = 1' : 'account_id = ?'}
+				WHERE ${queryListType === 'explore' 
+					? 'published = 1'
+					: queryListType === 'myqueries'
+						? 'account_id = ?'
+						: 'account_id in (select id from accounts a where a.id = ? or a.ancestry = ?)'}
 				AND tag = ?
 				ORDER by q_cnt.cnt DESC`, req.params.page)
-			sql.param = explore ? [req.params.tag] : [req.account_id, req.params.tag]
+			sql.param = queryListType === 'explore'
+				? [req.params.tag]
+				: queryListType === 'myqueries' 
+					? [req.account_id, req.params.tag]
+					: [teadAdmin, teadAdmin, req.params.tag]
 		}
 		const results = await query(sql.query, sql.param)
 		res.status(200).send(results)	

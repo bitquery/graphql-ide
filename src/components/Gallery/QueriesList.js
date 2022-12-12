@@ -19,8 +19,8 @@ const QueriesList = observer(function QueriesList() {
 	const [thereIsNext, setNext] = useState(false)
 
 	const main = async (page) => {
-		const explore = location.pathname === `${process.env.REACT_APP_IDE_URL}/explore` ? true : false
-		const { data } = await getTaggedQueriesList(currentTag, page * queriesOnPage, explore)
+		const queryListType = location.pathname.replace(`${process.env.REACT_APP_IDE_URL}/`, '')
+		const { data } = await getTaggedQueriesList(currentTag, page * queriesOnPage, queryListType)
 		data.length > queriesOnPage ? setNext(true) : setNext(false)
 		setList(data)
 	}
@@ -33,8 +33,8 @@ const QueriesList = observer(function QueriesList() {
 	useEffect(() => {
 		const main = async () => {
 			if (searchValue === '') {
-				const explore = location.pathname === `${process.env.REACT_APP_IDE_URL}/explore` ? true : false
-				const { data } = await getTaggedQueriesList(currentTag, currentPage * queriesOnPage, explore)
+				const queryListType = location.pathname.replace(`${process.env.REACT_APP_IDE_URL}/`, '')
+				const { data } = await getTaggedQueriesList(currentTag, currentPage * queriesOnPage, queryListType)
 				data.length > queriesOnPage ? setNext(true) : setNext(false)
 				setList(data)
 			} else if (searchValue) {
