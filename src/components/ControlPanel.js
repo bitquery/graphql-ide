@@ -34,11 +34,12 @@ const ControlPanel = observer(function ControlPanel() {
 	}, [currentTag])
 	
 	useEffect(() => {
-		if (history.location.pathname === `${process.env.REACT_APP_IDE_URL}/explore`) {
+		const queryListType = location.pathname.replace(`${process.env.REACT_APP_IDE_URL}/`, '').match(/[a-zA-Z]+/gm)[0]
+		if (queryListType === 'explore') {
 			setActive(2)
-		} else if (history.location.pathname === `${process.env.REACT_APP_IDE_URL}/myqueries`) {
+		} else if (queryListType === 'myqueries') {
 			setActive(3)
-		} else if (history.location.pathname === `${process.env.REACT_APP_IDE_URL}/team`) {
+		} else if (queryListType === 'team') {
 			setActive(4)
 		} else {
 			setActive(1)
