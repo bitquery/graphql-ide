@@ -3,6 +3,7 @@ const fs = require('fs')
 const path = require('path')
 const sdk = require('postman-collection')
 const codegen = require('postman-code-generators')
+const bodyParser = require('body-parser')
 
 const getCodeSnippet = (lang, query, variables, key, endpoint_url) => 
 	new Promise((resolve, reject) => {
@@ -620,7 +621,7 @@ module.exports = function(app, db, redisClient) {
 		)
 	})
 		
-	app.post('/api/querytransfer', (req, res) => {
+	app.post('/api/querytransfer', bodyParser.urlencoded({ extended: true }), (req, res) => {
 		const code = crypto.randomBytes(3).toString('hex')
 		redisClient.setex(code, 10, JSON.stringify(req.body))
 		res.set('Location', `${process.env.IDE_URL}/transfer/${code}`)
