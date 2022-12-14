@@ -35,7 +35,7 @@ const TabsComponent = observer(() => {
 			const code = history.location.pathname.match(/[0-9a-fA-F]{6}/)[0]
 			const gtf = async () => {
 				const { data } = await getTransferedQuery(code)	
-				updateQuery({query: data.transferedQuery.query, variables: data.transferedQuery.variables}, index)
+				updateQuery({query: data.transferedQuery.query.replaceAll(/(?<="|})\\"/gm, ''), variables: data.transferedQuery.variables}, index)
 				setQueryIsTransfered(true)
 				setx(2)
 				setIsLoaded()
