@@ -34,7 +34,7 @@ const ControlPanel = observer(function ControlPanel() {
 	}, [currentTag])
 	
 	useEffect(() => {
-		const queryListType = location.pathname.replace(`${process.env.REACT_APP_IDE_URL}/`, '').match(/[a-zA-Z]+/gm)[0]
+		const queryListType = location.pathname.replace(`${process.env.REACT_APP_IDE_URL}/`, '').match(/[a-zA-Z]+/gm)?.[0]
 		if (queryListType === 'explore') {
 			setActive(2)
 		} else if (queryListType === 'myqueries') {
