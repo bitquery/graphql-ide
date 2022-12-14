@@ -623,7 +623,7 @@ module.exports = function(app, db, redisClient) {
 		
 	app.post('/api/querytransfer', bodyParser.urlencoded({ extended: true }), (req, res) => {
 		const code = crypto.randomBytes(3).toString('hex')
-		redisClient.setex(code, 10, JSON.stringify(req.body))
+		redisClient.setex(code, 10, JSON.stringify(req.body).replace(/(?<=")\\\\\\"|\\\\\\"(?=\\")/gm, ''))
 		res.set('Location', `${process.env.IDE_URL}/transfer/${code}`)
 		res.sendStatus(302)
 	})
