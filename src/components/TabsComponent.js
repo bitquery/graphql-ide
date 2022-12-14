@@ -35,7 +35,9 @@ const TabsComponent = observer(() => {
 			const code = history.location.pathname.match(/[0-9a-fA-F]{6}/)[0]
 			const gtf = async () => {
 				const { data } = await getTransferedQuery(code)	
-				updateQuery({query: data.transferedQuery.query, variables: data.transferedQuery.variables}, index)
+				//query string goes from explorer JSON.stringify'ed twice
+				//double JSON.parse to rid off unexpected qoutes 
+				updateQuery({query: JSON.parse(data.transferedQuery.query), variables: data.transferedQuery.variables}, index)
 				setQueryIsTransfered(true)
 				setx(2)
 				setIsLoaded()
