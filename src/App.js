@@ -53,13 +53,11 @@ const App = observer(function App() {
 				<Route path={`${process.env.REACT_APP_IDE_URL}/reset`} >
 					<ResetPassword />
 				</Route>
-				<Route exact path={`${process.env.REACT_APP_IDE_URL}/explore`} >
-					<ExploreComponent />
-				</Route>
-				<Route exact path={`${process.env.REACT_APP_IDE_URL}/myqueries`} >
-					<ExploreComponent />
-				</Route>
-				<Route exact path={`${process.env.REACT_APP_IDE_URL}/team`} >
+				<Route path={[
+					`${process.env.REACT_APP_IDE_URL}/explore`,
+					`${process.env.REACT_APP_IDE_URL}/myqueries`,
+					`${process.env.REACT_APP_IDE_URL}/team`
+				]}>
 					<ExploreComponent />
 				</Route>
 				<Route path={[`${process.env.REACT_APP_IDE_URL}/:queryurl`, `${process.env.REACT_APP_IDE_URL}`]} >

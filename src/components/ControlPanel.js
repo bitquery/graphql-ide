@@ -24,7 +24,7 @@ const ControlPanel = observer(function ControlPanel() {
 		setSearchValue(searchValue)
 		if (searchValue) {
 			setCurrentTag('All queries')
-			history.push(`${process.env.REACT_APP_IDE_URL}/explore`, {detail: 'search'}	)
+			history.push(`${process.env.REACT_APP_IDE_URL}/explore/All%20queries`, {detail: 'search'}	)
 			setActive(2)
 		}
 	}, [searchValue])
@@ -89,16 +89,19 @@ const ControlPanel = observer(function ControlPanel() {
 						<Link className={`nav-link ${active === 1 ? 'nav-active' : 'text-primary'}`} to={process.env.REACT_APP_IDE_URL}  ><i className="bi bi-play mr-2"></i>Develop</Link>
 					</li>
 					<li className='nav-item'>
-						<Link className={`nav-link ${active === 2 ? 'nav-active' : 'text-primary'}`} to={`${process.env.REACT_APP_IDE_URL}/explore`} onClick={()=>setSearch('')} ><i className="bi bi-terminal mr-2"></i>Explore</Link>
+						<Link className={`nav-link ${active === 2 ? 'nav-active' : 'text-primary'}`} to={`${process.env.REACT_APP_IDE_URL}/explore/All%20queries`} onClick={()=>setSearch('')} ><i className="bi bi-terminal mr-2"></i>Explore</Link>
 					</li>
 					<li className='nav-item'>
-						<Link className={`nav-link ${active === 3 ? 'nav-active' : 'text-primary'}`} to={`${process.env.REACT_APP_IDE_URL}/myqueries`} onClick={()=>setSearch('')}><i className="bi bi-star mr-2"></i>My Queries</Link>
+						<Link className={`nav-link ${active === 3 ? 'nav-active' : 'text-primary'}`} to={`${process.env.REACT_APP_IDE_URL}/myqueries/All%20queries`} onClick={()=>setSearch('')}><i className="bi bi-star mr-2"></i>My Queries</Link>
 					</li>
 					{(user?.children_count || user?.ancestry) && <li className='nav-item'>
-						<Link className={`nav-link ${active === 4 ? 'nav-active' : 'text-primary'}`} to={`${process.env.REACT_APP_IDE_URL}/team`} onClick={()=>setSearch('')}><i className="bi bi-people mr-2"></i>Team</Link>
+						<Link className={`nav-link ${active === 4 ? 'nav-active' : 'text-primary'}`} to={`${process.env.REACT_APP_IDE_URL}/team/All%20queries`} onClick={()=>setSearch('')}><i className="bi bi-people mr-2"></i>Team</Link>
 					</li>}
 					<li className="nav-item d-lg-none">
-						<a className="nav-link text-primary" href="https://t.me/bloxy_info//"><i className="bi bi-telegram mr-2"></i>Telegram</a>
+						<a className="nav-link text-primary" href="https://discord.gg/EEBVTQnb2E"><i className="bi bi-discord">Discord</i></a>
+					</li>
+					<li className="nav-item d-lg-none">
+						<a className="nav-link text-primary" href="https://t.me/bloxy_info/"><i className="bi bi-telegram mr-2"></i>Telegram</a>
 					</li>
 					<li className="nav-item d-lg-none">
 						<a className="nav-link text-primary" href="https://community.bitquery.io/">Forum</a>

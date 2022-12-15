@@ -39,9 +39,10 @@ import { stringifyIncludesFunction } from '../utils/common';
 import { GalleryStore } from '../store/galleryStore.js';
 import CodeSnippetComponent from './CodeSnippetComponent.js';
 import { useHistory } from 'react-router-dom';
-
+import { useToasts } from 'react-toast-notifications'
 
 const EditorInstance = observer(function EditorInstance({number})  {
+	const { addToast } = useToasts()
 	const { tabs, currentTab, index, jsonMode, codeMode } = TabsStore
 	const { tagListIsOpen } = GalleryStore
 	const { user }  = UserStore
@@ -247,54 +248,58 @@ const EditorInstance = observer(function EditorInstance({number})  {
 				saved: currentQuery.id && true
 			}, index)
 		}
-		fetcher({query: currentQuery.query, variables: currentQuery.variables}).then(data => {
-			const graphqlRequested = data.headers.get('X-GraphQL-Requested') === 'true'
-			updateQuery(
-				{
-					graphqlQueryID: data.headers.get('X-GraphQL-Query-ID'),
-					graphqlRequested: graphqlRequested,
-					points: graphqlRequested ? undefined : 0,
-					saved: currentQuery.saved
-				}, index)
-			data.json().then(async json => {
-				let values = null
-				if ('data' in json) {
-					if (currentQuery.displayed_data && currentQuery.displayed_data !== 'data') {
-						if (currentQuery.data_type === 'flatten') {
-							values = flattenData(json.data)
+		try {
+			fetcher({query: currentQuery.query, variables: currentQuery.variables}).then(data => {
+				const graphqlRequested = data.headers.get('X-GraphQL-Requested') === 'true'
+				updateQuery(
+					{
+						graphqlQueryID: data.headers.get('X-GraphQL-Query-ID'),
+						graphqlRequested: graphqlRequested,
+						points: graphqlRequested ? undefined : 0,
+						saved: currentQuery.saved
+					}, index)
+				data.json().then(async json => {
+					let values = null
+					if ('data' in json) {
+						if (currentQuery.displayed_data && currentQuery.displayed_data !== 'data') {
+							if (currentQuery.data_type === 'flatten') {
+								values = flattenData(json.data)
+							} else {
+								console.log(json.data, displayed_data)
+								values = getValueFrom(json.data, displayed_data)
+							}
 						} else {
-							console.log(json.data, displayed_data)
-							values = getValueFrom(json.data, displayed_data)
-						}
-					} else {
-						values = json.data
-						if ('extensions' in json) {
-							values.extensions = json.extensions
+							values = json.data
+							if ('extensions' in json) {
+								values.extensions = json.extensions
+							}
 						}
 					}
-				}
-				currentQuery.id && await logQuery({
-					id: currentQuery.id,
-					account_id: currentQuery.account_id,
-					success: !json.errors,
-					error: JSON.stringify(json.errors)
+					currentQuery.id && await logQuery({
+						id: currentQuery.id,
+						account_id: currentQuery.account_id,
+						success: !json.errors,
+						error: JSON.stringify(json.errors)
+					})
+					setDataSource({
+						data: ('data' in json) ? json.data : null,
+						extensions: ('extensions' in json) ? json.extensions : null,
+						displayed_data: displayed_data || '',
+						values,
+						error: ('errors' in json) ? json.errors : null,
+						query: toJS(currentQuery.query), 
+						variables: toJS(currentQuery.variables)
+					})
+					if (!('data' in json)) updateQuery({widget_id: 'json.widget'}, index)
 				})
-				setDataSource({
-					data: ('data' in json) ? json.data : null,
-					extensions: ('extensions' in json) ? json.extensions : null,
-					displayed_data: displayed_data || '',
-					values,
-					error: ('errors' in json) ? json.errors : null,
-					query: toJS(currentQuery.query), 
-					variables: toJS(currentQuery.variables)
-				})
-				if (!('data' in json)) updateQuery({widget_id: 'json.widget'}, index)
+				setLoading(false)
+				setAccordance(true)
+				ReactTooltip.hide(executeButton.current)
 			})
-			
+		} catch (error) {
 			setLoading(false)
-			setAccordance(true)
 			ReactTooltip.hide(executeButton.current)
-		})
+		}
 		// eslint-disable-next-line 
 	}, [JSON.stringify(currentQuery), schema[debouncedURL], JSON.stringify(queryTypes)])
 	
@@ -360,7 +365,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 				fetcher(graphQLParams)
 				.then(response => {
 					if (!response.ok) {
-						throw new Error(response.status);
+						return response.text().then(text => { throw new Error(text) })
 				  	}
 					return response.json()
 				})
@@ -372,6 +377,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 					setLoading(false)
 					setErrorLoading(false)
 				}).catch(error => {
+					addToast(error.message, { appearance: 'error' })
 					setLoading(false)
 					setErrorLoading(true)
 					if (error.message === '401') {
