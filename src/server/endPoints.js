@@ -623,8 +623,15 @@ module.exports = function(app, db, redisClient) {
 		
 	app.post('/api/querytransfer', bodyParser.urlencoded({ extended: true }), (req, res) => {
 		const code = crypto.randomBytes(3).toString('hex')
-		redisClient.setex(code, 10, JSON.stringify(req.body))
-		res.set('Location', `${process.env.IDE_URL}/transfer/${code}`)
+		const queryLink = `${process.env.IDE_URL}/transfer/${code}`
+		const storageTime = req.account_id ? 10 : 60*60*24
+		redisClient.setex(code, storageTime, JSON.stringify(req.body))
+		if (req.account_id) {
+			res.set('Location', queryLink)
+		} else {
+			res.cookie('redirect_to', queryLink, { maxAge: storageTime*1000 })
+			res.set('Location', `${process.env.BACKEND_URL}/auth/login`)
+		}
 		res.sendStatus(302)
 	})
 	app.get('/api/getmyqueries', (req, res) => {
