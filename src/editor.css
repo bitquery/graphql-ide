@@ -779,6 +779,9 @@ div.CodeMirror span.CodeMirror-nonmatchingbracket {color: #f22;}
   position: relative;
 }
 
+.editor__wrapper .CodeMirror-scroll {
+  overflow: scroll !important;
+}
 .CodeMirror-scroll {
   height: 100%;
   /* 30px is the magic margin used to hide the element's real scrollbars */

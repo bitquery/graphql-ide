@@ -79,7 +79,7 @@ class JsonWidget extends Component {
 
 	render() {
 		return (
-			<div className='flex-col flex h-100' >
+			<div className='flex-col flex flex-grow-1' >
 				{this.props.values && <div className='result-time'>{this.state.time} seconds ago</div>}
 				<section
 					className="result-window"
