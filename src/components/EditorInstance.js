@@ -294,7 +294,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 					setWsClean({f: cleanup})
 				});
 			}
-			execute({query: currentQuery.query}).then(res => console.log('complete - ', res))
+			execute({query: currentQuery.query, variables: JSON.parse(currentQuery.variables)}).then(res => console.log('complete - ', res))
 		} else {
 			fetcher({query: currentQuery.query, variables: currentQuery.variables}).then(data => {
 				const graphqlRequested = data.headers.get('X-GraphQL-Requested') === 'true'
