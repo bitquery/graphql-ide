@@ -59,11 +59,6 @@ const EditDialog = observer(function EditDialog({active}) {
 		}
 		// eslint-disable-next-line 
 	}, [shared])
-	const handleCopy = () => {
-		console.log(url)
-		copy(`${window.location.protocol}//${window.location.host}${url.match(/^\/([^?\/]+)/)[0]}/${queryUrl}`)
-		addToast('Link Copied to clipboard', {appearance: 'success'})
-	}
 	const queryNameHandler = e => {
 		setName(e.target.value)
 		setQueryUrl(e.target.value.trim().replaceAll(' ', '-').replace(/[^a-zA-Z0-9-_]/g, ''))

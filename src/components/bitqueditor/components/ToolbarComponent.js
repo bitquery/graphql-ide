@@ -85,6 +85,7 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 		setQuery({
 			...currentQuery,
 			id: null,
+			account_id: null,
 			name: `Copy of ${currentQuery.name}`,
 			saved: false,
 			url: null
