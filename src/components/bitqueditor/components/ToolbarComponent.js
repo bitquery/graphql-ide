@@ -97,7 +97,7 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 				queryID: currentQuery.graphqlQueryID,
 				query: {
 					query: currentQuery.query,
-					variabled: currentQuery.variables
+					variables: currentQuery.variables
 				}
 			})
 			link = data
