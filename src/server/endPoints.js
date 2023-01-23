@@ -620,7 +620,31 @@ module.exports = function(app, db, redisClient) {
 			}
 		)
 	})
-		
+	
+	app.post('/api/copyquery', (req, res) => {
+		const queryID = req.body.queryID
+		const queryLink = `${process.env.IDE_URL}/query/${queryID}`
+		const storageTime = 60*30*1000
+		redisClient.get(queryID, async (error, query) => {
+			if (query === null) {
+				redisClient.setex(queryID, storageTime, JSON.stringify(req.body.query))
+			}
+			return res.status(200).send(queryLink)
+		})
+	})
+
+	app.get('/api/bygraphqlqueryid/:queryid', (req, res) => {
+		redisClient.get(req.params.queryid, async (error, query) => {
+			if (error) console.log(error)
+			if (query !== null) {
+				console.log('there is some query')
+				res.status(200).send(JSON.parse(query))
+			} else {
+				res.sendStatus(400)
+			}
+		})
+	})
+
 	app.post('/api/querytransfer', bodyParser.urlencoded({ extended: true }), (req, res) => {
 		const code = crypto.randomBytes(3).toString('hex')
 		const queryLink = `${process.env.IDE_URL}/transfer/${code}`
