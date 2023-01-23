@@ -625,8 +625,12 @@ module.exports = function(app, db, redisClient) {
 		const queryID = req.body.queryID
 		const queryLink = `${process.env.IDE_URL}/query/${queryID}`
 		const storageTime = 60*30*1000
-		redisClient.setex(queryID, storageTime, JSON.stringify(req.body.query))
-		return res.status(200).send(queryLink)
+		redisClient.get(queryID, async (error, query) => {
+			if (query === null) {
+				redisClient.setex(queryID, storageTime, JSON.stringify(req.body.query))
+			}
+			return res.status(200).send(queryLink)
+		})
 	})
 
 	app.get('/api/bygraphqlqueryid/:queryid', (req, res) => {

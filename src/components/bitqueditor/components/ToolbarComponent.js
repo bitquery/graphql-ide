@@ -1,5 +1,6 @@
 import { observer } from 'mobx-react-lite'
 import { QueriesStore, UserStore, TabsStore } from '../../../store/queriesStore'
+import { copyQuery } from '../../../api/api'
 import modalStore from '../../../store/modalStore'
 import { useToasts } from 'react-toast-notifications'
 import { useRouteMatch } from 'react-router-dom'
@@ -89,12 +90,25 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 			url: null
 		})
 	}
-	const handleCopy = () => {
-		copy(`${window.location.protocol}//${window.location.host}${url.match(/^\/([^?\/]+)/)[0]}/${currentQuery.url}`)
+	const handleCopy = async () => {
+		let link
+		if (!currentQuery.url) {
+			const { data } = await copyQuery({
+				queryID: currentQuery.graphqlQueryID,
+				query: {
+					query: currentQuery.query,
+					variabled: currentQuery.variables
+				}
+			})
+			link = data
+		} else {
+			link = `${window.location.protocol}//${window.location.host}${url.match(/^\/([^?\/]+)/)[0]}/${currentQuery.url}`
+		}
+		copy(link)
 		addToast('Link copied to clipboard', {appearance: 'success'})
 	}
 
-	const toolbar = (!dashboardOwner || !isLoaded) ? null : <div className="topBarWrap">
+	const toolbar = <div className="topBarWrap">
 		<div className="topBar">
 			{!tagListIsOpen &&<i className="bi bi-chevron-double-right cursor-pointer ml-2" onClick={toggleTagsList} />}
 			{dashboardOwner && !(!currentQuery.id || !currentQuery.saved) && currentQuery.layout 
@@ -129,7 +143,7 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 			<ToolbarButton 
 				title='Copy query URL'
 				onClick={handleCopy}
-				visible={!!currentQuery.url}
+				visible={!!currentQuery.graphqlQueryID || !!currentQuery.url}
 			/>
 			<Form.Control 
 				type="text" 

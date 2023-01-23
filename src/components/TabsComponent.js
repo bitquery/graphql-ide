@@ -39,12 +39,11 @@ const TabsComponent = observer(() => {
 				updateQuery({ endpoint_url: updateEndpointToStreaming, saved: true }, index)
 			}
 			if (/^\/graphql\/query\/[0-9a-zA-Z]{16}$/.test(history.location.pathname)) {
-				console.log('here')
 				const gqbi = async () => {
 					const queryID = history.location.pathname.match(/[0-9a-zA-Z]{16}/)[0]
 					try {
-						const { data } = await getQueryByID(queryID)
-						console.log(data)
+						const { data: { query, variables } } = await getQueryByID(queryID)
+						updateQuery({ query, variables, saved: true }, index)
 					} catch (error) {
 						if (error.response.status === 400) {
 							try {
@@ -61,7 +60,7 @@ const TabsComponent = observer(() => {
 								const { data } = await response.json()
 								const query = data.system.userRequests[0].request.json
 								const variables = data.system.userRequests[0].variables.json
-								updateQuery({ query, variables }, index)
+								updateQuery({ query, variables, saved: true }, index)
 							} catch (error) {
 								updateQuery({ query: 'QUERY DOES NOT EXIST!' }, index)
 							}
