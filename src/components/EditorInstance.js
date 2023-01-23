@@ -518,7 +518,7 @@ ${WidgetComponent.id === 'table.widget' ? '<link href="https://unpkg.com/tabulat
 								height={25}
 								width={25}
 							/> :
-								<PlayIcon fill={accordance ? '#eee' : '#14ff41'} />
+								<PlayIcon fill={accordance ? '#eee' : '#14ff41'} width="50%" height="50%" />
 					}
 				</button>
 				<div className="workspace__wrapper"
