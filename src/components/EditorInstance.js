@@ -14,9 +14,10 @@ import './bitqueditor/App.scss'
 import '@bitquery/ide-graph/dist/graphs.min.css'
 import getQueryFacts from '../utils/getQueryFacts'
 import GraphqlEditor from './bitqueditor/components/GraphqlEditor'
-import { 
+import {
 	visitWithTypeInfo,
-	TypeInfo} from 'graphql'
+	TypeInfo
+} from 'graphql'
 import { visit } from 'graphql/language/visitor'
 import { parse as parseGql } from 'graphql/language'
 import JsonPlugin from './bitqueditor/components/JsonWidget'
@@ -42,11 +43,11 @@ import { useHistory } from 'react-router-dom';
 import { useToasts } from 'react-toast-notifications'
 import { createClient } from "graphql-ws"
 
-const EditorInstance = observer(function EditorInstance({number})  {
+const EditorInstance = observer(function EditorInstance({ number }) {
 	const { addToast } = useToasts()
 	const { tabs, currentTab, index, jsonMode, codeMode } = TabsStore
 	const { tagListIsOpen } = GalleryStore
-	const { user }  = UserStore
+	const { user } = UserStore
 	const { query, updateQuery, currentQuery, isMobile,
 		setMobile, showSideBar, schema, setSchema, isLoaded, logQuery } = QueriesStore
 	const [docExplorerOpen, setDocExplorerOpen] = useState(false)
@@ -75,13 +76,13 @@ const EditorInstance = observer(function EditorInstance({number})  {
 	}, [currentTab, tabs, number])
 	const setupExecButtonPosition = () => {
 		let execButt = workspace.current.offsetWidth / overwrap.current.offsetWidth
-		executeButton.current.setAttribute('style', `left: calc(${execButt*100}% - 25px);`)
+		executeButton.current.setAttribute('style', `left: calc(${execButt * 100}% - 25px);`)
 		window.dispatchEvent(new Event('resize'))
 	}
-	
+
 	const handleResizer = e => {
-		if (e.target && e.target.tagName) { 
-			if (e.target.tagName === 'IMG') return 
+		if (e.target && e.target.tagName) {
+			if (e.target.tagName === 'IMG') return
 		}
 		e.preventDefault()
 		const onMouseUp = () => {
@@ -92,7 +93,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 			if (e.buttons === 0) {
 				return onMouseUp()
 			}
-			const leftSize = e.clientX - getLeft(overwrap.current) 
+			const leftSize = e.clientX - getLeft(overwrap.current)
 			const editorWidth = workspace.current.clientWidth + widgetDisplay.current.clientWidth
 			const rightSize = editorWidth - leftSize
 			let flex = leftSize / rightSize
@@ -100,14 +101,14 @@ const EditorInstance = observer(function EditorInstance({number})  {
 			setupExecButtonPosition()
 		}
 		overwrap.current.addEventListener('mousemove', onMouseMove);
-    	overwrap.current.addEventListener('mouseup', onMouseUp);
+		overwrap.current.addEventListener('mouseup', onMouseUp);
 	}
 	useEffect(() => {
 		setupExecButtonPosition()
 	}, [docExplorerOpen, codeSnippetOpen])
 	const workspaceResizer = e => {
-		if (e.target && e.target.className && typeof e.target.className.indexOf === 'function') { 
-			if (e.target.className.indexOf('workspace__sizechanger') !== 0) return 
+		if (e.target && e.target.className && typeof e.target.className.indexOf === 'function') {
+			if (e.target.className.indexOf('workspace__sizechanger') !== 0) return
 		}
 		e.preventDefault()
 		const onMouseUp = () => {
@@ -118,7 +119,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 			if (e.buttons === 0) {
 				return onMouseUp()
 			}
-			const topSize = e.clientY - getTop(workspace.current) 
+			const topSize = e.clientY - getTop(workspace.current)
 			const bottomSize = workspace.current.clientHeight - 75 - topSize
 			let flex = bottomSize / topSize
 			const widget = document.getElementsByClassName('widget')[number]
@@ -129,7 +130,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 			}
 		}
 		overwrap.current.addEventListener('mousemove', onMouseMove);
-    	overwrap.current.addEventListener('mouseup', onMouseUp);
+		overwrap.current.addEventListener('mouseup', onMouseUp);
 	}
 	const getQueryTypes = (query) => {
 		const typeInfo = new TypeInfo(schema[currentQuery.endpoint_url])
@@ -140,9 +141,9 @@ const EditorInstance = observer(function EditorInstance({number})  {
 		let checkpoint = 0
 		let queryLength = 0
 		let visitor = {
-			enter(node ) {
+			enter(node) {
 				typeInfo.enter(node)
-				if(node.kind === "Field") {
+				if (node.kind === "Field") {
 					if (!depth && queryNodes.length) {
 						checkpoint = queryNodes.length
 						if (currentQuery.data_type === 'flatten') {
@@ -156,36 +157,36 @@ const EditorInstance = observer(function EditorInstance({number})  {
 						queryNodes.push(typeInfo.getFieldDef().name)
 					}
 					if (depth) {
-						let arr = queryNodes.filter(node=> node.split('.').length === depth)
-						let index = queryNodes.indexOf(arr[arr.length-1])
-						let depthLength = depth!==1 ? index : 0
+						let arr = queryNodes.filter(node => node.split('.').length === depth)
+						let index = queryNodes.indexOf(arr[arr.length - 1])
+						let depthLength = depth !== 1 ? index : 0
 						if (checkpoint && depthLength <= checkpoint) {
 							depthLength += checkpoint
 						}
-						queryNodes[queryNodes.length-1] = 
-							queryNodes[depthLength]+'.'+queryNodes[queryNodes.length-1]
+						queryNodes[queryNodes.length - 1] =
+							queryNodes[depthLength] + '.' + queryNodes[queryNodes.length - 1]
 					}
 					if (typeInfo.getType().toString()[0] === '[') {
 						if (node.selectionSet.selections.length === 1) {
-							queryNodes[queryNodes.length-1] = `${queryNodes[queryNodes.length-1]}[0]`
+							queryNodes[queryNodes.length - 1] = `${queryNodes[queryNodes.length - 1]}[0]`
 						}
 					}
 					depth++
-					return {...node, typeInfo: typeInfo.getType()}
+					return { ...node, typeInfo: typeInfo.getType() }
 				}
 			},
 			leave(node) {
 				if (node.kind === 'Field') {
-					let arr = queryNodes.filter(node=> node.split('.').length === depth)
-					let index = queryNodes.indexOf(arr[arr.length-1])
+					let arr = queryNodes.filter(node => node.split('.').length === depth)
+					let index = queryNodes.indexOf(arr[arr.length - 1])
 					depth--
 					if (queryNodes[index] !== undefined) {
 						typesMap[queryNodes[index]] = node
-					} 
+					}
 					//-------
 					if (queryLength <= 1) {
 						if (queryNodes[index].includes('.')) queryLength += 1
-						if (queryLength > 1) typesMap = {data: {typeInfo: 'FullResponse'}, ...typesMap}
+						if (queryLength > 1) typesMap = { data: { typeInfo: 'FullResponse' }, ...typesMap }
 					}
 					if (!depth && queryNodes.length) {
 						if (currentQuery.data_type === 'flatten') {
@@ -198,24 +199,24 @@ const EditorInstance = observer(function EditorInstance({number})  {
 		}
 		try {
 			visit(parseGql(query), visitWithTypeInfo(typeInfo, visitor))
-		} catch (e) {}
+		} catch (e) { }
 		if (stop) {
 			let flattenModel = {}
 			Object.keys(typesMap).forEach((key, i) => {
 				if (key === 'data') {
 					flattenModel[key] = typesMap[key]
-				} else if ( ['Int', 'String'].some(value => typesMap[key].typeInfo.toString().includes(value)) ) { 
-					let flatKey = key.includes('data') ? key : `${key.replace( key.split('.')[0], '' ).replace('[0]', '')}`
+				} else if (['Int', 'String'].some(value => typesMap[key].typeInfo.toString().includes(value))) {
+					let flatKey = key.includes('data') ? key : `${key.replace(key.split('.')[0], '').replace('[0]', '')}`
 					const splittedKey = flatKey.split('.')
 					if (splittedKey.length > 3) {
-						flatKey = `${splittedKey[splittedKey.length-2]}${splittedKey[splittedKey.length-1]}`
+						flatKey = `${splittedKey[splittedKey.length - 2]}${splittedKey[splittedKey.length - 1]}`
 					}
 					flatKey = `data.${flatKey.replaceAll('.', '')}`
-					flattenModel[flatKey] = {typeInfo: typesMap[key].typeInfo.toString()}
+					flattenModel[flatKey] = { typeInfo: typesMap[key].typeInfo.toString() }
 				}
 			})
-			flattenModel['data.network'] = {typeInfo: 'String'}
-			return flattenModel 
+			flattenModel['data.network'] = { typeInfo: 'String' }
+			return flattenModel
 		}
 		return typesMap
 	}
@@ -225,11 +226,11 @@ const EditorInstance = observer(function EditorInstance({number})  {
 			const model = getQueryTypes(query[index].query)
 			setQueryTypes(model)
 		}
-	}, [currentQuery.data_type,currentQuery.saved, dataSource.values, dataSource.streamingValues, schema[currentQuery.endpoint_url]])
+	}, [currentQuery.data_type, currentQuery.saved, dataSource.values, dataSource.streamingValues, schema[currentQuery.endpoint_url]])
 
-	const plugins = useMemo(()=> [JsonPlugin, tradingView,  ...vegaPlugins, ...graphPlugins, ...timeChartPlugins, tablePlugin], [])
+	const plugins = useMemo(() => [JsonPlugin, tradingView, ...vegaPlugins, ...graphPlugins, ...timeChartPlugins, tablePlugin], [])
 	let indexx = plugins.map(plugin => plugin.id).indexOf(currentQuery.widget_id)
-	const WidgetComponent = indexx>=0 ? plugins[indexx] : plugins[0]
+	const WidgetComponent = indexx >= 0 ? plugins[indexx] : plugins[0]
 
 	const getResult = useCallback(() => {
 		if (wsClean) {
@@ -238,7 +239,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 			return
 		}
 		ReactTooltip.hide(executeButton.current)
-		updateQuery({points: undefined, graphqlRequested: undefined, saved: currentQuery.saved}, index)
+		updateQuery({ points: undefined, graphqlRequested: undefined, saved: currentQuery.saved }, index)
 		setLoading(true)
 		let queryType = getQueryTypes(currentQuery.query)
 		if (JSON.stringify(queryType) !== JSON.stringify(queryTypes)) {
@@ -247,7 +248,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 		let indexOfData = Object.keys(queryType).indexOf(currentQuery.displayed_data)
 		let indexOfWidget = plugins.map(p => p.id).indexOf(currentQuery.widget_id)
 		const unusablePair = indexOfData < 0 || indexOfWidget < 0
-		let displayed_data = unusablePair ? Object.keys(queryType)[Object.keys(queryType).length-1] : currentQuery.displayed_data
+		let displayed_data = unusablePair ? Object.keys(queryType)[Object.keys(queryType).length - 1] : currentQuery.displayed_data
 		if (unusablePair) {
 			updateQuery({
 				displayed_data,
@@ -267,7 +268,7 @@ const EditorInstance = observer(function EditorInstance({number})  {
 					let result;
 					let values = []
 					const cleanup = client.subscribe(payload, {
-						next: ({data}) => {
+						next: ({ data }) => {
 							setLoading(false)
 							if (currentQuery.displayed_data && currentQuery.displayed_data !== 'data') {
 								if (currentQuery.data_type === 'flatten') {
@@ -284,19 +285,19 @@ const EditorInstance = observer(function EditorInstance({number})  {
 								displayed_data: displayed_data || '',
 								streamingValues: values,
 								error: ('errors' in data) ? data.errors : null,
-								query: toJS(currentQuery.query), 
+								query: toJS(currentQuery.query),
 								variables: toJS(currentQuery.variables)
 							})
 						},
 						error: reject,
 						complete: () => resolve(result),
 					});
-					setWsClean({f: cleanup})
+					setWsClean({ f: cleanup })
 				});
 			}
-			execute({query: currentQuery.query, variables: JSON.parse(currentQuery.variables)}).then(res => console.log('complete - ', res))
+			execute({ query: currentQuery.query, variables: JSON.parse(currentQuery.variables) }).then(res => console.log('complete - ', res))
 		} else {
-			fetcher({query: currentQuery.query, variables: currentQuery.variables}).then(data => {
+			fetcher({ query: currentQuery.query, variables: currentQuery.variables }).then(data => {
 				const graphqlRequested = data.headers.get('X-GraphQL-Requested') === 'true'
 				updateQuery(
 					{
@@ -334,12 +335,12 @@ const EditorInstance = observer(function EditorInstance({number})  {
 						displayed_data: displayed_data || '',
 						values,
 						error: ('errors' in json) ? json.errors : null,
-						query: toJS(currentQuery.query), 
+						query: toJS(currentQuery.query),
 						variables: toJS(currentQuery.variables)
 					})
-					if (!('data' in json)) updateQuery({widget_id: 'json.widget'}, index)
+					if (!('data' in json)) updateQuery({ widget_id: 'json.widget' }, index)
 				})
-				
+
 				setLoading(false)
 				setAccordance(true)
 				ReactTooltip.hide(executeButton.current)
@@ -347,27 +348,27 @@ const EditorInstance = observer(function EditorInstance({number})  {
 		}
 		// eslint-disable-next-line 
 	}, [JSON.stringify(currentQuery), schema[debouncedURL], JSON.stringify(queryTypes), wsClean, dataSource.values])
-	
+
 	const editQueryHandler = useCallback(handleSubject => {
 		if ('query' in handleSubject) {
 			const facts = getQueryFacts(schema[debouncedURL], handleSubject.query)
 			if (facts) {
 				const { variableToType } = facts
-				if ((JSON.stringify(variableToType) !== JSON.stringify(_variableToType)) 
-					&& _variableToType!==null) {
+				if ((JSON.stringify(variableToType) !== JSON.stringify(_variableToType))
+					&& _variableToType !== null) {
 					_setVariableToType(variableToType)
 				}
 			}
 			let queryType = getQueryTypes(handleSubject.query)
 			if (JSON.stringify(queryType) !== JSON.stringify(queryTypes)) {
-				(typeof queryType === 'object' && Object.keys(queryType).length) 
+				(typeof queryType === 'object' && Object.keys(queryType).length)
 					&& setQueryTypes(queryType)
 			}
 		}
-		if (user && query[index].account_id === user.id ) {
-			updateQuery({...handleSubject, saved: false}, index)
+		if (user && query[index].account_id === user.id) {
+			updateQuery({ ...handleSubject, saved: false }, index)
 		} else {
-			updateQuery({...handleSubject, saved: false, url: null, account_id: user.id}, index, null)
+			updateQuery({ ...handleSubject, saved: false, url: null, account_id: user.id }, index, null)
 		}
 		setAccordance(false)
 		// eslint-disable-next-line 
@@ -375,13 +376,13 @@ const EditorInstance = observer(function EditorInstance({number})  {
 	const setConfig = (config) => {
 		if (number === index) {
 			if (JSON.stringify(currentQuery.config) !== JSON.stringify(config, stringifyIncludesFunction)) {
-				updateQuery({config}, index)
+				updateQuery({ config }, index)
 			}
 		}
 	}
 	const fetcher = (graphQLParams) => {
 		let key = user ? user.key : null
-		let keyHeader = {'X-API-KEY': key}
+		let keyHeader = { 'X-API-KEY': key }
 		return fetch(
 			currentQuery.endpoint_url,
 			{
@@ -408,27 +409,27 @@ const EditorInstance = observer(function EditorInstance({number})  {
 					operationName: introspectionQueryName,
 				}
 				fetcher(graphQLParams)
-				.then(response => {
-					if (!response.ok) {
-						return response.text().then(text => { throw new Error(text) })
-				  	}
-					return response.json()
-				})
-				.then(result => {
-					if (typeof result !== 'string' && 'data' in result) {
-						let newSchema = buildClientSchema(result.data)
-						setSchema({...schema, [debouncedURL]: newSchema})
-					}
-					setLoading(false)
-					setErrorLoading(false)
-				}).catch(error => {
-					addToast(error.message, { appearance: 'error' })
-					setLoading(false)
-					setErrorLoading(true)
-					if (error.message === '401') {
-						history.push('/auth/login')
-					}
-				})
+					.then(response => {
+						if (!response.ok) {
+							return response.text().then(text => { throw new Error(text) })
+						}
+						return response.json()
+					})
+					.then(result => {
+						if (typeof result !== 'string' && 'data' in result) {
+							let newSchema = buildClientSchema(result.data)
+							setSchema({ ...schema, [debouncedURL]: newSchema })
+						}
+						setLoading(false)
+						setErrorLoading(false)
+					}).catch(error => {
+						addToast(error.message, { appearance: 'error' })
+						setLoading(false)
+						setErrorLoading(true)
+						if (error.message === '401') {
+							history.push('/auth/login')
+						}
+					})
 			}
 			fetchSchema()
 		}
@@ -437,10 +438,10 @@ const EditorInstance = observer(function EditorInstance({number})  {
 		}
 		// eslint-disable-next-line 
 	}, [debouncedURL, user])
-	
+
 	const fullscreenHandle = useFullScreenHandle()
 
-	const getCode = useCallback( async () => {
+	const getCode = useCallback(async () => {
 		let { data } = WidgetComponent.source && await getCheckoutCode(WidgetComponent.source)
 		if (WidgetComponent.id === 'tradingview.widget') {
 			data = data.replace('createChart', 'LightweightCharts.createChart')
@@ -473,14 +474,14 @@ ${WidgetComponent.id === 'table.widget' ? '<link href="https://unpkg.com/tabulat
 	}
 
 	return (
-		<div 
-			className={'graphiql__wrapper ' + 
+		<div
+			className={'graphiql__wrapper ' +
 				(currentTab === tabs[number].id ? 'graphiql__wrapper_active' : '')
 				+ (!showSideBar ? ' graphiql__wrapper_wide' : '')
 				+ (!tagListIsOpen ? ' fullwidth' : '')
 			}
 		>
-			<ToolbarComponent 
+			<ToolbarComponent
 				number={number}
 				queryEditor={queryEditor}
 				variablesEditor={variablesEditor}
@@ -489,8 +490,8 @@ ${WidgetComponent.id === 'table.widget' ? '<link href="https://unpkg.com/tabulat
 				toggleCodeSnippet={toggleCodeSnippet}
 				codeSnippetOpen={codeSnippetOpen}
 			/>
-			<div className={'over-wrapper ' + (!currentQuery.layout ? 'active' : '')}  ref={overwrap}>
-				<ReactTooltip 
+			<div className={'over-wrapper ' + (!currentQuery.layout ? 'active' : '')} ref={overwrap}>
+				<ReactTooltip
 					place="top"
 					border={false}
 					borderColor="#fff"
@@ -498,31 +499,31 @@ ${WidgetComponent.id === 'table.widget' ? '<link href="https://unpkg.com/tabulat
 					arrowColor="transparent"
 					delayShow={750}
 				/>
-				
+
 				<button className="execute-button"
 					data-tip='Execute query (Ctrl-Enter)'
-					disabled={loading || errorLoading} 
-					ref={executeButton} 
+					disabled={loading || errorLoading}
+					ref={executeButton}
 					onClick={getResult}
 				>
-					{loading 
-						?	<Loader
-								type="Oval"
-								color="#3d77b6"
+					{loading
+						? <Loader
+							type="Oval"
+							color="#3d77b6"
+							height={25}
+							width={25}
+						/>
+						: errorLoading ?
+							<ErrorIcon fill={'#FF2D00'} /> : wsClean ? <Loader type={'Grid'} color="#3d77b6"
 								height={25}
 								width={25}
-							/> 
-						: 	errorLoading	?
-								<ErrorIcon fill={'#FF2D00'} /> : wsClean ? <Loader type={'Grid'} color="#3d77b6"
-								height={25}
-								width={25} 
-								/> :
+							/> :
 								<PlayIcon fill={accordance ? '#eee' : '#14ff41'} />
 					}
 				</button>
-				<div className="workspace__wrapper" 
-						ref={workspace} 
-						onMouseDown={workspaceResizer}
+				<div className="workspace__wrapper"
+					ref={workspace}
+					onMouseDown={workspaceResizer}
 				>
 					{!currentQuery.layout && <GraphqlEditor
 						readOnly={!!currentQuery?.url && !!currentQuery.id}
@@ -539,8 +540,8 @@ ${WidgetComponent.id === 'table.widget' ? '<link href="https://unpkg.com/tabulat
 							ref2: variablesEditor
 						}}
 					/>}
-					<div className="workspace__sizechanger"/>
-					<WidgetEditorControls 
+					<div className="workspace__sizechanger" />
+					<WidgetEditorControls
 						model={queryTypes}
 						dataSource={dataSource}
 						setDataSource={setDataSource}
@@ -548,74 +549,75 @@ ${WidgetComponent.id === 'table.widget' ? '<link href="https://unpkg.com/tabulat
 						plugins={plugins}
 						number={number}
 					/>
-					{(currentQuery.displayed_data && isLoaded) ? <WidgetComponent.editor 
+					{(currentQuery.displayed_data && isLoaded) ? <WidgetComponent.editor
 						model={queryTypes}
 						displayedData={toJS(query[index].displayed_data)}
 						config={toJS(query[index].config)}
-						setConfig={setConfig} 
-					/> : <div className="widget" /> }
+						setConfig={setConfig}
+					/> : <div className="widget" />}
 				</div>
-				<div className={'widget-display widget-display-wrapper'+
-					(isMobile ? ' widget-display-wrapper-fullscreen' : '')} 
+				<div className={'widget-display widget-display-wrapper' +
+					(isMobile ? ' widget-display-wrapper-fullscreen' : '')}
 					ref={widgetDisplay}
 				>
-					<div 
-						className="sizeChanger" 
+					<div
+						className="sizeChanger"
 						onMouseDown={handleResizer}
 					>
 					</div>
-					<div className={"w-100 result-wrapper col-reverse " + ((currentQuery.widget_id==='json.widget') || dataSource.values ? '' : 'h-100')}>
-						<QueryErrorIndicator 
-							error={dataSource.error}
-							removeError={setDataSource}
-						/>
-						{currentQuery.widget_id==='json.widget' || jsonMode || codeMode ?
+					<div className={"w-100 result-wrapper col-reverse " + ((currentQuery.widget_id === 'json.widget') || dataSource.values ? '' : 'h-100')}>
+						{currentQuery.widget_id === 'json.widget' || jsonMode || codeMode ?
 							('streamingValues' in dataSource) ?
-							dataSource.streamingValues.map(values => {
-								const dateAdded = new Date().getTime()
-								return (
-								<JsonPlugin.renderer
+								dataSource.streamingValues.map(values => {
+									const dateAdded = new Date().getTime()
+									return (
+										<JsonPlugin.renderer
+											code={checkoutCode}
+											getCode={getCode}
+											mode={jsonMode ? 'json' : codeMode ? 'code' : ''}
+											dataSource={dataSource}
+											values={values}
+											dateAdded={dateAdded}
+											displayedData={toJS(currentQuery.displayed_data)}
+											config={toJS(query[index].config)}
+										/>
+									)
+								})
+								: <JsonPlugin.renderer
 									code={checkoutCode}
 									getCode={getCode}
 									mode={jsonMode ? 'json' : codeMode ? 'code' : ''}
-									dataSource={dataSource} 
-									values={values}
-									dateAdded={dateAdded}				
+									dataSource={dataSource}
 									displayedData={toJS(currentQuery.displayed_data)}
-									config={toJS(query[index].config)} 
-								/>	
-							)})
-							 : <JsonPlugin.renderer
-							code={checkoutCode}
-							getCode={getCode}
-							mode={jsonMode ? 'json' : codeMode ? 'code' : ''}
-							dataSource={dataSource} 
-							displayedData={toJS(currentQuery.displayed_data)}
-							config={toJS(query[index].config)} 
-						/> :
+									config={toJS(query[index].config)}
+								/> :
 							<FullScreen className="widget-display" handle={fullscreenHandle}>
-							<WidgetView 
-								renderFunc={WidgetComponent.renderer}
-								dataSource={dataSource} 
-								displayedData={toJS(currentQuery.displayed_data)}
-								config={toJS(query[index].config)} 
-								el={currentTab === tabs[number].id ? `asd${currentTab}` : 'x'} 
-							>
-								<FullscreenIcon onClick={
-									isMobile ? ()=>setMobile(false) :
-									fullscreenHandle.active 
-									? fullscreenHandle.exit 
-									: fullscreenHandle.enter} 
-								/>
-							</WidgetView>
-						</FullScreen>
-							}
+								<WidgetView
+									renderFunc={WidgetComponent.renderer}
+									dataSource={dataSource}
+									displayedData={toJS(currentQuery.displayed_data)}
+									config={toJS(query[index].config)}
+									el={currentTab === tabs[number].id ? `asd${currentTab}` : 'x'}
+								>
+									<FullscreenIcon onClick={
+										isMobile ? () => setMobile(false) :
+											fullscreenHandle.active
+												? fullscreenHandle.exit
+												: fullscreenHandle.enter}
+									/>
+								</WidgetView>
+							</FullScreen>
+						}
+						<QueryErrorIndicator
+							error={dataSource.error}
+							removeError={setDataSource}
+						/>
 					</div>
 				</div>
 				{docExplorerOpen && <DocExplorer schema={schema[debouncedURL]} />}
 				{codeSnippetOpen && <CodeSnippetComponent />}
 			</div>
-		</div> 
+		</div>
 	)
 })
 
