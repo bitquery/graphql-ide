@@ -1,7 +1,7 @@
 import { observer } from 'mobx-react-lite'
 import React, { useEffect, useState } from 'react'
 import { useCallback } from 'react'
-import { useHistory, useRouteMatch, useParams } from 'react-router-dom'
+import { useHistory, useRouteMatch } from 'react-router-dom'
 import { getQuery, getWidget, getTransferedQuery } from '../api/api'
 import {TabsStore, QueriesStore, UserStore} from '../store/queriesStore'
 import handleState from '../utils/handleState'
@@ -9,8 +9,10 @@ import useEventListener from '../utils/useEventListener'
 import logo from '../assets/images/bitquery_logo_w.png'
 import GraphqlIcon from './icons/GraphqlIcon'
 import { GalleryStore } from '../store/galleryStore'
+import { useQuery } from '../utils/useQuery'
 
 const TabsComponent = observer(() => {
+	let searchQueryParam = useQuery()
 	const history = useHistory()
 	const { queriesListIsOpen, toggleQueriesList } = GalleryStore
 	const { user } = UserStore
@@ -31,6 +33,10 @@ const TabsComponent = observer(() => {
 		// eslint-disable-next-line 
 	}, [currentQuery.url])
 	useEffect(() => {
+		const updateEndpointToStreaming = searchQueryParam.get('endpoint')
+		if (updateEndpointToStreaming) {
+			updateQuery({endpoint_url: updateEndpointToStreaming, saved: true}, index)
+		}
 		if (/^\/ide\/transfer\/[0-9a-fA-F]{6}$/.test(history.location.pathname)) {
 			const code = history.location.pathname.match(/[0-9a-fA-F]{6}/)[0]
 			const gtf = async () => {
