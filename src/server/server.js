@@ -49,8 +49,9 @@ const authMiddleware = async (req, res, next) => {
 		req.account_id = +account_id
 		return next()
 	} else {
+		const fullUrl = req.protocol + '://' + req.get('host') + req.originalUrl
 		res.set('Location', `${process.env.BACKEND_URL}/auth/login`)
-		res.cookie('redirect_to', process.env.IDE_URL, { maxAge: 300000 })
+		res.cookie('redirect_to', fullUrl, { maxAge: 60*60*24*1000 })
 		res.sendStatus(302)
 	}
 }
