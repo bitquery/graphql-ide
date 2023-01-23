@@ -37,17 +37,20 @@ class JsonWidget extends Component {
 			gutters: ['CodeMirror-foldgutter'],
 		});
 		this.ref.current = this.ref.current ? this.ref.current : this.props.dateAdded
-		if (this.props.values) {
+		if (this.props.values && this.props.wsClean) {
 			this.interval = setInterval(() => this.setState({time: this.ref.current ? Math.floor((new Date().getTime() - this.ref.current)/1000) : 0}), 1000)
 		}
 	}
 
 	shouldComponentUpdate(nextProps, nextState) {
-		return this.props.dataSource !== nextProps.dataSource || this.props.mode !== nextProps.mode || this.state.time !== nextState.time;
+		return this.props.dataSource !== nextProps.dataSource || this.props.mode !== nextProps.mode || this.state.time !== nextState.time || this.props.wsClean !== nextProps.wsClean;
 	}
 
 	async componentDidUpdate(prevProps) {
 		if (this.viewer) {
+			if (!this.props.wsClean && this.interval) {
+				clearInterval(this.interval)
+			}
 			if (JSON.stringify(prevProps.values) !== JSON.stringify(this.props.values)) {
 				const value = this.props.mode === 'code' ? await this.props.getCode() : this.formatResult()
 				this.viewer.setValue(value || '')

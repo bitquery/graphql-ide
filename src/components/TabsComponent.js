@@ -134,7 +134,7 @@ const TabsComponent = observer(() => {
 	}
 	const addNewTabHandler = () => {
 		queriesListIsOpen && toggleQueriesList()
-		setQuery({ query: '', variables: '{}', name: 'New Query', endpoint_url: currentQuery.endpoint_url, config: '{}' })
+		setQuery({ query: '', variables: '{}', name: 'New Query', endpoint_url: currentQuery.endpoint_url, config: '{}' , widget_id: 'json.widget'})
 	}
 	const removeTabHandler = (index, event) => {
 		event.stopPropagation()

@@ -573,6 +573,7 @@ ${WidgetComponent.id === 'table.widget' ? '<link href="https://unpkg.com/tabulat
 									return (
 										<JsonPlugin.renderer
 											code={checkoutCode}
+											wsClean={!!wsClean}
 											getCode={getCode}
 											mode={jsonMode ? 'json' : codeMode ? 'code' : ''}
 											dataSource={dataSource}

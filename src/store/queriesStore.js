@@ -58,7 +58,8 @@ class Queries {
 		data_type: 'response',
 		config: {},
 		endpoint_url: 'https://graphql.bitquery.io',
-		id: null
+		id: null,
+		widget_id: 'json.widget'
 	}
 	dashboardQuery = this.currentQuery
 	query = [this.currentQuery]
