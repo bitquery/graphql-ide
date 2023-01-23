@@ -38,7 +38,7 @@ const TabsComponent = observer(() => {
 			if (updateEndpointToStreaming) {
 				updateQuery({ endpoint_url: updateEndpointToStreaming, saved: true }, index)
 			}
-			if (/^\/graphql\/query\/[0-9a-zA-Z]{16}$/.test(history.location.pathname)) {
+			if (/^\/ide\/query\/[0-9a-zA-Z]{16}$/.test(history.location.pathname)) {
 				const gqbi = async () => {
 					const queryID = history.location.pathname.match(/[0-9a-zA-Z]{16}/)[0]
 					try {
