@@ -629,6 +629,18 @@ module.exports = function(app, db, redisClient) {
 		return res.status(200).send(queryLink)
 	})
 
+	app.get('/api/bygraphqlqueryid/:queryid', (req, res) => {
+		redisClient.get(req.params.queryid, async (error, query) => {
+			if (error) console.log(error)
+			if (query !== null) {
+				console.log('there is some query')
+				res.status(200).send(JSON.parse(query))
+			} else {
+				res.sendStatus(400)
+			}
+		})
+	})
+
 	app.post('/api/querytransfer', bodyParser.urlencoded({ extended: true }), (req, res) => {
 		const code = crypto.randomBytes(3).toString('hex')
 		const queryLink = `${process.env.IDE_URL}/transfer/${code}`

@@ -2,8 +2,8 @@ import { observer } from 'mobx-react-lite'
 import React, { useEffect, useState } from 'react'
 import { useCallback } from 'react'
 import { useHistory, useRouteMatch } from 'react-router-dom'
-import { getQuery, getWidget, getTransferedQuery } from '../api/api'
-import {TabsStore, QueriesStore, UserStore} from '../store/queriesStore'
+import { getQuery, getWidget, getTransferedQuery, getQueryByID } from '../api/api'
+import { TabsStore, QueriesStore, UserStore } from '../store/queriesStore'
 import handleState from '../utils/handleState'
 import useEventListener from '../utils/useEventListener'
 import logo from '../assets/images/bitquery_logo_w.png'
@@ -20,79 +20,112 @@ const TabsComponent = observer(() => {
 	const match = useRouteMatch(`${process.env.REACT_APP_IDE_URL}/:queryurl`)
 	const { setQuery, removeQuery, query, updateQuery, currentQuery, isLoaded, setIsLoaded, setQueryIsTransfered } = QueriesStore
 	const [editTabName, setEditTabName] = useState(false)
-	const [queryName, setQueryName] = useState({[currentTab]: currentQuery.name})
-	const [x,setx] = useState(0)
+	const [queryName, setQueryName] = useState({ [currentTab]: currentQuery.name })
+	const [x, setx] = useState(0)
 
 	useEffect(() => {
-		x <=1 && setx(x => x + 1)
+		x <= 1 && setx(x => x + 1)
 		if (x > 1) {
 			currentQuery.url
-				? history.push(`${process.env.REACT_APP_IDE_URL}/${currentQuery.url}`) 
+				? history.push(`${process.env.REACT_APP_IDE_URL}/${currentQuery.url}`)
 				: history.push(`${process.env.REACT_APP_IDE_URL}`)
 		}
 		// eslint-disable-next-line 
 	}, [currentQuery.url])
 	useEffect(() => {
-		const updateEndpointToStreaming = searchQueryParam.get('endpoint')
-		if (updateEndpointToStreaming) {
-			updateQuery({endpoint_url: updateEndpointToStreaming, saved: true}, index)
-		}
-		if (/^\/ide\/transfer\/[0-9a-fA-F]{6}$/.test(history.location.pathname)) {
-			const code = history.location.pathname.match(/[0-9a-fA-F]{6}/)[0]
-			const gtf = async () => {
-				const { data } = await getTransferedQuery(code)	
-				//query string goes from explorer JSON.stringify'ed twice
-				//double JSON.parse to rid off unexpected qoutes 
-				updateQuery({query: JSON.parse(data.transferedQuery.query), variables: data.transferedQuery.variables}, index)
-				setQueryIsTransfered(true)
+		if (user?.key) {
+			const updateEndpointToStreaming = searchQueryParam.get('endpoint')
+			if (updateEndpointToStreaming) {
+				updateQuery({ endpoint_url: updateEndpointToStreaming, saved: true }, index)
+			}
+			if (/^\/graphql\/query\/[0-9a-zA-Z]{16}$/.test(history.location.pathname)) {
+				console.log('here')
+				const gqbi = async () => {
+					const queryID = history.location.pathname.match(/[0-9a-zA-Z]{16}/)[0]
+					try {
+						const { data } = await getQueryByID(queryID)
+						console.log(data)
+					} catch (error) {
+						if (error.response.status === 400) {
+							try {
+								const response = await fetch("https://graphql.bitquery.io/", {
+									"headers": {
+										"accept": "application/json",
+										"content-type": "application/json",
+										"x-api-key": user.key
+									},
+									"body": `{\"query\":\"query MyQuery {\\n\\tsystem {\\n\\t  userRequests(graphqlQueryId: {is: \\\"${queryID}\\\"}) {\\n\\t\\trequest {\\n\\t\\t  json\\n\\t\\t}\\n\\t\\tvariables {\\n\\t\\t  json\\n\\t\\t}\\n\\t  }\\n\\t}\\n  }\",\"variables\":\"{}\"}`,
+									"method": "POST",
+									"mode": "cors"
+								})
+								const { data } = await response.json()
+								const query = data.system.userRequests[0].request.json
+								const variables = data.system.userRequests[0].variables.json
+								updateQuery({ query, variables }, index)
+							} catch (error) {
+								updateQuery({ query: 'QUERY DOES NOT EXIST!' }, index)
+							}
+						}
+					}
+				}
+				gqbi()
+			} else if (/^\/ide\/transfer\/[0-9a-fA-F]{6}$/.test(history.location.pathname)) {
+				const code = history.location.pathname.match(/[0-9a-fA-F]{6}/)[0]
+				const gtf = async () => {
+					const { data } = await getTransferedQuery(code)
+					//query string goes from explorer JSON.stringify'ed twice
+					//double JSON.parse to rid off unexpected qoutes 
+					updateQuery({ query: JSON.parse(data.transferedQuery.query), variables: data.transferedQuery.variables }, index)
+					setQueryIsTransfered(true)
+					setx(2)
+					setIsLoaded()
+				}
+				gtf()
+			} else if (!match) {
 				setx(2)
 				setIsLoaded()
-			}
-			gtf()
-		} else if (!match) {
-			setx(2)
-			setIsLoaded()
-		} else {
-			async function updateTabs() {
-				const { data } = await getWidget(match.params.queryurl)
-				if (typeof data === 'object') {
-					if (query.map(query=>query.id).indexOf(data.id) === -1) {
-						updateQuery({...data, config: JSON.parse(data.config), javascript: JSON.parse(data.javascript),  saved: true}, index, data.id)
-						setQueryName({[currentTab]: data.name})
-						setIsLoaded()
-					}
-				} else {
-					const { data } = await getQuery(match.params.queryurl)
+			} else {
+				async function updateTabs() {
+					const { data } = await getWidget(match.params.queryurl)
 					if (typeof data === 'object') {
-						if (query.map(query=>query.id).indexOf(data.id) === -1) {
-							updateQuery({...data, config: JSON.parse(data.config), saved: true}, index, data.id)
-							setQueryName({[currentTab]: data.name})
+						if (query.map(query => query.id).indexOf(data.id) === -1) {
+							updateQuery({ ...data, config: JSON.parse(data.config), javascript: JSON.parse(data.javascript), saved: true }, index, data.id)
+							setQueryName({ [currentTab]: data.name })
 							setIsLoaded()
 						}
-					} 
+					} else {
+						const { data } = await getQuery(match.params.queryurl)
+						if (typeof data === 'object') {
+							if (query.map(query => query.id).indexOf(data.id) === -1) {
+								updateQuery({ ...data, config: JSON.parse(data.config), saved: true }, index, data.id)
+								setQueryName({ [currentTab]: data.name })
+								setIsLoaded()
+							}
+						}
+					}
 				}
+				updateTabs()
 			}
-			updateTabs()
 		}
 		// eslint-disable-next-line 
-	}, [])
-	const editTabNameHandler = useCallback(({key}) => {
-		if (key==='Enter') {
-			setEditTabName(prev=>prev?!prev:prev)
+	}, [user])
+	const editTabNameHandler = useCallback(({ key }) => {
+		if (key === 'Enter') {
+			setEditTabName(prev => prev ? !prev : prev)
 			updateIfNeeded()
-		} else if (key==='Escape') {
-			setEditTabName(prev=>prev?!prev:prev)
-			setQueryName({[currentTab]: tabs[index].name})
+		} else if (key === 'Escape') {
+			setEditTabName(prev => prev ? !prev : prev)
+			setQueryName({ [currentTab]: tabs[index].name })
 		}
 		// eslint-disable-next-line 
 	}, [setEditTabName, currentTab, queryName])
-	useEventListener('keyup', editTabNameHandler)	
+	useEventListener('keyup', editTabNameHandler)
 	useEffect(() => {
 		setEditTabName(false)
-		setQueryName(handleState({...queryName}) || {[currentTab]: 'New Query'})
+		setQueryName(handleState({ ...queryName }) || { [currentTab]: 'New Query' })
 		// eslint-disable-next-line 
 	}, [tabs.length])
-	const handleEdit = e => setQueryName({...queryName, [currentTab]: e.target.value})
+	const handleEdit = e => setQueryName({ ...queryName, [currentTab]: e.target.value })
 	const switchTabHandler = (tabid) => {
 		queriesListIsOpen && toggleQueriesList()
 		switchTab(tabid)
@@ -102,7 +135,7 @@ const TabsComponent = observer(() => {
 	}
 	const addNewTabHandler = () => {
 		queriesListIsOpen && toggleQueriesList()
-		setQuery({query: '', variables: '{}', name: 'New Query', endpoint_url: currentQuery.endpoint_url, config: '{}'})
+		setQuery({ query: '', variables: '{}', name: 'New Query', endpoint_url: currentQuery.endpoint_url, config: '{}' })
 	}
 	const removeTabHandler = (index, event) => {
 		event.stopPropagation()
@@ -111,70 +144,59 @@ const TabsComponent = observer(() => {
 	const updateIfNeeded = () => {
 		if (editTabName && queryName[currentTab] && queryName[currentTab].length) {
 			let newID = currentQuery.account_id === user?.id ? currentQuery.id : null
-			queryName[currentTab]!==query[index].name && updateQuery({name: queryName[currentTab]}, index, newID)
+			queryName[currentTab] !== query[index].name && updateQuery({ name: queryName[currentTab] }, index, newID)
 		}
 	}
 	const renameQueryHandler = () => {
 		if (!!currentQuery?.url && !!currentQuery.id) {		//if query READONLY
 		} else {
-			setEditTabName((prev)=>!prev)
+			setEditTabName((prev) => !prev)
 			updateIfNeeded()
 		}
 	}
 
-	return isLoaded ? (
-		<div className="tabs">
+	return <div className="tabs">
 			<ul className="nav nav-tabs" >
 				{
 					tabs.map((tab, i) => (
-						<li 
+						<li
 							className="nav-item" key={i}
 							onClick={() => currentTab !== tab.id && switchTabHandler(tab.id)}
 						>
-							<a href="# " className={'nav-link '+(currentTab === tab.id && 'active')} key={i}>
-								{query[i].layout ? <i className="fas fa-th"></i> 
-								: query[i].widget_id==='json.widget' || !query[i].widget_id 
-								? <GraphqlIcon fill={'#000000'} width={'16px'} height={'16px'}/>
-								: <i className="fas fa-chart-bar"></i>}
+							<a href="# " className={'nav-link ' + (currentTab === tab.id && 'active')} key={i}>
+								{query[i].layout ? <i className="fas fa-th"></i>
+									: query[i].widget_id === 'json.widget' || !query[i].widget_id
+										? <GraphqlIcon fill={'#000000'} width={'16px'} height={'16px'} />
+										: <i className="fas fa-chart-bar"></i>}
 								{
-								(editTabName && currentTab === tab.id) 
-									? 	<>
-											<input type="text" 
-												value={queryName ? queryName[currentTab] : 'New Query'} 
+									(editTabName && currentTab === tab.id)
+										? <>
+											<input type="text"
+												value={queryName ? queryName[currentTab] : 'New Query'}
 												className="tabs__edit"
 												onChange={handleEdit}
 											/>
-											<i className="fas fa-check" onClick={renameQueryHandler}/>
+											<i className="fas fa-check" onClick={renameQueryHandler} />
 										</>
-									: 	<span className={'nav-link-title ' + ((currentTab === tab.id && !(!!currentQuery?.url && !!currentQuery.id)) ? 'cursor-edit' : undefined)}
-											onClick={()=>(currentTab === tab.id && (!currentQuery.id || currentQuery.account_id === user.id)) && renameQueryHandler(currentTab, i)}
+										: <span className={'nav-link-title ' + ((currentTab === tab.id && !(!!currentQuery?.url && !!currentQuery.id)) ? 'cursor-edit' : undefined)}
+											onClick={() => (currentTab === tab.id && (!currentQuery.id || currentQuery.account_id === user.id)) && renameQueryHandler(currentTab, i)}
 										>
-											{(('saved' in query[i]) && query[i].saved) || !('saved' in query[i]) 
-											? tab.name : `*${tab.name}`}
+											{(('saved' in query[i]) && query[i].saved) || !('saved' in query[i])
+												? tab.name : `*${tab.name}`}
 										</span>
 								}
-								<i className="tab__close bi bi-x" onClick={e=>removeTabHandler(i, e)} />
+								<i className="tab__close bi bi-x" onClick={e => removeTabHandler(i, e)} />
 							</a>
 						</li>
 					))
 				}
-				<li 
+				<li
 					className="nav-item"
 					onClick={addNewTabHandler}
-				><a href="# " className="nav-link nav-link-add"><i className="tab__add bi bi-plus"/></a></li>
+				><a href="# " className="nav-link nav-link-add"><i className="tab__add bi bi-plus" /></a></li>
 			</ul>
 		</div>
-	) : <div className="tabs">
-		<ul className="nav nav-tabs" >
-				<a href="https://bitquery.io" className="topBar__logo">
-					<img 
-						className="topBar__logo__img" 
-						src={logo}
-						alt="logo"
-					/>
-				</a>
-			</ul>
-	</div>
+	
 })
 
 export default TabsComponent
