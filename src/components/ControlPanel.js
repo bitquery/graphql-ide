@@ -116,6 +116,9 @@ const ControlPanel = observer(function ControlPanel() {
 						<a className="nav-link text-primary" href={`${window.location.origin}/admin/accounts`}>Admin</a>
 					</li>}
 					<li className="nav-item d-lg-none">
+						<a className="nav-link text-primary" href={`${window.location.origin}/team/members/new`}>Invite team member</a>
+					</li>
+					<li className="nav-item d-lg-none">
 						<a className="nav-link text-primary" href={`${window.location.origin}/user/account`}>Account</a>
 					</li>
 					<li className="nav-item d-lg-none">

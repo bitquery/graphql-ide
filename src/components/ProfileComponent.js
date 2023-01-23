@@ -58,6 +58,8 @@ const Profile = observer(() => {
 				<Dropdown.Divider/>
 				{ user.role === 'admin' &&  <Dropdown.Item href={`${window.location.origin}/admin/accounts`}>Admin</Dropdown.Item>}
 				{ user.role === 'admin' && <Dropdown.Divider/> }
+				<Dropdown.Item href={`${window.location.origin}/team/members/new`}>Invite team member</Dropdown.Item>
+				<Dropdown.Divider/>
 				<Dropdown.Item href={`${window.location.origin}/user/account`}>Account</Dropdown.Item>
 				<Dropdown.Item href="# " onClick={logOut}>Logout</Dropdown.Item>
 			</Dropdown.Menu>
