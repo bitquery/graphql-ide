@@ -258,6 +258,7 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 		}
 		if (currentQuery.query.match(/subscription[^a-zA-z0-9]/gm)) {
 			console.log('match')
+			setDataSource({...dataSource, streamingValues: []})
 			const client = wsClient ? wsClient : createClient({
 				url: currentQuery.endpoint_url.replace('http', 'ws'),
 				shouldRetry: () => false
