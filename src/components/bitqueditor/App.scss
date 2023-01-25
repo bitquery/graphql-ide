@@ -61,6 +61,7 @@ $top-bar-height: 44px;
 .error {
   &__wrapper {
     width: 100%;
+    min-height: 150px;
     height: 150px;
     border-radius: 0 0 10px 10px;
     border-left: 0;
