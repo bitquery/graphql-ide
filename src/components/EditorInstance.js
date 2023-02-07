@@ -232,11 +232,16 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 	let indexx = plugins.map(plugin => plugin.id).indexOf(currentQuery.widget_id)
 	const WidgetComponent = indexx >= 0 ? plugins[indexx] : plugins[0]
 
-	const getResult = useCallback(() => {
-		if (wsClean) {
-			wsClean.f()
-			setWsClean(null)
-			return
+	const getResult = useCallback(async () => {
+		const onCleanUp = () => {
+			if (wsClean) {
+				wsClean.f()
+				setWsClean(null)
+				return true
+			}
+		}
+		if (onCleanUp()) {
+			return 
 		}
 		ReactTooltip.hide(executeButton.current)
 		updateQuery({ points: undefined, graphqlRequested: undefined, saved: currentQuery.saved }, index)
@@ -264,13 +269,16 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 				shouldRetry: () => false
 			});
 			setWsClient(client)
+			setLoading(false)
+			let cleanup = () => {
+				console.log('clean')
+			}
 			async function execute(payload) {
 				return new Promise((resolve, reject) => {
 					let result;
 					let values = []
-					const cleanup = client.subscribe(payload, {
-						next: ({ data }) => {
-							setLoading(false)
+					cleanup = client.subscribe(payload, {
+						next: ({ data, errors }) => {
 							if (currentQuery.displayed_data && currentQuery.displayed_data !== 'data') {
 								if (currentQuery.data_type === 'flatten') {
 									values = flattenData(data)
@@ -285,18 +293,25 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 								extensions: null,
 								displayed_data: displayed_data || '',
 								streamingValues: values,
-								error: ('errors' in data) ? data.errors : null,
+								error: errors ? errors : null,
 								query: toJS(currentQuery.query),
 								variables: toJS(currentQuery.variables)
 							})
 						},
 						error: reject,
-						complete: () => resolve(result),
+						complete: resolve,
 					});
 					setWsClean({ f: cleanup })
 				});
 			}
-			execute({ query: currentQuery.query, variables: JSON.parse(currentQuery.variables) }).then(res => console.log('complete - ', res))
+			try {
+				await execute({ query: currentQuery.query, variables: JSON.parse(currentQuery.variables) })
+				setWsClean(null)
+			} catch (error) {
+				console.log(error)
+				setDataSource({ ...dataSource, error })
+				setWsClean(null)
+			}
 		} else {
 			fetcher({ query: currentQuery.query, variables: currentQuery.variables }).then(data => {
 				const graphqlRequested = data.headers.get('X-GraphQL-Requested') === 'true'
@@ -314,7 +329,6 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 							if (currentQuery.data_type === 'flatten') {
 								values = flattenData(json.data)
 							} else {
-								console.log(json.data, displayed_data)
 								values = getValueFrom(json.data, displayed_data)
 							}
 						} else {
@@ -568,7 +582,7 @@ ${WidgetComponent.id === 'table.widget' ? '<link href="https://unpkg.com/tabulat
 					</div>
 					<div className={"w-100 result-wrapper col-reverse " + ((currentQuery.widget_id === 'json.widget') || dataSource.values ? '' : 'h-100')}>
 						{currentQuery.widget_id === 'json.widget' || jsonMode || codeMode ?
-							('streamingValues' in dataSource) ?
+							('streamingValues' in dataSource && dataSource.streamingValues.length) ?
 								dataSource.streamingValues.map(values => {
 									const dateAdded = new Date().getTime()
 									return (
