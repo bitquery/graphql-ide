@@ -11,7 +11,7 @@ import StatisticsButton from './StatisticsButton'
 import { GalleryStore } from '../../../store/galleryStore'
 import ToolbarButton from './ToolbarButton'
 import copy from 'copy-to-clipboard'
-import { Form } from 'react-bootstrap'
+import { Form, InputGroup } from 'react-bootstrap'
 import DocsIcon from '../../icons/DocsIcon'
 
 const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOpen, toggleDocExplorer, toggleCodeSnippet, codeSnippetOpen, number}) => {
@@ -146,11 +146,16 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 				onClick={handleCopy}
 				visible={!!currentQuery.graphqlQueryID || !!currentQuery.url}
 			/>
-			<Form.Control 
-				type="text" 
-				value={currentQuery.endpoint_url}
-				onChange={handleInputURLChange} 
-			/>
+			<InputGroup >
+				{currentQuery.endpoint_url === 'https://streaming.bitquery.io/graphql' && <InputGroup.Text id="basic-addon3" className='text-success'>
+					<span className='blinker' />
+					New streaming endpoint!
+				</InputGroup.Text>}
+				<Form.Control id="basic-url" aria-describedby="basic-addon3" 
+					value={currentQuery.endpoint_url}
+					onChange={handleInputURLChange} 
+				/>
+			</InputGroup>
 			{user?.id && query[number].graphqlQueryID && <StatisticsButton number={number} />}
 			<div className="newGallery__topbar" aria-label="Open Documentation Explorer">
 				<DocsIcon className={"docs_icon"+(docExplorerOpen ? " active" : '')} onClick={toggleDocExplorer} data-toggle="tooltip" data-placement="top" title="Tooltip on top" />
