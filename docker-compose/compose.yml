@@ -3,7 +3,8 @@ x-common-dns: &common-dns
   dns_search: ${LC_COMPOSE_CLUSTER}.local
   dns_opt: [ 'ndots:1' ]
 x-common-network: &common-network
-  network_mode: bridge
+  networks:
+    - common
 x-common-restart: &common-restart
   restart: on-failure
 x-graceful-stop: &graceful-stop
@@ -39,3 +40,8 @@ services:
     <<: *common-dns
     <<: *common-network
     <<: *common-restart
+
+networks:
+  common:
+    external: ${LC_COMPOSE_NETWORK_EXTERNAL:-false}
+    name: "${LC_COMPOSE_NETWORK_ID:-bridge-lan}"
