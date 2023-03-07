@@ -147,9 +147,8 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 				visible={!!currentQuery.graphqlQueryID || !!currentQuery.url}
 			/>
 			<InputGroup >
-				{currentQuery.endpoint_url === 'https://streaming.bitquery.io/graphql' && <InputGroup.Text id="basic-addon3" className='text-success'>
-					<span className='blinker' />
-					New streaming endpoint!
+				{currentQuery.endpoint_url === 'https://streaming.bitquery.io/graphql' && <InputGroup.Text className='text-success'>
+					<span className="d-none d-sm-inline">Live </span><div className="blink blnkr bg-success"></div>
 				</InputGroup.Text>}
 				<Form.Control id="basic-url" aria-describedby="basic-addon3" 
 					value={currentQuery.endpoint_url}
