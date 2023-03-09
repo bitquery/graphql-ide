@@ -22,11 +22,11 @@ services:
     environment:
       - NODE_ENV=${LC_COMPOSE_NODE_ENV}
       - PORT=${LC_COMPOSE_WEB_PORT}
-      - DB_HOST=${LC_COMPOSE_DB_HOST}
-      - DB_NAME=${LC_COMPOSE_DB_NAME}
-      - DB_USER=${LC_COMPOSE_DB_USER}
-      - DB_PASSWORD=${LC_COMPOSE_DB_PASSWORD}
-      - DB_PORT=${LC_COMPOSE_DB_PORT}
+      - DB_HOST=${LC_COMPOSE_MYSQL_HOST}
+      - DB_NAME=${LC_COMPOSE_MYSQL_NAME}
+      - DB_USER=${LC_COMPOSE_MYSQL_USER}
+      - DB_PASSWORD=${LC_COMPOSE_MYSQL_PASSWORD}
+      - DB_PORT=${LC_COMPOSE_MYSQL_PORT}
       - REDIS_HOST=${LC_COMPOSE_REDIS_HOST}
       - REDIS_PORT=${LC_COMPOSE_REDIS_PORT}
       - REDIS_DB=${LC_COMPOSE_REDIS_DB}
@@ -36,46 +36,10 @@ services:
       - REACT_APP_ENDPOINT_URL=${LC_COMPOSE_REACT_APP_ENDPOINT_URL}
       - PUBLIC_URL=${LC_COMPOSE_PUBLIC_URL}
       - CAT=${LC_COMPOSE_CAT}
-    depends_on:
-      mysql:
-        condition: service_started
-      redis:
-        condition: service_started
     <<: *graceful-stop
     <<: *common-dns
     <<: *common-network
     <<: *common-restart
-  mysql:
-    image: percona/percona-server:5.7.37-40
-    volumes:
-      - mysql-data:/var/lib/mysql
-      - ./schema:/docker-entrypoint-initdb.d
-    ports:
-      - ${LC_COMPOSE_IPADDR}:${LC_COMPOSE_DB_PORT}:3306
-    environment:
-      - MYSQL_ROOT_PASSWORD=${LC_COMPOSE_MYSQL_ROOT_PASSWORD}
-      - MYSQL_DATABASE=${LC_COMPOSE_DB_NAME}
-      - MYSQL_USER=${LC_COMPOSE_DB_USER}
-      - MYSQL_PASSWORD=${LC_COMPOSE_DB_PASSWORD}
-    <<: *graceful-stop
-    <<: *common-dns
-    <<: *common-network
-    <<: *common-restart
-
-  redis:
-    image: redis:7.0.5-alpine
-    volumes:
-      - redis-data:/data
-    ports:
-      - ${LC_COMPOSE_IPADDR}:${LC_COMPOSE_REDIS_PORT}:6379
-    <<: *graceful-stop
-    <<: *common-dns
-    <<: *common-network
-    <<: *common-restart
-
-volumes:
-  mysql-data:
-  redis-data:
 
 
 networks:
