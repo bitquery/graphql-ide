@@ -36,6 +36,11 @@ services:
       - REACT_APP_ENDPOINT_URL=${LC_COMPOSE_REACT_APP_ENDPOINT_URL}
       - PUBLIC_URL=${LC_COMPOSE_PUBLIC_URL}
       - CAT=${LC_COMPOSE_CAT}
+    depends_on:
+      mysql:
+        condition: service_started
+      redis:
+        condition: service_started
     <<: *graceful-stop
     <<: *common-dns
     <<: *common-network
