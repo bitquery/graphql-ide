@@ -40,6 +40,38 @@ services:
     <<: *common-dns
     <<: *common-network
     <<: *common-restart
+  mysql:
+    image: percona/percona-server:5.7.37-40
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./schema:/docker-entrypoint-initdb.d
+    ports:
+      - ${LC_COMPOSE_IPADDR}:3306:3306
+    environment:
+      - MYSQL_ROOT_PASSWORD=${LC_COMPOSE_MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${LC_COMPOSE_MYSQL_DATABASE}
+      - MYSQL_USER=${LC_COMPOSE_RAILS_MYSQL_USER}
+      - MYSQL_PASSWORD=${LC_COMPOSE_RAILS_MYSQL_PASSWORD}
+    <<: *graceful-stop
+    <<: *common-dns
+    <<: *common-network
+    <<: *common-restart
+
+  redis:
+    image: redis:7.0.5-alpine
+    volumes:
+      - redis-data:/data
+    ports:
+      - ${LC_COMPOSE_IPADDR}:${LC_COMPOSE_REDIS_PORT}:6379
+    <<: *graceful-stop
+    <<: *common-dns
+    <<: *common-network
+    <<: *common-restart
+
+volumes:
+  mysql-data:
+  redis-data:
+
 
 networks:
   common:
