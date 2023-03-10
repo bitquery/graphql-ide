@@ -33,9 +33,7 @@ services:
       - BACKEND_URL=${LC_COMPOSE_BACKEND_URL}
       - IDE_URL=${LC_COMPOSE_IDE_URL}
       - REACT_APP_IDE_URL=${LC_COMPOSE_REACT_APP_IDE_URL}
-      - REACT_APP_ENDPOINT_URL=${LC_COMPOSE_REACT_APP_ENDPOINT_URL}
       - PUBLIC_URL=${LC_COMPOSE_PUBLIC_URL}
-      - CAT=${LC_COMPOSE_CAT}
     <<: *graceful-stop
     <<: *common-dns
     <<: *common-network

@@ -116,7 +116,6 @@ DB_USER=<mysql database user>
 DB_PASSWORD=<mysql database password>
 DB_PORT=<mysql database port, ususally 3306>
 NODE_ENV=production
-REACT_APP_ENDPOINT_URL=<default Graphql URL  endpoint>
 IDE_URL=<URL of frontent app>
 BACKEND_URL=<URL of backend app>
 ```
