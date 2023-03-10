@@ -117,7 +117,7 @@ DB_PASSWORD=<mysql database password>
 DB_PORT=<mysql database port, ususally 3306>
 NODE_ENV=production
 IDE_URL=<URL of frontent app>
-BACKEND_URL=<URL of backend app>
+GRAPHQL_ADMIN_URL=<URL of admin app>
 ```
 
 To automate deploy create `shipitfile.js` :

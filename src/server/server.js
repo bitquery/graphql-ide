@@ -50,7 +50,7 @@ const authMiddleware = async (req, res, next) => {
 		return next()
 	} else {
 		const fullUrl = process.env.IDE_URL + req.originalUrl
-		res.set('Location', `${process.env.BACKEND_URL}/auth/login`)
+		res.set('Location', `${process.env.GRAPHQL_ADMIN_URL}/auth/login`)
 		res.cookie('redirect_to', fullUrl, { maxAge: 60*60*24*1000 })
 		res.sendStatus(302)
 	}

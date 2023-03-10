@@ -654,7 +654,7 @@ module.exports = function(app, db, redisClient) {
 			res.set('Location', queryLink)
 		} else {
 			res.cookie('redirect_to', queryLink, { maxAge: storageTime*1000 })
-			res.set('Location', `${process.env.BACKEND_URL}/auth/login`)
+			res.set('Location', `${process.env.GRAPHQL_ADMIN_URL}/auth/login`)
 		}
 		res.sendStatus(302)
 	})
