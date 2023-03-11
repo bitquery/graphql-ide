@@ -13,7 +13,7 @@ x-graceful-stop: &graceful-stop
 
 services:
   ide:
-    image: ${LC_APP_IMAGE}:${LC_APP_IMAGE_TAG}
+    image: ${LC_COMPOSE_IMAGE}:${LC_COMPOSE_IMAGE_TAG}
     command: [
       "node", "./src/server/server.js"
     ] 
