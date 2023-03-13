@@ -34,8 +34,8 @@ services:
       - IDE_URL=${LC_COMPOSE_APP_URL}/ide
       - REACT_APP_IDE_URL=/ide
       - PUBLIC_URL=${LC_COMPOSE_APP_URL}/ide
-      - GRAPHQL_LEGACY_URL=${LC_COMPOSE_GRAPHQL_LEGACY_URL}
-      - GRAPHQL_URL=${LC_COMPOSE_GRAPHQL_URL}
+      - REACT_APP_GRAPHQL_LEGACY_URL=${LC_COMPOSE_GRAPHQL_LEGACY_URL}
+      - REACT_APP_GRAPHQL_URL=${LC_COMPOSE_GRAPHQL_URL}
     <<: *graceful-stop
     <<: *common-dns
     <<: *common-network
