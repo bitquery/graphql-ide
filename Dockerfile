@@ -2,16 +2,13 @@ FROM node:14.15-alpine AS builder
 
 LABEL maintainer="Andrey Gridin <andrey@bitquery.io>"
 
-ARG ENV
-ARG SCHEME
-ARG DOMAIN
-ARG REACT_APP_IDE_URL
+ENV REACT_APP_IDE_URL=/ide
+ENV PUBLIC_URL=/ide
+ENV IDE_URL=/ide
 
-ENV NODE_ENV=${ENV:-production}
-ENV GRAPHQL_ADMIN_URL=${SCHEME:-https}://${DOMAIN:-graphql.bitquery.io}
-ENV REACT_APP_IDE_URL=${REACT_APP_IDE_URL:-/ide}
-ENV PUBLIC_URL=$GRAPHQL_ADMIN_URL$REACT_APP_IDE_URL
-ENV IDE_URL=$PUBLIC_URL
+ENV GRAPHQL_LEGACY_URL=https://graphql.bitquery.io
+ENV GRAPHQL_URL=https://streaming.bitquery.io/graphql
+
 
 WORKDIR /app
 
