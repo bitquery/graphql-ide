@@ -623,7 +623,7 @@ module.exports = function(app, db, redisClient) {
 	
 	app.post('/api/copyquery', (req, res) => {
 		const queryID = req.body.queryID
-		const queryLink = `${process.env.IDE_URL}/query/${queryID}`
+		const queryLink = `${req.protocol}://${req.get('host')}/query/${queryID}`
 		const storageTime = 60*30*1000
 		redisClient.get(queryID, async (error, query) => {
 			if (query === null) {
@@ -647,7 +647,7 @@ module.exports = function(app, db, redisClient) {
 
 	app.post('/api/querytransfer', bodyParser.urlencoded({ extended: true }), (req, res) => {
 		const code = crypto.randomBytes(3).toString('hex')
-		const queryLink = `${process.env.IDE_URL}/transfer/${code}`
+		const queryLink = `${req.protocol}://${req.get('host')}/transfer/${code}`
 		const storageTime = req.account_id ? 10 : 60*60*24
 		redisClient.setex(code, storageTime, JSON.stringify(req.body))
 		if (req.account_id) {

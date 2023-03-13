@@ -4,11 +4,8 @@ LABEL maintainer="Andrey Gridin <andrey@bitquery.io>"
 
 ENV REACT_APP_IDE_URL=/ide
 ENV PUBLIC_URL=/ide
-ENV IDE_URL=/ide
-
 ENV GRAPHQL_LEGACY_URL=https://graphql.bitquery.io
 ENV GRAPHQL_URL=https://streaming.bitquery.io/graphql
-
 
 WORKDIR /app
 
