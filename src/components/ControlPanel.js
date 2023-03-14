@@ -6,13 +6,11 @@ import useDebounce from '../utils/useDebounce'
 import { Link, useHistory, useLocation } from 'react-router-dom'
 import logo from '../assets/images/bitquery_logo_w.png'
 import { GalleryStore } from '../store/galleryStore'
-import ModalStore from '../store/modalStore'
 import { logout } from '../api/api'
 
 const ControlPanel = observer(function ControlPanel() {
-	const { user, setUser } = UserStore
+	const { user,  } = UserStore
 	const { setSearchValue } = QueriesStore
-	const { toggleModal, toggleLogin, toggleChangePassword, toggleApiKey } = ModalStore
 	const { setCurrentTag, currentTag } = GalleryStore
 	const [search, setSearch] = useState('')
 	const [active, setActive] = useState(1)
@@ -24,7 +22,7 @@ const ControlPanel = observer(function ControlPanel() {
 		setSearchValue(searchValue)
 		if (searchValue) {
 			setCurrentTag('All queries')
-			history.push(`${process.env.REACT_APP_IDE_URL}/explore/All%20queries`, {detail: 'search'}	)
+			history.push(`/explore/All%20queries`, {detail: 'search'}	)
 			setActive(2)
 		}
 	}, [searchValue])
@@ -34,7 +32,7 @@ const ControlPanel = observer(function ControlPanel() {
 	}, [currentTag])
 	
 	useEffect(() => {
-		const queryListType = location.pathname.replace(`${process.env.REACT_APP_IDE_URL}/`, '').match(/[a-zA-Z]+/gm)?.[0]
+		const queryListType = location.pathname.match(/[a-zA-Z]+/gm)?.[0]
 		if (queryListType === 'explore') {
 			setActive(2)
 		} else if (queryListType === 'myqueries') {
@@ -55,14 +53,6 @@ const ControlPanel = observer(function ControlPanel() {
 		}
 	}
 
-	const changePasswordHadler = () => {
-		toggleModal()
-		toggleChangePassword()
-	}
-	const apiKeyHandler = () => {
-		toggleModal()
-		toggleApiKey()
-	}
 	const logOut = async () => {
 		await logout().catch(e => console.log(e))
 		window.location.replace(`${window.location.origin}/auth/login`)
@@ -70,7 +60,7 @@ const ControlPanel = observer(function ControlPanel() {
 
 	return (
 		<div className="navbar navbar-expand-lg navbar-light bg-white mb-2">
-			<a href={process.env.REACT_APP_IDE_URL} className="navbar-brand topBar__logo">
+			<a href={process.env.REACT_APP_IDE_PATH} className="navbar-brand topBar__logo">
 				<img
 					className="topBar__logo__img"
 					src={logo}
@@ -86,16 +76,16 @@ const ControlPanel = observer(function ControlPanel() {
 				</form>
 				<ul className="navbar-nav mr-auto mt-2 mt-lg-0">
 					<li className='nav-item'>
-						<Link className={`nav-link ${active === 1 ? 'nav-active' : 'text-primary'}`} to={process.env.REACT_APP_IDE_URL}  ><i className="bi bi-play mr-2"></i>Develop</Link>
+						<Link className={`nav-link ${active === 1 ? 'nav-active' : 'text-primary'}`} to='/'  ><i className="bi bi-play mr-2"></i>Develop</Link>
 					</li>
 					<li className='nav-item'>
-						<Link className={`nav-link ${active === 2 ? 'nav-active' : 'text-primary'}`} to={`${process.env.REACT_APP_IDE_URL}/explore/All%20queries`} onClick={()=>setSearch('')} ><i className="bi bi-terminal mr-2"></i>Explore</Link>
+						<Link className={`nav-link ${active === 2 ? 'nav-active' : 'text-primary'}`} to={`/explore/All%20queries`} onClick={()=>setSearch('')} ><i className="bi bi-terminal mr-2"></i>Explore</Link>
 					</li>
 					<li className='nav-item'>
-						<Link className={`nav-link ${active === 3 ? 'nav-active' : 'text-primary'}`} to={`${process.env.REACT_APP_IDE_URL}/myqueries/All%20queries`} onClick={()=>setSearch('')}><i className="bi bi-star mr-2"></i>My Queries</Link>
+						<Link className={`nav-link ${active === 3 ? 'nav-active' : 'text-primary'}`} to={`/myqueries/All%20queries`} onClick={()=>setSearch('')}><i className="bi bi-star mr-2"></i>My Queries</Link>
 					</li>
 					{(user?.children_count || user?.ancestry) && <li className='nav-item'>
-						<Link className={`nav-link ${active === 4 ? 'nav-active' : 'text-primary'}`} to={`${process.env.REACT_APP_IDE_URL}/team/All%20queries`} onClick={()=>setSearch('')}><i className="bi bi-people mr-2"></i>Team</Link>
+						<Link className={`nav-link ${active === 4 ? 'nav-active' : 'text-primary'}`} to={`/team/All%20queries`} onClick={()=>setSearch('')}><i className="bi bi-people mr-2"></i>Team</Link>
 					</li>}
 					<li className="nav-item d-lg-none">
 						<a className="nav-link text-primary" href="https://discord.gg/EEBVTQnb2E"><i className="bi bi-discord">Discord</i></a>

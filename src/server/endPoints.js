@@ -542,7 +542,6 @@ module.exports = function(app, db, redisClient) {
 	}) 
 	
 	app.get("/api/user", async (req, res) => {
-
 		const results = await query(`SELECT a.*, ak.\`key\` FROM accounts a
 			JOIN api_keys ak
 			ON a.id = ak.account_id

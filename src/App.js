@@ -47,17 +47,17 @@ const App = observer(function App() {
 			<ControlPanel />
 			<ModalWindow />
 			<Switch>
-				<Route path={`${process.env.REACT_APP_IDE_URL}/reset`} >
+				<Route path='/reset' >
 					<ResetPassword />
 				</Route>
 				<Route path={[
-					`${process.env.REACT_APP_IDE_URL}/explore`,
-					`${process.env.REACT_APP_IDE_URL}/myqueries`,
-					`${process.env.REACT_APP_IDE_URL}/team`
+					'/explore',
+					'/myqueries',
+					'/team'
 				]}>
 					<ExploreComponent />
 				</Route>
-				<Route path={[`${process.env.REACT_APP_IDE_URL}/:queryurl`, `${process.env.REACT_APP_IDE_URL}`]} >
+				<Route path={['/:queryurl', '/']} >
 					<TabsComponent />
 					<div className="content flex">
 						{tagListIsOpen && <NewGallery />}

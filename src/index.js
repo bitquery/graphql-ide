@@ -9,7 +9,7 @@ import { BrowserRouter, Route } from 'react-router-dom';
 
 ReactDOM.render(
 	<ToastProvider autoDismiss={true} >
-		<BrowserRouter>
+		<BrowserRouter basename={process.env.REACT_APP_IDE_PATH}>
 			<Route>
 				<App/>
 			</Route>

@@ -17,7 +17,7 @@ const ExploreComponent = observer(function ExploreComponent() {
 	const [tagsList, setTagsList] = useState([])
 	useEffect(() => {
 		const onload = async () => {
-			const queryListType = location.pathname.replace(`${process.env.REACT_APP_IDE_URL}/`, '').match(/[a-zA-Z]+/gm)[0]
+			const queryListType = location.pathname.match(/[a-zA-Z]+/gm)[0]
 			try {
 				const { data } = await getTagsList(queryListType)
 				setTagsList(data)

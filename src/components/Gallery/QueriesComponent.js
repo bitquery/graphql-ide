@@ -36,7 +36,7 @@ const QueriesComponent = observer(function QueriesComponent({ queries }) {
 		setDashboardQuery(queryFromGallery, queryFromGallery.id)
 		window.dispatchEvent(new CustomEvent('query-request', {detail: queryFromGallery}))
 	}
-	const queryUrl = queryUrl => queryUrl ? `${process.env.REACT_APP_IDE_URL}/${queryUrl}` : `${process.env.REACT_APP_IDE_URL}`
+	const queryUrl = queryUrl => queryUrl ? `/${queryUrl}` : '/'
 	const queryIsOpen = (queryFromGallery) => 
 		queryFromGallery.id === currentQuery.id ? true : false	
 	const isSaved = baseQuery => {

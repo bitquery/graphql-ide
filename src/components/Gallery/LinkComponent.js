@@ -6,7 +6,7 @@ function LinkComponent({ propquery, as }) {
 	const { switchTab, tabs } = TabsStore
 	const { setQuery, query } = QueriesStore
 	const history = useHistory()
-	const queryUrl = queryUrl => queryUrl ? `${process.env.REACT_APP_IDE_URL}/${queryUrl}` : `${process.env.REACT_APP_IDE_URL}`
+	const queryUrl = queryUrl => queryUrl ? `/${queryUrl}` : '/'
 	const isSaved = baseQuery => {
 		for (let i =0; i<query.length; i++) {
 			if (!((('saved' in query[i]) && query[i].saved) || !('saved' in query[i]))) {

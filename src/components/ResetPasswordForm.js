@@ -28,7 +28,7 @@ function ResetPasswordForm() {
 	}
 	return (
 		<form style={style} onSubmit={resetPassword} className="reset__form" >
-			<Link to={process.env.REACT_APP_IDE_URL}>Home</Link>
+			<Link to='/'>Home</Link>
 			<h1>Confirm new password</h1>
 			<p className="p-modal">New password</p>
 			<input type="password" className="query__save" 

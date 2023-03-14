@@ -20,7 +20,7 @@ const QueriesList = observer(function QueriesList() {
 	const [thereIsNext, setNext] = useState(false)
 
 	const main = async (page) => {
-		const queryListType = location.pathname.replace(`${process.env.REACT_APP_IDE_URL}/`, '').match(/[a-zA-Z]+/gm)[0]
+		const queryListType = location.pathname.match(/[a-zA-Z]+/gm)[0]
 		const { data } = await getTaggedQueriesList(currentTag, page * queriesOnPage, queryListType)
 		data.length > queriesOnPage ? setNext(true) : setNext(false)
 		setList(data)
@@ -34,7 +34,7 @@ const QueriesList = observer(function QueriesList() {
 	useEffect(() => {
 		const main = async () => {
 			if (searchValue === '') {
-				const queryListType = location.pathname.replace(`${process.env.REACT_APP_IDE_URL}/`, '').match(/[a-zA-Z]+/gm)[0]
+				const queryListType = location.pathname.match(/[a-zA-Z]+/gm)[0]
 				const { data } = await getTaggedQueriesList(currentTag, currentPage * queriesOnPage, queryListType)
 				data.length > queriesOnPage ? setNext(true) : setNext(false)
 				setList(data)
@@ -42,7 +42,7 @@ const QueriesList = observer(function QueriesList() {
 				setNext(false)
 				setCurrentPage(0)
 				const { data } = await getSearchResults(searchValue)
-				history.push(`${process.env.REACT_APP_IDE_URL}/explore/All%20queries`)
+				history.push(`/explore/All%20queries`)
 				setList(data)
 			}
 		}
@@ -56,7 +56,7 @@ const QueriesList = observer(function QueriesList() {
 			let tabID = query.map(query => query.id).indexOf(queryFromGallery.id)
 			switchTab(tabs[tabID].id)
 		}
-		history.push(`${process.env.REACT_APP_IDE_URL}/${queryFromGallery.url || ''}`)
+		history.push(`/${queryFromGallery.url || ''}`)
 	}
 	const nextPage = () => {
 		if (thereIsNext) {

@@ -17,7 +17,7 @@ const TabsComponent = observer(() => {
 	const { queriesListIsOpen, toggleQueriesList } = GalleryStore
 	const { user } = UserStore
 	const { tabs, currentTab, switchTab, index } = TabsStore
-	const match = useRouteMatch(`${process.env.REACT_APP_IDE_URL}/:queryurl`)
+	const match = useRouteMatch(`/:queryurl`)
 	const { setQuery, removeQuery, query, updateQuery, currentQuery, isLoaded, setIsLoaded, setQueryIsTransfered } = QueriesStore
 	const [editTabName, setEditTabName] = useState(false)
 	const [queryName, setQueryName] = useState({ [currentTab]: currentQuery.name })
@@ -27,8 +27,8 @@ const TabsComponent = observer(() => {
 		x <= 1 && setx(x => x + 1)
 		if (x > 1) {
 			currentQuery.url
-				? history.push(`${process.env.REACT_APP_IDE_URL}/${currentQuery.url}`)
-				: history.push(`${process.env.REACT_APP_IDE_URL}`)
+				? history.push(`/${currentQuery.url}`)
+				: history.push('/')
 		}
 		// eslint-disable-next-line 
 	}, [currentQuery.url])
@@ -129,7 +129,7 @@ const TabsComponent = observer(() => {
 		queriesListIsOpen && toggleQueriesList()
 		switchTab(tabid)
 		let id = tabs.map(tab => tab.id).indexOf(tabid)
-		query[id].url ? history.push(`${process.env.REACT_APP_IDE_URL}/${query[id].url}`) : history.push(`${process.env.REACT_APP_IDE_URL}`)
+		query[id].url ? history.push(`/${query[id].url}`) : history.push('/')
 		setEditTabName(false)
 	}
 	const addNewTabHandler = () => {
