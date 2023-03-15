@@ -134,19 +134,17 @@ module.exports = function(app, db, redisClient) {
         }
     })
 
-	app.get('/api/transferedquery/:query', (req, res) => {
-		redisClient.get(req.params.query, async (error, query) => {
-			if (error) console.log(error)
-			if (query !== null) {
-				console.log('there is some query')
-				res.status(200).send({transferedQuery: JSON.parse(query)})
-			} else {
-				res.status(200).send({transferedQuery: {
-					query: 'QUERY DOES NOT EXIST!',
-					variables: ''
-				}})
-			}
-		})
+	app.get('/api/transferedquery/:query', async (req, res) => {
+		const query = await redisClient.get(req.params.query)
+		if (query !== null) {
+			console.log('there is some query')
+			res.status(200).send({transferedQuery: JSON.parse(query)})
+		} else {
+			res.status(200).send({transferedQuery: {
+				query: 'QUERY DOES NOT EXIST!',
+				variables: ''
+			}})
+		}
 	})
 
 	app.post('/api/checkurl', async (req, res) => {
@@ -601,18 +599,17 @@ module.exports = function(app, db, redisClient) {
 			WHERE a.published=true
 			AND a.deleted=false
 			GROUP BY a.id  
-			ORDER BY number DESC`, (err, queries) => {
+			ORDER BY number DESC`, async (err, queries) => {
 				if (err) console.log(err)
 				const transferedKey = req.session?.transferedKey
 				req.session.transferedKey = null
 				if (transferedKey) {
-					redisClient.get(transferedKey, async (error, query) => {
-						if (query !== null) {
-							res.send({queries: queries, msg: checkActive, transferedQuery: JSON.parse(query)})
-						} else {
-							res.send({queries: queries, msg: checkActive})
-						}
-					})
+					const query = await redisClient.get(transferedKey)
+					if (query !== null) {
+						res.send({queries: queries, msg: checkActive, transferedQuery: JSON.parse(query)})
+					} else {
+						res.send({queries: queries, msg: checkActive})
+					}
 				} else {
 					res.send({queries: queries, msg: checkActive})
 				}
@@ -620,35 +617,32 @@ module.exports = function(app, db, redisClient) {
 		)
 	})
 	
-	app.post('/api/copyquery', (req, res) => {
+	app.post('/api/copyquery', async (req, res) => {
 		const queryID = req.body.queryID
-		const queryLink = `/query/${queryID}`
-		const storageTime = 60*30*1000
-		redisClient.get(queryID, async (error, query) => {
-			if (query === null) {
-				redisClient.setex(queryID, storageTime, JSON.stringify(req.body.query))
-			}
-			return res.status(200).send(queryLink)
-		})
+		const queryLink = `${req.protocol}://${req.get('host')}/query/${queryID}`
+		const storageTime = 60*30
+		const query = await redisClient.get(queryID)
+		if (query === null) {
+			await redisClient.set(queryID, JSON.stringify(req.body.query), { EX: storageTime })
+		}
+		return res.status(200).send(queryLink)
 	})
 
-	app.get('/api/bygraphqlqueryid/:queryid', (req, res) => {
-		redisClient.get(req.params.queryid, async (error, query) => {
-			if (error) console.log(error)
-			if (query !== null) {
-				console.log('there is some query')
-				res.status(200).send(JSON.parse(query))
-			} else {
-				res.sendStatus(400)
-			}
-		})
+	app.get('/api/bygraphqlqueryid/:queryid', async (req, res) => {
+		const query = await redisClient.get(req.params.queryid)
+		if (query !== null) {
+			console.log('there is some query')
+			res.status(200).send(JSON.parse(query))
+		} else {
+			res.sendStatus(400)
+		}
 	})
 
-	app.post('/api/querytransfer', bodyParser.urlencoded({ extended: true }), (req, res) => {
+	app.post('/api/querytransfer', bodyParser.urlencoded({ extended: true }), async (req, res) => {
 		const code = crypto.randomBytes(3).toString('hex')
 		const queryLink = `/transfer/${code}`
 		const storageTime = req.account_id ? 10 : 60*60*24
-		redisClient.setex(code, storageTime, JSON.stringify(req.body))
+		await redisClient.set(code, JSON.stringify(req.body), { EX: storageTime })
 		if (req.account_id) {
 			res.set('Location', queryLink)
 		} else {
