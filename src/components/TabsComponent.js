@@ -38,7 +38,7 @@ const TabsComponent = observer(() => {
 			if (updateEndpointToStreaming) {
 				updateQuery({ endpoint_url: updateEndpointToStreaming, saved: true }, index)
 			}
-			if (/^\/ide\/query\/[0-9a-zA-Z]{16}$/.test(history.location.pathname)) {
+			if (/^\/query\/[0-9a-zA-Z]{16}$/.test(history.location.pathname)) {
 				const gqbi = async () => {
 					const queryID = history.location.pathname.match(/[0-9a-zA-Z]{16}/)[0]
 					try {
@@ -68,7 +68,7 @@ const TabsComponent = observer(() => {
 					}
 				}
 				gqbi()
-			} else if (/^\/ide\/transfer\/[0-9a-fA-F]{6}$/.test(history.location.pathname)) {
+			} else if (/^\/transfer\/[0-9a-fA-F]{6}$/.test(history.location.pathname)) {
 				const code = history.location.pathname.match(/[0-9a-fA-F]{6}/)[0]
 				const gtf = async () => {
 					const { data } = await getTransferedQuery(code)

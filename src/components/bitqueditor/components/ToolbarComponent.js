@@ -103,7 +103,7 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 			})
 			link = data
 		} else {
-			link = `${window.location.protocol}//${window.location.host}${url.match(/^\/([^?\/]+)/)[0]}/${currentQuery.url}`
+			link = `${window.location.protocol}//${window.location.host}/${currentQuery.url}`
 		}
 		copy(link)
 		addToast('Link copied to clipboard', {appearance: 'success'})

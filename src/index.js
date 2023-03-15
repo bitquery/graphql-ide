@@ -9,10 +9,8 @@ import { BrowserRouter, Route } from 'react-router-dom';
 
 ReactDOM.render(
 	<ToastProvider autoDismiss={true} >
-		<BrowserRouter basename={process.env.REACT_APP_IDE_PATH}>
-			<Route>
-				<App/>
-			</Route>
+		<BrowserRouter>
+			<App/>
 		</BrowserRouter>
 	</ToastProvider>,
 	document.getElementById('graphql_ide')
