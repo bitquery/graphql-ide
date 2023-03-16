@@ -10,24 +10,12 @@ import { useHistory } from 'react-router-dom'
 const Profile = observer(() => {
 
 	const history = useHistory()
-	const { getUser, user, setUser } = UserStore
-	const { fade, toggleModal, toggleLogin, toggleChangePassword, toggleApiKey } = ModalStore
+	const { getUser, user } = UserStore
+	const { fade, toggleModal, toggleLogin } = ModalStore
 
 	const clickHandler = () => {
 		toggleModal()
 		toggleLogin()
-	}
-	const changePasswordHadler = () => {
-		toggleModal()
-		toggleChangePassword()
-	}
-	const apiKeyHandler = () => {
-		toggleModal()
-		toggleApiKey()
-	}
-	const logOut = async () => {
-		await logout().catch(e => console.log(e))
-		window.location.replace(`${user?.graphql_admin_url}/auth/login`)
 	}
 	useEffect(() => {
 		getUser()
@@ -61,7 +49,7 @@ const Profile = observer(() => {
 				<Dropdown.Item href={`${user?.graphql_admin_url}/team/members/new`}>Invite team member</Dropdown.Item>
 				<Dropdown.Divider/>
 				<Dropdown.Item href={`${user?.graphql_admin_url}/user/account`}>Account</Dropdown.Item>
-				<Dropdown.Item href="# " onClick={logOut}>Logout</Dropdown.Item>
+				<Dropdown.Item href="# " onClick={logout}>Logout</Dropdown.Item>
 			</Dropdown.Menu>
 		</Dropdown>
 })

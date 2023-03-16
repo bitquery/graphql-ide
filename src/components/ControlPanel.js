@@ -53,11 +53,6 @@ const ControlPanel = observer(function ControlPanel() {
 		}
 	}
 
-	const logOut = async () => {
-		await logout().catch(e => console.log(e))
-		window.location.replace(`${user?.graphql_admin_url}/auth/login`)
-	}
-
 	return (
 		<div className="navbar navbar-expand-lg navbar-light bg-white mb-2">
 			<a href='/' className="navbar-brand topBar__logo">
@@ -112,7 +107,7 @@ const ControlPanel = observer(function ControlPanel() {
 						<a className="nav-link text-primary" href={`${user?.graphql_admin_url}/user/account`}>Account</a>
 					</li>
 					<li className="nav-item d-lg-none">
-						<a className="nav-link text-primary" href="# " onClick={logOut}>Logout</a>
+						<a className="nav-link text-primary" href="# " onClick={logout}>Logout</a>
 					</li>
 				</ul>
 				<ProfileComponent />

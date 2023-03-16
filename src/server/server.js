@@ -52,8 +52,7 @@ redisClient.connect().then(async () => {
 			return next()
 		} else {
 			const fullUrl = req.protocol + '://' + req.get('host') + req.originalUrl
-			res.set('Location', `${process.env.GRAPHQL_ADMIN_URL}/auth/login`)
-			res.cookie('redirect_to', fullUrl, { maxAge: 60 * 60 * 24 * 1000 })
+			res.set('Location', `${process.env.GRAPHQL_ADMIN_URL}/auth/login?redirect_to=${fullUrl}`)
 			res.sendStatus(302)
 		}
 	}
