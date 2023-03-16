@@ -52,7 +52,7 @@ redisClient.connect().then(async () => {
 			return next()
 		} else {
 			const fullUrl = req.protocol + '://' + req.get('host') + req.originalUrl
-			res.set('Location', `${process.env.GRAPHQL_ADMIN_URL}/auth/login?redirect_to=${fullUrl}`)
+			res.set('Location', `${process.env.GRAPHQL_ADMIN_URL}/auth/login?redirect_to=${encodeURIComponent(fullUrl)}`)
 			res.sendStatus(302)
 		}
 	}

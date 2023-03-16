@@ -1,17 +1,14 @@
 import React, { useEffect } from 'react'
-import { logout } from '../api/api'
 import { observer } from 'mobx-react-lite'
 import ModalStore from '../store/modalStore'
 import { UserStore } from '../store/queriesStore'
 import UserIcon from './icons/UserIcon'
 import { Dropdown } from 'react-bootstrap'
-import { useHistory } from 'react-router-dom'
 
 const Profile = observer(() => {
 
-	const history = useHistory()
 	const { getUser, user } = UserStore
-	const { fade, toggleModal, toggleLogin } = ModalStore
+	const { toggleModal, toggleLogin } = ModalStore
 
 	const clickHandler = () => {
 		toggleModal()
@@ -49,7 +46,7 @@ const Profile = observer(() => {
 				<Dropdown.Item href={`${user?.graphql_admin_url}/team/members/new`}>Invite team member</Dropdown.Item>
 				<Dropdown.Divider/>
 				<Dropdown.Item href={`${user?.graphql_admin_url}/user/account`}>Account</Dropdown.Item>
-				<Dropdown.Item href="# " onClick={logout}>Logout</Dropdown.Item>
+				<Dropdown.Item href={`${user?.graphql_admin_url}/auth/logout`}>Logout</Dropdown.Item>
 			</Dropdown.Menu>
 		</Dropdown>
 })

@@ -6,7 +6,6 @@ import useDebounce from '../utils/useDebounce'
 import { Link, useHistory, useLocation } from 'react-router-dom'
 import logo from '../assets/images/bitquery_logo_w.png'
 import { GalleryStore } from '../store/galleryStore'
-import { logout } from '../api/api'
 
 const ControlPanel = observer(function ControlPanel() {
 	const { user } = UserStore
@@ -107,7 +106,7 @@ const ControlPanel = observer(function ControlPanel() {
 						<a className="nav-link text-primary" href={`${user?.graphql_admin_url}/user/account`}>Account</a>
 					</li>
 					<li className="nav-item d-lg-none">
-						<a className="nav-link text-primary" href="# " onClick={logout}>Logout</a>
+						<a className="nav-link text-primary" href={`${user?.graphql_admin_url}/auth/logout`}>Logout</a>
 					</li>
 				</ul>
 				<ProfileComponent />

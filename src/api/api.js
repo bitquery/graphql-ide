@@ -18,8 +18,6 @@ export const login = (email, password) =>
 		password
 	})
 
-export const logout = () => axios.get(`/api/logout`)
-
 export const getUser = () => axios.get('/api/user')
 
 export const regenerateKey = key => axios.post('/api/regenerate', {key})

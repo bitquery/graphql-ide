@@ -539,11 +539,6 @@ module.exports = function(app, db, redisClient) {
 		})
 	}) 
 	
-	app.get('/api/logout', async (req, res) => {
-		res.set('Location', `${process.env.GRAPHQL_ADMIN_URL}/auth/logout`)
-		res.sendStatus(302)
-	})
-
 	app.get("/api/user", async (req, res) => {
 		const results = await query(`SELECT a.*, ak.\`key\` FROM accounts a
 			JOIN api_keys ak
