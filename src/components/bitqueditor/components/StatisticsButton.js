@@ -13,7 +13,7 @@ const StatisticsButton = observer(function StatisticsButton({number}) {
 	const getPoints = async () => {
 		if (user.key && number === index ) {
 			updateQuery({gettingPointsCount: gettingPointsCount + 1 || 0}, index)
-			const response = await fetch("https://graphql.bitquery.io/", {
+			const response = await fetch(user?.graphql_legacy_url, {
 				"headers": {
 					"accept": "application/json",
 					"content-type": "application/json",

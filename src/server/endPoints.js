@@ -556,7 +556,10 @@ module.exports = function(app, db, redisClient) {
 				created_at: results[0].created_at,
 				role: results[0].role,
 				children_count: +results[0].children_count,
-				ancestry: results[0].ancestry
+				ancestry: results[0].ancestry,
+				graphql_admin_url: process.env.GRAPHQL_ADMIN_URL,
+				graphql_legacy_url: process.env.GRAPHQL_LEGACY_URL,
+				graphql_url: process.env.GRAPHQL_URL
 			}]
 			res.status(200).send({user: userSend})
 		} else {

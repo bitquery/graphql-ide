@@ -27,7 +27,7 @@ const Profile = observer(() => {
 	}
 	const logOut = async () => {
 		await logout().catch(e => console.log(e))
-		window.location.replace(`${process.env.REACT_APP_GRAPHQL_ADMIN_URL}/auth/login`)
+		window.location.replace(`${user?.graphql_admin_url}/auth/login`)
 	}
 	useEffect(() => {
 		getUser()
@@ -56,11 +56,11 @@ const Profile = observer(() => {
 			<Dropdown.Menu className="dropdown-menu dropdown-menu-right">
 				<Dropdown.Header>{user.email}</Dropdown.Header>
 				<Dropdown.Divider/>
-				{ user.role === 'admin' &&  <Dropdown.Item href={`${process.env.REACT_APP_GRAPHQL_ADMIN_URL}/admin/accounts`}>Admin</Dropdown.Item>}
+				{ user.role === 'admin' &&  <Dropdown.Item href={`${user?.graphql_admin_url}/admin/accounts`}>Admin</Dropdown.Item>}
 				{ user.role === 'admin' && <Dropdown.Divider/> }
-				<Dropdown.Item href={`${process.env.REACT_APP_GRAPHQL_ADMIN_URL}/team/members/new`}>Invite team member</Dropdown.Item>
+				<Dropdown.Item href={`${user?.graphql_admin_url}/team/members/new`}>Invite team member</Dropdown.Item>
 				<Dropdown.Divider/>
-				<Dropdown.Item href={`${process.env.REACT_APP_GRAPHQL_ADMIN_URL}/user/account`}>Account</Dropdown.Item>
+				<Dropdown.Item href={`${user?.graphql_admin_url}/user/account`}>Account</Dropdown.Item>
 				<Dropdown.Item href="# " onClick={logOut}>Logout</Dropdown.Item>
 			</Dropdown.Menu>
 		</Dropdown>

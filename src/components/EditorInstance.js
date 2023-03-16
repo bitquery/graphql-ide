@@ -413,7 +413,7 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 		)
 	}
 	useEffect(() => {
-		if (number === index && user !== null && !(debouncedURL in schema)) {
+		if (number === index && user !== null && !(debouncedURL in schema) && debouncedURL) {
 			const fetchSchema = () => {
 				setLoading(true)
 				let introspectionQuery = getIntrospectionQuery()

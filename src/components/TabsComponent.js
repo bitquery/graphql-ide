@@ -34,10 +34,6 @@ const TabsComponent = observer(() => {
 	}, [currentQuery.url])
 	useEffect(() => {
 		if (user?.key) {
-			const updateEndpointToStreaming = searchQueryParam.get('endpoint')
-			if (updateEndpointToStreaming) {
-				updateQuery({ endpoint_url: updateEndpointToStreaming, saved: true }, index)
-			}
 			if (/^\/query\/[0-9a-zA-Z]{16}$/.test(history.location.pathname)) {
 				const gqbi = async () => {
 					const queryID = history.location.pathname.match(/[0-9a-zA-Z]{16}/)[0]
@@ -47,7 +43,7 @@ const TabsComponent = observer(() => {
 					} catch (error) {
 						if (error.response.status === 400) {
 							try {
-								const response = await fetch("https://graphql.bitquery.io/", {
+								const response = await fetch(user?.graphql_legacy_url, {
 									"headers": {
 										"accept": "application/json",
 										"content-type": "application/json",

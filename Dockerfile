@@ -2,7 +2,6 @@ FROM node:14.15-alpine AS builder
 
 LABEL maintainer="Andrey Gridin <andrey@bitquery.io>"
 
-
 WORKDIR /app
 
 COPY package.json package-lock.json* ./

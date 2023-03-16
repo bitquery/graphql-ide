@@ -9,7 +9,7 @@ import { GalleryStore } from '../store/galleryStore'
 import { logout } from '../api/api'
 
 const ControlPanel = observer(function ControlPanel() {
-	const { user,  } = UserStore
+	const { user } = UserStore
 	const { setSearchValue } = QueriesStore
 	const { setCurrentTag, currentTag } = GalleryStore
 	const [search, setSearch] = useState('')
@@ -55,7 +55,7 @@ const ControlPanel = observer(function ControlPanel() {
 
 	const logOut = async () => {
 		await logout().catch(e => console.log(e))
-		window.location.replace(`${process.env.REACT_APP_GRAPHQL_ADMIN_URL}/auth/login`)
+		window.location.replace(`${user?.graphql_admin_url}/auth/login`)
 	}
 
 	return (
@@ -103,13 +103,13 @@ const ControlPanel = observer(function ControlPanel() {
 						<a className="nav-link text-primary" href="https://angel.co/company/bitquery/jobs">We are hiring!</a>
 					</li>
 					{ user?.role === 'admin' && <li className="nav-item d-lg-none">
-						<a className="nav-link text-primary" href={`${process.env.REACT_APP_GRAPHQL_ADMIN_URL}/admin/accounts`}>Admin</a>
+						<a className="nav-link text-primary" href={`${user?.graphql_admin_url}/admin/accounts`}>Admin</a>
 					</li>}
 					<li className="nav-item d-lg-none">
-						<a className="nav-link text-primary" href={`${process.env.REACT_APP_GRAPHQL_ADMIN_URL}/team/members/new`}>Invite team member</a>
+						<a className="nav-link text-primary" href={`${user?.graphql_admin_url}/team/members/new`}>Invite team member</a>
 					</li>
 					<li className="nav-item d-lg-none">
-						<a className="nav-link text-primary" href={`${process.env.REACT_APP_GRAPHQL_ADMIN_URL}/user/account`}>Account</a>
+						<a className="nav-link text-primary" href={`${user?.graphql_admin_url}/user/account`}>Account</a>
 					</li>
 					<li className="nav-item d-lg-none">
 						<a className="nav-link text-primary" href="# " onClick={logOut}>Logout</a>

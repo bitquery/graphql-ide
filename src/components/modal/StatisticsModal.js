@@ -26,7 +26,7 @@ const StatisticsModal = observer(function StatisticsModal({active}) {
 	const getMetrics = async () => {
 		if (user?.key && active) {
 			updateQuery({gettingPointsCount: gettingPointsCount + 1 || 0}, index)
-			const response = await fetch("https://graphql.bitquery.io/", {
+			const response = await fetch(user?.graphql_legacy_url, {
 				"headers": {
 					"accept": "application/json",
 					"content-type": "application/json",
