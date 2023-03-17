@@ -426,3 +426,25 @@ div.CodeMirror span.CodeMirror-matchingbracket {
 .rawcode {
   height: 100%;
 }
+.blinker-wrapper {
+  position: absolute;
+  top: 0;
+  z-index: 9999;
+  right: 0;
+}
+.blnkr {
+  font-size: 5px;
+  position: relative;
+  left: 3px;
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  animation: blinker 1s linear infinite;
+}
+
+@keyframes blinker {
+  50% {
+    opacity: 0;
+  }
+}

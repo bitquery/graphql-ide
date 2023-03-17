@@ -6,13 +6,10 @@ import { getQuery, getWidget, getTransferedQuery, getQueryByID } from '../api/ap
 import { TabsStore, QueriesStore, UserStore } from '../store/queriesStore'
 import handleState from '../utils/handleState'
 import useEventListener from '../utils/useEventListener'
-import logo from '../assets/images/bitquery_logo_w.png'
 import GraphqlIcon from './icons/GraphqlIcon'
 import { GalleryStore } from '../store/galleryStore'
-import { useQuery } from '../utils/useQuery'
 
 const TabsComponent = observer(() => {
-	let searchQueryParam = useQuery()
 	const history = useHistory()
 	const { queriesListIsOpen, toggleQueriesList } = GalleryStore
 	const { user } = UserStore
@@ -69,8 +66,11 @@ const TabsComponent = observer(() => {
 				const gtf = async () => {
 					const { data } = await getTransferedQuery(code)
 					//query string goes from explorer JSON.stringify'ed twice
-					//double JSON.parse to rid off unexpected qoutes 
-					updateQuery({ query: JSON.parse(data.transferedQuery.query), variables: data.transferedQuery.variables }, index)
+					//double JSON.parse to rid off unexpected qoutes
+					const query = JSON.parse(data.transferedQuery.query)
+					const type = query.substr(0, query.indexOf(" ")).toLowerCase()
+					const isSubscription = (type === 'subscription')
+					updateQuery({ query: JSON.parse(data.transferedQuery.query), variables: data.transferedQuery.variables, endpoint_url: isSubscription && 'https://streaming.bitquery.io/graphql' }, index)
 					setQueryIsTransfered(true)
 					setx(2)
 					setIsLoaded()

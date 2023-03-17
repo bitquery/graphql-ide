@@ -3,7 +3,6 @@ import { QueriesStore, UserStore, TabsStore } from '../../../store/queriesStore'
 import { copyQuery } from '../../../api/api'
 import modalStore from '../../../store/modalStore'
 import { useToasts } from 'react-toast-notifications'
-import { useRouteMatch } from 'react-router-dom'
 import { parse as parseGql } from 'graphql/language'
 import { print } from 'graphql'
 import React, { useState, useEffect } from 'react'
@@ -11,13 +10,12 @@ import StatisticsButton from './StatisticsButton'
 import { GalleryStore } from '../../../store/galleryStore'
 import ToolbarButton from './ToolbarButton'
 import copy from 'copy-to-clipboard'
-import { Form } from 'react-bootstrap'
+import { Form, InputGroup } from 'react-bootstrap'
 import DocsIcon from '../../icons/DocsIcon'
 
 const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOpen, toggleDocExplorer, toggleCodeSnippet, codeSnippetOpen, number}) => {
-	const { url } = useRouteMatch()
-	const { currentQuery, saveQuery, updateQuery, setQuery,
-		isLoaded, queryIsTransfered, setQueryIsTransfered, query } = QueriesStore
+	const { currentQuery, updateQuery, setQuery,
+		queryIsTransfered, setQueryIsTransfered, query } = QueriesStore
 	const { tagListIsOpen, toggleTagsList } = GalleryStore
 	const { index } = TabsStore
 	const { user }  = UserStore
@@ -146,11 +144,15 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 				onClick={handleCopy}
 				visible={!!currentQuery.graphqlQueryID || !!currentQuery.url}
 			/>
-			<Form.Control 
-				type="text" 
-				value={currentQuery.endpoint_url}
-				onChange={handleInputURLChange} 
-			/>
+			<InputGroup >
+				{currentQuery.endpoint_url === 'https://streaming.bitquery.io/graphql' && <InputGroup.Text className='text-success'>
+					<span className="d-none d-sm-inline">Live </span><div className="blink blnkr bg-success"></div>
+				</InputGroup.Text>}
+				<Form.Control id="basic-url" aria-describedby="basic-addon3" 
+					value={currentQuery.endpoint_url}
+					onChange={handleInputURLChange} 
+				/>
+			</InputGroup>
 			{user?.id && query[number].graphqlQueryID && <StatisticsButton number={number} />}
 			<div className="newGallery__topbar" aria-label="Open Documentation Explorer">
 				<DocsIcon className={"docs_icon"+(docExplorerOpen ? " active" : '')} onClick={toggleDocExplorer} data-toggle="tooltip" data-placement="top" title="Tooltip on top" />
