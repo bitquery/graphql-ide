@@ -106,6 +106,9 @@ const ControlPanel = observer(function ControlPanel() {
 						<a className="nav-link text-primary" href={`${user?.graphql_admin_url}/user/account`}>Account</a>
 					</li>
 					<li className="nav-item d-lg-none">
+						<a className="nav-link text-primary" href={`${user?.graphql_admin_url}/user/api_key`}>API key</a>
+					</li>
+					<li className="nav-item d-lg-none">
 						<a className="nav-link text-primary" href={`${user?.graphql_admin_url}/auth/logout`}>Logout</a>
 					</li>
 				</ul>

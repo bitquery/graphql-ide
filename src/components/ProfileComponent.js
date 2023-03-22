@@ -46,6 +46,7 @@ const Profile = observer(() => {
 				<Dropdown.Item href={`${user?.graphql_admin_url}/team/members/new`}>Invite team member</Dropdown.Item>
 				<Dropdown.Divider/>
 				<Dropdown.Item href={`${user?.graphql_admin_url}/user/account`}>Account</Dropdown.Item>
+				<Dropdown.Item href={`${user?.graphql_admin_url}/user/api_key`}>API key</Dropdown.Item>
 				<Dropdown.Item href={`${user?.graphql_admin_url}/auth/logout`}>Logout</Dropdown.Item>
 			</Dropdown.Menu>
 		</Dropdown>
