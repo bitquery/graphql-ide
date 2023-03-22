@@ -649,8 +649,8 @@ module.exports = function(app, db, redisClient) {
 		if (req.account_id) {
 			res.set('Location', queryLink)
 		} else {
-			res.cookie('redirect_to', queryLink, { maxAge: storageTime*1000 })
-			res.set('Location', `${process.env.GRAPHQL_ADMIN_URL}/auth/login`)
+			const fullUrl = req.protocol + '://' + req.get('host') + queryLink
+			res.set('Location', `${process.env.GRAPHQL_ADMIN_URL}/auth/login?redirect_to=${encodeURIComponent(fullUrl)}`)
 		}
 		res.sendStatus(302)
 	})
