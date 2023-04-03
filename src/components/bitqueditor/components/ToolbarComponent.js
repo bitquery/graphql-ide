@@ -145,13 +145,11 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 				visible={!!currentQuery.graphqlQueryID || !!currentQuery.url}
 			/>
 			<InputGroup >
-				{currentQuery.endpoint_url === 'https://streaming.bitquery.io/graphql' && <InputGroup.Text className='text-success'>
-					<span className="d-none d-sm-inline">Live </span><div className="blink blnkr bg-success"></div>
-				</InputGroup.Text>}
-				<Form.Control id="basic-url" aria-describedby="basic-addon3" 
+				<Form.Control id="basic-url" aria-describedby="endpoint-url" 
 					value={currentQuery.endpoint_url}
 					onChange={handleInputURLChange} 
 				/>
+				{currentQuery.endpoint_url === 'https://streaming.bitquery.io/graphql' && <sup className='text-success'>New</sup>}
 			</InputGroup>
 			{user?.id && query[number].graphqlQueryID && <StatisticsButton number={number} />}
 			<div className="newGallery__topbar" aria-label="Open Documentation Explorer">

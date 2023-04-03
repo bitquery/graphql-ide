@@ -581,7 +581,7 @@ ${WidgetComponent.id === 'table.widget' ? '<link href="https://unpkg.com/tabulat
 					>
 					</div>
 					<div className={"w-100 result-wrapper col-reverse position-relative" + ((currentQuery.widget_id === 'json.widget') || dataSource.values ? '' : 'h-100')}>
-						{wsClean && <div className="blinker-wrapper d-flex align-items-center text-success text-right mr-2">
+						{wsClean && <div className="blinker-wrapper d-flex align-items-center text-success text-right mr-3">
 							<span className="d-none d-sm-inline">Live </span><div className="blink blnkr bg-success"></div>
 						</div>}
 						{currentQuery.widget_id === 'json.widget' || jsonMode || codeMode ?
