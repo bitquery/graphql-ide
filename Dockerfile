@@ -8,14 +8,14 @@ COPY package.json package-lock.json* ./
 
 RUN chown node:node -R /app
 
+VOLUME /app/public
+
 USER node
 
 RUN npm install --production
 
 COPY --chown=node:node . .
 
-RUN npm run build
-
-RUN chmod +x ./entrypoint.sh
+RUN npm run build && chmod +x ./entrypoint.sh
 
 ENTRYPOINT ["./entrypoint.sh"]
