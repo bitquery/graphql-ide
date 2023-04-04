@@ -244,7 +244,7 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 			return 
 		}
 		ReactTooltip.hide(executeButton.current)
-		updateQuery({ points: undefined, graphqlRequested: undefined, saved: currentQuery.saved }, index)
+		updateQuery({ points: undefined, graphqlRequested: undefined, saved: currentQuery.saved, gettingPointsCount: 0 }, index)
 		setLoading(true)
 		let queryType = getQueryTypes(currentQuery.query)
 		if (JSON.stringify(queryType) !== JSON.stringify(queryTypes)) {
