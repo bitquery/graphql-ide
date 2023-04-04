@@ -262,8 +262,7 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 			}, index)
 		}
 		if (currentQuery.query.match(/subscription[^a-zA-z0-9]/gm)) {
-			console.log('match')
-			setDataSource({...dataSource, streamingValues: []})
+			setDataSource({...dataSource, streamingValues: [], values: {}})
 			const client = wsClient ? wsClient : createClient({
 				url: currentQuery.endpoint_url.replace('http', 'ws'),
 				shouldRetry: () => false
@@ -311,18 +310,28 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 				console.log(error)
 				setDataSource({ ...dataSource, error })
 				setWsClean(null)
+			} finally {
+				setLoading(false)
+				setAccordance(true)
+				ReactTooltip.hide(executeButton.current)				
 			}
 		} else {
-			fetcher({ query: currentQuery.query, variables: currentQuery.variables }).then(data => {
-				const graphqlRequested = data.headers.get('X-GraphQL-Requested') === 'true'
-				updateQuery(
-					{
-						graphqlQueryID: data.headers.get('X-GraphQL-Query-ID'),
-						graphqlRequested: graphqlRequested,
-						points: graphqlRequested ? undefined : 0,
-						saved: currentQuery.saved
-					}, index)
-				data.json().then(async json => {
+			setDataSource({...dataSource, values: {}, streamingValues: []})
+			fetcher({ query: currentQuery.query, variables: currentQuery.variables })
+				.then(response => {
+					if (response.status === 200) {
+						const graphqlRequested = response.headers.get('X-GraphQL-Requested') === 'true'
+						updateQuery({
+							graphqlQueryID: response.headers.get('X-GraphQL-Query-ID'),
+							graphqlRequested: graphqlRequested,
+							points: graphqlRequested ? undefined : 0,
+							saved: currentQuery.saved
+						}, index)
+						return response.json()
+					} else {
+						throw new Error('Something went wrong')
+					}
+				}).then(async json => {
 					let values = null
 					if ('data' in json) {
 						if (currentQuery.displayed_data && currentQuery.displayed_data !== 'data') {
@@ -354,12 +363,13 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 						variables: toJS(currentQuery.variables)
 					})
 					if (!('data' in json)) updateQuery({ widget_id: 'json.widget' }, index)
+				}).catch(error => {
+					setDataSource({ error: error.message })
+				}).finally(() => {
+					setLoading(false)
+					setAccordance(true)
+					ReactTooltip.hide(executeButton.current)
 				})
-
-				setLoading(false)
-				setAccordance(true)
-				ReactTooltip.hide(executeButton.current)
-			})
 		}
 		// eslint-disable-next-line 
 	}, [JSON.stringify(currentQuery), schema[debouncedURL], JSON.stringify(queryTypes), wsClean, dataSource.values])
@@ -581,7 +591,7 @@ ${WidgetComponent.id === 'table.widget' ? '<link href="https://unpkg.com/tabulat
 					>
 					</div>
 					<div className={"w-100 result-wrapper col-reverse position-relative" + ((currentQuery.widget_id === 'json.widget') || dataSource.values ? '' : 'h-100')}>
-						{wsClean && <div className="blinker-wrapper d-flex align-items-center text-success text-right mr-2">
+						{wsClean && <div className="blinker-wrapper d-flex align-items-center text-success text-right mr-3">
 							<span className="d-none d-sm-inline">Live </span><div className="blink blnkr bg-success"></div>
 						</div>}
 						{currentQuery.widget_id === 'json.widget' || jsonMode || codeMode ?
