@@ -55,6 +55,7 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 	const [codeSnippetOpen, setCodeSnippetOpen] = useState(false)
 	const [_variableToType, _setVariableToType] = useState(null)
 	const [loading, setLoading] = useState(false)
+	const [schemaLoading, setSchemaLoading] = useState(false)
 	const [errorLoading, setErrorLoading] = useState(false)
 	const [queryTypes, setQueryTypes] = useState('')
 	const [dataSource, setDataSource] = useState({})
@@ -429,7 +430,7 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 	useEffect(() => {
 		if (number === index && user !== null && !(debouncedURL in schema) && debouncedURL) {
 			const fetchSchema = () => {
-				setLoading(true)
+				setSchemaLoading(true)
 				let introspectionQuery = getIntrospectionQuery()
 				let staticName = 'IntrospectionQuery'
 				let introspectionQueryName = staticName
@@ -449,11 +450,11 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 							let newSchema = buildClientSchema(result.data)
 							setSchema({ ...schema, [debouncedURL]: newSchema })
 						}
-						setLoading(false)
+						setSchemaLoading(false)
 						setErrorLoading(false)
 					}).catch(error => {
 						addToast(error.message, { appearance: 'error' })
-						setLoading(false)
+						setSchemaLoading(false)
 						setErrorLoading(true)
 						if (error.message === '401') {
 							history.push('/auth/login')
@@ -547,7 +548,13 @@ ${WidgetComponent.id === 'table.widget' ? '<link href="https://unpkg.com/tabulat
 					onClick={loading ? abortRequest : getResult}
 				>
 					{loading
-						? <StopIcon />
+						? <StopIcon /> : schemaLoading ? <Loader
+						className="view-loader"
+						type="Oval"
+						color="#3d77b6"
+						height={25}
+						width={25}
+					/>
 						: errorLoading ?
 							<ErrorIcon fill={'#FF2D00'} /> : wsClean ? <StopIcon /> :
 								<PlayIcon fill={accordance ? '#eee' : '#14ff41'} />
