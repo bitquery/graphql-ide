@@ -7,9 +7,13 @@ x-common-network: &common-network
     - common
 x-common-restart: &common-restart
   restart: on-failure
-x-graceful-stop: &graceful-stop
-  stop_grace_period: 1m
-  stop_signal: SIGINT
+x-common-logging: &common-logging
+  logging:
+    driver: "json-file"
+    options:
+      max-size: "100m"
+      max-file: "3"
+
 
 services:
   runtime-config:
@@ -65,7 +69,6 @@ services:
       - GRAPHQL_URL=${LC_COMPOSE_GRAPHQL_URL}
     depends_on:
       - nginx
-    <<: *graceful-stop
     <<: *common-dns
     <<: *common-network
     <<: *common-restart
