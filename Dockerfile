@@ -8,7 +8,7 @@ COPY package.json package-lock.json* ./
 
 RUN chown node:node -R /app
 
-VOLUME /app/public
+VOLUME /app/static
 
 USER node
 
