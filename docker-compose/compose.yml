@@ -23,8 +23,8 @@ services:
     - |
        . /app/scripts/apply_env.sh
     environment:
-      - WEB_PORT: ${LC_COMPOSE_WEB_PORT}
-      - ESC: $$
+      - WEB_PORT=${LC_COMPOSE_WEB_PORT}
+      - ESC=$$
     volumes:
       - ./scripts:/app/scripts
       - ./config:/config-source
