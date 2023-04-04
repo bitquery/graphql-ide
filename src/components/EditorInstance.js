@@ -42,6 +42,7 @@ import CodeSnippetComponent from './CodeSnippetComponent.js';
 import { useHistory } from 'react-router-dom';
 import { useToasts } from 'react-toast-notifications'
 import { createClient } from "graphql-ws"
+import StopIcon from './icons/StopIcon.js';
 
 const EditorInstance = observer(function EditorInstance({ number }) {
 	const { addToast } = useToasts()
@@ -68,6 +69,7 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 	const queryEditor = useRef(null)
 	const variablesEditor = useRef(null)
 	const widgetDisplay = useRef(null)
+	const abortController = useRef(null)
 
 	const history = useHistory()
 
@@ -268,7 +270,6 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 				shouldRetry: () => false
 			});
 			setWsClient(client)
-			setLoading(false)
 			let cleanup = () => {
 				console.log('clean')
 			}
@@ -278,6 +279,7 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 					let values = []
 					cleanup = client.subscribe(payload, {
 						next: ({ data, errors }) => {
+							setLoading(prev => prev && !prev)
 							if (currentQuery.displayed_data && currentQuery.displayed_data !== 'data') {
 								if (currentQuery.data_type === 'flatten') {
 									values = flattenData(data)
@@ -406,11 +408,13 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 		}
 	}
 	const fetcher = (graphQLParams) => {
+		abortController.current = new AbortController()
 		let key = user ? user.key : null
 		let keyHeader = { 'X-API-KEY': key }
 		return fetch(
 			currentQuery.endpoint_url,
 			{
+				signal: abortController.current.signal,
 				method: 'POST',
 				headers: {
 					Accept: 'application/json',
@@ -498,6 +502,18 @@ ${WidgetComponent.id === 'table.widget' ? '<link href="https://unpkg.com/tabulat
 		setCodeSnippetOpen(prev => !prev)
 	}
 
+	const abortRequest = () => {
+		if (wsClean) {
+			wsClean.f()
+			setWsClean(null)
+			return
+		}
+		if (abortController.current) {
+			abortController.current.abort()
+			setLoading(false)
+		}
+	}
+
 	return (
 		<div
 			className={'graphiql__wrapper ' +
@@ -526,24 +542,15 @@ ${WidgetComponent.id === 'table.widget' ? '<link href="https://unpkg.com/tabulat
 				/>
 
 				<button className="execute-button"
-					data-tip='Execute query (Ctrl-Enter)'
-					disabled={loading || errorLoading}
+					data-tip={loading ? 'Interrupt' : 'Execute query (Ctrl-Enter)'}
 					ref={executeButton}
-					onClick={getResult}
+					onClick={loading ? abortRequest : getResult}
 				>
 					{loading
-						? <Loader
-							type="Oval"
-							color="#3d77b6"
-							height={25}
-							width={25}
-						/>
+						? <StopIcon />
 						: errorLoading ?
-							<ErrorIcon fill={'#FF2D00'} /> : wsClean ? <Loader type={'Grid'} color="#3d77b6"
-								height={25}
-								width={25}
-							/> :
-								<PlayIcon fill={accordance ? '#eee' : '#14ff41'} width="50%" height="50%" />
+							<ErrorIcon fill={'#FF2D00'} /> : wsClean ? <StopIcon /> :
+								<PlayIcon fill={accordance ? '#eee' : '#14ff41'} />
 					}
 				</button>
 				<div className="workspace__wrapper"
@@ -591,6 +598,13 @@ ${WidgetComponent.id === 'table.widget' ? '<link href="https://unpkg.com/tabulat
 					>
 					</div>
 					<div className={"w-100 result-wrapper col-reverse position-relative" + ((currentQuery.widget_id === 'json.widget') || dataSource.values ? '' : 'h-100')}>
+						{loading && <Loader
+							className="view-loader"
+							type="Oval"
+							color="#3d77b6"
+							height={100}
+							width={100}
+						/>}
 						{wsClean && <div className="blinker-wrapper d-flex align-items-center text-success text-right mr-3">
 							<span className="d-none d-sm-inline">Live </span><div className="blink blnkr bg-success"></div>
 						</div>}
