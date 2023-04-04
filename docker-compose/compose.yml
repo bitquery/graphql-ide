@@ -23,6 +23,7 @@ services:
     - |
        . /app/scripts/apply_env.sh
     environment:
+      - IPADDR=${LC_COMPOSE_IPADDR}
       - WEB_PORT=${LC_COMPOSE_WEB_PORT}
       - ESC=$$
     volumes:
