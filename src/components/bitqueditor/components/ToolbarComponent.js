@@ -84,7 +84,7 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 			...currentQuery,
 			id: null,
 			account_id: null,
-			name: `Copy of ${currentQuery.name}`,
+			name: `Copy of ${currentQuery.name || 'New Query'}`,
 			saved: false,
 			url: null
 		})
@@ -137,7 +137,7 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 			<ToolbarButton 
 				title='Fork'
 				onClick={handleFork}
-				visible={currentQuery.id}
+				visible={true}
 			/>
 			<ToolbarButton 
 				title='Copy query URL'
