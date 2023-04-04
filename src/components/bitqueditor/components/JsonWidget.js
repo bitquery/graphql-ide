@@ -73,12 +73,14 @@ class JsonWidget extends Component {
 	formatResult() {
 		if (this.props.values) {
 			return JSON.stringify(this.props.values, null, 2)
-		} else {
+		} else if (this.props.dataSource.values) {
 			return JSON.stringify({
 				[this.props.dataSource.displayed_data]: this.props.dataSource.values}, 
 				null, 2
-			)}
+		)} else {
+			return null
 		}
+	}
 
 	render() {
 		return (

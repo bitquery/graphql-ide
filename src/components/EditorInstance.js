@@ -265,7 +265,7 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 			}, index)
 		}
 		if (currentQuery.query.match(/subscription[^a-zA-z0-9]/gm)) {
-			setDataSource({...dataSource, streamingValues: [], values: {}})
+			setDataSource({...dataSource, streamingValues: [], values: ''})
 			const client = wsClient ? wsClient : createClient({
 				url: currentQuery.endpoint_url.replace('http', 'ws'),
 				shouldRetry: () => false
@@ -319,7 +319,7 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 				ReactTooltip.hide(executeButton.current)				
 			}
 		} else {
-			setDataSource({...dataSource, values: {}, streamingValues: []})
+			setDataSource({...dataSource, values: '', streamingValues: []})
 			fetcher({ query: currentQuery.query, variables: currentQuery.variables })
 				.then(response => {
 					if (response.status === 200) {
