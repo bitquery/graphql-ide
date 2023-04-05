@@ -91,6 +91,10 @@ module.exports = function(app, db, redisClient) {
 		}
 	}
 	
+	app.get('/api/version', async (req, res) => {
+		res.status(200).send('version 1.0.14')
+	})
+
 	app.post('/api/codesnippet', async (req, res) => {
 		const { language, query, variables, endpoint_url, key } = req.body
 		const snippet = await getCodeSnippet(language, query, variables, key, endpoint_url)
