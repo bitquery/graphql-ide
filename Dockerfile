@@ -8,8 +8,6 @@ COPY package.json package-lock.json* ./
 
 RUN chown node:node -R /app
 
-VOLUME /app/static
-
 USER node
 
 RUN npm install --production
