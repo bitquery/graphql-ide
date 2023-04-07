@@ -51,7 +51,7 @@ services:
       "node", "./src/server/server.js"
     ] 
     volumes:
-      - ide-static:/app/build
+      - ide-static:/app/static
     ports:
       - ${LC_COMPOSE_IPADDR}:${LC_COMPOSE_WEB_PORT}:${LC_COMPOSE_WEB_PORT}
     environment:
