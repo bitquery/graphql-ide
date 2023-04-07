@@ -1,6 +1,6 @@
 {
   "name": "graphql-component",
-  "version": "0.1.0",
+  "version": "1.0.16",
   "private": true,
   "dependencies": {
     "@bitquery/ide-charts": "^2.0.5",

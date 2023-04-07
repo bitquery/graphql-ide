@@ -543,7 +543,7 @@ ${WidgetComponent.id === 'table.widget' ? '<link href="https://unpkg.com/tabulat
 				/>
 
 				<button className="execute-button"
-					data-tip={loading ? 'Interrupt' : 'Execute query (Ctrl-Enter)'}
+					data-tip={(loading || wsClean) ? 'Interrupt' : 'Execute query (Ctrl-Enter)'}
 					ref={executeButton}
 					onClick={loading ? abortRequest : getResult}
 				>
@@ -598,13 +598,14 @@ ${WidgetComponent.id === 'table.widget' ? '<link href="https://unpkg.com/tabulat
 				<div className={'widget-display widget-display-wrapper' +
 					(isMobile ? ' widget-display-wrapper-fullscreen' : '')}
 					ref={widgetDisplay}
+					style={{backgroundColor: '#f6f7f8'}}
 				>
 					<div
 						className="sizeChanger"
 						onMouseDown={handleResizer}
 					>
 					</div>
-					<div className={"w-100 result-wrapper col-reverse position-relative" + ((currentQuery.widget_id === 'json.widget') || dataSource.values ? '' : 'h-100')}>
+					<div className={"w-100 result-wrapper col-reverse position-relative pl-4" + ((currentQuery.widget_id === 'json.widget') || dataSource.values ? '' : 'h-100')}>
 						{loading && <Loader
 							className="view-loader"
 							type="Oval"
@@ -617,10 +618,12 @@ ${WidgetComponent.id === 'table.widget' ? '<link href="https://unpkg.com/tabulat
 						</div>}
 						{currentQuery.widget_id === 'json.widget' || jsonMode || codeMode ?
 							('streamingValues' in dataSource && dataSource.streamingValues.length) ?
-								dataSource.streamingValues.map(values => {
+								dataSource.streamingValues.map((values, pluginIndex) => {
 									const dateAdded = new Date().getTime()
 									return (
 										<JsonPlugin.renderer
+											pluginIndex={pluginIndex}
+											loading={loading}
 											code={checkoutCode}
 											wsClean={!!wsClean}
 											getCode={getCode}
@@ -634,6 +637,8 @@ ${WidgetComponent.id === 'table.widget' ? '<link href="https://unpkg.com/tabulat
 									)
 								})
 								: <JsonPlugin.renderer
+									pluginIndex={0}
+									loading={loading}
 									code={checkoutCode}
 									getCode={getCode}
 									mode={jsonMode ? 'json' : codeMode ? 'code' : ''}

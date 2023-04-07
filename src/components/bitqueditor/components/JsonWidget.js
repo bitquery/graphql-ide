@@ -77,14 +77,16 @@ class JsonWidget extends Component {
 			return JSON.stringify({
 				[this.props.dataSource.displayed_data]: this.props.dataSource.values}, 
 				null, 2
-		)} else {
+		)} else if (this.props.loading) {
+			return 'Waiting for data...'
+		} else {
 			return null
 		}
 	}
 
 	render() {
 		return (
-			<div className='flex-col flex flex-grow-1' >
+			<div className={'flex-col flex' + (this.props.pluginIndex === 0 ? ' flexone' : '')} >
 				{this.props.values && <div className='result-time'>{this.state.time} seconds ago</div>}
 				<section
 					className="result-window"
