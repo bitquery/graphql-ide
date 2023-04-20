@@ -4,6 +4,7 @@ import DisplayedData from './DisplayedData'
 import ResponseDataType from './ResponseDataType'
 import { QueriesStore, TabsStore } from '../../../store/queriesStore'
 import { observer } from 'mobx-react-lite'
+import { getWidgetConfig } from '../../../api/api'
 
 const WidgetEditorControls = observer(
 	function WidgetEditorControls({model, name, plugins, setDataSource, dataSource, number}) {
@@ -11,6 +12,23 @@ const WidgetEditorControls = observer(
 	const { toggleMode, jsonMode, codeMode, viewMode } = TabsStore
 	const [dataWidgets, setDataWidgets] = useState([]) 
 	const [dataIndexInModel, setDataIndexInModel] = useState(0)
+	useEffect(() => {
+		const gwi = async () => {
+			const searchParams = new URL(document.location).searchParams
+			const configID = searchParams.get('config') ? searchParams.get('config') : null
+			if (configID) {
+				let config = await getWidgetConfig(configID)
+				const MyBootstrapTableComponent = eval(`(${config.base})`)
+				console.log(MyBootstrapTableComponent)
+				// const Widget = eval(`(${config.widget})`)
+				// console.log(Widget)
+				// const example = document.createElement('div')
+				// const widgetInstance = new Widget(example, currentQuery.query)
+				// console.log(widgetInstance)
+			}
+		}
+		gwi()
+	}, [])
 	useEffect(() => {
 		let info = []
 		let insert = null
