@@ -17,14 +17,21 @@ const WidgetEditorControls = observer(
 			const searchParams = new URL(document.location).searchParams
 			const configID = searchParams.get('config') ? searchParams.get('config') : null
 			if (configID) {
-				let config = await getWidgetConfig(configID)
-				const MyBootstrapTableComponent = eval(`(${config.base})`)
-				console.log(MyBootstrapTableComponent)
-				// const Widget = eval(`(${config.widget})`)
-				// console.log(Widget)
-				// const example = document.createElement('div')
-				// const widgetInstance = new Widget(example, currentQuery.query)
-				// console.log(widgetInstance)
+				
+				let configString = await getWidgetConfig(configID)
+				const config = JSON.parse(configString.data.data)
+				console.log(config)
+				for (let i=0; i<config.length-1; i++) {
+					for (let functionName in config[i]) {
+						window[functionName] = eval(`(${config[i][functionName]})`)
+					}
+				}
+				const Widget = eval(`(${config.at(-1)[Object.keys(config.at(-1))[0]]})`)
+				const example = document.createElement('div')
+				const widgetInstance = new Widget(example, currentQuery.query)
+				
+				console.log(widgetInstance.onData)
+
 			}
 		}
 		gwi()
