@@ -34,7 +34,7 @@ import FullscreenIcon from './icons/FullscreenIcon'
 import { getIntrospectionQuery, buildClientSchema } from 'graphql'
 import useDebounce from '../utils/useDebounce'
 import WidgetView from './bitqueditor/components/WidgetView'
-import { getCheckoutCode } from '../api/api'
+import { getCheckoutCode, getWidgetConfig } from '../api/api'
 import { flattenData } from './flattenData.js'
 import { stringifyIncludesFunction } from '../utils/common';
 import { GalleryStore } from '../store/galleryStore.js';
@@ -61,6 +61,8 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 	const [dataSource, setDataSource] = useState({})
 	const [accordance, setAccordance] = useState(true)
 	const [checkoutCode, setCheckOutCode] = useState('')
+	const [widgetConfig, setWidgetConfig] = useState('')
+	const [widgetInstance, setWidgetInstance] = useState(null)
 	const [wsClean, setWsClean] = useState(null)
 	const [wsClient, setWsClient] = useState(null)
 	const debouncedURL = useDebounce(currentQuery.endpoint_url, 500)
@@ -74,6 +76,52 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 
 	const history = useHistory()
 
+	useEffect(() => {
+		const gwi = async () => {
+			const searchParams = new URL(document.location).searchParams
+			const configID = searchParams.get('config') ? searchParams.get('config') : null
+			if (configID) {
+				
+				let configString = await getWidgetConfig(configID)
+				const config = JSON.parse(configString.data.data)
+				// setWidgetConfig( config.reduce((c, f) => c + Object.values(f)[0], '') )
+				console.log(config)
+				function renderIco(nameIco){
+					const div = document.createElement('div')
+					const i = document.createElement('i')
+					const icons = {
+					   sender: 'fa fa-sign-in text-success',
+					   receiver: 'fas fa-share-square text-primary',
+					}
+					i.className = icons[nameIco];
+					div.appendChild(i)
+					return div
+				 }
+				let wcfg = `${renderIco.toString()}\n`
+				for (let i=0; i<config.length-1; i++) {
+					for (let functionName in config[i]) {
+						window[functionName] = eval(`(${config[i][functionName]})`)
+						// console.log(window[functionName].toString())
+						wcfg += window[functionName].toString() + '\n'
+					}
+				}
+				// console.log(wcfg)
+				const Widget = eval(`(${config.at(-1)[Object.keys(config.at(-1))[0]]})`)
+				wcfg += Widget.toString()
+				setWidgetConfig(wcfg)
+				const example = document.getElementById(`asdx${currentTab}`)
+
+				const widgetInstance = new Widget(example, currentQuery.query)
+				setWidgetInstance(widgetInstance)
+				
+				// console.log(widgetInstance.onData)
+
+			}
+		}
+		// if (document.getElementById(`asd${currentTab}`)) {
+			gwi()
+		// }
+	}, [])
 	useEffect(() => {
 		if (currentTab === tabs[number].id) window.dispatchEvent(new Event('resize'))
 	}, [currentTab, tabs, number])
@@ -280,7 +328,7 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 					let values = []
 					cleanup = client.subscribe(payload, {
 						next: ({ data, errors }) => {
-							setLoading(prev => prev && !prev)
+							/* setLoading(prev => prev && !prev)
 							if (currentQuery.displayed_data && currentQuery.displayed_data !== 'data') {
 								if (currentQuery.data_type === 'flatten') {
 									values = flattenData(data)
@@ -298,7 +346,9 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 								error: errors ? errors : null,
 								query: toJS(currentQuery.query),
 								variables: toJS(currentQuery.variables)
-							})
+							}) */
+							setLoading(prev => prev && !prev)
+							widgetInstance.onData(data, true)
 						},
 						error: reject,
 						complete: resolve,
@@ -588,12 +638,12 @@ ${WidgetComponent.id === 'table.widget' ? '<link href="https://unpkg.com/tabulat
 						plugins={plugins}
 						number={number}
 					/>
-					{(currentQuery.displayed_data && isLoaded) ? <WidgetComponent.editor
-						model={queryTypes}
-						displayedData={toJS(query[index].displayed_data)}
-						config={toJS(query[index].config)}
-						setConfig={setConfig}
-					/> : <div className="widget" />}
+					<div className="widget">
+						<JsonPlugin.renderer 
+							values={widgetConfig}
+							pluginIndex={0}
+						/>
+					</div>
 				</div>
 				<div className={'widget-display widget-display-wrapper' +
 					(isMobile ? ' widget-display-wrapper-fullscreen' : '')}
@@ -616,7 +666,7 @@ ${WidgetComponent.id === 'table.widget' ? '<link href="https://unpkg.com/tabulat
 						{wsClean && <div className="blinker-wrapper d-flex align-items-center text-success text-right mr-3">
 							<span className="d-none d-sm-inline">Live </span><div className="blink blnkr bg-success"></div>
 						</div>}
-						{currentQuery.widget_id === 'json.widget' || jsonMode || codeMode ?
+						{((currentQuery.widget_id === 'json.widget' || jsonMode || codeMode) && !widgetConfig) ?
 							('streamingValues' in dataSource && dataSource.streamingValues.length) ?
 								dataSource.streamingValues.map((values, pluginIndex) => {
 									const dateAdded = new Date().getTime()
@@ -647,7 +697,8 @@ ${WidgetComponent.id === 'table.widget' ? '<link href="https://unpkg.com/tabulat
 									config={toJS(query[index].config)}
 								/> :
 							<FullScreen className="widget-display" handle={fullscreenHandle}>
-								<WidgetView
+								<div className="table-striped" style={{'width': '100%', 'height': '100%', 'overflowY': 'scroll'}} id={currentTab === tabs[number].id ? `asdx${currentTab}` : 'x'} />
+								{/* <WidgetView
 									renderFunc={WidgetComponent.renderer}
 									dataSource={dataSource}
 									displayedData={toJS(currentQuery.displayed_data)}
@@ -660,7 +711,7 @@ ${WidgetComponent.id === 'table.widget' ? '<link href="https://unpkg.com/tabulat
 												? fullscreenHandle.exit
 												: fullscreenHandle.enter}
 									/>
-								</WidgetView>
+								</WidgetView> */}
 							</FullScreen>
 						}
 						<QueryErrorIndicator
