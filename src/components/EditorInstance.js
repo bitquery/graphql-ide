@@ -82,7 +82,7 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 			const searchParams = new URL(document.location).searchParams
 			const configID = searchParams.get('config') ? searchParams.get('config') : null
 			if (configID) {
-				
+				updateQuery({ widget_id: 'config.widget' }, index )
 				let configString = await getWidgetConfig(configID)
 				const config = JSON.parse(configString.data.data)
 				// setWidgetConfig( config.reduce((c, f) => c + Object.values(f)[0], '') )
@@ -307,13 +307,13 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 		let indexOfWidget = plugins.map(p => p.id).indexOf(currentQuery.widget_id)
 		const unusablePair = indexOfData < 0 || indexOfWidget < 0
 		let displayed_data = unusablePair ? Object.keys(queryType)[Object.keys(queryType).length - 1] : currentQuery.displayed_data
-		if (unusablePair) {
+		/* if (unusablePair) {
 			updateQuery({
 				displayed_data,
 				widget_id: 'json.widget',
 				saved: currentQuery.id && true
 			}, index)
-		}
+		} */
 		if (currentQuery.query.match(/subscription[^a-zA-z0-9]/gm)) {
 			setDataSource({...dataSource, streamingValues: [], values: ''})
 			const client = wsClient ? wsClient : createClient({
@@ -668,7 +668,7 @@ ${WidgetComponent.id === 'table.widget' ? '<link href="https://unpkg.com/tabulat
 						{wsClean && <div className="blinker-wrapper d-flex align-items-center text-success text-right mr-3">
 							<span className="d-none d-sm-inline">Live </span><div className="blink blnkr bg-success"></div>
 						</div>}
-						{((currentQuery.widget_id === 'json.widget' || jsonMode || codeMode) && !widgetConfig) ?
+						{((currentQuery.widget_id === 'json.widget' || jsonMode || codeMode) ) ?
 							('streamingValues' in dataSource && dataSource.streamingValues.length) ?
 								dataSource.streamingValues.map((values, pluginIndex) => {
 									const dateAdded = new Date().getTime()
