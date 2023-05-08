@@ -10,7 +10,7 @@ import ToolbarButton from './ToolbarButton'
 
 const WidgetEditorControls = observer(
 	function WidgetEditorControls({abortRequest, getResult, model, name, plugins, setDataSource, dataSource, number}) {
-	const { currentQuery, defaultWidget, updateQuery } = QueriesStore
+	const { currentQuery, defaultWidget, updateQuery, schema } = QueriesStore
 	const { toggleMode, jsonMode, codeMode, viewMode, index } = TabsStore
 	const [dataWidgets, setDataWidgets] = useState([]) 
 	const [dataIndexInModel, setDataIndexInModel] = useState(0)
@@ -55,7 +55,7 @@ const WidgetEditorControls = observer(
 
 	const onClick = widget_id => {
 		updateQuery({ widget_id }, index)
-		abortRequest()
+		schema.length && abortRequest()
 	}
 
 	return <div className='d-flex p-2' style={{backgroundColor: '#f6f7f8'}}>

@@ -353,6 +353,7 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 								})
 							} else {
 								setLoading(prev => prev && !prev)
+								console.log(data)
 								widgetInstance.onData(data, true)
 							}
 						},
@@ -391,37 +392,41 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 						throw new Error('Something went wrong')
 					}
 				}).then(async json => {
-					let values = null
-					if ('data' in json) {
-						if (currentQuery.displayed_data && currentQuery.displayed_data !== 'data') {
-							if (currentQuery.data_type === 'flatten') {
-								values = flattenData(json.data)
+						let values = null
+						if ('data' in json) {
+							if (currentQuery.displayed_data && currentQuery.displayed_data !== 'data') {
+								if (currentQuery.data_type === 'flatten') {
+									values = flattenData(json.data)
+								} else {
+									values = getValueFrom(json.data, displayed_data)
+								}
 							} else {
-								values = getValueFrom(json.data, displayed_data)
-							}
-						} else {
-							values = json.data
-							if ('extensions' in json) {
-								values.extensions = json.extensions
+								values = json.data
+								if ('extensions' in json) {
+									values.extensions = json.extensions
+								}
 							}
 						}
-					}
-					currentQuery.id && await logQuery({
-						id: currentQuery.id,
-						account_id: currentQuery.account_id,
-						success: !json.errors,
-						error: JSON.stringify(json.errors)
-					})
-					setDataSource({
-						data: ('data' in json) ? json.data : null,
-						extensions: ('extensions' in json) ? json.extensions : null,
-						displayed_data: displayed_data || '',
-						values,
-						error: ('errors' in json) ? json.errors : null,
-						query: toJS(currentQuery.query),
-						variables: toJS(currentQuery.variables)
-					})
-					if (!('data' in json)) updateQuery({ widget_id: 'json.widget' }, index)
+						currentQuery.id && await logQuery({
+							id: currentQuery.id,
+							account_id: currentQuery.account_id,
+							success: !json.errors,
+							error: JSON.stringify(json.errors)
+						})
+						setDataSource({
+							data: ('data' in json) ? json.data : null,
+							extensions: ('extensions' in json) ? json.extensions : null,
+							displayed_data: displayed_data || '',
+							values,
+							error: ('errors' in json) ? json.errors : null,
+							query: toJS(currentQuery.query),
+							variables: toJS(currentQuery.variables)
+						})
+						if (!('data' in json)) updateQuery({ widget_id: 'json.widget' }, index)
+						if (currentQuery.widget_id !== 'json.widget') {
+							console.log(json.data)
+							widgetInstance.onData(json.data, false)
+						}
 				}).catch(error => {
 					setDataSource({ error: error.message })
 				}).finally(() => {
@@ -431,7 +436,7 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 				})
 		}
 		// eslint-disable-next-line 
-	}, [JSON.stringify(currentQuery), schema[debouncedURL], JSON.stringify(queryTypes), wsClean, dataSource.values])
+	}, [JSON.stringify(currentQuery), schema[debouncedURL], JSON.stringify(queryTypes), wsClean, dataSource.values, widgetInstance])
 
 	const editQueryHandler = useCallback(handleSubject => {
 		if ('query' in handleSubject) {

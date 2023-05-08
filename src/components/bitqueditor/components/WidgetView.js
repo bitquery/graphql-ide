@@ -11,6 +11,9 @@ function WidgetView({ el, config, dataSource, displayedData, children, renderFun
 	}
 	useEffect(async () => {
 		if (widget) {
+			while(ref.current.firstChild) {
+				ref.current.removeChild(ref.current.firstChild)
+			}
 			// const fakeWidget = document.getElementById(el).firstChild
 			// fakeWidget && document.getElementById(el).removeChild(fakeWidget)
 			// let tablevar = typeof renderFunc === 'function' && await renderFunc(dataSource, config, el)
@@ -20,7 +23,7 @@ function WidgetView({ el, config, dataSource, displayedData, children, renderFun
 			setWidgetInstance(widgetInstance)
 		}
 		// eslint-disable-next-line 
-	}, [JSON.stringify(config), JSON.stringify(dataSource), displayedData, widget])
+	}, [JSON.stringify(config), widget])
 	return (
 		<>
 			{children}
