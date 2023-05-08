@@ -6,11 +6,12 @@ import { QueriesStore, TabsStore } from '../../../store/queriesStore'
 import { observer } from 'mobx-react-lite'
 import { getWidgetConfig } from '../../../api/api'
 import JsonWidget from './JsonWidget'
+import ToolbarButton from './ToolbarButton'
 
 const WidgetEditorControls = observer(
-	function WidgetEditorControls({model, name, plugins, setDataSource, dataSource, number}) {
-	const { currentQuery, defaultWidget } = QueriesStore
-	const { toggleMode, jsonMode, codeMode, viewMode } = TabsStore
+	function WidgetEditorControls({abortRequest, getResult, model, name, plugins, setDataSource, dataSource, number}) {
+	const { currentQuery, defaultWidget, updateQuery } = QueriesStore
+	const { toggleMode, jsonMode, codeMode, viewMode, index } = TabsStore
 	const [dataWidgets, setDataWidgets] = useState([]) 
 	const [dataIndexInModel, setDataIndexInModel] = useState(0)
 	/* useEffect(() => {
@@ -52,9 +53,23 @@ const WidgetEditorControls = observer(
 		// eslint-disable-next-line 
 	}, [JSON.stringify(model)])
 
-	return (
-		null
-	)
+	const onClick = widget_id => {
+		updateQuery({ widget_id }, index)
+		abortRequest()
+	}
+
+	return <div className='d-flex p-2' style={{backgroundColor: '#f6f7f8'}}>
+		<ToolbarButton
+			title='JSON'
+			onClick={() => onClick('json.widget')}
+			style={{color: currentQuery.widget_id === 'json.widget' ? 'blue' : '#555'}}
+		/>
+		<ToolbarButton
+			title='Widget'
+			onClick={() => onClick('config.widget')}
+			style={{color: currentQuery.widget_id === 'config.widget' ? 'blue' : '#555'}}
+		/>
+	</div>
 })
 
 export default WidgetEditorControls

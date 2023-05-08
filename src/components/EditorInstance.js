@@ -21,6 +21,7 @@ import {
 import { visit } from 'graphql/language/visitor'
 import { parse as parseGql } from 'graphql/language'
 import JsonPlugin from './bitqueditor/components/JsonWidget'
+import CodePlugin from './bitqueditor/components/CodeEditor'
 import ToolbarComponent from './bitqueditor/components/ToolbarComponent'
 import { TabsStore, QueriesStore, UserStore } from '../store/queriesStore'
 import WidgetEditorControls from './bitqueditor/components/WidgetEditorControls'
@@ -330,27 +331,30 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 					let values = []
 					cleanup = client.subscribe(payload, {
 						next: ({ data, errors }) => {
-							/* setLoading(prev => prev && !prev)
-							if (currentQuery.displayed_data && currentQuery.displayed_data !== 'data') {
-								if (currentQuery.data_type === 'flatten') {
-									values = flattenData(data)
+							if (currentQuery.widget_id === 'json.widget') {
+								setLoading(prev => prev && !prev)
+								if (currentQuery.displayed_data && currentQuery.displayed_data !== 'data') {
+									if (currentQuery.data_type === 'flatten') {
+										values = flattenData(data)
+									} else {
+										values.push(data)
+									}
 								} else {
 									values.push(data)
 								}
+								setDataSource({
+									data: data || null,
+									extensions: null,
+									displayed_data: displayed_data || '',
+									streamingValues: values,
+									error: errors ? errors : null,
+									query: toJS(currentQuery.query),
+									variables: toJS(currentQuery.variables)
+								})
 							} else {
-								values.push(data)
+								setLoading(prev => prev && !prev)
+								widgetInstance.onData(data, true)
 							}
-							setDataSource({
-								data: data || null,
-								extensions: null,
-								displayed_data: displayed_data || '',
-								streamingValues: values,
-								error: errors ? errors : null,
-								query: toJS(currentQuery.query),
-								variables: toJS(currentQuery.variables)
-							}) */
-							setLoading(prev => prev && !prev)
-							widgetInstance.onData(data, true)
 						},
 						error: reject,
 						complete: resolve,
@@ -633,6 +637,8 @@ ${WidgetComponent.id === 'table.widget' ? '<link href="https://unpkg.com/tabulat
 					/>}
 					<div className="workspace__sizechanger" />
 					<WidgetEditorControls
+						abortRequest={abortRequest}
+						getResult={getResult}
 						model={queryTypes}
 						dataSource={dataSource}
 						setDataSource={setDataSource}
@@ -641,7 +647,7 @@ ${WidgetComponent.id === 'table.widget' ? '<link href="https://unpkg.com/tabulat
 						number={number}
 					/>
 					<div className="widget">
-						<JsonPlugin.renderer 
+						<CodePlugin.renderer 
 							values={widgetConfig}
 							pluginIndex={0}
 						/>
