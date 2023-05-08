@@ -297,6 +297,11 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 		if (onCleanUp()) {
 			return 
 		}
+		if (currentQuery.widget_id !== 'json.widget') {
+			while(widgetInstance.container.firstChild) {
+				widgetInstance.container.removeChild(widgetInstance.container.firstChild)
+			}
+		}
 		ReactTooltip.hide(executeButton.current)
 		updateQuery({ points: undefined, graphqlRequested: undefined, saved: currentQuery.saved, gettingPointsCount: 0 }, index)
 		setLoading(true)
@@ -363,8 +368,8 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 									query: toJS(currentQuery.query),
 									variables: toJS(currentQuery.variables)
 								})
-								console.log(data)
-								widgetInstance.onData(data, true)
+								// console.log(data)
+								// widgetInstance.onData(data, true)
 							}
 						},
 						error: reject,
