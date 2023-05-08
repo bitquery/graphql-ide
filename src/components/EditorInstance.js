@@ -65,6 +65,7 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 	const [widgetInstance, setWidgetInstance] = useState(null)
 	const [wsClean, setWsClean] = useState(null)
 	const [wsClient, setWsClient] = useState(null)
+	const [widget, setWidget] = useState(null)
 	const debouncedURL = useDebounce(currentQuery.endpoint_url, 500)
 	const workspace = useRef(null)
 	const overwrap = useRef(null)
@@ -106,13 +107,14 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 					}
 				}
 				// console.log(wcfg)
-				const Widget = eval(`(${config.at(-1)[Object.keys(config.at(-1))[0]]})`)
+				const Widget = `${config.at(-1)[Object.keys(config.at(-1))[0]]}`
+				setWidget(Widget)
 				wcfg += Widget.toString()
 				setWidgetConfig(wcfg)
-				const example = document.getElementById(`asdx${currentTab}`)
+				/*const example =  document.getElementById(`asdx${currentTab}`)
 
 				const widgetInstance = new Widget(example, currentQuery.query)
-				setWidgetInstance(widgetInstance)
+				setWidgetInstance(widgetInstance)*/
 				
 				// console.log(widgetInstance.onData)
 
@@ -425,7 +427,7 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 				})
 		}
 		// eslint-disable-next-line 
-	}, [JSON.stringify(currentQuery), schema[debouncedURL], JSON.stringify(queryTypes), wsClean, dataSource.values])
+	}, [JSON.stringify(currentQuery), schema[debouncedURL], JSON.stringify(queryTypes), wsClean, dataSource.values, widgetInstance])
 
 	const editQueryHandler = useCallback(handleSubject => {
 		if ('query' in handleSubject) {
@@ -698,6 +700,8 @@ ${WidgetComponent.id === 'table.widget' ? '<link href="https://unpkg.com/tabulat
 								/> :
 							<FullScreen className="widget-display" handle={fullscreenHandle}>
 								<WidgetView
+									widget={widget}
+									setWidgetInstance={setWidgetInstance}
 									renderFunc={WidgetComponent.renderer}
 									dataSource={dataSource}
 									displayedData={toJS(currentQuery.displayed_data)}
