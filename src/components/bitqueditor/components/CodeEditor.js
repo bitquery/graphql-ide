@@ -25,7 +25,7 @@ class CodeEditor extends Component {
 
 		this.viewer = CodeMirror(this._node, {
 			lineWrapping: true,
-			value: this.props.values,
+			value: typeof this.props.values === 'string' ? this.props.values : '',
 			readOnly: true,
 			scrollbarStyle: null,
 			theme: 'graphiql',
@@ -51,7 +51,7 @@ class CodeEditor extends Component {
 			if (!this.props.wsClean && this.interval) {
 				clearInterval(this.interval)
 			}
-			if (JSON.stringify(prevProps.values) !== JSON.stringify(this.props.values)) {
+			if (JSON.stringify(prevProps.values) !== JSON.stringify(this.props.values) && typeof this.props.values === 'string') {
 				const value = this.props.mode === 'code' ? await this.props.getCode() : this.formatResult()
 				this.viewer.setValue(value || '')
 				if (value) {
@@ -63,7 +63,7 @@ class CodeEditor extends Component {
 						}
 					}
 				}
-			} else if (prevProps.dataSource.values !== this.props.dataSource.values) {
+			} else if (prevProps.dataSource?.values !== this.props.dataSource?.values) {
 				const value = this.props.mode === 'code' ? await this.props.getCode() : this.formatResult()
 				this.viewer.setValue(value || '')
 			}

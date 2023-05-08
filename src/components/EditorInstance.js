@@ -62,7 +62,6 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 	const [dataSource, setDataSource] = useState({})
 	const [accordance, setAccordance] = useState(true)
 	const [checkoutCode, setCheckOutCode] = useState('')
-	const [widgetConfig, setWidgetConfig] = useState('')
 	const [widgetInstance, setWidgetInstance] = useState(null)
 	const [wsClean, setWsClean] = useState(null)
 	const [wsClient, setWsClient] = useState(null)
@@ -83,7 +82,7 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 			const searchParams = new URL(document.location).searchParams
 			const configID = searchParams.get('config') ? searchParams.get('config') : null
 			if (configID) {
-				updateQuery({ widget_id: 'config.widget' }, index )
+				
 				let configString = await getWidgetConfig(configID)
 				const config = JSON.parse(configString.data.data)
 				// setWidgetConfig( config.reduce((c, f) => c + Object.values(f)[0], '') )
@@ -111,7 +110,8 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 				const Widget = `${config.at(-1)[Object.keys(config.at(-1))[0]]}`
 				setWidget(Widget)
 				wcfg += Widget.toString()
-				setWidgetConfig(wcfg)
+				updateQuery({ widget_id: 'config.widget', config: wcfg }, index )
+				// setWidgetConfig(wcfg)
 				/*const example =  document.getElementById(`asdx${currentTab}`)
 
 				const widgetInstance = new Widget(example, currentQuery.query)
@@ -431,7 +431,7 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 				})
 		}
 		// eslint-disable-next-line 
-	}, [JSON.stringify(currentQuery), schema[debouncedURL], JSON.stringify(queryTypes), wsClean, dataSource.values, widgetInstance])
+	}, [JSON.stringify(currentQuery), schema[debouncedURL], JSON.stringify(queryTypes), wsClean, dataSource.values])
 
 	const editQueryHandler = useCallback(handleSubject => {
 		if ('query' in handleSubject) {
@@ -648,7 +648,7 @@ ${WidgetComponent.id === 'table.widget' ? '<link href="https://unpkg.com/tabulat
 					/>
 					<div className="widget">
 						<CodePlugin.renderer 
-							values={widgetConfig}
+							values={currentQuery.config}
 							pluginIndex={0}
 						/>
 					</div>

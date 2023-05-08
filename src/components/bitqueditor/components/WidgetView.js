@@ -24,7 +24,7 @@ function WidgetView({ el, config, dataSource, displayedData, children, renderFun
 	return (
 		<>
 			{children}
-			{config && 'columns' in config && <CsvIcon onClick={downloadCSV} />}
+			{/* NEED CONDITION FOR CSV DOWNLOAD BUTTON {config && 'columns' in config && <CsvIcon onClick={downloadCSV} />} */}
 			<div ref={ref} className="table-striped" style={{'width': '100%', 'height': '100%', 'overflowY': 'scroll'}} id={el} />
 		</>
 	)
