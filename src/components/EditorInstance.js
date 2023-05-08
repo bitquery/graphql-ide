@@ -697,13 +697,12 @@ ${WidgetComponent.id === 'table.widget' ? '<link href="https://unpkg.com/tabulat
 									config={toJS(query[index].config)}
 								/> :
 							<FullScreen className="widget-display" handle={fullscreenHandle}>
-								<div className="table-striped" style={{'width': '100%', 'height': '100%', 'overflowY': 'scroll'}} id={currentTab === tabs[number].id ? `asdx${currentTab}` : 'x'} />
-								{/* <WidgetView
+								<WidgetView
 									renderFunc={WidgetComponent.renderer}
 									dataSource={dataSource}
 									displayedData={toJS(currentQuery.displayed_data)}
 									config={toJS(query[index].config)}
-									el={currentTab === tabs[number].id ? `asd${currentTab}` : 'x'}
+									el={currentTab === tabs[number].id ? `asdx${currentTab}` : 'x'}
 								>
 									<FullscreenIcon onClick={
 										isMobile ? () => setMobile(false) :
@@ -711,7 +710,7 @@ ${WidgetComponent.id === 'table.widget' ? '<link href="https://unpkg.com/tabulat
 												? fullscreenHandle.exit
 												: fullscreenHandle.enter}
 									/>
-								</WidgetView> */}
+								</WidgetView>
 							</FullScreen>
 						}
 						<QueryErrorIndicator

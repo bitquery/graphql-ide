@@ -15,7 +15,6 @@ function WidgetView({ el, config, dataSource, displayedData, children, renderFun
 		}
 		// eslint-disable-next-line 
 	}, [JSON.stringify(config), JSON.stringify(dataSource), displayedData, renderFunc])
-	if (!dataSource || !displayedData) return (<div></div>)
 	return (
 		<>
 			{children}
