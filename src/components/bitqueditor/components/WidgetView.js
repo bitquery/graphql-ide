@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import CsvIcon from '../../icons/CsvIcon'
 import { QueriesStore } from '../../../store/queriesStore'
 
-function WidgetView({ el, config, dataSource, displayedData, children, renderFunc, widget, setWidgetInstance }) {
+function WidgetView({ el, config, dataSource, displayedData, children, renderFunc, widget, widgetInstance, setWidgetInstance }) {
 	const { currentQuery } = QueriesStore
 	const ref = useRef(null)
 	const [table, setTable] = useState(null)
@@ -21,9 +21,13 @@ function WidgetView({ el, config, dataSource, displayedData, children, renderFun
 			const Widget = eval(`(${widget})`)
 			const widgetInstance = new Widget(ref.current, currentQuery.query)
 			setWidgetInstance(widgetInstance)
+			if (dataSource?.data) {
+				widgetInstance.onData(dataSource.data, false)
+			}
 		}
 		// eslint-disable-next-line 
-	}, [JSON.stringify(config), widget])
+	}, [JSON.stringify(config), JSON.stringify(dataSource.data), widget, currentQuery.widget_id])
+
 	return (
 		<>
 			{children}

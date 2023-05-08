@@ -353,6 +353,16 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 								})
 							} else {
 								setLoading(prev => prev && !prev)
+								values.push(data)
+								setDataSource({
+									data: data || null,
+									extensions: null,
+									displayed_data: displayed_data || '',
+									streamingValues: values,
+									error: errors ? errors : null,
+									query: toJS(currentQuery.query),
+									variables: toJS(currentQuery.variables)
+								})
 								console.log(data)
 								widgetInstance.onData(data, true)
 							}
@@ -422,11 +432,11 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 							query: toJS(currentQuery.query),
 							variables: toJS(currentQuery.variables)
 						})
-						if (!('data' in json)) updateQuery({ widget_id: 'json.widget' }, index)
-						if (currentQuery.widget_id !== 'json.widget') {
+						// if (!('data' in json)) updateQuery({ widget_id: 'json.widget' }, index)
+						/* if (currentQuery.widget_id !== 'json.widget') {
 							console.log(json.data)
 							widgetInstance.onData(json.data, false)
-						}
+						} */
 				}).catch(error => {
 					setDataSource({ error: error.message })
 				}).finally(() => {
@@ -712,6 +722,7 @@ ${WidgetComponent.id === 'table.widget' ? '<link href="https://unpkg.com/tabulat
 							<FullScreen className="widget-display" handle={fullscreenHandle}>
 								<WidgetView
 									widget={widget}
+									widgetInstance={widgetInstance}
 									setWidgetInstance={setWidgetInstance}
 									renderFunc={WidgetComponent.renderer}
 									dataSource={dataSource}
