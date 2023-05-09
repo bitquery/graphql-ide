@@ -407,6 +407,9 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 						throw new Error('Something went wrong')
 					}
 				}).then(async json => {
+						if ('errors' in json) {
+							setLoading(false)
+						}
 						let values = null
 						if ('data' in json) {
 							if (currentQuery.displayed_data && currentQuery.displayed_data !== 'data') {
