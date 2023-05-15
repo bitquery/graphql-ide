@@ -25,7 +25,7 @@ class CodeEditor extends Component {
 
 		this.viewer = CodeMirror(this._node, {
 			lineWrapping: true,
-			value: typeof this.props.values === 'string' ? this.props.values : '',
+			value: this.formatResult(),
 			readOnly: true,
 			scrollbarStyle: null,
 			theme: 'graphiql',
@@ -48,12 +48,9 @@ class CodeEditor extends Component {
 
 	async componentDidUpdate(prevProps) {
 		if (this.viewer) {
-			if (!this.props.wsClean && this.interval) {
-				clearInterval(this.interval)
-			}
-			if (JSON.stringify(prevProps.values) !== JSON.stringify(this.props.values) && typeof this.props.values === 'string') {
-				const value = this.props.mode === 'code' ? await this.props.getCode() : this.formatResult()
-				this.viewer.setValue(value || '')
+			if (JSON.stringify(prevProps.values) !== JSON.stringify(this.props.values)) {
+				const value = this.formatResult()
+				this.viewer.setValue(value)
 				if (value) {
 					const ll = this.viewer.lastLine()
 					for (let i = 0; i < ll; i++) {
@@ -63,9 +60,6 @@ class CodeEditor extends Component {
 						}
 					}
 				}
-			} else if (prevProps.dataSource?.values !== this.props.dataSource?.values) {
-				const value = this.props.mode === 'code' ? await this.props.getCode() : this.formatResult()
-				this.viewer.setValue(value || '')
 			}
 		}
 	}
@@ -76,7 +70,19 @@ class CodeEditor extends Component {
 	}
 
 	formatResult() {
-		return this.props.values
+		let result = ''
+		if (Array.isArray(this.props.values)) {
+			for (let i=0; i<this.props.values.length-1; i++) {
+				for (let functionName in this.props.values[i]) {
+					window[functionName] = eval(`(${this.props.values[i][functionName]})`)
+					result += window[functionName].toString() + '\n'
+				}
+			}
+			const Widget = `${this.props.values.at(-1)[Object.keys(this.props.values.at(-1))[0]]}`
+			this.props.setWidget(Widget)
+			result += Widget.toString()
+		}
+		return result
 	}
 
 	render() {
