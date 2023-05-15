@@ -82,48 +82,12 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 			const searchParams = new URL(document.location).searchParams
 			const configID = searchParams.get('config') ? searchParams.get('config') : null
 			if (configID) {
-				
 				let configString = await getWidgetConfig(configID)
 				const config = JSON.parse(configString.data.data)
-				// setWidgetConfig( config.reduce((c, f) => c + Object.values(f)[0], '') )
-				console.log(config)
-				function renderIco(nameIco){
-					const div = document.createElement('div')
-					const i = document.createElement('i')
-					const icons = {
-					   sender: 'fa fa-sign-in text-success',
-					   receiver: 'fas fa-share-square text-primary',
-					}
-					i.className = icons[nameIco];
-					div.appendChild(i)
-					return div
-				 }
-				let wcfg = `${renderIco.toString()}\n`
-				for (let i=0; i<config.length-1; i++) {
-					for (let functionName in config[i]) {
-						window[functionName] = eval(`(${config[i][functionName]})`)
-						// console.log(window[functionName].toString())
-						wcfg += window[functionName].toString() + '\n'
-					}
-				}
-				// console.log(wcfg)
-				const Widget = `${config.at(-1)[Object.keys(config.at(-1))[0]]}`
-				setWidget(Widget)
-				wcfg += Widget.toString()
-				updateQuery({ widget_id: 'config.widget', config: wcfg }, index )
-				// setWidgetConfig(wcfg)
-				/*const example =  document.getElementById(`asdx${currentTab}`)
-
-				const widgetInstance = new Widget(example, currentQuery.query)
-				setWidgetInstance(widgetInstance)*/
-				
-				// console.log(widgetInstance.onData)
-
+				updateQuery({ widget_id: 'config.widget', config }, index )
 			}
 		}
-		// if (document.getElementById(`asd${currentTab}`)) {
-			gwi()
-		// }
+		gwi()
 	}, [])
 	useEffect(() => {
 		if (currentTab === tabs[number].id) window.dispatchEvent(new Event('resize'))
@@ -673,6 +637,7 @@ ${WidgetComponent.id === 'table.widget' ? '<link href="https://unpkg.com/tabulat
 						<CodePlugin.renderer 
 							values={currentQuery.config}
 							pluginIndex={0}
+							setWidget={setWidget}
 						/>
 					</div>
 				</div>
