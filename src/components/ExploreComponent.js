@@ -46,13 +46,15 @@ const ExploreComponent = observer(function ExploreComponent() {
 				<div className="col-lg-3 mb-3">
 					<div className="card">
 						<div className="card-body">
-							<ul className="list-group list-group-flush">
+							<ul aria-label='of query tags' tabIndex={0} className="list-group list-group-flush">
 								{
 									tagsList.map(({ tag, tag_id, tags_count }) => (
 										<li
 											className={`list-group-item d-flex justify-content-between align-items-center list-group-item-action cursor-pointer ${currentTag === tag ? 'tag-active' : ''}`}
 											key={`${tag_id}-${tags_count}`}
 											onClick={() => handleClick(tag)}
+											role='button'
+											tabIndex={0}
 										>
 											<span>{tag_id !==0 && <i className="bi bi-tag"></i>} { tag } </span>
 											<span className="badge badge-primary badge-pill"> { tags_count } </span>

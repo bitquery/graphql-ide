@@ -25,16 +25,16 @@ const Profile = observer(() => {
 			<UserIcon />
 		</div>
 	) : <Dropdown className={'d-none d-lg-block'}>
-			<a className='link__hire' target='_blank' href='https://discord.gg/EEBVTQnb2E'>
+			<a aria-label='discord' className='link__hire navigation-link-color' target='_blank' href='https://discord.gg/EEBVTQnb2E'>
 				<i className="bi bi-discord"></i>
 			</a>
-			<a className='link__hire' target='_blank' href='https://t.me/bloxy_info/'>
+			<a aria-label='telegram' className='link__hire navigation-link-color' target='_blank' href='https://t.me/bloxy_info/'>
 				<i className="bi bi-telegram"></i>
 			</a>
-			<a className='link__hire' target='_blank' href='https://community.bitquery.io/'>Forum</a>
-			<a className='link__hire' target='_blank' href='https://community.bitquery.io/t/how-to-get-started-with-bitquerys-blockchain-graphql-apis/13'>Getting started</a>
-			<a className='link__hire' target='_blank' href='https://angel.co/company/bitquery/jobs'>We are hiring!</a>
-			<Dropdown.Toggle className="cursor-pointer dropdown-toggler" as={'a'} >
+			<a className='link__hire navigation-link-color' target='_blank' href='https://community.bitquery.io/'>Forum</a>
+			<a className='link__hire navigation-link-color' target='_blank' href='https://community.bitquery.io/t/how-to-get-started-with-bitquerys-blockchain-graphql-apis/13'>Getting started</a>
+			<a className='link__hire navigation-link-color' target='_blank' href='https://angel.co/company/bitquery/jobs'>We are hiring!</a>
+			<Dropdown.Toggle className="cursor-pointer dropdown-toggler" as={'a'} role="button" tabIndex="0" aria-label="account menu">
 				<i className="bi bi-person"></i>
 			</Dropdown.Toggle>
 		

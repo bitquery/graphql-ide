@@ -1752,7 +1752,7 @@ class FieldView extends React.PureComponent<
         : null;
 
     const node = (
-      <div className={className}>
+      <div className={className} role='select' tabIndex={0}>
         <span
           title={field.description}
           style={{
@@ -2208,6 +2208,7 @@ class RootView extends React.PureComponent<
       <div
         id={rootViewElId}
         tabIndex="0"
+        role="list"
         onKeyDown={this._handlePotentialRun}
         style={{
           // The actions bar has its own top border
@@ -2216,6 +2217,7 @@ class RootView extends React.PureComponent<
           paddingBottom: '1em',
         }}>
         <div
+          role="listitem"
           style={{color: styleConfig.colors.keyword, paddingBottom: 4}}
           className="graphiql-operation-title-bar"
           onMouseEnter={() => this.setState({displayTitleActions: true})}
@@ -2235,6 +2237,7 @@ class RootView extends React.PureComponent<
           .sort()
           .map((fieldName: string) => (
             <FieldView
+              role="listitem"
               key={fieldName}
               field={fields[fieldName]}
               selections={selections}

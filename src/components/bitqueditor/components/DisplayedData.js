@@ -61,7 +61,7 @@ const DisplayedData = observer(function DisplayedData({model, dataWidgets, setDa
 			<div className="collapse navbar-collapse" id="navbarSupportedContent">
 				<ul className={'navbar-nav mr-auto ' + (currentQuery.widget_id === 'tradingview.widget' && 'dropup')}>
 					<li className="nav-item dropdown">
-						<a 	className="nav-link dropdown-toggle" 
+						<a 	className="nav-link dropdown-toggle dropdown-toggle-color" 
 							href="# "
 							id="navbarDropdown" 
 							disabled

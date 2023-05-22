@@ -3,14 +3,39 @@
 @import "./components/modal/editDialog.scss";
 @import "./components/codeSnippet.scss";
 
+.skip-to-main-content {
+	left: -999px;
+    position: absolute;
+    top: auto;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    z-index: -999;
+}
+.skip-to-main-content:focus {
+    left: auto;
+    top: auto;
+    width: 30%;
+    height: auto;
+    overflow: auto;
+    margin: 0 35%;
+    padding: 5px;
+    font-size: 20px;
+    outline: 3px solid red;
+    text-align: center;
+    z-index: 999;
+}
 .tag-active, .tag-active:hover {
 	background-color: #ddd;
 }
 .nav-active {
 	color: #000 !important;
 }
+.nav-link.dropdown-toggle.dropdown-toggle-color {
+	color: #4f4f4f;
+}
 .dropdown-toggler {
-	color: rgba(0,0,0,.5);
+	color: rgba(0,0,0,.5);;
 	border: 1px solid #fff;
 	padding: 0.5rem;
 	&:hover {
@@ -131,7 +156,6 @@ body {
 	padding: 10px;
 	border-radius: 5px;
 	border: none;
-	outline: none;
 }
 .p-modal {
 	padding: 10px 0;
@@ -312,6 +336,10 @@ body {
 		}
 	}
 }
+li:focus-visible {
+	outline: 2px solid crimson;
+    border-radius: 3px;
+}
 .graphiql__wrapper {
 	display: none;
 	flex: 1 1 auto;
@@ -389,7 +417,6 @@ body {
 	&__edit {
 		border: none;
 		border-bottom: 1px solid #d7d7d7;
-		outline: none;
 		height: 100%;
 		& + i {
 			opacity: .75;
@@ -542,7 +569,6 @@ body {
 	padding: 8px;
 	margin: 0 5px 0 0;
 	border-radius: 10px;
-	outline: none;
 	&:hover {
 		background-color: #d5d5d5;
 	}
@@ -558,6 +584,9 @@ body {
 		border-bottom: 1px solid #aaa;
 	}
 }
+.navigation-link-color {
+	color: #002aff !important;
+}
 .dashboard {
 	display: none;
 	&.active {
@@ -571,6 +600,9 @@ body {
 	flex-direction: column;
 	&__form {
 		.access-control{
+			legend {
+				display: contents;
+			}
 			&__wrapper {
 				width: 80%;
 				display: flex;
@@ -1062,11 +1094,14 @@ body {
 	border: none;
 	box-sizing: border-box;
 	font-size: 14px;
-	outline: none;
 	padding: 6px 24px 8px 20px;
 	width: 100%;
   }
-  
+  a:focus {
+	border-color: #80bdff;
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+  }
   .error-container {
 	font-weight: bold;
 	left: 0;

@@ -113,6 +113,7 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 			{dashboardOwner && !(!currentQuery.id || !currentQuery.saved) && currentQuery.layout 
 				&& <button type="button" className="topBar__button" onClick={switchMode}>Edit</button>}
 			<ToolbarButton
+				aria-labelledby={currentQuery.id}
 				title='Save'
 				onClick={()=>{toggleModal();toggleEditDialog();}}
 				visible={((currentQuery.account_id===user?.id) || (!currentQuery.id && !currentQuery.account_id)) && !(!!currentQuery?.url && !!currentQuery.id)}
@@ -145,17 +146,20 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 				visible={!!currentQuery.graphqlQueryID || !!currentQuery.url}
 			/>
 			<InputGroup >
-				<Form.Control id="basic-url" aria-describedby="endpoint-url" 
+				<Form.Control id="basic-url" 
+					aria-label="endpoint-url"
 					value={currentQuery.endpoint_url}
 					onChange={handleInputURLChange} 
 				/>
 				{currentQuery.endpoint_url === 'https://streaming.bitquery.io/graphql' && <sup className='text-success'>New</sup>}
 			</InputGroup>
 			{user?.id && query[number].graphqlQueryID && <StatisticsButton number={number} />}
-			<div className="newGallery__topbar" aria-label="Open Documentation Explorer">
-				<DocsIcon className={"docs_icon"+(docExplorerOpen ? " active" : '')} onClick={toggleDocExplorer} data-toggle="tooltip" data-placement="top" title="Tooltip on top" />
-			</div>
-			<i className={"bi bi-code-slash ml-2" + (codeSnippetOpen ? " active" : '')} onClick={toggleCodeSnippet} />
+			<button className="newGallery__topbar" aria-label="Documentation Explorer" onClick={toggleDocExplorer}>
+				<DocsIcon className={"docs_icon"+(docExplorerOpen ? " active" : '')} data-toggle="tooltip" data-placement="top" title="Tooltip on top" />
+			</button>
+			<button className="newGallery__topbar" aria-label="Code Snippet" onClick={toggleCodeSnippet}>
+				<i className={"bi bi-code-slash" + (codeSnippetOpen ? " active" : '')} />
+			</button>
 		</div>
 	</div>
 	return toolbar
