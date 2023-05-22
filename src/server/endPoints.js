@@ -570,7 +570,6 @@ module.exports = function(app, db, redisClient) {
 			res.status(400).send('No user found')
 		}
 	})
-	
 	app.get('/api/getquery/:url', (req, res) => {
 		let sql = `
 			SELECT queries.*, widgets.id as widget_number, widgets.widget_id, widgets.config, widgets.displayed_data, widgets.data_type FROM queries
@@ -624,29 +623,7 @@ module.exports = function(app, db, redisClient) {
 			}
 		)
 	})
-	app.post('/api/widgetconfig', bodyParser.urlencoded({ extended: true }), async (req, res) => {
-		const code = crypto.randomBytes(3).toString('hex')
-		const storageTime = req.account_id ? 10000 : 60*60*24
-		const queryLink = req.body.url
-		await redisClient.set(code, JSON.stringify(req.body), { EX: storageTime })
-		console.log(req.body)
-		if (req.account_id) {
-			res.set('Location', `/${queryLink}?config=${code}`)
-		} else {
-			const fullUrl = req.protocol + '://' + req.get('host') + queryLink
-			res.set('Location', `${process.env.GRAPHQL_ADMIN_URL}/auth/login?redirect_to=${encodeURIComponent(fullUrl)}`)
-		}
-		res.sendStatus(302)
-	})
-	app.get('/api/getwidgetconfig/:id', async (req, res) => {
-		const widgetConfig = await redisClient.get(req.params.id)
-		if (widgetConfig !== null) {
-			console.log('there is some widgetconfig')
-			res.status(200).send(JSON.parse(widgetConfig))
-		} else {
-			res.sendStatus(400)
-		}
-	})
+	
 	app.post('/api/copyquery', async (req, res) => {
 		const queryID = req.body.queryID
 		const queryLink = `${req.protocol}://${req.get('host')}/query/${queryID}`

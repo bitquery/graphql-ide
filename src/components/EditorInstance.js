@@ -21,7 +21,6 @@ import {
 import { visit } from 'graphql/language/visitor'
 import { parse as parseGql } from 'graphql/language'
 import JsonPlugin from './bitqueditor/components/JsonWidget'
-import CodePlugin from './bitqueditor/components/CodeEditor'
 import ToolbarComponent from './bitqueditor/components/ToolbarComponent'
 import { TabsStore, QueriesStore, UserStore } from '../store/queriesStore'
 import WidgetEditorControls from './bitqueditor/components/WidgetEditorControls'
@@ -35,7 +34,7 @@ import FullscreenIcon from './icons/FullscreenIcon'
 import { getIntrospectionQuery, buildClientSchema } from 'graphql'
 import useDebounce from '../utils/useDebounce'
 import WidgetView from './bitqueditor/components/WidgetView'
-import { getCheckoutCode, getWidgetConfig } from '../api/api'
+import { getCheckoutCode } from '../api/api'
 import { flattenData } from './flattenData.js'
 import { stringifyIncludesFunction } from '../utils/common';
 import { GalleryStore } from '../store/galleryStore.js';
@@ -62,10 +61,8 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 	const [dataSource, setDataSource] = useState({})
 	const [accordance, setAccordance] = useState(true)
 	const [checkoutCode, setCheckOutCode] = useState('')
-	const [widgetInstance, setWidgetInstance] = useState(null)
 	const [wsClean, setWsClean] = useState(null)
 	const [wsClient, setWsClient] = useState(null)
-	const [widget, setWidget] = useState(null)
 	const debouncedURL = useDebounce(currentQuery.endpoint_url, 500)
 	const workspace = useRef(null)
 	const overwrap = useRef(null)
@@ -77,18 +74,6 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 
 	const history = useHistory()
 
-	useEffect(() => {
-		const gwi = async () => {
-			const searchParams = new URL(document.location).searchParams
-			const configID = searchParams.get('config') ? searchParams.get('config') : null
-			if (configID) {
-				let configString = await getWidgetConfig(configID)
-				const config = JSON.parse(configString.data.data)
-				updateQuery({ widget_id: 'config.widget', config }, index )
-			}
-		}
-		gwi()
-	}, [])
 	useEffect(() => {
 		if (currentTab === tabs[number].id) window.dispatchEvent(new Event('resize'))
 	}, [currentTab, tabs, number])
@@ -261,11 +246,6 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 		if (onCleanUp()) {
 			return 
 		}
-		if (currentQuery.widget_id !== 'json.widget') {
-			while(widgetInstance.container.firstChild) {
-				widgetInstance.container.removeChild(widgetInstance.container.firstChild)
-			}
-		}
 		ReactTooltip.hide(executeButton.current)
 		updateQuery({ points: undefined, graphqlRequested: undefined, saved: currentQuery.saved, gettingPointsCount: 0 }, index)
 		setLoading(true)
@@ -277,13 +257,13 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 		let indexOfWidget = plugins.map(p => p.id).indexOf(currentQuery.widget_id)
 		const unusablePair = indexOfData < 0 || indexOfWidget < 0
 		let displayed_data = unusablePair ? Object.keys(queryType)[Object.keys(queryType).length - 1] : currentQuery.displayed_data
-		/* if (unusablePair) {
+		if (unusablePair) {
 			updateQuery({
 				displayed_data,
 				widget_id: 'json.widget',
 				saved: currentQuery.id && true
 			}, index)
-		} */
+		}
 		if (currentQuery.query.match(/subscription[^a-zA-z0-9]/gm)) {
 			setDataSource({...dataSource, streamingValues: [], values: ''})
 			const client = wsClient ? wsClient : createClient({
@@ -300,41 +280,25 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 					let values = []
 					cleanup = client.subscribe(payload, {
 						next: ({ data, errors }) => {
-							if (currentQuery.widget_id === 'json.widget') {
-								setLoading(prev => prev && !prev)
-								if (currentQuery.displayed_data && currentQuery.displayed_data !== 'data') {
-									if (currentQuery.data_type === 'flatten') {
-										values = flattenData(data)
-									} else {
-										values.push(data)
-									}
+							setLoading(prev => prev && !prev)
+							if (currentQuery.displayed_data && currentQuery.displayed_data !== 'data') {
+								if (currentQuery.data_type === 'flatten') {
+									values = flattenData(data)
 								} else {
 									values.push(data)
 								}
-								setDataSource({
-									data: data || null,
-									extensions: null,
-									displayed_data: displayed_data || '',
-									streamingValues: values,
-									error: errors ? errors : null,
-									query: toJS(currentQuery.query),
-									variables: toJS(currentQuery.variables)
-								})
 							} else {
-								setLoading(prev => prev && !prev)
 								values.push(data)
-								setDataSource({
-									data: data || null,
-									extensions: null,
-									displayed_data: displayed_data || '',
-									streamingValues: values,
-									error: errors ? errors : null,
-									query: toJS(currentQuery.query),
-									variables: toJS(currentQuery.variables)
-								})
-								// console.log(data)
-								// widgetInstance.onData(data, true)
 							}
+							setDataSource({
+								data: data || null,
+								extensions: null,
+								displayed_data: displayed_data || '',
+								streamingValues: values,
+								error: errors ? errors : null,
+								query: toJS(currentQuery.query),
+								variables: toJS(currentQuery.variables)
+							})
 						},
 						error: reject,
 						complete: resolve,
@@ -371,44 +335,37 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 						throw new Error('Something went wrong')
 					}
 				}).then(async json => {
-						if ('errors' in json) {
-							setLoading(false)
-						}
-						let values = null
-						if ('data' in json) {
-							if (currentQuery.displayed_data && currentQuery.displayed_data !== 'data') {
-								if (currentQuery.data_type === 'flatten') {
-									values = flattenData(json.data)
-								} else {
-									values = getValueFrom(json.data, displayed_data)
-								}
+					let values = null
+					if ('data' in json) {
+						if (currentQuery.displayed_data && currentQuery.displayed_data !== 'data') {
+							if (currentQuery.data_type === 'flatten') {
+								values = flattenData(json.data)
 							} else {
-								values = json.data
-								if ('extensions' in json) {
-									values.extensions = json.extensions
-								}
+								values = getValueFrom(json.data, displayed_data)
+							}
+						} else {
+							values = json.data
+							if ('extensions' in json) {
+								values.extensions = json.extensions
 							}
 						}
-						currentQuery.id && await logQuery({
-							id: currentQuery.id,
-							account_id: currentQuery.account_id,
-							success: !json.errors,
-							error: JSON.stringify(json.errors)
-						})
-						setDataSource({
-							data: ('data' in json) ? json.data : null,
-							extensions: ('extensions' in json) ? json.extensions : null,
-							displayed_data: displayed_data || '',
-							values,
-							error: ('errors' in json) ? json.errors : null,
-							query: toJS(currentQuery.query),
-							variables: toJS(currentQuery.variables)
-						})
-						// if (!('data' in json)) updateQuery({ widget_id: 'json.widget' }, index)
-						/* if (currentQuery.widget_id !== 'json.widget') {
-							console.log(json.data)
-							widgetInstance.onData(json.data, false)
-						} */
+					}
+					currentQuery.id && await logQuery({
+						id: currentQuery.id,
+						account_id: currentQuery.account_id,
+						success: !json.errors,
+						error: JSON.stringify(json.errors)
+					})
+					setDataSource({
+						data: ('data' in json) ? json.data : null,
+						extensions: ('extensions' in json) ? json.extensions : null,
+						displayed_data: displayed_data || '',
+						values,
+						error: ('errors' in json) ? json.errors : null,
+						query: toJS(currentQuery.query),
+						variables: toJS(currentQuery.variables)
+					})
+					if (!('data' in json)) updateQuery({ widget_id: 'json.widget' }, index)
 				}).catch(error => {
 					setDataSource({ error: error.message })
 				}).finally(() => {
@@ -418,7 +375,7 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 				})
 		}
 		// eslint-disable-next-line 
-	}, [JSON.stringify(currentQuery), schema[debouncedURL], JSON.stringify(queryTypes), wsClean, dataSource.values, widgetInstance])
+	}, [JSON.stringify(currentQuery), schema[debouncedURL], JSON.stringify(queryTypes), wsClean, dataSource.values])
 
 	const editQueryHandler = useCallback(handleSubject => {
 		if ('query' in handleSubject) {
@@ -624,8 +581,6 @@ ${WidgetComponent.id === 'table.widget' ? '<link href="https://unpkg.com/tabulat
 					/>}
 					<div className="workspace__sizechanger" />
 					<WidgetEditorControls
-						abortRequest={abortRequest}
-						getResult={getResult}
 						model={queryTypes}
 						dataSource={dataSource}
 						setDataSource={setDataSource}
@@ -633,13 +588,12 @@ ${WidgetComponent.id === 'table.widget' ? '<link href="https://unpkg.com/tabulat
 						plugins={plugins}
 						number={number}
 					/>
-					<div className="widget">
-						<CodePlugin.renderer 
-							values={currentQuery.config}
-							pluginIndex={0}
-							setWidget={setWidget}
-						/>
-					</div>
+					{(currentQuery.displayed_data && isLoaded) ? <WidgetComponent.editor
+						model={queryTypes}
+						displayedData={toJS(query[index].displayed_data)}
+						config={toJS(query[index].config)}
+						setConfig={setConfig}
+					/> : <div className="widget" />}
 				</div>
 				<div className={'widget-display widget-display-wrapper' +
 					(isMobile ? ' widget-display-wrapper-fullscreen' : '')}
@@ -662,7 +616,7 @@ ${WidgetComponent.id === 'table.widget' ? '<link href="https://unpkg.com/tabulat
 						{wsClean && <div className="blinker-wrapper d-flex align-items-center text-success text-right mr-3">
 							<span className="d-none d-sm-inline">Live </span><div className="blink blnkr bg-success"></div>
 						</div>}
-						{((currentQuery.widget_id === 'json.widget' || jsonMode || codeMode) ) ?
+						{currentQuery.widget_id === 'json.widget' || jsonMode || codeMode ?
 							('streamingValues' in dataSource && dataSource.streamingValues.length) ?
 								dataSource.streamingValues.map((values, pluginIndex) => {
 									const dateAdded = new Date().getTime()
@@ -694,14 +648,11 @@ ${WidgetComponent.id === 'table.widget' ? '<link href="https://unpkg.com/tabulat
 								/> :
 							<FullScreen className="widget-display" handle={fullscreenHandle}>
 								<WidgetView
-									widget={widget}
-									widgetInstance={widgetInstance}
-									setWidgetInstance={setWidgetInstance}
 									renderFunc={WidgetComponent.renderer}
 									dataSource={dataSource}
 									displayedData={toJS(currentQuery.displayed_data)}
 									config={toJS(query[index].config)}
-									el={currentTab === tabs[number].id ? `asdx${currentTab}` : 'x'}
+									el={currentTab === tabs[number].id ? `asd${currentTab}` : 'x'}
 								>
 									<FullscreenIcon onClick={
 										isMobile ? () => setMobile(false) :

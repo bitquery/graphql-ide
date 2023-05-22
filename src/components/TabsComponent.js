@@ -81,12 +81,10 @@ const TabsComponent = observer(() => {
 				setIsLoaded()
 			} else {
 				async function updateTabs() {
-					const searchParams = new URL(document.location).searchParams
-					const configID = searchParams.get('config') ? searchParams.get('config') : null
 					const { data } = await getWidget(match.params.queryurl)
 					if (typeof data === 'object') {
 						if (query.map(query => query.id).indexOf(data.id) === -1) {
-							updateQuery({ ...data, config: !configID && JSON.parse(data.config), widget_id: currentQuery.widget_id, javascript: JSON.parse(data.javascript), saved: true }, index, data.id)
+							updateQuery({ ...data, config: JSON.parse(data.config), javascript: JSON.parse(data.javascript), saved: true }, index, data.id)
 							setQueryName({ [currentTab]: data.name })
 							setIsLoaded()
 						}
@@ -94,7 +92,7 @@ const TabsComponent = observer(() => {
 						const { data } = await getQuery(match.params.queryurl)
 						if (typeof data === 'object') {
 							if (query.map(query => query.id).indexOf(data.id) === -1) {
-								updateQuery({ ...data, config: !configID && JSON.parse(data.config), widget_id: currentQuery.widget_id, saved: true }, index, data.id)
+								updateQuery({ ...data, config: JSON.parse(data.config), saved: true }, index, data.id)
 								setQueryName({ [currentTab]: data.name })
 								setIsLoaded()
 							}
