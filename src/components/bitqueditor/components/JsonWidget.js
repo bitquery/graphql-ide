@@ -12,6 +12,7 @@ class JsonWidget extends Component {
 
 	async componentDidMount() {
 		const CodeMirror = require('codemirror');
+		require('codemirror/addon/display/autorefresh');
 		require('codemirror/addon/fold/foldgutter');
 		require('codemirror/addon/fold/brace-fold');
 		require('codemirror/addon/dialog/dialog');
@@ -24,6 +25,7 @@ class JsonWidget extends Component {
 		let value = this.props.mode === 'code' && await this.props.getCode()
 
 		this.viewer = CodeMirror(this._node, {
+			autoRefresh: true,
 			lineWrapping: true,
 			value: value || this.formatResult() || '',
 			readOnly: true,
