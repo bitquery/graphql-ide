@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useHistory, useRouteMatch } from 'react-router-dom'
-import { useToasts } from 'react-toast-notifications'
+import { useToasts, DefaultToast } from 'react-toast-notifications'
 import modalStore from '../../store/modalStore'
 import { QueriesStore, TabsStore } from '../../store/queriesStore'
 import copy from 'copy-to-clipboard'
@@ -96,7 +96,7 @@ const EditDialog = observer(function EditDialog({active}) {
 				renameCurrentTab(name)
 				params.url && history.push(`/${params.url}`)
 				updateQuery({tags: tags.join(',')}, index)
-				data.msg && addToast(data.msg, {appearance: 'success'})
+				data.msg && addToast(<div id={data.id}>{data.msg}</div>, {appearance: 'success'})
 				closeHandler()
 			} else { 
 				addToast(data.data.msg, {appearance: 'error'})
@@ -131,15 +131,17 @@ const EditDialog = observer(function EditDialog({active}) {
 			</Modal.Header>
 			<Modal.Body>
 				<Form.Group>
-					<Form.Label>Query name (required)</Form.Label>
-					<Form.Control ref={nameInput} type="email" 
+					<Form.Label htmlFor="queryName">Query name (required)</Form.Label>
+					<Form.Control ref={nameInput} type="email"
+						id="queryName"
 						value={name==='New Query' ? '' : name}
 						onChange={queryNameHandler} 
 					/>
 				</Form.Group>
 				<Form.Group>
-					<Form.Label>Description (optional)</Form.Label>
+					<Form.Label htmlFor="queryDescription">Description (optional)</Form.Label>
 					<Form.Control as="textarea" rows={4}
+						id="queryDescription"
 						value={description}
 						onChange={e => setDescription(e.target.value)} 
 					/>
@@ -161,12 +163,10 @@ const EditDialog = observer(function EditDialog({active}) {
 							onChange={e => setInputTagValue(e.target.value)}
 						/>
 				</div>
-				<div className="access-control flex"
+				<fieldset className="access-control flex"
 					style={{'justifyContent': 'space-evenly', 'width': '100%'}}
 				>
-					<div className="access-control__title">
-						Access control:
-					</div>
+					<legend className="access-control__title">Access control:</legend>
 					<div className="access-control__controls" style={{'marginBottom': '1rem'}}>
 						<div className="form-check">
 							<input className="form-check-input" type="radio" id="exampleRadios1" 
@@ -183,12 +183,13 @@ const EditDialog = observer(function EditDialog({active}) {
 							</label>
 						</div>
 					</div>
-				</div>
+				</fieldset>
 				<Form.Group className="d-flex justify-content-between">
 					<Button variant="secondary" onClick={closeHandler} >Cancel</Button>
 					<span data-tip={!name ? 'Name is required' : ''} data-for="savequerybutton">
 						<Button 
 							variant="primary"
+							style={{backgroundColor: '#002aff'}}
 							onClick={saveHandler}
 							disabled={(!nameInput.current.value && !name) || name==='New Query' ? true : false}
 						>Save</Button>

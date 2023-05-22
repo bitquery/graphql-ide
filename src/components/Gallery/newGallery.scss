@@ -13,10 +13,11 @@
 	}
 	&__topbar {
 		min-height: 44px;
+		background-color: #fff;
+		border: none;
 		display: flex;
 		align-items: center;
 		border-bottom: 1px solid #d0d0d0;
-		padding-left: 14px;
 		i:hover {
 			color: #000 !important;
 		} 

@@ -642,7 +642,7 @@ div.CodeMirror-lint-tooltip > * + * {
 
 
 .CodeMirror-linenumber {
-  color: #999;
+  color: #4f4f4f;
   min-width: 20px;
   padding: 0 3px 0 5px;
   text-align: right;

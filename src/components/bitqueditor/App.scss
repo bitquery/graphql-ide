@@ -161,7 +161,6 @@ $top-bar-height: 44px;
       margin: 0 10px 0;
     }
     .columns_number {
-      outline: none;
       background: none;
       border: none;
       width: auto;
@@ -172,7 +171,6 @@ $top-bar-height: 44px;
   }
 }
 button.columns_number {
-  outline: none;
   background: none;
   border: none;
   width: auto;
@@ -291,7 +289,6 @@ button.columns_number {
   right: 0;
   left: calc(50% - 25px);
   border: none;
-  outline: none !important;
   background: #c7c7c7;
   background-size: 25px 25px;
   background-position-x: 60%;
@@ -387,7 +384,6 @@ div.CodeMirror span.CodeMirror-matchingbracket {
   }
   .endpointURL {
     border: none;
-    outline: none;
     font-size: 14px;
     flex: 1 1 auto
   }

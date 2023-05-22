@@ -118,6 +118,7 @@ export default class VariableEditor extends Component {
 		return (
 			<section
 				className="variable-editor"
+				aria-label="Variables Editor"
 				ref={node => {
 				this._node = node;
 				}}

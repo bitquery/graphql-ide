@@ -72,13 +72,13 @@ const QueriesList = observer(function QueriesList() {
 	}
 
 	return (
-		<div className="col-lg-9 mb-3">
-			<ul className="list-group">
+		<div className="col-lg-9 mb-3" aria-label='list of public queries'>
+			<ul className="list-group" role='list' tabIndex={0}>
 				{list && list.map((item, i, arr) => {
 					if (arr.length <= queriesOnPage || i + 1 !== arr.length) {
 						return (
 							<li key={item.id} className="list-group-item list-group-item-action">
-								<div className="d-flex w-100 justify-content-between cursor-pointer" onClick={()=>handleClick(item)}>
+								<div role='button' tabIndex={0} className="d-flex w-100 justify-content-between cursor-pointer" onClick={()=>handleClick(item)}>
 									<div className='w-100'>
 										<div>
 											<span className="mr-2">{item.name}</span>
@@ -98,10 +98,10 @@ const QueriesList = observer(function QueriesList() {
 			<nav className="mt-3">
 				<ul className="pagination justify-content-center">
 					<li className={`page-item ${!currentPage ? 'disabled' : null}`} onClick={prevPage}>
-						<a className="page-link">&larr;</a>
+						<a className="page-link" aria-label='previous page'>&larr;</a>
 					</li>
 					<li className={`page-item ${!thereIsNext ? 'disabled' : null}`} onClick={nextPage}>
-						<a className="page-link" href="#">&rarr;</a>
+						<a className="page-link" href="#" aria-label='next page'>&rarr;</a>
 					</li>
 				</ul>
 			</nav>

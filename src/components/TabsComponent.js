@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react-lite'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useCallback } from 'react'
 import { useHistory, useRouteMatch } from 'react-router-dom'
 import { getQuery, getWidget, getTransferedQuery, getQueryByID } from '../api/api'
@@ -150,11 +150,13 @@ const TabsComponent = observer(() => {
 		}
 	}
 
-	return <div className="tabs">
-			<ul className="nav nav-tabs" >
+	return <div className="tabs" id="tabs">
+			<ul className="nav nav-tabs" role="tablist" aria-label="List of query tabs" >
 				{
 					tabs.map((tab, i) => (
 						<li
+							role="tab"
+							aria-selected={currentTab === tab.id ? 'true' : 'false'}
 							className="nav-item" key={i}
 							onClick={() => currentTab !== tab.id && switchTabHandler(tab.id)}
 						>
@@ -166,21 +168,23 @@ const TabsComponent = observer(() => {
 								{
 									(editTabName && currentTab === tab.id)
 										? <>
-											<input type="text"
+											<input 
+												autoFocus
+												type="text"
 												value={queryName ? queryName[currentTab] : 'New Query'}
 												className="tabs__edit"
 												onChange={handleEdit}
 											/>
 											<i className="fas fa-check" onClick={renameQueryHandler} />
 										</>
-										: <span className={'nav-link-title ' + ((currentTab === tab.id && !(!!currentQuery?.url && !!currentQuery.id)) ? 'cursor-edit' : undefined)}
+										: <span role='button' aria-label='name' tabIndex={0} className={'nav-link-title ' + ((currentTab === tab.id && !(!!currentQuery?.url && !!currentQuery.id)) ? 'cursor-edit' : undefined)}
 											onClick={() => (currentTab === tab.id && (!currentQuery.id || currentQuery.account_id === user.id)) && renameQueryHandler(currentTab, i)}
 										>
 											{(('saved' in query[i]) && query[i].saved) || !('saved' in query[i])
 												? tab.name : `*${tab.name}`}
 										</span>
 								}
-								<i className="tab__close bi bi-x" onClick={e => removeTabHandler(i, e)} />
+								<i role="button" aria-label='close tab' tabIndex={currentTab === tab.id ? "0" : "1"} className="tab__close bi bi-x" onClick={e => removeTabHandler(i, e)} />
 							</a>
 						</li>
 					))
@@ -188,7 +192,7 @@ const TabsComponent = observer(() => {
 				<li
 					className="nav-item"
 					onClick={addNewTabHandler}
-				><a href="# " className="nav-link nav-link-add"><i className="tab__add bi bi-plus" /></a></li>
+				><a href="# " role="button" aria-label="add new tab" className="nav-link nav-link-add"><i className="tab__add bi bi-plus" /></a></li>
 			</ul>
 		</div>
 	
