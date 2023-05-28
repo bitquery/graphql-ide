@@ -695,12 +695,10 @@ ${WidgetComponent.id === 'table.widget' ? '<link href="https://unpkg.com/tabulat
 							<FullScreen className="widget-display" handle={fullscreenHandle}>
 								<WidgetView
 									widget={widget}
-									widgetInstance={widgetInstance}
 									setWidgetInstance={setWidgetInstance}
-									renderFunc={WidgetComponent.renderer}
 									dataSource={dataSource}
-									displayedData={toJS(currentQuery.displayed_data)}
 									config={toJS(query[index].config)}
+									loading={loading}
 									el={currentTab === tabs[number].id ? `asdx${currentTab}` : 'x'}
 								>
 									<FullscreenIcon onClick={
