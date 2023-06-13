@@ -276,6 +276,9 @@ button.columns_number {
 .sizeChanger {
   border: 5px solid #f3f3f3;
   cursor: col-resize;
+  &:hover {
+    border: 5px solid #f0f0f0;
+  }
 }
 .execute-button {
   position: absolute;

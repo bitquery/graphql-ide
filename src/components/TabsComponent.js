@@ -84,6 +84,7 @@ const TabsComponent = observer(() => {
 					const searchParams = new URL(document.location).searchParams
 					const configID = searchParams.get('config') ? searchParams.get('config') : null
 					const { data } = await getWidget(match.params.queryurl)
+					configID && delete data.variables
 					if (typeof data === 'object') {
 						if (query.map(query => query.id).indexOf(data.id) === -1) {
 							updateQuery({ ...data, config: !configID && JSON.parse(data.config), widget_id: currentQuery.widget_id, javascript: JSON.parse(data.javascript), saved: true }, index, data.id)
@@ -92,6 +93,7 @@ const TabsComponent = observer(() => {
 						}
 					} else {
 						const { data } = await getQuery(match.params.queryurl)
+						configID && delete data.variables
 						if (typeof data === 'object') {
 							if (query.map(query => query.id).indexOf(data.id) === -1) {
 								updateQuery({ ...data, config: !configID && JSON.parse(data.config), widget_id: currentQuery.widget_id, saved: true }, index, data.id)

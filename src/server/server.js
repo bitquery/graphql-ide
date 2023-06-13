@@ -47,7 +47,7 @@ redisClient.connect().then(async () => {
 
 	const authMiddleware = async (req, res, next) => {
 		const account_id = await getAccountIdFromSession(req)
-		if (account_id || req.path === '/api/querytransfer' || req.path.startsWith('/api/getquery/')) {
+		if (account_id || req.path === '/api/querytransfer' || req.path.startsWith('/api/getquery/' || req.path === '/api/widgetconfig')) {
 			req.account_id = +account_id
 			return next()
 		} else {
