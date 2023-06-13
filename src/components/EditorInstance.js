@@ -84,7 +84,8 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 			if (configID) {
 				let configString = await getWidgetConfig(configID)
 				const config = JSON.parse(configString.data.data)
-				updateQuery({ widget_id: 'config.widget', config }, index )
+				const variables = configString.data.variables
+				updateQuery({ widget_id: 'config.widget', config, variables }, index )
 			}
 		}
 		gwi()
