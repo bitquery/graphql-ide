@@ -12,6 +12,7 @@ class CodeEditor extends Component {
 
 	async componentDidMount() {
 		const CodeMirror = require('codemirror');
+		require('codemirror/addon/display/autorefresh');
 		require('codemirror/addon/fold/foldgutter');
 		require('codemirror/addon/fold/foldcode');
 		require('codemirror/addon/fold/brace-fold');
@@ -24,6 +25,7 @@ class CodeEditor extends Component {
 		require('codemirror-graphql/results/mode');
 
 		this.viewer = CodeMirror(this._node, {
+			autoRefresh: true,
 			lineWrapping: true,
 			value: this.formatResult(),
 			readOnly: true,

@@ -35,7 +35,7 @@ import FullscreenIcon from './icons/FullscreenIcon'
 import { getIntrospectionQuery, buildClientSchema } from 'graphql'
 import useDebounce from '../utils/useDebounce'
 import WidgetView from './bitqueditor/components/WidgetView'
-import { getCheckoutCode, getWidgetConfig } from '../api/api'
+import { getCheckoutCode } from '../api/api'
 import { flattenData } from './flattenData.js'
 import { stringifyIncludesFunction } from '../utils/common';
 import { GalleryStore } from '../store/galleryStore.js';
@@ -77,19 +77,6 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 
 	const history = useHistory()
 
-	useEffect(() => {
-		const gwi = async () => {
-			const searchParams = new URL(document.location).searchParams
-			const configID = searchParams.get('config') ? searchParams.get('config') : null
-			if (configID) {
-				let configString = await getWidgetConfig(configID)
-				const config = JSON.parse(configString.data.data)
-				const variables = configString.data.variables
-				updateQuery({ widget_id: 'config.widget', config, variables }, index )
-			}
-		}
-		gwi()
-	}, [])
 	useEffect(() => {
 		if (currentTab === tabs[number].id) window.dispatchEvent(new Event('resize'))
 	}, [currentTab, tabs, number])
@@ -381,7 +368,7 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 								if (currentQuery.data_type === 'flatten') {
 									values = flattenData(json.data)
 								} else {
-									values = getValueFrom(json.data, displayed_data)
+									values = getValueFrom(json.data, displayed_data || 'data')
 								}
 							} else {
 								values = json.data
@@ -589,6 +576,7 @@ ${WidgetComponent.id === 'table.widget' ? '<link href="https://unpkg.com/tabulat
 				<button className="execute-button"
 					data-tip={(loading || wsClean) ? 'Interrupt' : 'Execute query (Ctrl-Enter)'}
 					ref={executeButton}
+					disabled={schemaLoading}
 					onClick={loading ? abortRequest : getResult}
 				>
 					{loading
@@ -696,6 +684,7 @@ ${WidgetComponent.id === 'table.widget' ? '<link href="https://unpkg.com/tabulat
 							<FullScreen className="widget-display" handle={fullscreenHandle}>
 								<WidgetView
 									widget={widget}
+									widgetInstance={widgetInstance}
 									setWidgetInstance={setWidgetInstance}
 									dataSource={dataSource}
 									config={toJS(query[index].config)}

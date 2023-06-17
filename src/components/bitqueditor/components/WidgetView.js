@@ -3,7 +3,7 @@ import CsvIcon from '../../icons/CsvIcon'
 import { QueriesStore } from '../../../store/queriesStore'
 import { observer } from 'mobx-react'
 
-const WidgetView = observer(function WidgetView({ el, config, dataSource, children, widget, setWidgetInstance, loading }) {
+const WidgetView = observer(function WidgetView({ el, config, dataSource, children, widget, widgetInstance, setWidgetInstance, loading }) {
 	const { currentQuery } = QueriesStore
 	const ref = useRef(null)
 	const [table, setTable] = useState(null)
@@ -11,7 +11,11 @@ const WidgetView = observer(function WidgetView({ el, config, dataSource, childr
 		table.download('csv', 'data.csv')
 	}
 	useEffect(async () => {
-		if (widget && !loading) {
+		if (widgetInstance && !loading && ref.current.children.length) {
+			if (dataSource?.data) {
+				widgetInstance.onData(dataSource.data, true)
+			}
+		} else if (widget && !ref.current.children.length) {
 			//temp for fit height in IDE
 			const explicitHeight = widget.match(/height:.*\d(px| +|)(,|)( +|)$/gm)
 			if (explicitHeight) {

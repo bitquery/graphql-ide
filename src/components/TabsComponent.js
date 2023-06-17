@@ -1,8 +1,8 @@
 import { observer } from 'mobx-react-lite'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useCallback } from 'react'
 import { useHistory, useRouteMatch } from 'react-router-dom'
-import { getQuery, getWidget, getTransferedQuery, getQueryByID } from '../api/api'
+import { getQuery, getTransferedQuery, getQueryByID, getWidgetConfig } from '../api/api'
 import { TabsStore, QueriesStore, UserStore } from '../store/queriesStore'
 import handleState from '../utils/handleState'
 import useEventListener from '../utils/useEventListener'
@@ -83,23 +83,25 @@ const TabsComponent = observer(() => {
 				async function updateTabs() {
 					const searchParams = new URL(document.location).searchParams
 					const configID = searchParams.get('config') ? searchParams.get('config') : null
-					const { data } = await getWidget(match.params.queryurl)
-					configID && delete data.variables
+					const { data } = await getQuery(match.params.queryurl)
 					if (typeof data === 'object') {
 						if (query.map(query => query.id).indexOf(data.id) === -1) {
-							updateQuery({ ...data, config: !configID && JSON.parse(data.config), widget_id: currentQuery.widget_id, javascript: JSON.parse(data.javascript), saved: true }, index, data.id)
+							let patch = {
+								config: JSON.parse(data.config),
+								widget_id: currentQuery.widget_id,
+								saved: true
+							}
+							if (configID) {
+								let configString = await getWidgetConfig(configID)
+								const config = JSON.parse(configString.data.data)
+								const variables = configString.data.variables
+								patch.widget_id = 'config.widget'
+								patch.config = config
+								patch.variables = variables
+							}
+							updateQuery({ ...data, ...patch }, index, data.id)
 							setQueryName({ [currentTab]: data.name })
 							setIsLoaded()
-						}
-					} else {
-						const { data } = await getQuery(match.params.queryurl)
-						configID && delete data.variables
-						if (typeof data === 'object') {
-							if (query.map(query => query.id).indexOf(data.id) === -1) {
-								updateQuery({ ...data, config: !configID && JSON.parse(data.config), widget_id: currentQuery.widget_id, saved: true }, index, data.id)
-								setQueryName({ [currentTab]: data.name })
-								setIsLoaded()
-							}
 						}
 					}
 				}

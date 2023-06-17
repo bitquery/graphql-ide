@@ -75,31 +75,31 @@ const ControlPanel = observer(function ControlPanel() {
 					<input value={search} onChange={e=>setSearch(e.target.value)} className="form-control form-control-sm mr-sm-2" type="search" placeholder="Search Queries" aria-label="Search" />
 				</form>
 				<ul className="navbar-nav mr-auto mt-2 mt-lg-0">
-					<li className='nav-item' tabindex='-1'>
+					<li className='nav-item' tabIndex='-1'>
 						<Link className={`nav-link ${active === 1 ? 'nav-active' : 'navigation-link-color'}`} to='/' onClick={() => onClick(currentQuery.name || 'New Query')}  ><i className="bi bi-play mr-2"></i>Develop</Link>
 					</li>
-					<li className='nav-item' tabindex='-1'>
+					<li className='nav-item' tabIndex='-1'>
 						<Link className={`nav-link ${active === 2 ? 'nav-active' : 'navigation-link-color'}`} to={`/explore/All%20queries`} onClick={() => onClick('Explore')} ><i className="bi bi-terminal mr-2"></i>Explore</Link>
 					</li>
-					<li className='nav-item' tabindex='-1'>
+					<li className='nav-item' tabIndex='-1'>
 						<Link className={`nav-link ${active === 3 ? 'nav-active' : 'navigation-link-color'}`} to={`/myqueries/All%20queries`} onClick={() => onClick('My Queries')}><i className="bi bi-star mr-2"></i>My Queries</Link>
 					</li>
-					{(user?.children_count || user?.ancestry) && <li className='nav-item' tabindex='-1'>
+					{(user?.children_count || user?.ancestry) && <li className='nav-item' tabIndex='-1'>
 						<Link className={`nav-link ${active === 4 ? 'nav-active' : 'navigation-link-color'}`} to={`/team/All%20queries`} onClick={() => onClick('Team')}><i className="bi bi-people mr-2"></i>Team</Link>
 					</li>}
-					<li className="nav-item d-lg-none" tabindex='-1'>
+					<li className="nav-item d-lg-none" tabIndex='-1'>
 						<a className="nav-link navigation-link-color" href="https://discord.gg/EEBVTQnb2E"><i className="bi bi-discord">Discord</i></a>
 					</li>
-					<li className="nav-item d-lg-none" tabindex='-1'>
+					<li className="nav-item d-lg-none" tabIndex='-1'>
 						<a className="nav-link navigation-link-color" href="https://t.me/bloxy_info/"><i className="bi bi-telegram mr-2"></i>Telegram</a>
 					</li>
-					<li className="nav-item d-lg-none" tabindex='-1'>
+					<li className="nav-item d-lg-none" tabIndex='-1'>
 						<a className="nav-link navigation-link-color" href="https://community.bitquery.io/">Forum</a>
 					</li>
-					<li className="nav-item d-lg-none" tabindex='-1'>
+					<li className="nav-item d-lg-none" tabIndex='-1'>
 						<a className="nav-link navigation-link-color" href="https://community.bitquery.io/t/how-to-get-started-with-bitquerys-blockchain-graphql-apis/13">Getting started</a>
 					</li>
-					<li className="nav-item d-lg-none" tabindex='-1'>
+					<li className="nav-item d-lg-none" tabIndex='-1'>
 						<a className="nav-link navigation-link-color" href="https://angel.co/company/bitquery/jobs">We are hiring!</a>
 					</li>
 					{ user?.role === 'admin' && <li className="nav-item d-lg-none">
