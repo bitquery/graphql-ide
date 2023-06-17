@@ -273,7 +273,7 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 			}, index)
 		} */
 		if (currentQuery.query.match(/subscription[^a-zA-z0-9]/gm)) {
-			setDataSource({...dataSource, streamingValues: [], values: ''})
+			setDataSource({...dataSource, streamingValues: [], values: '', error: null})
 			const client = wsClient ? wsClient : createClient({
 				url: currentQuery.endpoint_url.replace('http', 'ws'),
 				shouldRetry: () => false
@@ -336,6 +336,7 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 			} catch (error) {
 				console.log(error)
 				setDataSource({ ...dataSource, error })
+				setLoading(false)
 				setWsClean(null)
 			} finally {
 				setLoading(false)
@@ -343,7 +344,7 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 				ReactTooltip.hide(executeButton.current)				
 			}
 		} else {
-			setDataSource({...dataSource, values: '', streamingValues: []})
+			setDataSource({...dataSource, values: '', streamingValues: [], error: null})
 			fetcher({ query: currentQuery.query, variables: currentQuery.variables })
 				.then(response => {
 					if (response.status === 200) {
@@ -359,21 +360,23 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 						throw new Error('Something went wrong')
 					}
 				}).then(async json => {
+					let values
 						if ('errors' in json) {
 							setLoading(false)
-						}
-						let values = null
-						if ('data' in json) {
-							if (currentQuery.displayed_data && currentQuery.displayed_data !== 'data') {
-								if (currentQuery.data_type === 'flatten') {
-									values = flattenData(json.data)
+						} else {
+							values = null
+							if ('data' in json) {
+								if (currentQuery.displayed_data && currentQuery.displayed_data !== 'data') {
+									if (currentQuery.data_type === 'flatten') {
+										values = flattenData(json.data)
+									} else {
+										values = getValueFrom(json.data, displayed_data || 'data')
+									}
 								} else {
-									values = getValueFrom(json.data, displayed_data || 'data')
-								}
-							} else {
-								values = json.data
-								if ('extensions' in json) {
-									values.extensions = json.extensions
+									values = json.data
+									if ('extensions' in json) {
+										values.extensions = json.extensions
+									}
 								}
 							}
 						}
