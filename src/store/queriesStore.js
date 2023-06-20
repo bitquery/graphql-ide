@@ -24,11 +24,11 @@ class User {
 			this.setUser(data.user[0])
 			const searchParams = new URL(document.location).searchParams
 			const endpoint_url = searchParams.get('endpoint') ? searchParams.get('endpoint') : data.user[0].graphql_legacy_url
+			console.log(endpoint_url)
 			QueriesStore.updateQuery({ endpoint_url }, 0)
 		} catch (error) {
 			this.setUser(undefined)
-			window.dispatchEvent(new Event('unauth'))
-			console.log(error.response.data)
+			console.log(error.response?.data)
 		}
 	}
 

@@ -435,13 +435,7 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 		setAccordance(false)
 		// eslint-disable-next-line 
 	}, [user, schema[debouncedURL], queryTypes, index])
-	const setConfig = (config) => {
-		if (number === index) {
-			if (JSON.stringify(currentQuery.config) !== JSON.stringify(config, stringifyIncludesFunction)) {
-				updateQuery({ config }, index)
-			}
-		}
-	}
+	
 	const fetcher = (graphQLParams) => {
 		abortController.current = new AbortController()
 		let key = user ? user.key : null

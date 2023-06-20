@@ -28,6 +28,7 @@ const ExploreComponent = observer(function ExploreComponent() {
 				console.log(error)
 			}
 		}
+		console.log('hui')
 		user && onload()
 	}, [queryJustSaved, user, location.pathname])
 

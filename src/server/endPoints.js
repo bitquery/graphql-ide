@@ -567,7 +567,10 @@ module.exports = function(app, db, redisClient) {
 			}]
 			res.status(200).send({user: userSend})
 		} else {
-			res.status(400).send('No user found')
+			res.status(200).send({user: [{
+				graphql_legacy_url: process.env.GRAPHQL_LEGACY_URL,
+				graphql_url: process.env.GRAPHQL_URL
+			}]})
 		}
 	})
 	
