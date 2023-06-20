@@ -46,21 +46,11 @@ redisClient.connect().then(async () => {
 	)
 
 	const authMiddleware = async (req, res, next) => {
-		console.log(req.path)
-		const notSecurePaths = ['taggedqueries\/All%20queries\/+\d', 'querytransfer', 'getquery\/.+', 'widgetconfig', 'user', 'tags']
 		const account_id = await getAccountIdFromSession(req)
-		if (req.path === '/') {
-			console.log('1')
-			if ( isNaN(account_id) ) {
-				res.set('Location', `/explore/All%20queries`)
-				res.sendStatus(302)
-			}
-		} else if (notSecurePaths.some(pathRegEx => new RegExp(`\/${pathRegEx}`, 'i').test(req.path)) || req.path === '/explore/All%20queries') {
-			console.log('2')
-			req.account_id = isNaN(account_id) ? 'NaN' : +account_id
+		if (account_id || req.path === '/api/querytransfer' || req.path.startsWith('/api/getquery/' || req.path === '/api/widgetconfig')) {
+			req.account_id = +account_id
 			return next()
 		} else {
-			console.log('3')
 			const fullUrl = req.protocol + '://' + req.get('host') + req.originalUrl
 			res.set('Location', `${process.env.GRAPHQL_ADMIN_URL}/auth/login?redirect_to=${encodeURIComponent(fullUrl)}`)
 			res.sendStatus(302)
