@@ -48,6 +48,7 @@ const NewGallery = observer(function NewGallery() {
 				title={'Builder'}
 				schema={schema[currentQuery.endpoint_url]}
 				query={currentQuery.query}
+				user={user}
 				onEdit={query=>updateQuery({query}, index)}
 				explorerIsOpen={true}
 				getDefaultScalarArgValue={getDefaultScalarArgValue}

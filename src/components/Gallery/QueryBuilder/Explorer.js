@@ -30,6 +30,7 @@ import {
   visit,
 } from 'graphql';
 
+
 import type {
   ArgumentNode,
   DefinitionNode,
@@ -2329,13 +2330,15 @@ class Explorer extends React.PureComponent<Props, State> {
     }
   };
 
+  
   render() {
     const {schema, query, makeDefaultArg} = this.props;
 
     if (!schema) {
       return (
         <div style={{fontFamily: 'sans-serif'}} className="error-container">
-          No Schema Available
+          <p>No Schema Available</p>
+          <p>Please <a href={`${this.props.user?.graphql_admin_url}/auth/login?redirect_to=${window.location.href}`}>Sign In</a> To Try API</p>
         </div>
       );
     }

@@ -551,7 +551,7 @@ module.exports = function(app, db, redisClient) {
 			AND ak.active = true`,
 			[req.account_id])
 		if (results.length) {
-			let userSend = [{
+			let user = [{
 				id: results[0].id,
 				key: results[0].key,
 				email: results[0].email,
@@ -565,11 +565,13 @@ module.exports = function(app, db, redisClient) {
 				graphql_legacy_url: process.env.GRAPHQL_LEGACY_URL,
 				graphql_url: process.env.GRAPHQL_URL
 			}]
-			res.status(200).send({user: userSend})
+			res.status(200).send({ user })
 		} else {
 			res.status(200).send({user: [{
 				graphql_legacy_url: process.env.GRAPHQL_LEGACY_URL,
-				graphql_url: process.env.GRAPHQL_URL
+				graphql_url: process.env.GRAPHQL_URL,
+				graphql_admin_url: process.env.GRAPHQL_ADMIN_URL,
+				key: 'key'
 			}]})
 		}
 	})

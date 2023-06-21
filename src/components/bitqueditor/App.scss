@@ -407,6 +407,7 @@ div.CodeMirror span.CodeMirror-matchingbracket {
   height: 30px;
 }
 .docExplorerWrap {
+  position: relative;
   .doc-explorer-contents {
     display: contents;
     input {

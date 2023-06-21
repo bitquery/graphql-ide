@@ -1103,16 +1103,19 @@ li:focus-visible {
     box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
   }
   .error-container {
+	position: relative;
 	font-weight: bold;
 	left: 0;
 	letter-spacing: 1px;
 	opacity: 0.5;
-	position: absolute;
 	right: 0;
 	text-align: center;
 	text-transform: uppercase;
 	top: 50%;
 	transform: translate(0, -50%);
+	a {
+		color: #002aff;
+	}
   }
   .docExplorerHide {
 	cursor: pointer;
