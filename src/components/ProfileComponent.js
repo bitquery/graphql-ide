@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react'
 import { observer } from 'mobx-react-lite'
-import ModalStore from '../store/modalStore'
 import { UserStore } from '../store/queriesStore'
 import UserIcon from './icons/UserIcon'
 import { Dropdown } from 'react-bootstrap'
@@ -8,21 +7,18 @@ import { Dropdown } from 'react-bootstrap'
 const Profile = observer(() => {
 
 	const { getUser, user } = UserStore
-	const { toggleModal, toggleLogin } = ModalStore
 
-	const clickHandler = () => {
-		toggleModal()
-		toggleLogin()
-	}
 	useEffect(() => {
 		getUser()
 		// eslint-disable-next-line 
 	}, [])
 
-	return !user ? (
-		<div className="flex profile__menu d-none d-lg-block" onClick={clickHandler}>
-			<a className="profile__email" href="# ">Login</a>
-			<UserIcon />
+	return !user?.id ? (
+		<div className="flex profile__menu d-none d-lg-block" >
+			<a className="profile__email" href={`${user?.graphql_admin_url}/auth/login?redirect_to=${window.location.href}`}>
+				Login
+				<UserIcon />
+			</a>
 		</div>
 	) : <Dropdown className={'d-none d-lg-block'}>
 			<a aria-label='discord' className='link__hire navigation-link-color' target='_blank' href='https://discord.gg/EEBVTQnb2E'>

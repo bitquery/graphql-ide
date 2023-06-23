@@ -81,9 +81,9 @@ const ControlPanel = observer(function ControlPanel() {
 					<li className='nav-item' tabIndex='-1'>
 						<Link className={`nav-link ${active === 2 ? 'nav-active' : 'navigation-link-color'}`} to={`/explore/All%20queries`} onClick={() => onClick('Explore')} ><i className="bi bi-terminal mr-2"></i>Explore</Link>
 					</li>
-					<li className='nav-item' tabIndex='-1'>
+					{user?.id && <li className='nav-item' tabIndex='-1'>
 						<Link className={`nav-link ${active === 3 ? 'nav-active' : 'navigation-link-color'}`} to={`/myqueries/All%20queries`} onClick={() => onClick('My Queries')}><i className="bi bi-star mr-2"></i>My Queries</Link>
-					</li>
+					</li>}
 					{(user?.children_count || user?.ancestry) && <li className='nav-item' tabIndex='-1'>
 						<Link className={`nav-link ${active === 4 ? 'nav-active' : 'navigation-link-color'}`} to={`/team/All%20queries`} onClick={() => onClick('Team')}><i className="bi bi-people mr-2"></i>Team</Link>
 					</li>}
@@ -102,21 +102,24 @@ const ControlPanel = observer(function ControlPanel() {
 					<li className="nav-item d-lg-none" tabIndex='-1'>
 						<a className="nav-link navigation-link-color" href="https://angel.co/company/bitquery/jobs">We are hiring!</a>
 					</li>
+					{!user?.id && <li className="nav-item d-lg-none">
+						<a className="nav-link navigation-link-color" href={`${user?.graphql_admin_url}/auth/login?redirect_to=${window.location.href}`}>Login</a>
+					</li>}
 					{ user?.role === 'admin' && <li className="nav-item d-lg-none">
 						<a className="nav-link navigation-link-color" href={`${user?.graphql_admin_url}/admin/accounts`}>Admin</a>
 					</li>}
-					<li className="nav-item d-lg-none">
+					{user?.id && <li className="nav-item d-lg-none">
 						<a className="nav-link navigation-link-color" href={`${user?.graphql_admin_url}/team/members/new`}>Invite team member</a>
-					</li>
-					<li className="nav-item d-lg-none">
+					</li>}
+					{user?.id && <li className="nav-item d-lg-none">
 						<a className="nav-link navigation-link-color" href={`${user?.graphql_admin_url}/user/account`}>Account</a>
-					</li>
-					<li className="nav-item d-lg-none">
+					</li>}
+					{user?.id && <li className="nav-item d-lg-none">
 						<a className="nav-link navigation-link-color" href={`${user?.graphql_admin_url}/user/api_key`}>API key</a>
-					</li>
-					<li className="nav-item d-lg-none">
+					</li>}
+					{user?.id && <li className="nav-item d-lg-none">
 						<a className="nav-link navigation-link-color" href={`${user?.graphql_admin_url}/auth/logout`}>Logout</a>
-					</li>
+					</li>}
 				</ul>
 				<ProfileComponent />
 			</div>
