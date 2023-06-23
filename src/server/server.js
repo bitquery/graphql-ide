@@ -47,17 +47,11 @@ redisClient.connect().then(async () => {
 
 	const authMiddleware = async (req, res, next) => {
 		const account_id = await getAccountIdFromSession(req)
-		if (account_id || req.path === '/api/querytransfer' || req.path.startsWith('/api/getquery/' || req.path === '/api/widgetconfig')) {
-			req.account_id = +account_id
-			return next()
-		} else {
-			const fullUrl = req.protocol + '://' + req.get('host') + req.originalUrl
-			res.set('Location', `${process.env.GRAPHQL_ADMIN_URL}/auth/login?redirect_to=${encodeURIComponent(fullUrl)}`)
-			res.sendStatus(302)
-		}
+		req.account_id = isNaN(account_id) ? 0 : +account_id
+		return next()
 	}
 
-	// app.use(authMiddleware)
+	app.use(authMiddleware)
 	app.enable('trust proxy');
 
 	require('./endPoints')(app, db, redisClient)
