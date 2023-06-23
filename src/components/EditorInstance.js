@@ -239,6 +239,10 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 	const WidgetComponent = indexx >= 0 ? plugins[indexx] : plugins[0]
 
 	const getResult = useCallback(async () => {
+		if (!user?.id) {
+			window.location = `${user?.graphql_admin_url}/auth/login?redirect_to=${window.location.href}`
+			return
+		}
 		const onCleanUp = () => {
 			if (wsClean) {
 				wsClean.f()
@@ -409,7 +413,7 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 				})
 		}
 		// eslint-disable-next-line 
-	}, [JSON.stringify(currentQuery), schema[debouncedURL], JSON.stringify(queryTypes), wsClean, dataSource.values, widgetInstance])
+	}, [JSON.stringify(currentQuery), schema[debouncedURL], JSON.stringify(queryTypes), wsClean, dataSource.values, widgetInstance, user?.id])
 
 	const editQueryHandler = useCallback(handleSubject => {
 		if ('query' in handleSubject) {
@@ -481,7 +485,8 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 						setSchemaLoading(false)
 						setErrorLoading(false)
 					}).catch(error => {
-						addToast(error.message, { appearance: 'error' })
+						const message = /401 Authorization Required/.test(error.message) ? '401 Authorization Required' : error.message
+						addToast(message, { appearance: 'error' })
 						setSchemaLoading(false)
 						setErrorLoading(true)
 						if (error.message === '401') {
@@ -584,7 +589,7 @@ ${WidgetComponent.id === 'table.widget' ? '<link href="https://unpkg.com/tabulat
 						height={25}
 						width={25}
 					/>
-						: errorLoading ?
+						: errorLoading && user?.id ?
 							<ErrorIcon fill={'#FF2D00'} /> : wsClean ? <StopIcon /> :
 								<PlayIcon fill={accordance ? '#eee' : '#14ff41'} />
 					}
