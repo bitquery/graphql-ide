@@ -2338,7 +2338,7 @@ class Explorer extends React.PureComponent<Props, State> {
       return (
         <div style={{fontFamily: 'sans-serif'}} className="error-container">
           <p>No Schema Available</p>
-          <p>Please <a href={`${this.props.user?.graphql_admin_url}/auth/login?redirect_to=${window.location.href}`}>Sign In</a> To Try API</p>
+          {!this.props.user?.id && <p>Please <a href={`${this.props.user?.graphql_admin_url}/auth/login?redirect_to=${window.location.href}`}>Sign In</a> To Try API</p>}
         </div>
       );
     }
