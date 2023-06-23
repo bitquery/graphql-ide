@@ -112,12 +112,12 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 			{!tagListIsOpen &&<i className="bi bi-chevron-double-right cursor-pointer ml-2" onClick={toggleTagsList} />}
 			{dashboardOwner && !(!currentQuery.id || !currentQuery.saved) && currentQuery.layout 
 				&& <button type="button" className="topBar__button" onClick={switchMode}>Edit</button>}
-			<ToolbarButton
+			{user?.id && <ToolbarButton
 				aria-labelledby={currentQuery.id}
 				title='Save'
 				onClick={()=>{toggleModal();toggleEditDialog();}}
 				visible={((currentQuery.account_id===user?.id) || (!currentQuery.id && !currentQuery.account_id)) && !(!!currentQuery?.url && !!currentQuery.id)}
-			/>
+			/>}
 			{!currentQuery.saved && currentQuery.layout && <button type="button" className="topBar__button" onClick={cancelHandle}>Cancel</button>}
 			{dashboardOwner && currentQuery.layout &&
 				<div 
