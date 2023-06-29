@@ -2,7 +2,7 @@
 
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
    	<url>
-		<loc>https://www.ide.bitquery.io/</loc>
+		<loc>https://ide.bitquery.io/</loc>
 		<lastmod>2023-06-20</lastmod>
    	</url>
    	<url>
@@ -21653,4 +21653,1604 @@
 			<loc>https://ide.bitquery.io/Latest-Transfers-of-Token-with-Coinbase</loc>
 			<lastmod>2023-06-19</lastmod>
 		</url>
-</urlset> 
+<url>
+					<loc>https://ide.bitquery.io/explore/ethereum</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/dexTrades</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/transfers</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/EVM</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/transactions</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/address</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/MyQuery</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/eth</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/bitcoin</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/bsc</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/smartContractCalls</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/solana</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/coinpath</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/blocks</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/arguments</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/evm</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/tron</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/cardano</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/smartContractEvents</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/subscription</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/matic</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/DEXTrades</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/Transfers</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/inputs</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/combined</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/BalanceUpdates</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/binance</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/cosmos</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/outputs</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/algorand</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/network</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/flow</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/avalanche</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/nft</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/filecoin</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/ripple</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/elrond</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/search</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/DEXTradeByTokens</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/addressStats</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/explorer</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/moonbeam</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/validatorUpdates</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/trades</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/Events</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/messages</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/eos</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/GetCandleData</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/conflux</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/uniswap</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/stellar</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/velas</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/hedera</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/userRequests</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/system</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/terra</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/cosmoshub</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/Calls</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/Transactions</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/getFirstTxData</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/balance</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/testpriz</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/balances</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/celo</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/instructions</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/cronos</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/price</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/tezos</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/date</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/LRG%20COIN</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/subject</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/gas</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/fantom</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/utilities</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/LRG</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/LRG%20TOKEN</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/subscribeTrading</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/transfer</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/Int</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/bitcash</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/events</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/LARGE%20CHAIN</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/mint</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/NFT</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/ERC20</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/pair</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/contracts</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/a</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/String</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/klaytn</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/everscale</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/Uniswap</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/calls</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/smart%20contract</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/block</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/totalunique</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/harmony</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/transaction</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/activeAddresses</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/difficulty</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/TokenMoves</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/pool</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/realtime</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/top10</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/Balance</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/volume</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/graph</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/blockRewards</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/usd</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/dex</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/nfts</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/ethTransfers</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/sankey</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/lp</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/GetRawTransfers</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/fees</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/MarketCap</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/myQuery</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/tokens</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/ATCSteps</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/collections</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/approve</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/stats</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/bitcoinsv</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/archive</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/GetTransfersHeights</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/DappInteractions</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/uniswapv3</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/advt</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/input</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/HoldersQuery</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/null</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/BitcoinHash</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/trade</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/token</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/Input</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/getAllTransactions</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/GetAllTransactions</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/lrg%20coin</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/instructionAccounts</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/diem</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/ohlc</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/lrg%20token</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/whale</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/okb</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/DEX</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/BoundedPriceChanges</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/GetTopGainers</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/myq</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/activePeriodInformation</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/getTradingData</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/approvefilter</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/holders</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/receiver</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/orders</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/balanceUpdates</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/Wallet</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/hourly</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/fragment</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/limitOf</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/inbound</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/GetWalletBalanceWithHistory</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/%23eth</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/list</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/eth2</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/subscribeTrade</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/SampleQuery</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/litecoin</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/mint%20account</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/usdc</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/Sayon</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/change</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/ethclassic</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/pancake</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/baseCurrency</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/GetPoolsOfToken</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/fee</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/dextrades</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/of</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/Blocks</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/attestations</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/getQuotePrice</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/chart</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/weth</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/pancakeswap</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/smartcontracts</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/token%20holder</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/EosGetAllTransfers</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/getBalance</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/getSolTransactions</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/tx</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/moonbirds</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/qqqqq</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/getBars</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/amount</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/getTokenPriceUSDT</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/transaction%20hash</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/quoteCurrency</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/activePeriodInfo</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/bscOHLC</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/dogecoin</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/Metamask</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/USD</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/spender</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/filter</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/range</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/large%20chain</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/Karmaverse</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/operations</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/signature</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/AllProducts</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/CSV</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/axies</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/burn</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/latest</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/getPrices</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/signatures</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/GetAxieBriefList</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/GetTransactions</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/currency</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/QuickswapSwapsQuery</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/limitBy</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/streaming</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/CURLcode</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/gmx</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/transactionPayloadSignatures</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/method</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/MyQueryquery</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/test</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/DailyActiveUser</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/blacklist</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/RealTimeBlocks</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/receivertokens</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/%23bug</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/total</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/GetAddressThroughput</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/candlesBitquery</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/verify</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/outbound</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/Transaction</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/balancer</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/goerli</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/GetDailyVolumeValue</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/const</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/metrics</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/MyTestAccount</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/exchange</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/prices</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/Whale</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/deposits</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/STATS</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/references</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/address_stats</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/as</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/GetAddressTransactions</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/BalanceQuery</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/Cardano</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/transations</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/GetHolders</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/contract</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/progra</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/You</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/initialBitquery</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/Holders</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/generic</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/%23gas</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/asd</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/totalvolume</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/GetAddresses</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/voluntaryExits</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/LRGTOKEN</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/TransactionsByAddress</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/smartcontract</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/ChartDetails</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/balanceupdate</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/GetOHLC</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/PairCreated</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/proposer</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/ZendeskQuery</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/there</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/ETH</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/getAccountBalances</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/%23goerli</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/asda</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/GetAllStablecoinPairsCreatedForDex</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/walletTransactions</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/Lawyer%20Ai%20</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/smartcontractcalls</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/CollectWalletTx</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/health</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/mints</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/Pairs</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/proposerSlashings</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/blocksize</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/usdt</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/Solana</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/sat</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/%23hedera</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/alias</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/LookForSetAuthorityInstruction</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/TransfersBase</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/success</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/ContractCreation</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/bigint</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/PancakeSquadBuys</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/qqq</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/account</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/blur</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/SolanaBlockRange</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/schema</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/%23token</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/aliasing</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/Blur</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/GetAllTransfers</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/close_account</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/ethpow</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/payments</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/Transfrs</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/successfulTransactionsCount</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/DAY</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/heimdall</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/GetSolanaFirstTransactionHeight</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/count</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/Placeholder</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/fetchHistoricalPrice</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/token%20holders</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/EthLatestBalances</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/IntrospectionQuery</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/24h%20volume</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/BootstrapPairLinks</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/avax</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/GetAllWalletBalance</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/ltc</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/xflkdmf%3B</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/MelloFellow</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/event</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/plugin</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/TxAllInstructionsInTransfer</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/solidity</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/susbcription</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/binancesmartchain</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/hello%20world</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/txfees</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/GetTokenPairQuotePrice</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/create</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/Polygon</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/EthTransfers</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/validator</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/Is</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/opcode</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/Token</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/getEthBalances</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/searchSmartContractAddress</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/approval</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/average</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/getTotalPoolVolume</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/transaction%20sender</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/GetAnnotatedAddress</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/market%20cap</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/eventFields</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/poocoin</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/swap</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/historical</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/typename</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/Price</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/top</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/EthereumNetwork</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/bsv</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/validatorBalance</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/dot</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/transactionAuthorizers</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/GetAnnotatedAddresses</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/MyNewQuery</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/Unique</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/history</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/unattributed</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/GetTradesForAddress</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/crosschain</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/need</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/QUERY</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/filter%20dex</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/%23ERC20</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/top%20tokens</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/options</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/TopHolders</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/AllTX</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/CURL</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/glmr</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/transactionEnvelopeSignatures</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/conditions</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/pragma</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/DEXVolume</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/uniq</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/needle</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/%23blance</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/address%20info</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/FetchTokenTransfers</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/Trades</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+<url>
+					<loc>https://ide.bitquery.io/explore/BIT</loc>
+					<lastmod>2023-06-29</lastmod>
+				</url>
+</urlset>
