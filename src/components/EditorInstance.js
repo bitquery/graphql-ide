@@ -228,11 +228,18 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 	}
 
 	useEffect(() => {
-		if (number === index && !currentQuery.saved) {
+		if (number === index && schema[currentQuery.endpoint_url]) {
 			const model = getQueryTypes(query[index].query)
+			let keywords = []
+			for (const [key, value] of Object.entries(model)) {
+				if (value?.name?.value) {
+					keywords.push(value.name.value)
+				}
+			}
+			document.querySelector('meta[name="keywords"]').setAttribute('content', [...new Set(keywords)].join(', '))
 			setQueryTypes(model)
 		}
-	}, [currentQuery.data_type, currentQuery.saved, dataSource.values, dataSource.streamingValues, schema[currentQuery.endpoint_url]])
+	}, [schema[currentQuery.endpoint_url]])
 
 	const plugins = useMemo(() => [JsonPlugin, tradingView, ...vegaPlugins, ...graphPlugins, ...timeChartPlugins, tablePlugin], [])
 	let indexx = plugins.map(plugin => plugin.id).indexOf(currentQuery.widget_id)

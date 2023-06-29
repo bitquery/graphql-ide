@@ -22,7 +22,11 @@ const ExploreComponent = observer(function ExploreComponent() {
 				const { data } = await getTagsList(queryListType)
 				setTagsList(data)
 				if (location.pathname) {
-					setCurrentTag(location.pathname.split('/').at(-1))
+					const tag = location.pathname.split('/').at(-1)
+					setCurrentTag(tag)
+					document.querySelector('meta[name="keywords"]').setAttribute('content', `${tag}, queries, query, explore ${tag}, explore ${tag} queries, ${tag} queries`)
+					document.querySelector('meta[name="description"]').setAttribute('content', `Explore ${tag} queries`)
+					document.title = `Explore ${tag} queries`
 				}
 			} catch (error) {
 				console.log(error)
