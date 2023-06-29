@@ -8,6 +8,7 @@ import handleState from '../utils/handleState'
 import useEventListener from '../utils/useEventListener'
 import GraphqlIcon from './icons/GraphqlIcon'
 import { GalleryStore } from '../store/galleryStore'
+import { generateTags } from '../utils/generateTags'
 
 const TabsComponent = observer(() => {
 	const history = useHistory()
@@ -101,6 +102,10 @@ const TabsComponent = observer(() => {
 							}
 							updateQuery({ ...data, ...patch }, index, data.id)
 							setQueryName({ [currentTab]: data.name })
+							if (!user.id) {
+								const keywords = generateTags(data.query, data.variables)
+								document.querySelector('meta[name="keywords"]').setAttribute('content', keywords)
+							}
 							setIsLoaded()
 						}
 					}

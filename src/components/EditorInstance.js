@@ -44,7 +44,6 @@ import { useHistory } from 'react-router-dom';
 import { useToasts } from 'react-toast-notifications'
 import { createClient } from "graphql-ws"
 import StopIcon from './icons/StopIcon.js';
-import { generateTags } from '../utils/generateTags.js';
 
 const EditorInstance = observer(function EditorInstance({ number }) {
 	const { addToast } = useToasts()
@@ -229,10 +228,6 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 	}
 
 	useEffect(() => {
-		const keywords = generateTags(currentQuery.query, currentQuery.variables)
-		if (number === index) {
-			document.querySelector('meta[name="keywords"]').setAttribute('content', keywords)
-		}
 		if (number === index && schema[currentQuery.endpoint_url]) {
 			const model = getQueryTypes(query[index].query)
 			let keywords = []
