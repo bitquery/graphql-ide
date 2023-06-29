@@ -236,7 +236,7 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 					keywords.push(value.name.value)
 				}
 			}
-			document.querySelector('meta[name="keywords"]').setAttribute('content', [...new Set(keywords)].join(', '))
+			keywords.length && document.querySelector('meta[name="keywords"]').setAttribute('content', [...new Set(keywords)].join(', '))
 			setQueryTypes(model)
 		}
 	}, [schema[currentQuery.endpoint_url]])

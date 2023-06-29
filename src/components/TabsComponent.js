@@ -104,7 +104,7 @@ const TabsComponent = observer(() => {
 							setQueryName({ [currentTab]: data.name })
 							if (!user.id) {
 								const keywords = generateTags(data.query, data.variables)
-								document.querySelector('meta[name="keywords"]').setAttribute('content', keywords)
+								keywords && document.querySelector('meta[name="keywords"]').setAttribute('content', keywords)
 							}
 							setIsLoaded()
 						}
