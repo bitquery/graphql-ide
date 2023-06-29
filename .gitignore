@@ -117,3 +117,4 @@ build/
 api.http
 .vscode
 launch.json
+static/
