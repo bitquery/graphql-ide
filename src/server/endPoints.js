@@ -68,10 +68,11 @@ module.exports = function(app, db, redisClient) {
 	
 	const handleTags = async (query_id, tags, res, msg, update = false, url) => {
 		if (tags) {
+			const date = new Date(new Date()).toISOString().split('T')[0]
 			let newTagsXML = ''
 			let newUrl = url ? `\n<url>
 	<loc>https://ide.bitquery.io/${encodeURIComponent(url)}</loc>
-	<lastmod>2023-06-29</lastmod>
+	<lastmod>${date}</lastmod>
 </url>` : ''
 			for (const tag of tags) {
 				if (update) await query('DELETE FROM tags_to_queries WHERE query_id = ?', [query_id])
