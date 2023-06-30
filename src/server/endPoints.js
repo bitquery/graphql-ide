@@ -70,7 +70,7 @@ module.exports = function(app, db, redisClient) {
 		if (tags) {
 			let newTagsXML = ''
 			let newUrl = url ? `\n<url>
-	<loc>https://www.ide.bitquery.io/${encodeURIComponent(url)}</loc>
+	<loc>https://ide.bitquery.io/${encodeURIComponent(url)}</loc>
 	<lastmod>2023-06-29</lastmod>
 </url>` : ''
 			for (const tag of tags) {
@@ -81,7 +81,7 @@ module.exports = function(app, db, redisClient) {
 					await query('INSERT INTO tags_to_queries SET ?', { query_id, tag_id })
 					const date = new Date(new Date()).toISOString().split('T')[0]
 					newTagsXML += `\n<url>
-	<loc>https://www.ide.bitquery.io/explore/${encodeURIComponent(tag)}</loc>
+	<loc>https://ide.bitquery.io/explore/${encodeURIComponent(tag)}</loc>
 	<lastmod>${date}</lastmod>
 </url>`
 				} else {
