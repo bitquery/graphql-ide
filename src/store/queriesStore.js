@@ -193,6 +193,7 @@ class Queries {
 				this.query[index].url = null
 			}
 		}
+		if (params.preQuery) this.query[index].preQuery = params.preQuery
 		this.setCurrentQuery(index)
 	}
 	removeQuery = index => {

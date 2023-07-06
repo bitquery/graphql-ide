@@ -96,9 +96,11 @@ const TabsComponent = observer(() => {
 								let configString = await getWidgetConfig(configID)
 								const config = JSON.parse(configString.data.data)
 								const variables = configString.data.variables
+								const preQuery = configString.data.preQuery
 								patch.widget_id = 'config.widget'
 								patch.config = config
 								patch.variables = variables
+								patch.preQuery = preQuery
 							}
 							updateQuery({ ...data, ...patch }, index, data.id)
 							setQueryName({ [currentTab]: data.name })
