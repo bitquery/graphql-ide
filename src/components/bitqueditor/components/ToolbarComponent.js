@@ -154,6 +154,13 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 				{currentQuery.endpoint_url === 'https://streaming.bitquery.io/graphql' && <sup className='text-success'>New</sup>}
 			</InputGroup>
 			{user?.id && query[number].graphqlQueryID && <StatisticsButton number={number} />}
+			{!!currentQuery.graphqlQueryID && user?.id && <a 
+				target='_blank'
+				className='topBar__button'
+				href={`https://share.hsforms.com/1jhT3wGXlR4-mzU5DYZCHHA3rc4g?account_id=${user.id}&query_id=${currentQuery.graphqlQueryID}`}
+			>
+				Get historical data
+			</a>}
 			<button className="newGallery__topbar" aria-label="Documentation Explorer" onClick={toggleDocExplorer}>
 				<DocsIcon className={"docs_icon"+(docExplorerOpen ? " active" : '')} data-toggle="tooltip" data-placement="top" title="Tooltip on top" />
 			</button>
