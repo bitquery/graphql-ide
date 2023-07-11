@@ -344,6 +344,17 @@ module.exports = function(app, db, redisClient) {
 			...params} = req.body.params
 		params.id = null
 		params.published = params.url ? true : null
+		const matchURL = new RegExp(/(http(|s):\/\/.)[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&\/\/=]*)/, 'gm')
+		if (
+			params.name?.match(matchURL) ||
+			params.description?.match(matchURL) ||
+			params.query?.match(matchURL) ||
+			params.variables?.match(matchURL) ||
+			tags.some(tag => tag.match(matchURL))
+		) {
+			res.status(400).send({msg: 'Something went wrong!'})
+			return
+		}
 
 		const { insertId: query_id } = await query(sql, params)
 		let newParam = { 
