@@ -1,17 +1,40 @@
 import React, { useEffect, useRef, useState } from 'react'
 import CsvIcon from '../../icons/CsvIcon'
 import { QueriesStore } from '../../../store/queriesStore'
+import { TabsStore } from '../../../store/queriesStore'
 import { observer } from 'mobx-react'
 
+const getData = async ({ endpoint_url, query, variables }) => {
+	const response = await fetch(endpoint_url, {
+		method: 'POST',
+		headers: {
+			Accept: 'application/json',
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify({ query, variables }),
+		credentials: 'same-origin',
+	});
+	if (response.status !== 200) {
+		throw new Error(response.error);
+	}
+	const { data } = await response.json();
+	if (data.errors) {
+		throw new Error(data.errors[0].message);
+	}
+	return data
+};
+
 const WidgetView = observer(function WidgetView({ el, config, dataSource, children, widget, widgetInstance, setWidgetInstance, loading }) {
-	const { currentQuery } = QueriesStore
+	const { currentQuery, updateQuery } = QueriesStore
+	const { index } = TabsStore
 	const ref = useRef(null)
 	const [table, setTable] = useState(null)
 	const downloadCSV = () => {
 		table.download('csv', 'data.csv')
 	}
+
 	useEffect(async () => {
-		if (widgetInstance && !loading && ref.current.children.length) {
+		if (widgetInstance && ref.current.children.length) {
 			if (dataSource?.data) {
 				widgetInstance.onData(dataSource.data, true)
 			}
@@ -22,14 +45,20 @@ const WidgetView = observer(function WidgetView({ el, config, dataSource, childr
 				widget = widget.replace(explicitHeight[0], '')
 			}
 			const Widget = eval(`(${widget})`)
-			const widgetInstance = new Widget(ref.current, currentQuery.query)
+			const query = {
+				query: currentQuery.query,
+				variables: JSON.parse(currentQuery.variables),
+				endpoint_url: currentQuery.endpoint_url
+			}
+			const widgetInstance = new Widget(ref.current, query, getData)
 			setWidgetInstance(widgetInstance)
+			const isSubscription = currentQuery.query.startsWith('subscription')
 			if (dataSource?.data) {
-				widgetInstance.onData(dataSource.data, true)
+				widgetInstance.onData(dataSource.data, isSubscription)
 			}
 		}
 		// eslint-disable-next-line 
-	}, [JSON.stringify(config), JSON.stringify(dataSource.data), widget, currentQuery.widget_id, loading])
+	}, [JSON.stringify(dataSource.data), widget, currentQuery.widget_id])
 
 	return (
 		<>

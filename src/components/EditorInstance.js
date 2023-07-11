@@ -264,6 +264,7 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 			while(widgetInstance.container.firstChild) {
 				widgetInstance.container.removeChild(widgetInstance.container.firstChild)
 			}
+			setWidgetInstance(null)
 		}
 		ReactTooltip.hide(executeButton.current)
 		updateQuery({ points: undefined, graphqlRequested: undefined, saved: currentQuery.saved, gettingPointsCount: 0 }, index)
