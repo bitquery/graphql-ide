@@ -665,11 +665,11 @@ module.exports = function(app, db, redisClient) {
 	app.post('/api/widgetconfig', bodyParser.urlencoded({ extended: true }), async (req, res) => {
 		const code = crypto.randomBytes(3).toString('hex')
 		const storageTime = req.account_id ? 10000 : 60*60*24
-		const queryLink = req.body.url
+		const queryLink = `/${req.body.url}`
 		await redisClient.set(code, JSON.stringify(req.body), { EX: storageTime })
 		console.log(req.body)
 		if (req.account_id) {
-			res.set('Location', `/${queryLink}?config=${code}`)
+			res.set('Location', `${queryLink}?config=${code}`)
 		} else {
 			const fullUrl = req.protocol + '://' + req.get('host') + queryLink
 			res.set('Location', `${process.env.GRAPHQL_ADMIN_URL}/auth/login?redirect_to=${encodeURIComponent(fullUrl)}`)
