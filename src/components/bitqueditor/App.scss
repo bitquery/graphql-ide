@@ -28,7 +28,14 @@ $top-bar-height: 44px;
   }
 }
 .result-wrapper {
-  display: flex;
+  overflow-y: auto;
+}
+.streaming-wrapper {
+  flex-direction: column-reverse;
+  overflow-y: auto;
+  .CodeMirror-scroll {
+    overflow: hidden !important;
+  }
 }
 .result-time {
   background-color: #f6f7f8;

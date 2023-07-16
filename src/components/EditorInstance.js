@@ -74,6 +74,7 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 	const variablesEditor = useRef(null)
 	const widgetDisplay = useRef(null)
 	const abortController = useRef(null)
+	const resultWrapper = useRef(null)
 
 	const history = useHistory()
 
@@ -556,6 +557,12 @@ ${WidgetComponent.id === 'table.widget' ? '<link href="https://unpkg.com/tabulat
 		}
 	}
 
+	useEffect(() => {
+		if (-resultWrapper.current.scrollTop < resultWrapper.current.scrollHeight*0.9) {
+			resultWrapper.current.scrollTop = -resultWrapper.current.scrollHeight
+		}
+	}, [dataSource?.streamingValues?.length])
+
 	return (
 		<div
 			className={'graphiql__wrapper ' +
@@ -640,7 +647,7 @@ ${WidgetComponent.id === 'table.widget' ? '<link href="https://unpkg.com/tabulat
 						/>
 					</div>
 				</div>
-				<div className={'widget-display widget-display-wrapper' +
+				<div className={'widget-display widget-display-wrapper position-relative' +
 					(isMobile ? ' widget-display-wrapper-fullscreen' : '')}
 					ref={widgetDisplay}
 					style={{backgroundColor: '#f6f7f8'}}
@@ -650,7 +657,11 @@ ${WidgetComponent.id === 'table.widget' ? '<link href="https://unpkg.com/tabulat
 						onMouseDown={handleResizer}
 					>
 					</div>
-					<div className={"w-100 result-wrapper col-reverse position-relative pl-4" + ((currentQuery.widget_id === 'json.widget') || dataSource.values ? '' : 'h-100')}>
+					<div className={"flex w-100 pl-4" + 
+						((currentQuery.widget_id === 'json.widget') || dataSource.values ? '' : 'h-100') + 
+						((dataSource?.streamingValues?.length) ? ' streaming-wrapper' : ' result-wrapper')}
+						ref={resultWrapper}
+					>
 						{loading && <Loader
 							className="view-loader"
 							type="Oval"
@@ -658,7 +669,7 @@ ${WidgetComponent.id === 'table.widget' ? '<link href="https://unpkg.com/tabulat
 							height={100}
 							width={100}
 						/>}
-						{wsClean && <div className="blinker-wrapper d-flex align-items-center text-success text-right mr-3">
+						{wsClean && <div className="blinker-wrapper d-flex align-items-center text-success text-right mr-5">
 							<span className="d-none d-sm-inline">Live </span><div className="blink blnkr bg-success"></div>
 						</div>}
 						{((currentQuery.widget_id === 'json.widget' || jsonMode || codeMode) ) ?
