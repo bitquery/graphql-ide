@@ -78,6 +78,41 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 
 	const history = useHistory()
 
+	function HistoryDataSource(payload, widgetFrame) {
+
+		let callback
+		let variables = payload.variables
+	
+		const getNewData = async () => {
+			// widgetFrame.onquerystarted()
+			try {
+				const data = await fetcher({ ...payload, variables })
+				// widgetFrame.onqueryend()
+				callback(data, variables)
+			} catch (error) {
+				// widgetFrame.onerror(error)
+			}
+		}
+	
+		this.setCallback = cb => {
+			callback = cb
+		}
+	
+		this.increaseLimit = async () => {
+			variables.limit += 10
+			getNewData()
+		}
+	
+		this.changeVariables = async deltaVariables => {
+			if (deltaVariables) {
+				variables = { ...payload.variables, ...deltaVariables }
+			}
+			await getNewData()
+		}
+	
+		return this
+	}
+
 	useEffect(() => {
 		if (currentTab === tabs[number].id) window.dispatchEvent(new Event('resize'))
 	}, [currentTab, tabs, number])
@@ -449,11 +484,11 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 		// eslint-disable-next-line 
 	}, [user, schema[debouncedURL], queryTypes, index])
 	
-	const fetcher = (graphQLParams) => {
+	const fetcher = async (graphQLParams) => {
 		abortController.current = new AbortController()
 		let key = user ? user.key : null
 		let keyHeader = { 'X-API-KEY': key }
-		return fetch(
+		const response = await fetch(
 			currentQuery.endpoint_url,
 			{
 				signal: abortController.current.signal,
@@ -467,10 +502,12 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 				credentials: 'same-origin',
 			},
 		)
+		const { data } = response.json()
+		return data
 	}
 	useEffect(() => {
 		if (number === index && user !== null && !(debouncedURL in schema) && debouncedURL) {
-			const fetchSchema = () => {
+			const fetchSchema = async () => {
 				setSchemaLoading(true)
 				let introspectionQuery = getIntrospectionQuery()
 				let staticName = 'IntrospectionQuery'
@@ -479,29 +516,21 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 					query: introspectionQuery,
 					operationName: introspectionQueryName,
 				}
-				fetcher(graphQLParams)
-					.then(response => {
-						if (!response.ok) {
-							return response.text().then(text => { throw new Error(text) })
-						}
-						return response.json()
-					})
-					.then(result => {
-						if (typeof result !== 'string' && 'data' in result) {
-							let newSchema = buildClientSchema(result.data)
-							setSchema({ ...schema, [debouncedURL]: newSchema })
-						}
-						setSchemaLoading(false)
-						setErrorLoading(false)
-					}).catch(error => {
-						const message = /401 Authorization Required/.test(error.message) ? '401 Authorization Required' : error.message
-						addToast(message, { appearance: 'error' })
-						setSchemaLoading(false)
-						setErrorLoading(true)
-						if (error.message === '401') {
-							history.push('/auth/login')
-						}
-					})
+				try {
+					const data = await fetcher(graphQLParams)
+					let newSchema = buildClientSchema(data)
+					setSchema({ ...schema, [debouncedURL]: newSchema })
+					setSchemaLoading(false)
+					setErrorLoading(false)
+				} catch (error) {
+					const message = /401 Authorization Required/.test(error.message) ? '401 Authorization Required' : error.message
+					addToast(message, { appearance: 'error' })
+					setSchemaLoading(false)
+					setErrorLoading(true)
+					if (error.message === '401') {
+						history.push('/auth/login')
+					}
+				}
 			}
 			fetchSchema()
 		}
