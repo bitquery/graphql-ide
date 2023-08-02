@@ -108,6 +108,35 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 		return this
 	}
 
+	function SubscriptionDataSource(payload, widgetFrame) {
+
+		let callback, cleanSubscription
+		let variables = payload.variables
+	
+		const subscribe = () => {
+			const currentUrl = currentQuery.endpoint_url.replace(/^http/, 'ws');
+			const client = createClient({ url: currentUrl });
+	
+			cleanSubscription = client.subscribe({ ...payload, variables }, {
+				next: ({ data }) => callback(data, variables),
+				error: error => { console.log(error) },
+				complete: () => { console.log('complete') },
+			});
+		} 
+	
+		this.setCallback = cb => {
+			callback = cb
+		}
+	
+		this.changeVariables = async deltaVariables => {
+			variables = { ...payload.variables, ...deltaVariables }
+			cleanSubscription && cleanSubscription()
+			subscribe()
+		}
+	
+		return this
+	}
+
 	useEffect(() => {
 		if (currentTab === tabs[number].id) window.dispatchEvent(new Event('resize'))
 	}, [currentTab, tabs, number])
@@ -281,10 +310,14 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 			window.location = `${user?.graphql_admin_url}/auth/login?redirect_to=${window.location.href}`
 			return
 		}
-		
-		const historyDataSource = new HistoryDataSource({query: currentQuery.query, variables: currentQuery.variables})
-		setDataSource(historyDataSource)
-		console.log(historyDataSource)
+		const payload = {query: currentQuery.query, variables: currentQuery.variables}
+		if (currentQuery.query.match(/subscription[^a-zA-z0-9]/gm)) {
+			const subscriptionDataSource = new SubscriptionDataSource(payload)
+			setDataSource(subscriptionDataSource)
+		} else {
+			const historyDataSource = new HistoryDataSource(payload)
+			setDataSource(historyDataSource)
+		}
 		// eslint-disable-next-line 
 	}, [JSON.stringify(currentQuery), schema[debouncedURL], JSON.stringify(queryTypes), wsClean, dataSource.values, widgetInstance, user?.id])
 

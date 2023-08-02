@@ -1,6 +1,7 @@
 export default class JsonComponent {
 	constructor(element, historyDataSource, subscriptionDataSource) {
 		this.container = element
+		this.timers = {}
 		this.historyDataSource = historyDataSource
 		this.subscriptionDataSource = subscriptionDataSource
 	}
@@ -40,9 +41,28 @@ export default class JsonComponent {
 			this.historyDataSource.setCallback(this.onHistoryData.bind(this))
 			this.historyDataSource && await this.historyDataSource.changeVariables()
 		}
+		if (this.subscriptionDataSource) {
+			this.subscriptionDataSource.setCallback(this.onSubscriptionData.bind(this))
+			this.subscriptionDataSource.changeVariables()
+		}
 	}
 
 	onHistoryData(data) {
 		this.viewer.setValue(JSON.stringify(data, null, 2))
+	}
+
+	onSubscriptionData(data) {
+		const lastLine = this.viewer.lastLine()
+		this.timers[lastLine] = new Date().getTime()
+		if (this.interval) {
+			clearInterval(this.interval)
+		}
+		this.interval = setInterval(() => {
+			for (const timerLine in this.timers) {
+				this.viewer.replaceRange(`${Math.floor((new Date().getTime() - this.timers[timerLine])/1000)} seconds ago`, {line: timerLine, ch: 0}, {line: timerLine, ch: 30})
+			}
+		}, 1000);
+		this.viewer.replaceRange('0 seconds ago', {line: lastLine, ch: 0}, {line: lastLine, ch: 10})
+		this.viewer.replaceRange(`\n${JSON.stringify(data, null, 2)}\n`, {line: lastLine+1, ch: 0})
 	}
 }

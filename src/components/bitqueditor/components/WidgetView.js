@@ -5,27 +5,6 @@ import { TabsStore } from '../../../store/queriesStore'
 import { observer } from 'mobx-react'
 import JsonComponent from "./newJsonWidget"
 
-const getData = async ({ endpoint_url, query, variables }) => {
-	const response = await fetch(endpoint_url, {
-		method: 'POST',
-		headers: {
-			Accept: 'application/json',
-			'Content-Type': 'application/json'
-		},
-		body: JSON.stringify({ query, variables }),
-		credentials: 'same-origin',
-	});
-	if (response.status !== 200) {
-		throw new Error(response.error);
-	}
-	const { data } = await response.json();
-	if (data.errors) {
-		throw new Error(data.errors[0].message);
-	}
-	return data
-};
-
-
 const WidgetView = observer(function WidgetView({ el, config, dataSource, children, widget, widgetInstance, setWidgetInstance, loading }) {
 	const { currentQuery, updateQuery } = QueriesStore
 	const { index } = TabsStore
@@ -40,7 +19,7 @@ const WidgetView = observer(function WidgetView({ el, config, dataSource, childr
 			if (ref.current.childNodes.length)  {
 				ref.current.removeChild(ref.current.firstChild)
 			}
-			const widgetInstance = new JsonComponent(ref.current, dataSource)
+			const widgetInstance = new JsonComponent(ref.current, null, dataSource)
 			setWidgetInstance(widgetInstance)
 			widgetInstance.init()
 		}
