@@ -27,7 +27,7 @@ class JsonWidget extends Component {
 		this.viewer = CodeMirror(this._node, {
 			autoRefresh: true,
 			lineWrapping: true,
-			value: value || this.formatResult() || '',
+			value: value || this.formatResult(),
 			readOnly: true,
 			scrollbarStyle: null,
 			theme: 'graphiql',
@@ -45,24 +45,26 @@ class JsonWidget extends Component {
 	}
 
 	shouldComponentUpdate(nextProps, nextState) {
-		return this.props.dataSource !== nextProps.dataSource || this.props.mode !== nextProps.mode || this.state.time !== nextState.time || this.props.wsClean !== nextProps.wsClean || this.props.loading !== nextProps.loading;
+		return this.props.dataSource !== nextProps.dataSource || this.state.time !== nextState.time;
 	}
 
 	async componentDidUpdate(prevProps) {
 		if (this.viewer) {
-			if (!this.props.wsClean && this.interval) {
+			const data = this.formatResult()
+			this.viewer.setValue(data)
+			/* if (!this.props.wsClean && this.interval) {
 				clearInterval(this.interval)
-			}
-			if (JSON.stringify(prevProps.values) !== JSON.stringify(this.props.values)
+			} */
+			/* if (JSON.stringify(prevProps.values) !== JSON.stringify(this.props.values)
 				|| prevProps.dataSource.values !== this.props.dataSource.values 
 				|| this.props.loading !== prevProps.loading) {
 				const value = this.props.mode === 'code' ? await this.props.getCode() : this.formatResult()
 				this.viewer.setValue(value || '')
-			}
-			if (this.props.mode !== prevProps.mode) {
+			} */
+			/* if (this.props.mode !== prevProps.mode) {
 				const mode = this.props.mode === 'code' ? 'htmlmixed' : 'graphql-results'
 				this.viewer.setOption('mode', mode)
-			}
+			} */
 		}
 	}
 
@@ -72,20 +74,9 @@ class JsonWidget extends Component {
 	}
 
 	formatResult() {
-		if (this.props.dataSource.error) {
-			return null
-		}
-		if (this.props.values) {
-			return JSON.stringify(this.props.values, null, 2)
-		} else if (this.props.dataSource.values) {
-			return JSON.stringify({
-				[this.props.dataSource.displayed_data]: this.props.dataSource.values}, 
-				null, 2
-		)} else if (this.props.loading) {
-			return 'Waiting for data...'
-		} else {
-			return null
-		}
+		return this.props.dataSource.getData 
+			? JSON.stringify(this.props.dataSource.getData())
+			: '' 
 	}
 
 	render() {

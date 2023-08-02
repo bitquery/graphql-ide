@@ -3,6 +3,7 @@ import CsvIcon from '../../icons/CsvIcon'
 import { QueriesStore } from '../../../store/queriesStore'
 import { TabsStore } from '../../../store/queriesStore'
 import { observer } from 'mobx-react'
+import JsonComponent from "./newJsonWidget"
 
 const getData = async ({ endpoint_url, query, variables }) => {
 	const response = await fetch(endpoint_url, {
@@ -24,6 +25,7 @@ const getData = async ({ endpoint_url, query, variables }) => {
 	return data
 };
 
+
 const WidgetView = observer(function WidgetView({ el, config, dataSource, children, widget, widgetInstance, setWidgetInstance, loading }) {
 	const { currentQuery, updateQuery } = QueriesStore
 	const { index } = TabsStore
@@ -34,7 +36,15 @@ const WidgetView = observer(function WidgetView({ el, config, dataSource, childr
 	}
 
 	useEffect(async () => {
-		if (widgetInstance && ref.current.children.length) {
+		if (Object.keys(dataSource).length) {
+			if (ref.current.childNodes.length)  {
+				ref.current.removeChild(ref.current.firstChild)
+			}
+			const widgetInstance = new JsonComponent(ref.current, dataSource)
+			setWidgetInstance(widgetInstance)
+			widgetInstance.init()
+		}
+		/* if (widgetInstance && ref.current.children.length) {
 			if (dataSource?.data) {
 				widgetInstance.onData(dataSource.data, true)
 			}
@@ -56,15 +66,15 @@ const WidgetView = observer(function WidgetView({ el, config, dataSource, childr
 			if (dataSource?.data) {
 				widgetInstance.onData(dataSource.data, isSubscription)
 			}
-		}
+		} */
 		// eslint-disable-next-line 
-	}, [JSON.stringify(dataSource.data), widget, currentQuery.widget_id])
+	}, [dataSource/*, widget , widgetInstance */])
 
 	return (
 		<>
 			{children}
 			{/* NEED CONDITION FOR CSV DOWNLOAD BUTTON {config && 'columns' in config && <CsvIcon onClick={downloadCSV} />} */}
-			<div ref={ref} className="table-striped" style={{ 'width': '100%', 'height': '100%', 'overflowY': 'scroll' }} id={el} />
+			<div ref={ref} className="result-window" style={{ 'width': '100%', 'height': '100%', 'overflowY': 'scroll' }} id={el} />
 		</>
 	)
 })
