@@ -11,7 +11,7 @@ function QueryErrorIndicator({error, removeError}) {
             </div>
             <div 
                 className="error__wrapper__close"
-                onClick={() => removeError(prev => {return {...prev, error: null}})}
+                onClick={() => removeError(null)}
             >
                 <i className="fas fa-times"/>
             </div>

@@ -1,9 +1,7 @@
-import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useRef, useMemo, useReducer } from 'react';
 import { observer } from 'mobx-react-lite'
 import { toJS } from 'mobx'
 import ReactTooltip from 'react-tooltip'
-import PlayIcon from './icons/PlayIcon.js'
-import ErrorIcon from './icons/ErrorIcon.js'
 import { generateLink } from '../utils/common'
 import { vegaPlugins } from 'vega-widgets'
 import { tablePlugin } from 'table-widget'
@@ -26,7 +24,7 @@ import ToolbarComponent from './bitqueditor/components/ToolbarComponent'
 import { TabsStore, QueriesStore, UserStore } from '../store/queriesStore'
 import WidgetEditorControls from './bitqueditor/components/WidgetEditorControls'
 import QueryErrorIndicator from './QueryErrorIndicator'
-import { getValueFrom, getLeft, getTop } from '../utils/common'
+import { getLeft, getTop } from '../utils/common'
 import "react-loader-spinner/dist/loader/css/react-spinner-loader.css"
 import Loader from "react-loader-spinner"
 import { DocExplorer } from './DocExplorer'
@@ -36,14 +34,18 @@ import { getIntrospectionQuery, buildClientSchema } from 'graphql'
 import useDebounce from '../utils/useDebounce'
 import WidgetView from './bitqueditor/components/WidgetView'
 import { getCheckoutCode } from '../api/api'
-import { flattenData } from './flattenData.js'
-import { stringifyIncludesFunction } from '../utils/common';
 import { GalleryStore } from '../store/galleryStore.js';
 import CodeSnippetComponent from './CodeSnippetComponent.js';
 import { useHistory } from 'react-router-dom';
 import { useToasts } from 'react-toast-notifications'
 import { createClient } from "graphql-ws"
-import StopIcon from './icons/StopIcon.js';
+import { InteractionButton } from './InteractionButton.js';
+
+const queryStatusReducer = (state, action) => {
+	let newState = { ...state }
+	Object.keys(newState).forEach(status => { newState[status] = status === action })
+	return newState
+}
 
 const EditorInstance = observer(function EditorInstance({ number }) {
 	const { addToast } = useToasts()
@@ -58,8 +60,9 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 	const [loading, setLoading] = useState(false)
 	const [schemaLoading, setSchemaLoading] = useState(false)
 	const [errorLoading, setErrorLoading] = useState(false)
+	const [error, setError] = useState(null)
 	const [queryTypes, setQueryTypes] = useState('')
-	const [dataSource, setDataSource] = useState({})
+	const [dataSource, setDataSource] = useState(null)
 	const [accordance, setAccordance] = useState(true)
 	const [checkoutCode, setCheckOutCode] = useState('')
 	const [widgetInstance, setWidgetInstance] = useState(null)
@@ -76,21 +79,38 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 	const abortController = useRef(null)
 	const resultWrapper = useRef(null)
 
+	const [queryStatus, dispatchQueryStatus] = useReducer(queryStatusReducer, {
+		readyToExecute: false,
+		activeFetch: false,
+		activeSubscription: false,
+		schemaError: false,
+		schemaLoading: true
+	})
+	const queryDispatcher = {
+		onquerystarted: () => dispatchQueryStatus('activeFetch'),
+		onqueryend: () => dispatchQueryStatus('readyToExecute'),
+		onsubscribe: () => dispatchQueryStatus('activeSubscription'),
+		onerror: (error) => {
+			dispatchQueryStatus('readyToExecute')
+			setError(error)
+		}
+	}
+
 	const history = useHistory()
 
-	function HistoryDataSource(payload, widgetFrame) {
+	function HistoryDataSource(payload, queryDispatcher) {
 
 		let callback
 		let variables = payload.variables
 	
 		const getNewData = async () => {
-			// widgetFrame.onquerystarted()
+			queryDispatcher.onquerystarted()
 			try {
 				const data = await fetcher({ ...payload, variables })
-				// widgetFrame.onqueryend()
+				queryDispatcher.onqueryend()
 				callback(data, variables)
 			} catch (error) {
-				// widgetFrame.onerror(error)
+				queryDispatcher.onerror(error)
 			}
 		}
 	
@@ -108,7 +128,7 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 		return this
 	}
 
-	function SubscriptionDataSource(payload, widgetFrame) {
+	function SubscriptionDataSource(payload, queryDispatcher) {
 
 		let callback, cleanSubscription
 		let variables = payload.variables
@@ -116,11 +136,18 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 		const subscribe = () => {
 			const currentUrl = currentQuery.endpoint_url.replace(/^http/, 'ws');
 			const client = createClient({ url: currentUrl });
+
+			queryDispatcher.onquerystarted()
 	
 			cleanSubscription = client.subscribe({ ...payload, variables }, {
-				next: ({ data }) => callback(data, variables),
-				error: error => { console.log(error) },
-				complete: () => { console.log('complete') },
+				next: ({ data }) => {
+					queryDispatcher.onsubscribe()
+					callback(data, variables)
+				},
+				error: error => { 
+					queryDispatcher.onerror(error)
+				},
+				complete: () => queryDispatcher.onqueryend(),
 			});
 		} 
 	
@@ -132,6 +159,11 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 			variables = { ...payload.variables, ...deltaVariables }
 			cleanSubscription && cleanSubscription()
 			subscribe()
+		}
+
+		this.unsubscribe = () => {
+			cleanSubscription && cleanSubscription()
+			cleanSubscription = null
 		}
 	
 		return this
@@ -312,14 +344,14 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 		}
 		const payload = {query: currentQuery.query, variables: currentQuery.variables}
 		if (currentQuery.query.match(/subscription[^a-zA-z0-9]/gm)) {
-			const subscriptionDataSource = new SubscriptionDataSource(payload)
-			setDataSource(subscriptionDataSource)
+			const subscriptionDataSource = new SubscriptionDataSource(payload, queryDispatcher)
+			setDataSource({ subscriptionDataSource })
 		} else {
-			const historyDataSource = new HistoryDataSource(payload)
-			setDataSource(historyDataSource)
+			const historyDataSource = new HistoryDataSource(payload, queryDispatcher)
+			setDataSource({ historyDataSource })
 		}
 		// eslint-disable-next-line 
-	}, [JSON.stringify(currentQuery), schema[debouncedURL], JSON.stringify(queryTypes), wsClean, dataSource.values, widgetInstance, user?.id])
+	}, [JSON.stringify(currentQuery), schema[debouncedURL], JSON.stringify(queryTypes), wsClean, widgetInstance, user?.id])
 
 	const editQueryHandler = useCallback(handleSubject => {
 		if ('query' in handleSubject) {
@@ -370,7 +402,7 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 	useEffect(() => {
 		if (number === index && user !== null && !(debouncedURL in schema) && debouncedURL) {
 			const fetchSchema = async () => {
-				setSchemaLoading(true)
+				dispatchQueryStatus('schemaLoading')
 				let introspectionQuery = getIntrospectionQuery()
 				let staticName = 'IntrospectionQuery'
 				let introspectionQueryName = staticName
@@ -382,13 +414,11 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 					const data = await fetcher(graphQLParams)
 					let newSchema = buildClientSchema(data)
 					setSchema({ ...schema, [debouncedURL]: newSchema })
-					setSchemaLoading(false)
-					setErrorLoading(false)
+					dispatchQueryStatus('readyToExecute')
 				} catch (error) {
 					const message = /401 Authorization Required/.test(error.message) ? '401 Authorization Required' : error.message
 					addToast(message, { appearance: 'error' })
-					setSchemaLoading(false)
-					setErrorLoading(true)
+					dispatchQueryStatus('schemaError')
 					if (error.message === '401') {
 						history.push('/auth/login')
 					}
@@ -396,8 +426,8 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 			}
 			fetchSchema()
 		}
-		if (debouncedURL in schema && errorLoading) {
-			setErrorLoading(false)
+		if (debouncedURL in schema && queryStatus.schemaError) {
+			dispatchQueryStatus('readyToExecute')
 		}
 		// eslint-disable-next-line 
 	}, [debouncedURL, user])
@@ -437,14 +467,13 @@ ${WidgetComponent.id === 'table.widget' ? '<link href="https://unpkg.com/tabulat
 	}
 
 	const abortRequest = () => {
-		if (wsClean) {
-			wsClean.f()
-			setWsClean(null)
+		if (queryStatus.activeSubscription) {
+			dataSource.subscriptionDataSource.unsubscribe()
 			return
 		}
 		if (abortController.current) {
 			abortController.current.abort()
-			setLoading(false)
+			dispatchQueryStatus('readyToExecute')
 		}
 	}
 
@@ -485,20 +514,12 @@ ${WidgetComponent.id === 'table.widget' ? '<link href="https://unpkg.com/tabulat
 					data-tip={(loading || wsClean) ? 'Interrupt' : 'Execute query (Ctrl-Enter)'}
 					ref={executeButton}
 					disabled={schemaLoading}
-					onClick={loading ? abortRequest : getResult}
+					onClick={(queryStatus.activeFetch || queryStatus.activeSubscription) ? abortRequest : getResult}
 				>
-					{loading
-						? <StopIcon /> : schemaLoading ? <Loader
-						className="view-loader"
-						type="Oval"
-						color="#3d77b6"
-						height={25}
-						width={25}
+					<InteractionButton 
+						queryStatus={queryStatus}
+						accordance={accordance}
 					/>
-						: errorLoading && user?.id ?
-							<ErrorIcon fill={'#FF2D00'} /> : wsClean ? <StopIcon /> :
-								<PlayIcon fill={accordance ? '#eee' : '#14ff41'} />
-					}
 				</button>
 				<div className="workspace__wrapper"
 					ref={workspace}
@@ -548,12 +569,8 @@ ${WidgetComponent.id === 'table.widget' ? '<link href="https://unpkg.com/tabulat
 						onMouseDown={handleResizer}
 					>
 					</div>
-					<div className={"flex w-100 pl-4" + 
-						((currentQuery.widget_id === 'json.widget') || dataSource.values ? '' : 'h-100') + 
-						((dataSource?.streamingValues?.length) ? ' streaming-wrapper' : ' result-wrapper')}
-						ref={resultWrapper}
-					>
-						{loading && <Loader
+					<div className="flex w-100 pl-4 result-wrapper" ref={resultWrapper}>
+						{queryStatus.activeFetch && <Loader
 							className="view-loader"
 							type="Oval"
 							color="#3d77b6"
@@ -582,8 +599,8 @@ ${WidgetComponent.id === 'table.widget' ? '<link href="https://unpkg.com/tabulat
 							</WidgetView>
 						</FullScreen>
 						<QueryErrorIndicator
-							error={dataSource.error}
-							removeError={setDataSource}
+							error={error}
+							removeError={setError}
 						/>
 					</div>
 				</div>

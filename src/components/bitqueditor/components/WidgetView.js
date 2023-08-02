@@ -5,7 +5,7 @@ import { TabsStore } from '../../../store/queriesStore'
 import { observer } from 'mobx-react'
 import JsonComponent from "./newJsonWidget"
 
-const WidgetView = observer(function WidgetView({ el, config, dataSource, children, widget, widgetInstance, setWidgetInstance, loading }) {
+const WidgetView = observer(function WidgetView({ el, config, children, widget, widgetInstance, setWidgetInstance, loading, dataSource }) {
 	const { currentQuery, updateQuery } = QueriesStore
 	const { index } = TabsStore
 	const ref = useRef(null)
@@ -15,11 +15,11 @@ const WidgetView = observer(function WidgetView({ el, config, dataSource, childr
 	}
 
 	useEffect(async () => {
-		if (Object.keys(dataSource).length) {
+		if (dataSource) {
 			if (ref.current.childNodes.length)  {
 				ref.current.removeChild(ref.current.firstChild)
 			}
-			const widgetInstance = new JsonComponent(ref.current, null, dataSource)
+			const widgetInstance = new JsonComponent(ref.current, dataSource.historyDataSource, dataSource.subscriptionDataSource)
 			setWidgetInstance(widgetInstance)
 			widgetInstance.init()
 		}
@@ -47,7 +47,7 @@ const WidgetView = observer(function WidgetView({ el, config, dataSource, childr
 			}
 		} */
 		// eslint-disable-next-line 
-	}, [dataSource/*, widget , widgetInstance */])
+	}, [dataSource])
 
 	return (
 		<>
