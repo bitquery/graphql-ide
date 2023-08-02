@@ -80,11 +80,11 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 	const resultWrapper = useRef(null)
 
 	const [queryStatus, dispatchQueryStatus] = useReducer(queryStatusReducer, {
-		readyToExecute: false,
+		readyToExecute: Object.keys(schema).length ? true : false,
 		activeFetch: false,
 		activeSubscription: false,
 		schemaError: false,
-		schemaLoading: true
+		schemaLoading: Object.keys(schema).length ? false : true
 	})
 	const queryDispatcher = {
 		onquerystarted: () => dispatchQueryStatus('activeFetch'),
@@ -100,16 +100,17 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 
 	function HistoryDataSource(payload, queryDispatcher) {
 
-		let callback
+		let callback, cachedData
 		let variables = payload.variables
 	
 		const getNewData = async () => {
 			queryDispatcher.onquerystarted()
 			try {
-				const data = await fetcher({ ...payload, variables })
+				cachedData = cachedData ? cachedData : await fetcher({ ...payload, variables })
 				queryDispatcher.onqueryend()
-				callback(data, variables)
+				callback(cachedData, variables)
 			} catch (error) {
+				console.log('error - ', error)
 				queryDispatcher.onerror(error)
 			}
 		}
@@ -583,12 +584,7 @@ ${WidgetComponent.id === 'table.widget' ? '<link href="https://unpkg.com/tabulat
 						<FullScreen className="widget-display" handle={fullscreenHandle}>
 							<WidgetView
 								widget={widget}
-								widgetInstance={widgetInstance}
-								setWidgetInstance={setWidgetInstance}
 								dataSource={dataSource}
-								config={toJS(query[index].config)}
-								loading={loading}
-								el={currentTab === tabs[number].id ? `asdx${currentTab}` : 'x'}
 							>
 								<FullscreenIcon onClick={
 									isMobile ? () => setMobile(false) :

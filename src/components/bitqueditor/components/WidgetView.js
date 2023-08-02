@@ -3,12 +3,13 @@ import CsvIcon from '../../icons/CsvIcon'
 import { QueriesStore } from '../../../store/queriesStore'
 import { TabsStore } from '../../../store/queriesStore'
 import { observer } from 'mobx-react'
-import JsonComponent from "./newJsonWidget"
+import JsonWidget from "./newJsonWidget"
 
-const WidgetView = observer(function WidgetView({ el, config, children, widget, widgetInstance, setWidgetInstance, loading, dataSource }) {
+const WidgetView = observer(function WidgetView({ children, widget, dataSource }) {
 	const { currentQuery, updateQuery } = QueriesStore
 	const { index } = TabsStore
-	const ref = useRef(null)
+	const refJson = useRef(null)
+	const refChart = useRef(null)
 	const [table, setTable] = useState(null)
 	const downloadCSV = () => {
 		table.download('csv', 'data.csv')
@@ -16,44 +17,38 @@ const WidgetView = observer(function WidgetView({ el, config, children, widget, 
 
 	useEffect(async () => {
 		if (dataSource) {
-			if (ref.current.childNodes.length)  {
-				ref.current.removeChild(ref.current.firstChild)
+			if (refJson.current.childNodes.length) {
+				refJson.current.removeChild(refJson.current.firstChild)
 			}
-			const widgetInstance = new JsonComponent(ref.current, dataSource.historyDataSource, dataSource.subscriptionDataSource)
-			setWidgetInstance(widgetInstance)
-			widgetInstance.init()
+			if (refChart.current.childNodes.length) {
+				refChart.current.removeChild(refChart.current.firstChild)
+			}
+			const jsonWidgetInstance = new JsonWidget(refJson.current, dataSource.historyDataSource, dataSource.subscriptionDataSource)
+			await jsonWidgetInstance.init()
+			if (widget) {
+				//temp for fit height in IDE
+				const explicitHeight = widget.match(/height:.*\d(px| +|)(,|)( +|)$/gm)
+				if (explicitHeight) {
+					widget = widget.replace(explicitHeight[0], '')
+				}
+				const ChartWidget = eval(`(${widget})`)
+				const chartWidgetInstance = new ChartWidget(refChart.current, dataSource.historyDataSource, dataSource.subscriptionDataSource)
+				await chartWidgetInstance.init()
+			}
 		}
-		/* if (widgetInstance && ref.current.children.length) {
-			if (dataSource?.data) {
-				widgetInstance.onData(dataSource.data, true)
-			}
-		} else if (widget && !ref.current.children.length) {
-			//temp for fit height in IDE
-			const explicitHeight = widget.match(/height:.*\d(px| +|)(,|)( +|)$/gm)
-			if (explicitHeight) {
-				widget = widget.replace(explicitHeight[0], '')
-			}
-			const Widget = eval(`(${widget})`)
-			const query = {
-				query: currentQuery.query,
-				variables: JSON.parse(currentQuery.variables),
-				endpoint_url: currentQuery.endpoint_url
-			}
-			const widgetInstance = new Widget(ref.current, query, getData)
-			setWidgetInstance(widgetInstance)
-			const isSubscription = currentQuery.query.startsWith('subscription')
-			if (dataSource?.data) {
-				widgetInstance.onData(dataSource.data, isSubscription)
-			}
-		} */
 		// eslint-disable-next-line 
 	}, [dataSource])
+
+	useEffect(() => {
+		window.dispatchEvent(new Event('resize'))
+	}, [currentQuery.widget_id])
 
 	return (
 		<>
 			{children}
 			{/* NEED CONDITION FOR CSV DOWNLOAD BUTTON {config && 'columns' in config && <CsvIcon onClick={downloadCSV} />} */}
-			<div ref={ref} className="result-window" style={{ 'width': '100%', 'height': '100%', 'overflowY': 'scroll' }} id={el} />
+			<div ref={refJson} className={"result-window result-window-json " + (currentQuery.widget_id === 'json.widget' ? 'result-window-active' : '')} />
+			<div ref={refChart} className={"result-window result-window-chart " + (currentQuery.widget_id === 'config.widget' ? 'result-window-active' : '')} />
 		</>
 	)
 })
