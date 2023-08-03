@@ -134,7 +134,7 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 
 	function SubscriptionDataSource(payload, queryDispatcher) {
 
-		let cleanSubscription, clean
+		let cleanSubscription, clean, empty
 		let callbacks = []
 		let variables = payload.variables
 	
@@ -151,7 +151,7 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 				error: error => { 
 					queryDispatcher.onerror(error)
 				},
-				complete: () => queryDispatcher.onqueryend(),
+				complete: () => {},
 			});
 				
 		} 
@@ -163,9 +163,16 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 		this.setClean = cb => {
 			clean = cb
 		}
+
+		this.setEmptyWidget = cb => {
+			empty = cb
+		}
 	
 		this.changeVariables = async deltaVariables => {
-			variables = { ...payload.variables, ...deltaVariables }
+			if (deltaVariables) {
+				variables = { ...payload.variables, ...deltaVariables }
+				empty()
+			}
 			this.unsubscribe()
 			subscribe()
 		}
@@ -173,6 +180,7 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 		this.unsubscribe = () => {
 			cleanSubscription && cleanSubscription()
 			cleanSubscription = null
+			queryDispatcher.onqueryend()
 			clean()
 		}
 

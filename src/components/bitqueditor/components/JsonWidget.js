@@ -44,6 +44,7 @@ export default class JsonComponent {
 		if (this.subscriptionDataSource) {
 			this.subscriptionDataSource.setCallback(this.onSubscriptionData.bind(this))
 			this.subscriptionDataSource.setClean(this.clean.bind(this))
+			this.subscriptionDataSource.setEmptyWidget(this.emptyWidget.bind(this))
 			run && this.subscriptionDataSource.changeVariables()
 		}
 	}
@@ -52,6 +53,12 @@ export default class JsonComponent {
 		if (this.interval) {
 			clearInterval(this.interval)
 		}
+	}
+
+	emptyWidget() {
+		this.viewer.setValue('')
+		this.clean()
+		this.timers = {}
 	}
 
 	onHistoryData(data) {

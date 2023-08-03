@@ -29,7 +29,6 @@ class CodeEditor extends Component {
 			lineWrapping: true,
 			value: this.formatResult(),
 			readOnly: true,
-			scrollbarStyle: null,
 			theme: 'graphiql',
 			mode: 'javascript',
 			keyMap: 'sublime',
