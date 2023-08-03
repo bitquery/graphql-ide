@@ -1,19 +1,12 @@
-import React, { useEffect, useRef, useState } from 'react'
-import CsvIcon from '../../icons/CsvIcon'
+import React, { useEffect, useRef } from 'react'
 import { QueriesStore } from '../../../store/queriesStore'
-import { TabsStore } from '../../../store/queriesStore'
 import { observer } from 'mobx-react'
-import JsonWidget from "./newJsonWidget"
+import JsonWidget from "./JsonWidget"
 
 const WidgetView = observer(function WidgetView({ children, widget, dataSource }) {
-	const { currentQuery, updateQuery } = QueriesStore
-	const { index } = TabsStore
+	const { currentQuery } = QueriesStore
 	const refJson = useRef(null)
 	const refChart = useRef(null)
-	const [table, setTable] = useState(null)
-	const downloadCSV = () => {
-		table.download('csv', 'data.csv')
-	}
 
 	useEffect(async () => {
 		if (dataSource) {
@@ -24,7 +17,7 @@ const WidgetView = observer(function WidgetView({ children, widget, dataSource }
 				refChart.current.removeChild(refChart.current.firstChild)
 			}
 			const jsonWidgetInstance = new JsonWidget(refJson.current, dataSource.historyDataSource, dataSource.subscriptionDataSource)
-			await jsonWidgetInstance.init()
+			await jsonWidgetInstance.init(!!!widget)
 			if (widget) {
 				//temp for fit height in IDE
 				const explicitHeight = widget.match(/height:.*\d(px| +|)(,|)( +|)$/gm)

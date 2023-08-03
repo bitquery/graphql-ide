@@ -100,7 +100,8 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 
 	function HistoryDataSource(payload, queryDispatcher) {
 
-		let callback, cachedData
+		let callbacks = []
+		let cachedData
 		let variables = payload.variables
 	
 		const getNewData = async () => {
@@ -108,30 +109,33 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 			try {
 				cachedData = cachedData ? cachedData : await fetcher({ ...payload, variables })
 				queryDispatcher.onqueryend()
-				callback(cachedData, variables)
+				callbacks.forEach(cb => cb(cachedData, variables))
 			} catch (error) {
-				console.log('error - ', error)
 				queryDispatcher.onerror(error)
 			}
 		}
 	
 		this.setCallback = cb => {
-			callback = cb
+			callbacks.push(cb)
 		}
 	
 		this.changeVariables = async deltaVariables => {
 			if (deltaVariables) {
 				variables = { ...payload.variables, ...deltaVariables }
+				cachedData = null
 			}
 			await getNewData()
 		}
+
+		this.getInterval = () => variables.interval
 	
 		return this
 	}
 
 	function SubscriptionDataSource(payload, queryDispatcher) {
 
-		let callback, cleanSubscription
+		let cleanSubscription, clean
+		let callbacks = []
 		let variables = payload.variables
 	
 		const subscribe = () => {
@@ -139,33 +143,40 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 			const client = createClient({ url: currentUrl });
 
 			queryDispatcher.onquerystarted()
-	
 			cleanSubscription = client.subscribe({ ...payload, variables }, {
 				next: ({ data }) => {
 					queryDispatcher.onsubscribe()
-					callback(data, variables)
+					callbacks.forEach(cb => cb(data, variables))
 				},
 				error: error => { 
 					queryDispatcher.onerror(error)
 				},
 				complete: () => queryDispatcher.onqueryend(),
 			});
+				
 		} 
 	
 		this.setCallback = cb => {
-			callback = cb
+			callbacks.push(cb)
+		}
+
+		this.setClean = cb => {
+			clean = cb
 		}
 	
 		this.changeVariables = async deltaVariables => {
 			variables = { ...payload.variables, ...deltaVariables }
-			cleanSubscription && cleanSubscription()
+			this.unsubscribe()
 			subscribe()
 		}
 
 		this.unsubscribe = () => {
 			cleanSubscription && cleanSubscription()
 			cleanSubscription = null
+			clean()
 		}
+
+		this.getInterval = () => variables.interval
 	
 		return this
 	}
@@ -343,7 +354,7 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 			window.location = `${user?.graphql_admin_url}/auth/login?redirect_to=${window.location.href}`
 			return
 		}
-		const payload = {query: currentQuery.query, variables: currentQuery.variables}
+		const payload = {query: currentQuery.query, variables: JSON.parse(currentQuery.variables)}
 		if (currentQuery.query.match(/subscription[^a-zA-z0-9]/gm)) {
 			const subscriptionDataSource = new SubscriptionDataSource(payload, queryDispatcher)
 			setDataSource({ subscriptionDataSource })
