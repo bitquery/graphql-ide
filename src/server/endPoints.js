@@ -667,11 +667,11 @@ module.exports = function(app, db, redisClient) {
 		const storageTime = req.account_id ? 10000 : 60*60*24
 		const queryLink = `/${req.body.url}`
 		await redisClient.set(code, JSON.stringify(req.body), { EX: storageTime })
-		console.log(req.body)
+		const ps = `${queryLink}?config=${code}`
 		if (req.account_id) {
-			res.set('Location', `${queryLink}?config=${code}`)
+			res.set('Location', ps)
 		} else {
-			const fullUrl = req.protocol + '://' + req.get('host') + queryLink
+			const fullUrl = req.protocol + '://' + req.get('host') + ps
 			res.set('Location', `${process.env.GRAPHQL_ADMIN_URL}/auth/login?redirect_to=${encodeURIComponent(fullUrl)}`)
 		}
 		res.sendStatus(302)
