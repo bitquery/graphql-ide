@@ -22,7 +22,8 @@ export default class JsonComponent {
 		require('codemirror/mode/htmlmixed/htmlmixed')
 		require('codemirror/keymap/sublime');
 		require('codemirror-graphql/results/mode');
-
+		require('../../../utils/streaming-mode')
+		
 		this.viewer = CodeMirror(this.container, {
 			autoRefresh: true,
 			lineWrapping: true,
@@ -30,7 +31,7 @@ export default class JsonComponent {
 			readOnly: true,
 			scrollbarStyle: null,
 			theme: 'graphiql',
-			mode: 'graphql-results',
+			mode: `graphql-results${this.subscriptionDataSource ? '-streaming' : ''}`,
 			keyMap: 'sublime',
 			foldGutter: {
 				minFoldSize: 4,
@@ -71,10 +72,10 @@ export default class JsonComponent {
 		this.clean()
 		this.interval = setInterval(() => {
 			for (const timerLine in this.timers) {
-				this.viewer.replaceRange(`${Math.floor((new Date().getTime() - this.timers[timerLine])/1000)} seconds ago`, {line: timerLine, ch: 0}, {line: timerLine, ch: 30})
+				this.viewer.replaceRange(`${Math.floor((new Date().getTime() - this.timers[timerLine]) / 1000)} seconds ago`, { line: timerLine, ch: 0 }, { line: timerLine, ch: 30 })
 			}
 		}, 1000);
-		this.viewer.replaceRange('0 seconds ago', {line: lastLine, ch: 0}, {line: lastLine, ch: 10})
-		this.viewer.replaceRange(`\n${JSON.stringify(data, null, 2)}\n`, {line: lastLine+1, ch: 0})
+		this.viewer.replaceRange('0 seconds ago', { line: lastLine, ch: 0 }, { line: lastLine, ch: 10 })
+		this.viewer.replaceRange(`\n${JSON.stringify(data, null, 2)}\n`, { line: lastLine + 1, ch: 0 })
 	}
 }
