@@ -416,6 +416,15 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 				credentials: 'same-origin',
 			},
 		)
+		if (!('operationName' in graphQLParams)) {
+			const graphqlRequested = response.headers.get('X-GraphQL-Requested') === 'true'
+			updateQuery({
+				graphqlQueryID: response.headers.get('X-GraphQL-Query-ID'),
+				graphqlRequested: graphqlRequested,
+				points: graphqlRequested ? undefined : 0,
+				saved: currentQuery.saved
+			}, index)
+		}
 		const { data } = await response.json()
 		return data
 	}
