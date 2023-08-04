@@ -6,6 +6,9 @@ import './editor.css'
 
 import { ToastProvider } from 'react-toast-notifications'
 import { BrowserRouter, Route } from 'react-router-dom';
+import { widget } from './charting_library'
+
+window.TradingView = {widget}
 
 ReactDOM.render(
 	<ToastProvider autoDismiss={true} >

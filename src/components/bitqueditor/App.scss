@@ -28,9 +28,14 @@ $top-bar-height: 44px;
   }
 }
 .result-wrapper {
-  display: flex;
+  overflow-y: auto;
+}
+.streaming-wrapper {
   flex-direction: column-reverse;
-  justify-content: flex-end;
+  overflow-y: auto;
+  .CodeMirror-scroll {
+    overflow: hidden !important;
+  }
 }
 .result-time {
   background-color: #f6f7f8;
@@ -46,11 +51,20 @@ $top-bar-height: 44px;
   color: white;
 }
 .result-window {
-  display: flex;
-  flex: 1 1;
+  display: none;
   width: 100%;
   height: 100%;
-  overflow: auto; 
+  overflow: auto;
+  &-json.result-window-active {
+    display: flex;
+    flex: 1 1;
+  }
+  &-chart.result-window-active{
+    display: block;
+  }
+  &-chart {
+    overflow: hidden;
+  }
   .CodeMirror {
     height: 100%;
   }
@@ -120,8 +134,7 @@ $top-bar-height: 44px;
   flex: 1 1;
   width: 100%;
   height: 100%;
-  overflow-y: scroll;
-  overflow-x: hidden;
+  overflow: hidden;
   &-container {
     width: 100%;
     display: flex;

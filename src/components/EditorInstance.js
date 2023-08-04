@@ -1,9 +1,7 @@
-import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useRef, useMemo, useReducer } from 'react';
 import { observer } from 'mobx-react-lite'
 import { toJS } from 'mobx'
 import ReactTooltip from 'react-tooltip'
-import PlayIcon from './icons/PlayIcon.js'
-import ErrorIcon from './icons/ErrorIcon.js'
 import { generateLink } from '../utils/common'
 import { vegaPlugins } from 'vega-widgets'
 import { tablePlugin } from 'table-widget'
@@ -26,7 +24,7 @@ import ToolbarComponent from './bitqueditor/components/ToolbarComponent'
 import { TabsStore, QueriesStore, UserStore } from '../store/queriesStore'
 import WidgetEditorControls from './bitqueditor/components/WidgetEditorControls'
 import QueryErrorIndicator from './QueryErrorIndicator'
-import { getValueFrom, getLeft, getTop } from '../utils/common'
+import { getLeft, getTop } from '../utils/common'
 import "react-loader-spinner/dist/loader/css/react-spinner-loader.css"
 import Loader from "react-loader-spinner"
 import { DocExplorer } from './DocExplorer'
@@ -36,14 +34,18 @@ import { getIntrospectionQuery, buildClientSchema } from 'graphql'
 import useDebounce from '../utils/useDebounce'
 import WidgetView from './bitqueditor/components/WidgetView'
 import { getCheckoutCode } from '../api/api'
-import { flattenData } from './flattenData.js'
-import { stringifyIncludesFunction } from '../utils/common';
 import { GalleryStore } from '../store/galleryStore.js';
 import CodeSnippetComponent from './CodeSnippetComponent.js';
 import { useHistory } from 'react-router-dom';
 import { useToasts } from 'react-toast-notifications'
 import { createClient } from "graphql-ws"
-import StopIcon from './icons/StopIcon.js';
+import { InteractionButton } from './InteractionButton.js';
+
+const queryStatusReducer = (state, action) => {
+	let newState = { ...state }
+	Object.keys(newState).forEach(status => { newState[status] = status === action })
+	return newState
+}
 
 const EditorInstance = observer(function EditorInstance({ number }) {
 	const { addToast } = useToasts()
@@ -58,8 +60,9 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 	const [loading, setLoading] = useState(false)
 	const [schemaLoading, setSchemaLoading] = useState(false)
 	const [errorLoading, setErrorLoading] = useState(false)
+	const [error, setError] = useState(null)
 	const [queryTypes, setQueryTypes] = useState('')
-	const [dataSource, setDataSource] = useState({})
+	const [dataSource, setDataSource] = useState(null)
 	const [accordance, setAccordance] = useState(true)
 	const [checkoutCode, setCheckOutCode] = useState('')
 	const [widgetInstance, setWidgetInstance] = useState(null)
@@ -74,8 +77,117 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 	const variablesEditor = useRef(null)
 	const widgetDisplay = useRef(null)
 	const abortController = useRef(null)
+	const resultWrapper = useRef(null)
+
+	const [queryStatus, dispatchQueryStatus] = useReducer(queryStatusReducer, {
+		readyToExecute: Object.keys(schema).length ? true : false,
+		activeFetch: false,
+		activeSubscription: false,
+		schemaError: false,
+		schemaLoading: Object.keys(schema).length ? false : true
+	})
+	const queryDispatcher = {
+		onquerystarted: () => dispatchQueryStatus('activeFetch'),
+		onqueryend: () => dispatchQueryStatus('readyToExecute'),
+		onsubscribe: () => dispatchQueryStatus('activeSubscription'),
+		onerror: (error) => {
+			dispatchQueryStatus('readyToExecute')
+			setError(error)
+		}
+	}
 
 	const history = useHistory()
+
+	function HistoryDataSource(payload, queryDispatcher) {
+
+		let callbacks = []
+		let cachedData
+		let variables = payload.variables
+	
+		const getNewData = async () => {
+			queryDispatcher.onquerystarted()
+			try {
+				cachedData = cachedData ? cachedData : await fetcher({ ...payload, variables })
+				queryDispatcher.onqueryend()
+				callbacks.forEach(cb => cb(cachedData, variables))
+			} catch (error) {
+				queryDispatcher.onerror(error)
+			}
+		}
+	
+		this.setCallback = cb => {
+			callbacks.push(cb)
+		}
+	
+		this.changeVariables = async deltaVariables => {
+			if (deltaVariables) {
+				variables = { ...payload.variables, ...deltaVariables }
+				cachedData = null
+			}
+			await getNewData()
+		}
+
+		this.getInterval = () => variables.interval
+	
+		return this
+	}
+
+	function SubscriptionDataSource(payload, queryDispatcher) {
+
+		let cleanSubscription, clean, empty
+		let callbacks = []
+		let variables = payload.variables
+	
+		const subscribe = () => {
+			const currentUrl = currentQuery.endpoint_url.replace(/^http/, 'ws');
+			const client = createClient({ url: currentUrl });
+
+			queryDispatcher.onquerystarted()
+			cleanSubscription = client.subscribe({ ...payload, variables }, {
+				next: ({ data }) => {
+					queryDispatcher.onsubscribe()
+					callbacks.forEach(cb => cb(data, variables))
+				},
+				error: error => { 
+					queryDispatcher.onerror(error)
+				},
+				complete: () => {},
+			});
+				
+		} 
+	
+		this.setCallback = cb => {
+			callbacks.push(cb)
+		}
+
+		this.setClean = cb => {
+			clean = cb
+		}
+
+		this.setEmptyWidget = cb => {
+			empty = cb
+		}
+	
+		this.changeVariables = async deltaVariables => {
+			if (deltaVariables) {
+				variables = { ...payload.variables, ...deltaVariables }
+				empty()
+			}
+			this.unsubscribe()
+			subscribe()
+		}
+
+		this.unsubscribe = () => {
+			cleanSubscription && cleanSubscription()
+			cleanSubscription = null
+			queryDispatcher.onqueryend()
+			clean()
+		}
+
+		this.getInterval = () => variables.interval
+	
+		return this
+	}
 
 	useEffect(() => {
 		if (currentTab === tabs[number].id) window.dispatchEvent(new Event('resize'))
@@ -250,177 +362,16 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 			window.location = `${user?.graphql_admin_url}/auth/login?redirect_to=${window.location.href}`
 			return
 		}
-		const onCleanUp = () => {
-			if (wsClean) {
-				wsClean.f()
-				setWsClean(null)
-				return true
-			}
-		}
-		if (onCleanUp()) {
-			return 
-		}
-		if (currentQuery.widget_id !== 'json.widget') {
-			while(widgetInstance.container.firstChild) {
-				widgetInstance.container.removeChild(widgetInstance.container.firstChild)
-			}
-		}
-		ReactTooltip.hide(executeButton.current)
-		updateQuery({ points: undefined, graphqlRequested: undefined, saved: currentQuery.saved, gettingPointsCount: 0 }, index)
-		setLoading(true)
-		let queryType = getQueryTypes(currentQuery.query)
-		if (JSON.stringify(queryType) !== JSON.stringify(queryTypes)) {
-			setQueryTypes(queryType)
-		}
-		let indexOfData = Object.keys(queryType).indexOf(currentQuery.displayed_data)
-		let indexOfWidget = plugins.map(p => p.id).indexOf(currentQuery.widget_id)
-		const unusablePair = indexOfData < 0 || indexOfWidget < 0
-		let displayed_data = unusablePair ? Object.keys(queryType)[Object.keys(queryType).length - 1] : currentQuery.displayed_data
-		/* if (unusablePair) {
-			updateQuery({
-				displayed_data,
-				widget_id: 'json.widget',
-				saved: currentQuery.id && true
-			}, index)
-		} */
+		const payload = {query: currentQuery.query, variables: JSON.parse(currentQuery.variables)}
 		if (currentQuery.query.match(/subscription[^a-zA-z0-9]/gm)) {
-			setDataSource({...dataSource, streamingValues: [], values: '', error: null})
-			const client = wsClient ? wsClient : createClient({
-				url: currentQuery.endpoint_url.replace('http', 'ws'),
-				shouldRetry: () => false
-			});
-			setWsClient(client)
-			let cleanup = () => {
-				console.log('clean')
-			}
-			async function execute(payload) {
-				return new Promise((resolve, reject) => {
-					let result;
-					let values = []
-					cleanup = client.subscribe(payload, {
-						next: ({ data, errors }) => {
-							if (currentQuery.widget_id === 'json.widget') {
-								setLoading(prev => prev && !prev)
-								if (currentQuery.displayed_data && currentQuery.displayed_data !== 'data') {
-									if (currentQuery.data_type === 'flatten') {
-										values = flattenData(data)
-									} else {
-										values.push(data)
-									}
-								} else {
-									values.push(data)
-								}
-								setDataSource({
-									data: data || null,
-									extensions: null,
-									displayed_data: displayed_data || '',
-									streamingValues: values,
-									error: errors ? errors : null,
-									query: toJS(currentQuery.query),
-									variables: toJS(currentQuery.variables)
-								})
-							} else {
-								setLoading(prev => prev && !prev)
-								values.push(data)
-								setDataSource({
-									data: data || null,
-									extensions: null,
-									displayed_data: displayed_data || '',
-									streamingValues: values,
-									error: errors ? errors : null,
-									query: toJS(currentQuery.query),
-									variables: toJS(currentQuery.variables)
-								})
-								// console.log(data)
-								// widgetInstance.onData(data, true)
-							}
-						},
-						error: reject,
-						complete: resolve,
-					});
-					setWsClean({ f: cleanup })
-				});
-			}
-			try {
-				await execute({ query: currentQuery.query, variables: JSON.parse(currentQuery.variables) })
-				setWsClean(null)
-			} catch (error) {
-				console.log(error)
-				setDataSource({ ...dataSource, error })
-				setLoading(false)
-				setWsClean(null)
-			} finally {
-				setLoading(false)
-				setAccordance(true)
-				ReactTooltip.hide(executeButton.current)				
-			}
+			const subscriptionDataSource = new SubscriptionDataSource(payload, queryDispatcher)
+			setDataSource({ subscriptionDataSource })
 		} else {
-			setDataSource({...dataSource, values: '', streamingValues: [], error: null})
-			fetcher({ query: currentQuery.query, variables: currentQuery.variables })
-				.then(response => {
-					if (response.status === 200) {
-						const graphqlRequested = response.headers.get('X-GraphQL-Requested') === 'true'
-						updateQuery({
-							graphqlQueryID: response.headers.get('X-GraphQL-Query-ID'),
-							graphqlRequested: graphqlRequested,
-							points: graphqlRequested ? undefined : 0,
-							saved: currentQuery.saved
-						}, index)
-						return response.json()
-					} else {
-						throw new Error('Something went wrong')
-					}
-				}).then(async json => {
-					let values
-						if ('errors' in json) {
-							setLoading(false)
-						} else {
-							values = null
-							if ('data' in json) {
-								if (currentQuery.displayed_data && currentQuery.displayed_data !== 'data') {
-									if (currentQuery.data_type === 'flatten') {
-										values = flattenData(json.data)
-									} else {
-										values = getValueFrom(json.data, displayed_data || 'data')
-									}
-								} else {
-									values = json.data
-									if ('extensions' in json) {
-										values.extensions = json.extensions
-									}
-								}
-							}
-						}
-						currentQuery.id && await logQuery({
-							id: currentQuery.id,
-							account_id: currentQuery.account_id,
-							success: !json.errors,
-							error: JSON.stringify(json.errors)
-						})
-						setDataSource({
-							data: ('data' in json) ? json.data : null,
-							extensions: ('extensions' in json) ? json.extensions : null,
-							displayed_data: displayed_data || '',
-							values,
-							error: ('errors' in json) ? json.errors : null,
-							query: toJS(currentQuery.query),
-							variables: toJS(currentQuery.variables)
-						})
-						// if (!('data' in json)) updateQuery({ widget_id: 'json.widget' }, index)
-						/* if (currentQuery.widget_id !== 'json.widget') {
-							console.log(json.data)
-							widgetInstance.onData(json.data, false)
-						} */
-				}).catch(error => {
-					setDataSource({ error: error.message })
-				}).finally(() => {
-					setLoading(false)
-					setAccordance(true)
-					ReactTooltip.hide(executeButton.current)
-				})
+			const historyDataSource = new HistoryDataSource(payload, queryDispatcher)
+			setDataSource({ historyDataSource })
 		}
 		// eslint-disable-next-line 
-	}, [JSON.stringify(currentQuery), schema[debouncedURL], JSON.stringify(queryTypes), wsClean, dataSource.values, widgetInstance, user?.id])
+	}, [JSON.stringify(currentQuery), schema[debouncedURL], JSON.stringify(queryTypes), wsClean, widgetInstance, user?.id])
 
 	const editQueryHandler = useCallback(handleSubject => {
 		if ('query' in handleSubject) {
@@ -447,11 +398,11 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 		// eslint-disable-next-line 
 	}, [user, schema[debouncedURL], queryTypes, index])
 	
-	const fetcher = (graphQLParams) => {
+	const fetcher = async (graphQLParams) => {
 		abortController.current = new AbortController()
 		let key = user ? user.key : null
 		let keyHeader = { 'X-API-KEY': key }
-		return fetch(
+		const response = await fetch(
 			currentQuery.endpoint_url,
 			{
 				signal: abortController.current.signal,
@@ -465,11 +416,13 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 				credentials: 'same-origin',
 			},
 		)
+		const { data } = await response.json()
+		return data
 	}
 	useEffect(() => {
 		if (number === index && user !== null && !(debouncedURL in schema) && debouncedURL) {
-			const fetchSchema = () => {
-				setSchemaLoading(true)
+			const fetchSchema = async () => {
+				dispatchQueryStatus('schemaLoading')
 				let introspectionQuery = getIntrospectionQuery()
 				let staticName = 'IntrospectionQuery'
 				let introspectionQueryName = staticName
@@ -477,34 +430,24 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 					query: introspectionQuery,
 					operationName: introspectionQueryName,
 				}
-				fetcher(graphQLParams)
-					.then(response => {
-						if (!response.ok) {
-							return response.text().then(text => { throw new Error(text) })
-						}
-						return response.json()
-					})
-					.then(result => {
-						if (typeof result !== 'string' && 'data' in result) {
-							let newSchema = buildClientSchema(result.data)
-							setSchema({ ...schema, [debouncedURL]: newSchema })
-						}
-						setSchemaLoading(false)
-						setErrorLoading(false)
-					}).catch(error => {
-						const message = /401 Authorization Required/.test(error.message) ? '401 Authorization Required' : error.message
-						addToast(message, { appearance: 'error' })
-						setSchemaLoading(false)
-						setErrorLoading(true)
-						if (error.message === '401') {
-							history.push('/auth/login')
-						}
-					})
+				try {
+					const data = await fetcher(graphQLParams)
+					let newSchema = buildClientSchema(data)
+					setSchema({ ...schema, [debouncedURL]: newSchema })
+					dispatchQueryStatus('readyToExecute')
+				} catch (error) {
+					const message = /401 Authorization Required/.test(error.message) ? '401 Authorization Required' : error.message
+					addToast(message, { appearance: 'error' })
+					dispatchQueryStatus('schemaError')
+					if (error.message === '401') {
+						history.push('/auth/login')
+					}
+				}
 			}
 			fetchSchema()
 		}
-		if (debouncedURL in schema && errorLoading) {
-			setErrorLoading(false)
+		if (debouncedURL in schema && queryStatus.schemaError) {
+			dispatchQueryStatus('readyToExecute')
 		}
 		// eslint-disable-next-line 
 	}, [debouncedURL, user])
@@ -544,16 +487,21 @@ ${WidgetComponent.id === 'table.widget' ? '<link href="https://unpkg.com/tabulat
 	}
 
 	const abortRequest = () => {
-		if (wsClean) {
-			wsClean.f()
-			setWsClean(null)
+		if (queryStatus.activeSubscription) {
+			dataSource.subscriptionDataSource.unsubscribe()
 			return
 		}
 		if (abortController.current) {
 			abortController.current.abort()
-			setLoading(false)
+			dispatchQueryStatus('readyToExecute')
 		}
 	}
+
+	useEffect(() => {
+		if (-resultWrapper.current.scrollTop < resultWrapper.current.scrollHeight*0.9) {
+			resultWrapper.current.scrollTop = -resultWrapper.current.scrollHeight
+		}
+	}, [dataSource?.streamingValues?.length])
 
 	return (
 		<div
@@ -586,20 +534,12 @@ ${WidgetComponent.id === 'table.widget' ? '<link href="https://unpkg.com/tabulat
 					data-tip={(loading || wsClean) ? 'Interrupt' : 'Execute query (Ctrl-Enter)'}
 					ref={executeButton}
 					disabled={schemaLoading}
-					onClick={loading ? abortRequest : getResult}
+					onClick={(queryStatus.activeFetch || queryStatus.activeSubscription) ? abortRequest : getResult}
 				>
-					{loading
-						? <StopIcon /> : schemaLoading ? <Loader
-						className="view-loader"
-						type="Oval"
-						color="#3d77b6"
-						height={25}
-						width={25}
+					<InteractionButton 
+						queryStatus={queryStatus}
+						accordance={accordance}
 					/>
-						: errorLoading && user?.id ?
-							<ErrorIcon fill={'#FF2D00'} /> : wsClean ? <StopIcon /> :
-								<PlayIcon fill={accordance ? '#eee' : '#14ff41'} />
-					}
 				</button>
 				<div className="workspace__wrapper"
 					ref={workspace}
@@ -639,7 +579,7 @@ ${WidgetComponent.id === 'table.widget' ? '<link href="https://unpkg.com/tabulat
 						/>
 					</div>
 				</div>
-				<div className={'widget-display widget-display-wrapper' +
+				<div className={'widget-display widget-display-wrapper position-relative' +
 					(isMobile ? ' widget-display-wrapper-fullscreen' : '')}
 					ref={widgetDisplay}
 					style={{backgroundColor: '#f6f7f8'}}
@@ -649,69 +589,33 @@ ${WidgetComponent.id === 'table.widget' ? '<link href="https://unpkg.com/tabulat
 						onMouseDown={handleResizer}
 					>
 					</div>
-					<div className={"w-100 result-wrapper col-reverse position-relative pl-4" + ((currentQuery.widget_id === 'json.widget') || dataSource.values ? '' : 'h-100')}>
-						{loading && <Loader
+					<div className="flex w-100 pl-4 result-wrapper" ref={resultWrapper}>
+						{queryStatus.activeFetch && <Loader
 							className="view-loader"
 							type="Oval"
 							color="#3d77b6"
 							height={100}
 							width={100}
 						/>}
-						{wsClean && <div className="blinker-wrapper d-flex align-items-center text-success text-right mr-3">
+						{wsClean && <div className="blinker-wrapper d-flex align-items-center text-success text-right mr-5">
 							<span className="d-none d-sm-inline">Live </span><div className="blink blnkr bg-success"></div>
 						</div>}
-						{((currentQuery.widget_id === 'json.widget' || jsonMode || codeMode) ) ?
-							('streamingValues' in dataSource && dataSource.streamingValues.length) ?
-								dataSource.streamingValues.map((values, pluginIndex) => {
-									const dateAdded = new Date().getTime()
-									return (
-										<JsonPlugin.renderer
-											pluginIndex={pluginIndex}
-											loading={loading}
-											code={checkoutCode}
-											wsClean={!!wsClean}
-											getCode={getCode}
-											mode={jsonMode ? 'json' : codeMode ? 'code' : ''}
-											dataSource={dataSource}
-											values={values}
-											dateAdded={dateAdded}
-											displayedData={toJS(currentQuery.displayed_data)}
-											config={toJS(query[index].config)}
-										/>
-									)
-								})
-								: <JsonPlugin.renderer
-									pluginIndex={0}
-									loading={loading}
-									code={checkoutCode}
-									getCode={getCode}
-									mode={jsonMode ? 'json' : codeMode ? 'code' : ''}
-									dataSource={dataSource}
-									displayedData={toJS(currentQuery.displayed_data)}
-									config={toJS(query[index].config)}
-								/> :
-							<FullScreen className="widget-display" handle={fullscreenHandle}>
-								<WidgetView
-									widget={widget}
-									widgetInstance={widgetInstance}
-									setWidgetInstance={setWidgetInstance}
-									dataSource={dataSource}
-									config={toJS(query[index].config)}
-									loading={loading}
-									el={currentTab === tabs[number].id ? `asdx${currentTab}` : 'x'}
-								>
-									<FullscreenIcon onClick={
-										isMobile ? () => setMobile(false) :
-											fullscreenHandle.active
-												? fullscreenHandle.exit
-												: fullscreenHandle.enter}
-									/>
-								</WidgetView>
-							</FullScreen>
-						}
+						<FullScreen className="widget-display" handle={fullscreenHandle}>
+							<WidgetView
+								widget={widget}
+								dataSource={dataSource}
+							>
+								<FullscreenIcon onClick={
+									isMobile ? () => setMobile(false) :
+										fullscreenHandle.active
+											? fullscreenHandle.exit
+											: fullscreenHandle.enter}
+								/>
+							</WidgetView>
+						</FullScreen>
 						<QueryErrorIndicator
-							error={dataSource.error}
-							removeError={setDataSource}
+							error={error}
+							removeError={setError}
 						/>
 					</div>
 				</div>

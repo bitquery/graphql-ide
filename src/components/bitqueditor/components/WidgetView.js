@@ -1,41 +1,47 @@
-import React, { useEffect, useRef, useState } from 'react'
-import CsvIcon from '../../icons/CsvIcon'
+import React, { useEffect, useRef } from 'react'
 import { QueriesStore } from '../../../store/queriesStore'
 import { observer } from 'mobx-react'
+import JsonWidget from "./JsonWidget"
 
-const WidgetView = observer(function WidgetView({ el, config, dataSource, children, widget, widgetInstance, setWidgetInstance, loading }) {
+const WidgetView = observer(function WidgetView({ children, widget, dataSource }) {
 	const { currentQuery } = QueriesStore
-	const ref = useRef(null)
-	const [table, setTable] = useState(null)
-	const downloadCSV = () => {
-		table.download('csv', 'data.csv')
-	}
+	const refJson = useRef(null)
+	const refChart = useRef(null)
+
 	useEffect(async () => {
-		if (widgetInstance && !loading && ref.current.children.length) {
-			if (dataSource?.data) {
-				widgetInstance.onData(dataSource.data, true)
+		if (dataSource) {
+			if (refJson.current.childNodes.length) {
+				refJson.current.removeChild(refJson.current.firstChild)
 			}
-		} else if (widget && !ref.current.children.length) {
-			//temp for fit height in IDE
-			const explicitHeight = widget.match(/height:.*\d(px| +|)(,|)( +|)$/gm)
-			if (explicitHeight) {
-				widget = widget.replace(explicitHeight[0], '')
+			if (refChart.current.childNodes.length) {
+				refChart.current.removeChild(refChart.current.firstChild)
 			}
-			const Widget = eval(`(${widget})`)
-			const widgetInstance = new Widget(ref.current, currentQuery.query)
-			setWidgetInstance(widgetInstance)
-			if (dataSource?.data) {
-				widgetInstance.onData(dataSource.data, true)
+			const jsonWidgetInstance = new JsonWidget(refJson.current, dataSource.historyDataSource, dataSource.subscriptionDataSource)
+			await jsonWidgetInstance.init(!!!widget)
+			if (widget) {
+				//temp for fit height in IDE
+				const explicitHeight = widget.match(/height:.*\d(px| +|)(,|)( +|)$/gm)
+				if (explicitHeight) {
+					widget = widget.replace(explicitHeight[0], '')
+				}
+				const ChartWidget = eval(`(${widget})`)
+				const chartWidgetInstance = new ChartWidget(refChart.current, dataSource.historyDataSource, dataSource.subscriptionDataSource)
+				await chartWidgetInstance.init()
 			}
 		}
 		// eslint-disable-next-line 
-	}, [JSON.stringify(config), JSON.stringify(dataSource.data), widget, currentQuery.widget_id, loading])
+	}, [dataSource])
+
+	useEffect(() => {
+		window.dispatchEvent(new Event('resize'))
+	}, [currentQuery.widget_id])
 
 	return (
 		<>
 			{children}
 			{/* NEED CONDITION FOR CSV DOWNLOAD BUTTON {config && 'columns' in config && <CsvIcon onClick={downloadCSV} />} */}
-			<div ref={ref} className="table-striped" style={{ 'width': '100%', 'height': '100%', 'overflowY': 'scroll' }} id={el} />
+			<div ref={refJson} className={"result-window result-window-json " + (currentQuery.widget_id === 'json.widget' ? 'result-window-active' : '')} />
+			<div ref={refChart} className={"result-window result-window-chart " + (currentQuery.widget_id === 'config.widget' ? 'result-window-active' : '')} />
 		</>
 	)
 })

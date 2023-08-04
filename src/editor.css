@@ -789,8 +789,8 @@ div.CodeMirror span.CodeMirror-nonmatchingbracket {color: #f22;}
   padding-bottom: 30px;
   position: relative;
 }
-.result-window .CodeMirror-scroll {
-  overflow: hidden !important;
+.widget-display .CodeMirror-scroll {
+  margin-right: 0;
 }
 
 .CodeMirror-sizer {

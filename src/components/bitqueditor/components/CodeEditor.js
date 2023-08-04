@@ -29,7 +29,6 @@ class CodeEditor extends Component {
 			lineWrapping: true,
 			value: this.formatResult(),
 			readOnly: true,
-			scrollbarStyle: null,
 			theme: 'graphiql',
 			mode: 'javascript',
 			keyMap: 'sublime',
@@ -76,7 +75,7 @@ class CodeEditor extends Component {
 		if (Array.isArray(this.props.values)) {
 			for (let i=0; i<this.props.values.length-1; i++) {
 				for (let functionName in this.props.values[i]) {
-					window[functionName] = eval(`(${this.props.values[i][functionName]})`)
+					window[functionName] = eval(`(${this.props.values[i][functionName]})`.replace('600px', '100%'))
 					result += window[functionName].toString() + '\n'
 				}
 			}
@@ -91,7 +90,7 @@ class CodeEditor extends Component {
 		return (
 			<div className={'flex-col flex w-100 overflow-auto' + (this.props.pluginIndex === 0 ? ' flexone' : '')} >
 				<section
-					className="result-window"
+					className="result-window result-window-json result-window-active"
 					aria-label="Result Window"
 					aria-live="polite"
 					aria-atomic="true"
