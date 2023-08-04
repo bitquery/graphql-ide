@@ -63,7 +63,7 @@ $top-bar-height: 44px;
     display: block;
   }
   &-chart {
-    overflow: hidden;
+    overflow-x: hidden;
   }
   .CodeMirror {
     height: 100%;
