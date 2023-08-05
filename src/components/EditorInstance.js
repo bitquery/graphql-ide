@@ -416,6 +416,10 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 				credentials: 'same-origin',
 			},
 		)
+		if (!response.ok) {
+			if (response.status === 401) throw new Error("Authorization Required")
+			throw new Error(`HTTP Status ${response.status}`)
+		}
 		if (!('operationName' in graphQLParams)) {
 			const graphqlRequested = response.headers.get('X-GraphQL-Requested') === 'true'
 			updateQuery({
@@ -427,7 +431,6 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 			}, index)
 		}
 		const { data, errors } = await response.json()
-		console.log(errors)
 		if (errors) {
 			setError(errors[0].message)
 		}
