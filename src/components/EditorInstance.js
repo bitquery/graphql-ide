@@ -422,7 +422,8 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 				graphqlQueryID: response.headers.get('X-GraphQL-Query-ID'),
 				graphqlRequested: graphqlRequested,
 				points: graphqlRequested ? undefined : 0,
-				saved: currentQuery.saved
+				saved: currentQuery.saved,
+				gettingPointsCount: 0
 			}, index)
 		}
 		const { data } = await response.json()
