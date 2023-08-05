@@ -426,7 +426,11 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 				gettingPointsCount: 0
 			}, index)
 		}
-		const { data } = await response.json()
+		const { data, errors } = await response.json()
+		console.log(errors)
+		if (errors) {
+			setError(errors[0].message)
+		}
 		return data
 	}
 	useEffect(() => {
@@ -599,7 +603,7 @@ ${WidgetComponent.id === 'table.widget' ? '<link href="https://unpkg.com/tabulat
 						onMouseDown={handleResizer}
 					>
 					</div>
-					<div className="flex w-100 pl-4 result-wrapper" ref={resultWrapper}>
+					<div className="flex flex-column w-100 pl-4 result-wrapper" ref={resultWrapper}>
 						{queryStatus.activeFetch && <Loader
 							className="view-loader"
 							type="Oval"
@@ -610,6 +614,10 @@ ${WidgetComponent.id === 'table.widget' ? '<link href="https://unpkg.com/tabulat
 						{wsClean && <div className="blinker-wrapper d-flex align-items-center text-success text-right mr-5">
 							<span className="d-none d-sm-inline">Live </span><div className="blink blnkr bg-success"></div>
 						</div>}
+						<QueryErrorIndicator
+							error={error}
+							removeError={setError}
+						/>
 						<FullScreen className="widget-display" handle={fullscreenHandle}>
 							<WidgetView
 								widget={widget}
@@ -623,10 +631,6 @@ ${WidgetComponent.id === 'table.widget' ? '<link href="https://unpkg.com/tabulat
 								/>
 							</WidgetView>
 						</FullScreen>
-						<QueryErrorIndicator
-							error={error}
-							removeError={setError}
-						/>
 					</div>
 				</div>
 				{docExplorerOpen && <DocExplorer schema={schema[debouncedURL]} />}
