@@ -26,7 +26,7 @@ const ModalWindow = observer(() => {
     return (
 		<Modal
 			centered
-			fade
+			fade={fade.toString()}
 			show={modalIsOpen}
 			size={statisticsModalIsOpen ? 'lg' : 'md'}
 			onHide={fade ? null : onRequestClose}

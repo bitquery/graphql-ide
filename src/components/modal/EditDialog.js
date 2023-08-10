@@ -87,10 +87,6 @@ const EditDialog = observer(function EditDialog({active}) {
 			}
 			if (description) params.description = description
 			if (tags.length) params.tags = tags
-			if (!/^https:\/\/.+\.bitquery\.io.*/gm.test(params.endpoint_url)) {
-				addToast('You can not save query with non-bitquery.io URL', {appearance: 'error'})
-				return
-			}
 			data = await saveQuery({...params, isDraggable: false, isResizable: false})
 			if (data.status !== 400) {
 				renameCurrentTab(name)
@@ -148,7 +144,8 @@ const EditDialog = observer(function EditDialog({active}) {
 				</Form.Group>
 				<div className="tags__list">
 					{ tags.length ? tags.map(tag => 
-						<div 
+						<div
+							key={tag}
 							className="tags__tag"
 							onClick={() => deleteTag(tag)}
 						>
