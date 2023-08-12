@@ -606,7 +606,7 @@ ${WidgetComponent.id === 'table.widget' ? '<link href="https://unpkg.com/tabulat
 						onMouseDown={handleResizer}
 					>
 					</div>
-					<div className="flex flex-column w-100 pl-4 result-wrapper" ref={resultWrapper}>
+					<div className="flex flex-column w-100 pl-4 result-wrapper pt-4" ref={resultWrapper}>
 						{queryStatus.activeFetch && <Loader
 							className="view-loader"
 							type="Oval"
@@ -614,7 +614,7 @@ ${WidgetComponent.id === 'table.widget' ? '<link href="https://unpkg.com/tabulat
 							height={100}
 							width={100}
 						/>}
-						{wsClean && <div className="blinker-wrapper d-flex align-items-center text-success text-right mr-5">
+						{queryStatus.activeSubscription && <div className="blinker-wrapper d-flex align-items-center text-success text-right mr-5">
 							<span className="d-none d-sm-inline">Live </span><div className="blink blnkr bg-success"></div>
 						</div>}
 						<QueryErrorIndicator
