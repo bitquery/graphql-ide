@@ -244,12 +244,16 @@ class Queries {
 			return e.response
 		}
 	}
-	logQuery = async params => {
-		try {
-			const { data } = await axios.post('/api/querylog', { 
-				params
-			})
-			console.log(data)
+	logQuery = async errors => {
+		if ( !this.currentQuery.id ) { return }
+		const params = {
+			id: this.currentQuery.id,
+			account_id: this.currentQuery.account_id,
+			success: !errors,
+			error: JSON.stringify(errors)
+		}
+		try {			
+			axios.post('/api/querylog', { params })
 		} catch (e) {
 			console.log(e)
 		}

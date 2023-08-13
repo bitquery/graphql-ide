@@ -40,7 +40,7 @@ const WidgetView = observer(function WidgetView({ children, widget, dataSource }
 		<>
 			{children}
 			{/* NEED CONDITION FOR CSV DOWNLOAD BUTTON {config && 'columns' in config && <CsvIcon onClick={downloadCSV} />} */}
-			<div ref={refJson} className={"result-window result-window-json " + (currentQuery.widget_id === 'json.widget' ? 'result-window-active' : '')} />
+			<div ref={refJson} className={"result-window result-window-json " + (currentQuery.widget_id !== 'config.widget' ? 'result-window-active' : '')} />
 			<div ref={refChart} className={"result-window result-window-chart " + (currentQuery.widget_id === 'config.widget' ? 'result-window-active' : '')} />
 		</>
 	)

@@ -1,8 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef, useMemo, useReducer } from 'react';
 import { observer } from 'mobx-react-lite'
-import { toJS } from 'mobx'
 import ReactTooltip from 'react-tooltip'
-import { generateLink } from '../utils/common'
 import { vegaPlugins } from 'vega-widgets'
 import { tablePlugin } from 'table-widget'
 import { graphPlugins } from '@bitquery/ide-graph'
@@ -33,7 +31,6 @@ import FullscreenIcon from './icons/FullscreenIcon'
 import { getIntrospectionQuery, buildClientSchema } from 'graphql'
 import useDebounce from '../utils/useDebounce'
 import WidgetView from './bitqueditor/components/WidgetView'
-import { getCheckoutCode } from '../api/api'
 import { GalleryStore } from '../store/galleryStore.js';
 import CodeSnippetComponent from './CodeSnippetComponent.js';
 import { useHistory } from 'react-router-dom';
@@ -49,25 +46,18 @@ const queryStatusReducer = (state, action) => {
 
 const EditorInstance = observer(function EditorInstance({ number }) {
 	const { addToast } = useToasts()
-	const { tabs, currentTab, index, jsonMode, codeMode } = TabsStore
+	const { tabs, currentTab, index } = TabsStore
 	const { tagListIsOpen } = GalleryStore
 	const { user } = UserStore
 	const { query, updateQuery, currentQuery, isMobile,
-		setMobile, showSideBar, schema, setSchema, isLoaded, logQuery } = QueriesStore
+		setMobile, showSideBar, schema, setSchema, logQuery } = QueriesStore
 	const [docExplorerOpen, setDocExplorerOpen] = useState(false)
 	const [codeSnippetOpen, setCodeSnippetOpen] = useState(false)
 	const [_variableToType, _setVariableToType] = useState(null)
-	const [loading, setLoading] = useState(false)
-	const [schemaLoading, setSchemaLoading] = useState(false)
-	const [errorLoading, setErrorLoading] = useState(false)
 	const [error, setError] = useState(null)
 	const [queryTypes, setQueryTypes] = useState('')
 	const [dataSource, setDataSource] = useState(null)
 	const [accordance, setAccordance] = useState(true)
-	const [checkoutCode, setCheckOutCode] = useState('')
-	const [widgetInstance, setWidgetInstance] = useState(null)
-	const [wsClean, setWsClean] = useState(null)
-	const [wsClient, setWsClient] = useState(null)
 	const [widget, setWidget] = useState(null)
 	const debouncedURL = useDebounce(currentQuery.endpoint_url, 500)
 	const workspace = useRef(null)
@@ -102,12 +92,17 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 
 		let callbacks = []
 		let cachedData
+		let queryNotLogged = true
 		let variables = payload.variables
 	
 		const getNewData = async () => {
 			queryDispatcher.onquerystarted()
 			try {
 				cachedData = cachedData ? cachedData : await fetcher({ ...payload, variables })
+				if ( queryNotLogged ) {
+					logQuery(cachedData.errors)
+					queryNotLogged = false
+				}
 				queryDispatcher.onqueryend()
 				callbacks.forEach(cb => cb(cachedData, variables))
 			} catch (error) {
@@ -136,6 +131,7 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 
 		let cleanSubscription, clean, empty
 		let callbacks = []
+		let queryNotLogged = true
 		let variables = payload.variables
 	
 		const subscribe = () => {
@@ -146,9 +142,15 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 			cleanSubscription = client.subscribe({ ...payload, variables }, {
 				next: ({ data }) => {
 					queryDispatcher.onsubscribe()
+					if ( queryNotLogged ) {
+						logQuery(false)
+						queryNotLogged = false
+					}
 					callbacks.forEach(cb => cb(data, variables))
 				},
-				error: error => { 
+				error: error => {
+					logQuery(error)
+					queryNotLogged = false
 					queryDispatcher.onerror(error)
 				},
 				complete: () => {},
@@ -371,7 +373,7 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 			setDataSource({ historyDataSource })
 		}
 		// eslint-disable-next-line 
-	}, [JSON.stringify(currentQuery), schema[debouncedURL], JSON.stringify(queryTypes), wsClean, widgetInstance, user?.id])
+	}, [JSON.stringify(currentQuery), schema[debouncedURL], JSON.stringify(queryTypes), user?.id])
 
 	const editQueryHandler = useCallback(handleSubject => {
 		if ('query' in handleSubject) {
@@ -471,29 +473,6 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 
 	const fullscreenHandle = useFullScreenHandle()
 
-	const getCode = useCallback(async () => {
-		let { data } = WidgetComponent.source && await getCheckoutCode(WidgetComponent.source)
-		if (WidgetComponent.id === 'tradingview.widget') {
-			data = data.replace('createChart', 'LightweightCharts.createChart')
-		}
-		const id = generateLink(true)
-		let renderFunc = WidgetComponent.source ? data.match(/function(.*?)\(/)[1].trim() : WidgetComponent.rendererName
-		let dependencies = WidgetComponent.dependencies.map(dep => `<script src="${dep}"></script>`).join('\n')
-		return `
-${dependencies}
-${WidgetComponent.id === 'table.widget' ? '<link href="https://unpkg.com/tabulator-tables@4.9.3/dist/css/tabulator.min.css" rel="stylesheet">' : ''} 
-<script src="https://cdn.jsdelivr.net/gh/bitquery/widgets-runtime@v1.0/dataSource.js"></script>
-<div style="width: 500px; height: 500px; overflow-y: hidden;" id="${id}"></div>
-<script>
-	let ds = new dataSourceWidget(\`${currentQuery.query}\`, ${currentQuery.variables}, \`${currentQuery.displayed_data}\`, '${user.key}')
-	${data ? data : ''}
-	const config = ${JSON.stringify(currentQuery.config)}
-	${renderFunc}(ds, config, '${id}')
-</script>
-		`
-		// eslint-disable-next-line 
-	}, [WidgetComponent.id, JSON.stringify(currentQuery), user])
-
 	const toggleDocs = () => {
 		codeSnippetOpen && setCodeSnippetOpen(false)
 		setDocExplorerOpen(prev => !prev)
@@ -548,9 +527,9 @@ ${WidgetComponent.id === 'table.widget' ? '<link href="https://unpkg.com/tabulat
 				/>
 
 				<button className="execute-button"
-					data-tip={(loading || wsClean) ? 'Interrupt' : 'Execute query (Ctrl-Enter)'}
+					data-tip={(queryStatus.activeFetch || queryStatus.activeSubscription) ? 'Interrupt' : 'Execute query (Ctrl-Enter)'}
 					ref={executeButton}
-					disabled={schemaLoading}
+					disabled={queryStatus.schemaLoading}
 					onClick={(queryStatus.activeFetch || queryStatus.activeSubscription) ? abortRequest : getResult}
 				>
 					<InteractionButton 
@@ -606,7 +585,7 @@ ${WidgetComponent.id === 'table.widget' ? '<link href="https://unpkg.com/tabulat
 						onMouseDown={handleResizer}
 					>
 					</div>
-					<div className="flex flex-column w-100 pl-4 result-wrapper pt-4" ref={resultWrapper}>
+					<div className="flex flex-column w-100 pl-4 result-wrapper" ref={resultWrapper}>
 						{queryStatus.activeFetch && <Loader
 							className="view-loader"
 							type="Oval"
@@ -614,9 +593,6 @@ ${WidgetComponent.id === 'table.widget' ? '<link href="https://unpkg.com/tabulat
 							height={100}
 							width={100}
 						/>}
-						{queryStatus.activeSubscription && <div className="blinker-wrapper d-flex align-items-center text-success text-right mr-5">
-							<span className="d-none d-sm-inline">Live </span><div className="blink blnkr bg-success"></div>
-						</div>}
 						<QueryErrorIndicator
 							error={error}
 							removeError={setError}
