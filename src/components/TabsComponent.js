@@ -190,7 +190,7 @@ const TabsComponent = observer(() => {
 											/>
 											<i className="fas fa-check" onClick={renameQueryHandler} />
 										</>
-										: <span role='button' aria-label='name' tabIndex={0} className={'nav-link-title ' + ((currentTab === tab.id && !(!!currentQuery?.url && !!currentQuery.id)) ? 'cursor-edit' : undefined)}
+										: <span data-tip={tab.name} role='button' aria-label='name' tabIndex={0} className={'nav-link-title ' + ((currentTab === tab.id && !(!!currentQuery?.url && !!currentQuery.id)) ? 'cursor-edit' : undefined)}
 											onClick={() => (currentTab === tab.id && (!currentQuery.id || currentQuery.account_id === user.id)) && renameQueryHandler(currentTab, i)}
 										>
 											{(('saved' in query[i]) && query[i].saved) || !('saved' in query[i])

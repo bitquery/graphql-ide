@@ -523,7 +523,7 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 					borderColor="#fff"
 					backgroundColor="#5f5f5f"
 					arrowColor="transparent"
-					delayShow={750}
+					delayShow={350}
 				/>
 
 				<button className="execute-button"
