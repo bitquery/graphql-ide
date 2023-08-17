@@ -1,10 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { useHistory, useRouteMatch } from 'react-router-dom'
-import { useToasts, DefaultToast } from 'react-toast-notifications'
+import { useHistory } from 'react-router-dom'
+import { useToasts } from 'react-toast-notifications'
 import modalStore from '../../store/modalStore'
 import { QueriesStore, TabsStore } from '../../store/queriesStore'
-import copy from 'copy-to-clipboard'
-import { deleteQuery, checkUrl } from '../../api/api'
+import { deleteQuery } from '../../api/api'
 import ReactTooltip from 'react-tooltip'
 import ConfirmationWindow from '../modal/ConfirmationWindow'
 import { observer } from 'mobx-react-lite'
@@ -14,8 +13,7 @@ import { Modal, Form, Button } from 'react-bootstrap'
 
 const EditDialog = observer(function EditDialog({active}) {
 	const { addToast } = useToasts()
-	const { url } = useRouteMatch()
-	const { saveQuery, queryParams, currentQuery, sharedQueries,
+	const { saveQuery, queryParams, currentQuery,
 		saveToggle, query, removeQuery, updateQuery } = QueriesStore
 	const { index } = TabsStore
 	const [name, setName] = useState(currentQuery.name||'')
@@ -65,21 +63,13 @@ const EditDialog = observer(function EditDialog({active}) {
 	}
 	const saveHandler = async (e) => {
 		e.preventDefault()
-		const fixWrongUrl = async (url) => {
-			const { status } = await checkUrl(url)
-			if (status === 200) {
-				return await fixWrongUrl(`${url}_1`)
-			} else {
-				return url
-			}
-		}
 		let params = currentQuery.layout ? {...currentQuery} : queryParams
 		let data = null
 		if (name) {
 			params.name = name
 			if (shared) {
 				if (!params.url) {
-					params.url = await fixWrongUrl(queryUrl)
+					params.url = queryUrl
 				}
 			} else {
 				params.url = null
@@ -90,7 +80,7 @@ const EditDialog = observer(function EditDialog({active}) {
 			data = await saveQuery({...params, isDraggable: false, isResizable: false})
 			if (data.status !== 400) {
 				renameCurrentTab(name)
-				params.url && history.push(`/${params.url}`)
+				data.url && history.push(`/${data.url}`)
 				updateQuery({tags: tags.join(',')}, index)
 				data.msg && addToast(<div id={data.id}>{data.msg}</div>, {appearance: 'success'})
 				closeHandler()

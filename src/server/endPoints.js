@@ -323,16 +323,12 @@ module.exports = function(app, db, redisClient) {
 		
 	}) 
 	
-	const addWidgetConfig = async (res, params, widget_id) => {
+	const addWidgetConfig = async (res, params, url) => {
 		await query(`UPDATE widgets SET active = FALSE WHERE query_id=?`, [params.query_id])
 		try {
 			const results = await query('INSERT INTO widgets SET ?', {...params, active: true})
-			widget_id && await query(
-				`update queries_to_dashboards set ? where widget_id=${widget_id}`,
-				{ widget_id: results.insertId }
-			)
 			let msg = params.url ? 'Query shared!' : 'Query saved!'
-			return {msg, id: params.query_id}
+			return {msg, id: params.query_id, url}
 		} catch (error) {
 			res.status(400).send('Error adding widget Config')
 		}
@@ -359,7 +355,16 @@ module.exports = function(app, db, redisClient) {
 			res.status(400).send({msg: 'Something went wrong!'})
 			return
 		}
-
+		const fixURL = async (url) => {
+			let u = url
+			const fixRequired = await query(`select id from queries where url = ?`, [u])
+			if (fixRequired.length) {
+				const replacer = u.match(/[0-9]$/gm)?.[0]
+				u = fixURL(replacer ? `${u.replaceAll(`_${replacer}`, '')}_${+replacer+1}` : `${url}_${1}`)
+			}
+			return u
+		}
+		params.url = await fixURL(params.url)
 		const { insertId: query_id } = await query(sql, params)
 		let newParam = { 
 			displayed_data,
@@ -368,7 +373,7 @@ module.exports = function(app, db, redisClient) {
 			widget_id,
 			config: JSON.stringify(config)
 		}
-		const msg = await addWidgetConfig(res, newParam)
+		const msg = await addWidgetConfig(res, newParam, params.url)
 		handleTags(query_id, tags, res, msg, false, params.url)
 	}
 	const handleUpdateQuery = async (req, res, db) => {
