@@ -6,24 +6,25 @@ import useDebounce from '../utils/useDebounce'
 import { Link, useHistory, useLocation } from 'react-router-dom'
 import logo from '../assets/images/bitquery_logo_w.png'
 import { GalleryStore } from '../store/galleryStore'
+import { useQuery } from '../utils/useQuery'
 
 const ControlPanel = observer(function ControlPanel() {
 	const { user } = UserStore
-	const { setSearchValue, currentQuery } = QueriesStore
-	const { setCurrentTag, currentTag } = GalleryStore
+	const { currentQuery} = QueriesStore
+	const { currentTag } = GalleryStore
 	const [search, setSearch] = useState('')
 	const [active, setActive] = useState(1)
 	const searchValue = useDebounce(search, 500)
 	const history = useHistory()
 	const location = useLocation()
-
+	const query = useQuery()
+	
 	useEffect(() => {
-		setSearchValue(searchValue)
-		if (searchValue) {
-			setCurrentTag('All queries')
-			history.push(`/explore/All%20queries`, {detail: 'search'}	)
-			setActive(2)
-		}
+		query.set('search', searchValue)
+		searchValue && history.push({
+			pathname: '/explore/All%20queries',
+			search: `${searchValue ? '?search=' : ''}${searchValue}`
+		})
 	}, [searchValue])
 
 	useEffect(() => {

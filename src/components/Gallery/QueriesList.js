@@ -6,11 +6,12 @@ import { QueriesStore } from '../../store/queriesStore'
 import { TabsStore } from '../../store/queriesStore'
 import { useHistory, useLocation, useParams } from 'react-router-dom'
 import { getSearchResults } from '../../api/api'
+import { useQuery } from '../../utils/useQuery'
 
 const QueriesList = observer(function QueriesList() {
 
 	const { currentTag } = GalleryStore
-	const { setQuery, query, currentPage, queriesOnPage, setCurrentPage, searchValue } = QueriesStore
+	const { setQuery, query, currentPage, queriesOnPage, setCurrentPage, setSearchValue } = QueriesStore
 	const { switchTab, tabs } = TabsStore
 	const history = useHistory()
 	const location = useLocation()
@@ -18,6 +19,14 @@ const QueriesList = observer(function QueriesList() {
 
 	const [list, setList] = useState([])
 	const [thereIsNext, setNext] = useState(false)
+	const searchQuery = useQuery()
+
+	useEffect(() => {
+		const search = searchQuery.get('search')
+		if (search) {
+			setSearchValue(search)
+		}
+	}, [])
 
 	const main = async (page) => {
 		const queryListType = location.pathname.match(/[a-zA-Z]+/gm)[0]
@@ -26,28 +35,28 @@ const QueriesList = observer(function QueriesList() {
 		setList(data)
 	}
 	useEffect(() => {
-		if (currentTag && location?.state?.detail !== 'search') {
+		if (currentTag && !searchQuery.get('search')) {
 			main(currentPage)
 		}
 	}, [currentTag, location.pathname])
 
 	useEffect(() => {
 		const main = async () => {
-			if (searchValue === '') {
+			if (searchQuery.get('search') === '') {
 				const queryListType = location.pathname.match(/[a-zA-Z]+/gm)[0]
 				const { data } = await getTaggedQueriesList(currentTag, currentPage * queriesOnPage, queryListType)
 				data.length > queriesOnPage ? setNext(true) : setNext(false)
 				setList(data)
-			} else if (searchValue) {
+			} else if (searchQuery.get('search')) {
 				setNext(false)
 				setCurrentPage(0)
-				const { data } = await getSearchResults(searchValue)
-				history.push(`/explore/All%20queries`)
+				const { data } = await getSearchResults(searchQuery.get('search'))
+				history.push(`/explore/All%20queries?search=${searchQuery.get('search')}`)
 				setList(data)
 			}
 		}
 		main()
-	}, [searchValue])
+	}, [searchQuery])
 
 	const handleClick = queryFromGallery => {
 		if (query.map(query => query.id).indexOf(queryFromGallery.id) === -1) {
