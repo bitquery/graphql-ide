@@ -15,6 +15,10 @@ export const TokenPagesAPI = observer(function TokenPagesAPI() {
 		const main = async () => {
 			const { data } = await getQueryTemplates(symbol)
 			data && setQts(data)
+			document.title = `${symbol} API`
+			document.querySelector('meta[name="title"]').setAttribute('content', `${symbol} Token API`)
+			document.querySelector('meta[name="description"]').setAttribute('content', `List of APIs to get ${symbol} data on Ethereum blockchain. We cover all APIs including ${symbol} Transfers, ${symbol} balance, ${symbol} token holders, ${symbol} price`)
+			document.querySelector('meta[name="keywords"]').setAttribute('content', `${symbol} Trace API, track ${symbol} erc20, ${symbol} token address, ${symbol} token price, binance ${symbol} token address, ethereum $token, ${symbol} api, ${symbol} payment api, ERC20 ${symbol} api, ${symbol} transfer, track $token, ${symbol} wallet, ${symbol} price ticker, ${symbol} price on different exchanges, ${symbol} stats`)
 			if (hash) {
 				const el = document.querySelector(hash)
 				el && el.scrollIntoView({behavior: 'smooth'})
