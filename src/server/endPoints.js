@@ -113,6 +113,25 @@ module.exports = function(app, db, redisClient) {
 		}
 	}
 
+	app.get('/api/querytss/:symbol', async ({ params: { symbol } }, res) => {
+		const [queryTemplates, templateSubject] = await Promise.all([
+			query('select * from query_templates'),
+			query('select * from template_subjects where symbol = ?', [ symbol ])
+		])
+		const tokensymbol = templateSubject[0].symbol
+		const tokenaddress = templateSubject[0].address
+		const apislist = queryTemplates.map(api => {
+			return {
+				...api,
+				tokenaddress,
+				description: api.description.replaceAll('$tokensymbol', tokensymbol),
+				name: api.name.replaceAll('$tokensymbol', ''),
+				url: api.url.replaceAll('$tokensymbol', tokensymbol),
+			}
+		})
+		res.status(200).send(apislist)
+	})
+
 	app.post('/api/composeqt', async (req, res) => {	
 		await query('insert into query_templates (subject_type, api_version, name, description, url) values ?',
 			[query_templates.map(q => [q.subject_type, q.api_version, q.name, q.description, q.url])])

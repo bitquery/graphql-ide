@@ -62,3 +62,5 @@ export const copyQuery = body => axios.post('/api/copyquery', body)
 export const getQueryByID = queryID => axios.get(`/api/bygraphqlqueryid/${queryID}`)
 
 export const getWidgetConfig = id =>  axios.get(`/api/getwidgetconfig/${id}`)
+
+export const getQueryTemplates = symbol => axios.get(`/api/querytss/${symbol}`)

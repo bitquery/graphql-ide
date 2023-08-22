@@ -12,6 +12,7 @@ import NewGallery from "./components/Gallery/NewGallery"
 import { GalleryStore } from './store/galleryStore'
 import TabsComponent from './components/TabsComponent'
 import ExploreComponent from './components/ExploreComponent'
+import { TokenPagesAPI } from './components/TokenPagesAPI'
 
 if (process.env.NODE_ENV === 'development') {
 	/* require('@welldone-software/why-did-you-render')(React, {
@@ -49,6 +50,9 @@ const App = observer(function App() {
 			<Switch>
 				<Route path='/reset' >
 					<ResetPassword />
+				</Route>
+				<Route path='/exploreapi/:symbol' >
+					<TokenPagesAPI />
 				</Route>
 				<Route path={[
 					'/explore',

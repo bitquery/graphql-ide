@@ -2,7 +2,108 @@
 @import "./components/Gallery/queriesList.scss";
 @import "./components/modal/editDialog.scss";
 @import "./components/codeSnippet.scss";
-
+.token_apis {
+	max-width: 1440px;
+	margin: auto;
+	color: #828486;
+	h5 {
+		color: #171717;
+		.token_symbol {
+			color: #646464;
+		}
+	}
+	&_wrapper {
+		scroll-behavior: smooth;
+		background-color: #F8F8F8;
+	}
+}
+.token_api {
+	background-color: #F8F8F8;
+}
+.tokenapi_logo {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	min-width: 90px;
+	max-width: 90px;
+	min-height: 90px;
+	max-height: 90px;
+	background-color: #CA356814;
+	border-radius: 8px;
+	&_inner {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		min-width: 70px;
+		max-width: 70px;
+		min-height: 70px;
+		max-height: 70px;
+		background-color: #CA356814;
+		border-radius: 8px;
+		p {
+			background: linear-gradient(90deg, #6C1C44 0%, #3DB3BF 100%);
+			-webkit-background-clip: text;
+			-webkit-text-fill-color: transparent;
+			text-align: center;
+			margin: 0 auto;
+		}
+	}
+}
+.token_description {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	background-color: #FFFFFF;
+}
+.api_subject {
+	background-color: #FFFFFF;
+	align-items: center;
+	border-radius: 8px;
+}
+.api_description_wrapper {
+	flex-basis: 70%;
+}
+.api_description {
+	font-size: 15px;
+	line-height: 24px;
+}
+.api_versions {
+	gap: 16px;
+	justify-content: space-around;
+	flex-basis: 30%;
+	list-style: none;
+}
+.tokenapi_star {
+	height: 16px;
+	width: 16px;
+	border-radius: 50%;
+	background-color: #FFFFFF;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	position: absolute;
+	left: -8px;
+}
+.tokenapi_link {
+	position: relative;
+	display: flex;
+	border-radius: 8px;
+	padding: 8px, 8px, 8px, 16px;
+	justify-content: center;
+	align-items: center;
+	height: 40px;
+	width: 110px;
+	background-color: #F8F8F8;
+	color: #CA3568;
+	&.preffered {
+		background-color: #CA356814;
+	}
+	&.disabled {
+		pointer-events: none;
+		user-select: none;
+		opacity: .3;
+	}
+}
 .skip-to-main-content {
 	left: -999px;
     position: absolute;
