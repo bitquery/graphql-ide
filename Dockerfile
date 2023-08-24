@@ -1,4 +1,4 @@
-FROM node:14.15-alpine AS builder
+FROM node:18.17.1-alpine3.18 AS builder
 
 LABEL maintainer="Andrey Gridin <andrey@bitquery.io>"
 
