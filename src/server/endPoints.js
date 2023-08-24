@@ -120,15 +120,13 @@ module.exports = function(app, db, redisClient) {
 		])
 		const tokensymbol = templateSubject[0].symbol
 		const tokenaddress = templateSubject[0].address
-		const x = queryTemplates[0].description.replace('/\$tokensymbol/g', tokensymbol)
-		console.log(x)
 		const apislist = queryTemplates.map(api => {
 			return {
 				...api,
 				tokenaddress,
-				description: api.description.replace('/\$tokensymbol/g', tokensymbol),
-				name: api.name.replace('/\$tokensymbol/gu', ''),
-				url: api.url.replace('/\$tokensymbol/g', tokensymbol),
+				description: api.description.replaceAll('$tokensymbol', tokensymbol),
+				name: api.name.replaceAll('$tokensymbol', ''),
+				url: api.url.replaceAll('$tokensymbol', tokensymbol),
 			}
 		})
 		res.status(200).send(apislist)
