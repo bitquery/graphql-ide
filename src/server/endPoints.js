@@ -131,13 +131,6 @@ module.exports = function(app, db, redisClient) {
 		})
 		res.status(200).send(apislist)
 	})
-
-	app.post('/api/composeqt', async (req, res) => {	
-		await query('insert into query_templates (subject_type, api_version, name, description, url) values ?',
-			[query_templates.map(q => [q.subject_type, q.api_version, q.name, q.description, q.url])])
-		await query('insert into template_subjects set ?', [template_subjects])
-		res.sendStatus(200)
-	})	
 	
 	app.get('/api/version', async (req, res) => {
 		res.status(200).send('version 1.0.17')
