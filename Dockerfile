@@ -1,4 +1,4 @@
-FROM node:lts-alpine AS builder
+FROM node:14.15-alpine AS builder
 
 LABEL maintainer="Andrey Gridin <andrey@bitquery.io>"
 
