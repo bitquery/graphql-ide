@@ -151,8 +151,8 @@ module.exports = function(app, db, redisClient) {
             ) b 
             ON q.id=b.query_id
             where (q.published = 1 or q.account_id = ?) AND (match (q.name, q.description) against (?)
-            or q.name like ? or q.description like ?)
-            ORDER BY q.updated_at DESC`, [req.account_id, req.body.search, `%${req.body.search}%`, `%${req.body.search}%`])
+            or q.name like ? or q.description like ? or t.tags like ?)
+            ORDER BY q.updated_at DESC`, [req.account_id, req.body.search, `%${req.body.search}%`, `%${req.body.search}%`, `%${req.body.search}%`])
             res.status(200).send(results)
         } catch (error) {
             console.log(error)
