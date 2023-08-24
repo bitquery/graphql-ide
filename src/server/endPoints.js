@@ -112,6 +112,25 @@ module.exports = function(app, db, redisClient) {
 			res.status(400).send({msg: 'Add some tags to your query!'})
 		}
 	}
+
+	app.get('/api/querytss/:symbol', async ({ params: { symbol } }, res) => {
+		const [queryTemplates, templateSubject] = await Promise.all([
+			query('select * from query_templates'),
+			query('select * from template_subjects where symbol = ?', [ symbol ])
+		])
+		const tokensymbol = templateSubject[0].symbol
+		const tokenaddress = templateSubject[0].address
+		const apislist = queryTemplates.map(api => {
+			return {
+				...api,
+				tokenaddress,
+				description: api.description.replaceAll('$tokensymbol', tokensymbol),
+				name: api.name.replaceAll('$tokensymbol', ''),
+				url: api.url.replaceAll('$tokensymbol', tokensymbol),
+			}
+		})
+		res.status(200).send(apislist)
+	})
 	
 	app.get('/api/version', async (req, res) => {
 		res.status(200).send('version 1.0.17')
