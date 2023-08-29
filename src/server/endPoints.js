@@ -133,27 +133,6 @@ module.exports = function (app, db, redisClient) {
 		res.status(200).send(apislist)
 	})
 
-	app.get('/api/tue29', async (req, res) => {
-		let newXML = ''
-		const sitemappath = path.resolve('./static', 'sitemap.xml')
-		const values = tokens.map(token => {
-			newXML += `\n<url>
-			<loc>https://ide.bitquery.io/exploreapi/${encodeURIComponent(token.currency.symbol)}/${encodeURIComponent(token.currency.address)}</loc>
-			<lastmod>${new Date(new Date()).toISOString().split('T')[0]}</lastmod>
-		</url>`
-			return ['token', 'ethereum', 'eth', token.currency.symbol, token.currency.name, token.currency.address, new Date(), new Date()]
-		})
-		fs.readFile(sitemappath, 'utf8', (err, data) => {
-			const splitArray = data.split('\n')
-			splitArray.splice(-2, 2)
-			let result = splitArray.join('\n')
-			fs.writeFile(sitemappath, `${result+newXML}\n</urlset>\n`, err => {
-				console.log(err)
-				res.sendStatus(201)
-			})
-		})
-	})
-
 	app.get('/api/version', async (req, res) => {
 		res.status(200).send('version 1.0.17')
 	})
