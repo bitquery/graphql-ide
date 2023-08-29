@@ -4,7 +4,6 @@ const path = require('path')
 const sdk = require('postman-collection')
 const codegen = require('postman-code-generators')
 const bodyParser = require('body-parser')
-const { tokens } = require('./tokens')
 
 const getCodeSnippet = (lang, query, variables, key, endpoint_url) =>
 	new Promise((resolve, reject) => {
