@@ -51,7 +51,7 @@ const App = observer(function App() {
 				<Route path='/reset' >
 					<ResetPassword />
 				</Route>
-				<Route path='/exploreapi/:symbol' >
+				<Route path='/exploreapi/:symbol/:address' >
 					<TokenPagesAPI />
 				</Route>
 				<Route path={[

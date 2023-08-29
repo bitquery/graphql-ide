@@ -9,9 +9,11 @@ import useEventListener from '../utils/useEventListener'
 import GraphqlIcon from './icons/GraphqlIcon'
 import { GalleryStore } from '../store/galleryStore'
 import { generateTags } from '../utils/generateTags'
+import { useQuery } from '../utils/useQuery'
 
 const TabsComponent = observer(() => {
 	const history = useHistory()
+	const queryParams = useQuery()
 	const { queriesListIsOpen, toggleQueriesList } = GalleryStore
 	const { user } = UserStore
 	const { tabs, currentTab, switchTab, index } = TabsStore
@@ -101,6 +103,12 @@ const TabsComponent = observer(() => {
 								patch.config = config
 								patch.variables = variables
 								patch.preQuery = preQuery
+							}
+							const token = queryParams.get('token')
+							if (token) {
+								const variables = JSON.parse(data.variables)
+								variables.token = token
+								patch.variables = JSON.stringify(variables)
 							}
 							updateQuery({ ...data, ...patch }, index, data.id)
 							setQueryName({ [currentTab]: data.name })

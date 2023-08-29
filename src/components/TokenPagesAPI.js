@@ -7,13 +7,13 @@ import CopyIcon from './icons/CopyIcon'
 import copy from 'copy-to-clipboard'
 
 export const TokenPagesAPI = observer(function TokenPagesAPI() {
-	const { symbol } = useParams()
+	const { symbol, address } = useParams()
 	const [qts, setQts] = useState([[]])
 	const { hash } = useLocation()
 
 	useEffect(() => {
 		const main = async () => {
-			const { data } = await getQueryTemplates(symbol)
+			const { data } = await getQueryTemplates(address)
 			data && setQts(data)
 			document.title = `${symbol} API`
 			document.querySelector('meta[name="title"]').setAttribute('content', `${symbol} Token API`)
@@ -43,7 +43,7 @@ export const TokenPagesAPI = observer(function TokenPagesAPI() {
 								<CopyIcon className="mb-2 ml-2 cursor-pointer" onClick={() => copy(`${window.location.origin}${window.location.pathname}#${symbol.toUpperCase()}-APIs`)} />
 							</a>
 						</div>
-						{symbol.toUpperCase()} is an ERC20 token on the Ethereum blockchain. Here is the {symbol.toUpperCase()} address <a href={`https://explorer.bitquery.io/ethereum/${qts[0].subject_type}/${qts[0].tokenaddress}`}>{qts[0].tokenaddress}</a>.
+						{symbol.toUpperCase()} is an ERC20 token on the Ethereum blockchain. Here is the {symbol.toUpperCase()} address <a href={`https://explorer.bitquery.io/ethereum/${qts[0].subject_type}/${address}`}>{qts[0].tokenaddress}</a>.
 						Try our {symbol.toUpperCase()} GraphQL APIs to get {symbol.toUpperCase()} transfers, trades, OHLC candlestick data, price, balance, token holders, events, calls, and transaction data on the Ethereum blockchain.
 						You can get both historical and real-time {symbol.toUpperCase()} data with our APIs.
 					</div>
@@ -63,17 +63,17 @@ export const TokenPagesAPI = observer(function TokenPagesAPI() {
 							<ul className='api_versions flex'>
 								<TokenAPIBadge
 									type="V1 APIs"
-									link={qt.query_v1}
+									link={qt.query_v1 ? `/${qt.query_v1}?token=${qt.tokenaddress}` : ''}
 									preffered={qt.api_version === 'v1'}
 								/>
 								<TokenAPIBadge
 									type="V2 APIs"
-									link={qt.query_v2}
+									link={qt.query_v2 ? `/${qt.query_v2}?token=${qt.tokenaddress}` : ''}
 									preffered={qt.api_version === 'v2'}
 								/>
 								<TokenAPIBadge
 									type="Websocket"
-									link={qt.query_subscription}
+									link={qt.query_subscription ? `/${qt.query_subscription}?token=${qt.tokenaddress}` : ''}
 									preffered={qt.api_version === 'websocket'}
 								/>
 							</ul>

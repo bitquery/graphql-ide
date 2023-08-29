@@ -5,7 +5,7 @@ import StarIcon from './icons/StarIcon'
 
 export const TokenAPIBadge = observer(function TokenAPIBadge({type, link, preffered}) {
 	return (
-		<Link to={`/${link}`}
+		<Link to={link}
 			aria-label={type}
 			aria-disabled={link ? 'false' : 'true'}
 			className={`tokenapi_link ${preffered ? 'preffered' : ''} ${link ? '' : 'disabled'}`}
