@@ -2,6 +2,51 @@
 @import "./components/Gallery/queriesList.scss";
 @import "./components/modal/editDialog.scss";
 @import "./components/codeSnippet.scss";
+@media (min-width: 900px) {
+	.api_subject {
+
+	}
+}
+@media (max-width: 900px) {
+	.api_subject {
+		flex-direction: column;
+	}
+	.api_versions {
+		padding-left: 0;
+	}
+}
+@media (min-width: 480px) {
+	.tokenapi_link {
+		width: 110px;
+	}
+	.token_apis {
+		text-align: left;
+	}
+}
+@media (max-width: 480px) {
+	.token_description {
+		flex-direction: column;
+		.token_api_description > div {
+			justify-content: center;
+			margin-top: .5rem;
+		}
+	}
+	.token_apis {
+		text-align: justify;
+	}
+	.api_subject {
+		flex-direction: column;
+	}
+	.api_versions {
+		font-size: 10px;
+	}
+	.tokenapi_link {
+		width: 70px;
+	}
+}
+.explorer-link {
+	word-break: break-all;
+}
 .token_apis {
 	max-width: 1440px;
 	margin: auto;
@@ -92,7 +137,6 @@
 	justify-content: center;
 	align-items: center;
 	height: 40px;
-	width: 110px;
 	background-color: #F8F8F8;
 	color: #CA3568;
 	&.preffered {

@@ -43,7 +43,7 @@ export const TokenPagesAPI = observer(function TokenPagesAPI() {
 								<CopyIcon className="mb-2 ml-2 cursor-pointer" onClick={() => copy(`${window.location.origin}${window.location.pathname}#${symbol.toUpperCase()}-APIs`)} />
 							</a>
 						</div>
-						{symbol.toUpperCase()} is an ERC20 token on the Ethereum blockchain. Here is the {symbol.toUpperCase()} address <a href={`https://explorer.bitquery.io/ethereum/${qts[0].subject_type}/${address}`}>{qts[0].tokenaddress}</a>.
+						{symbol.toUpperCase()} is an ERC20 token on the Ethereum blockchain. Here is the {symbol.toUpperCase()} address <a className='explorer-link' href={`https://explorer.bitquery.io/ethereum/${qts[0].subject_type}/${address}`}>{qts[0].tokenaddress}</a>.
 						Try our {symbol.toUpperCase()} GraphQL APIs to get {symbol.toUpperCase()} transfers, trades, OHLC candlestick data, price, balance, token holders, events, calls, and transaction data on the Ethereum blockchain.
 						You can get both historical and real-time {symbol.toUpperCase()} data with our APIs.
 					</div>
