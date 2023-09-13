@@ -1,6 +1,6 @@
 import { observer } from 'mobx-react-lite'
 import React, { useEffect, useState } from 'react'
-import { useParams, useLocation } from 'react-router-dom'
+import { useParams, useLocation, useHistory } from 'react-router-dom'
 import { getQueryTemplates } from '../api/api'
 import { TokenAPIBadge } from './TokenAPIBadge'
 import CopyIcon from './icons/CopyIcon'
@@ -10,13 +10,17 @@ export const TokenPagesAPI = observer(function TokenPagesAPI() {
 	const { symbol, address } = useParams()
 	const [qts, setQts] = useState([[]])
 	const { hash } = useLocation()
+	const history = useHistory()
 
 	useEffect(() => {
 		const main = async () => {
-			const { data } = await getQueryTemplates(address)
+			const { data } = await getQueryTemplates(address, symbol)
+			if (data[0].tokenaddress !== address) {
+				history.replace(`/exploreapi/${symbol}/${data[0].tokenaddress}`)
+			}
 			data && setQts(data)
-			document.title = `${symbol} API`
-			document.querySelector('meta[name="title"]').setAttribute('content', `${symbol} Token API`)
+			document.title = `${symbol} API ${data[0].tokenaddress}`
+			document.querySelector('meta[name="title"]').setAttribute('content', `${symbol} Token API ${data[0].tokenaddress}`)
 			document.querySelector('meta[name="description"]').setAttribute('content', `List of APIs to get ${symbol} data on Ethereum blockchain. We cover all APIs including ${symbol} Transfers, ${symbol} balance, ${symbol} token holders, ${symbol} price`)
 			document.querySelector('meta[name="keywords"]').setAttribute('content', `${symbol} Trace API, track ${symbol} erc20, ${symbol} token address, ${symbol} token price, binance ${symbol} token address, ethereum $token, ${symbol} api, ${symbol} payment api, ERC20 ${symbol} api, ${symbol} transfer, track $token, ${symbol} wallet, ${symbol} price ticker, ${symbol} price on different exchanges, ${symbol} stats`)
 			if (hash) {
@@ -43,7 +47,7 @@ export const TokenPagesAPI = observer(function TokenPagesAPI() {
 								<CopyIcon className="mb-2 ml-2 cursor-pointer" onClick={() => copy(`${window.location.origin}${window.location.pathname}#${symbol.toUpperCase()}-APIs`)} />
 							</a>
 						</div>
-						{symbol.toUpperCase()} is an ERC20 token on the Ethereum blockchain. Here is the {symbol.toUpperCase()} address <a className='explorer-link' href={`https://explorer.bitquery.io/ethereum/${qts[0].subject_type}/${address}`}>{qts[0].tokenaddress}</a>.
+						{symbol.toUpperCase()} is an ERC20 token on the Ethereum blockchain. Here is the {symbol.toUpperCase()} address <a className='explorer-link' href={`https://explorer.bitquery.io/ethereum/${qts[0].subject_type}/${qts[0].tokenaddress}`}>{qts[0].tokenaddress}</a>.
 						Try our {symbol.toUpperCase()} GraphQL APIs to get {symbol.toUpperCase()} transfers, trades, OHLC candlestick data, price, balance, token holders, events, calls, and transaction data on the Ethereum blockchain.
 						You can get both historical and real-time {symbol.toUpperCase()} data with our APIs.
 					</div>
