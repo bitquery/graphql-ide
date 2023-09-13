@@ -4,7 +4,6 @@ const path = require('path')
 const sdk = require('postman-collection')
 const codegen = require('postman-code-generators')
 const bodyParser = require('body-parser')
-const { tokens } = require('./tokens')
 
 const getCodeSnippet = (lang, query, variables, key, endpoint_url) =>
 	new Promise((resolve, reject) => {
@@ -113,34 +112,6 @@ module.exports = function (app, db, redisClient) {
 			res.status(400).send({ msg: 'Add some tags to your query!' })
 		}
 	}
-
-	app.get('/api/tue29', async (req, res) => {
-		let newXML = ''
-		const sitemappath = path.resolve('./static', 'sitemap.xml')
-
-		const values = tokens.map((token, i) => {
-			let name = token.Transfer.Currency.Name
-			if (i === 246) {
-				name = token.Transfer.Currency.Name.split(' ')
-				name = name[0] + ' ' + name[1]
-			}
-			if (name.length >= 200) name = name.slice(0, 200)
-			newXML += `\n<url>
-			<loc>https://ide.bitquery.io/exploreapi/${encodeURIComponent(token.Transfer.Currency.Symbol)}/${encodeURIComponent(token.Transfer.Currency.SmartContract)}</loc>
-			<lastmod>${new Date(new Date()).toISOString().split('T')[0]}</lastmod>
-		</url>`
-			return ['token', 'ethereum', 'eth', token.Transfer.Currency.Symbol, name, token.Transfer.Currency.SmartContract, new Date(), new Date()]
-		})
-		fs.readFile(sitemappath, 'utf8', (err, data) => {
-			const splitArray = data.split('\n')
-			splitArray.splice(-2, 2)
-			let result = splitArray.join('\n')
-			fs.writeFile(sitemappath, `${result+newXML}\n</urlset>\n`, err => {
-				console.log(err)
-				res.sendStatus(201)
-			})
-		})
-	})
 
 	app.get('/api/querytss/:address', async ({ params: { address } }, res) => {
 		const [queryTemplates, templateSubject] = await Promise.all([
