@@ -114,6 +114,9 @@ module.exports = function (app, db, redisClient) {
 	}
 
 	app.get('/api/querytss/:address', async ({ params: { address } }, res) => {
+		if (address = '0x7dd5f67a25afb9e73d4966b1ac578dabd9ccc986') {
+			res.redirect('/exploreapi/USDT/0xdac17f958d2ee523a2206206994597c13d831ec7')
+		}
 		const [queryTemplates, templateSubject] = await Promise.all([
 			query('select * from query_templates'),
 			query('select * from template_subjects where address = ?', [address])
