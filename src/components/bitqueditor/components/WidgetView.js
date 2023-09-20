@@ -27,6 +27,12 @@ const WidgetView = observer(function WidgetView({ children, widget, dataSource }
 				const ChartWidget = eval(`(${widget})`)
 				const chartWidgetInstance = new ChartWidget(refChart.current, dataSource.historyDataSource, dataSource.subscriptionDataSource)
 				await chartWidgetInstance.init()
+				if (dataSource.historyDataSource) {
+					dataSource.historyDataSource.changeVariables()
+				}
+				if (dataSource.subscriptionDataSource) {
+					dataSource.subscriptionDataSource.changeVariables()
+				}
 			}
 		}
 		// eslint-disable-next-line 
