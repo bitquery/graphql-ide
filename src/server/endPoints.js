@@ -114,12 +114,17 @@ module.exports = function (app, db, redisClient) {
 	}
 
 	app.get('/api/querytss/:address/:symbol', async (req, res) => {
+		let status = 200
 		let [queryTemplates, templateSubject] = await Promise.all([
 			query('select * from query_templates'),
 			query('select * from template_subjects where address = ?', [req.params.address])
 		])
 		if (!templateSubject.length) {
 			templateSubject = await query('select * from template_subjects where symbol = ?', [req.params.symbol])
+		}
+		if (!templateSubject.length) {
+			templateSubject = await query('select * from template_subjects where symbol = ?', ['USDT'])
+			status = 302
 		}
 		const tokensymbol = templateSubject[0].symbol
 		const tokenaddress = templateSubject[0].address
@@ -132,7 +137,7 @@ module.exports = function (app, db, redisClient) {
 				url: api.url.replaceAll('$tokensymbol', tokensymbol),
 			}
 		})
-		res.status(200).send(apislist)
+		res.status(status).send(apislist)
 	})
 
 	app.get('/api/version', async (req, res) => {

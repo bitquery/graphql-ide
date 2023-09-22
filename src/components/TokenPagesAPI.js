@@ -14,7 +14,15 @@ export const TokenPagesAPI = observer(function TokenPagesAPI() {
 
 	useEffect(() => {
 		const main = async () => {
-			const { data } = await getQueryTemplates(address, symbol)
+			let data
+			try {
+				const response = await getQueryTemplates(address, symbol)
+				data = response.data
+			} catch (error) {
+				if (error.response.status === 302) {
+					window.location = `/exploreapi/USDT/0xdac17f958d2ee523a2206206994597c13d831ec7`
+				}
+			}
 			if (data[0].tokenaddress !== address) {
 				history.replace(`/exploreapi/${symbol}/${data[0].tokenaddress}`)
 			}
