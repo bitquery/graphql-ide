@@ -15,13 +15,14 @@ const db = mysql.createPool({
 const app = express()
 const bodyParser = require('body-parser')
 const defaultmeta = require('./defaultMeta')
+const isProduction = process.env.NODE_ENV === 'production'
 app.use(bodyParser.json())
 app.use(express.static(path.join(__dirname, '../../build'), { index: false }))
 app.use(cors())
 app.use(cookieParser())
-app.use(require('prerender-node').set('prerenderToken', 'DXIIY0kTzXJvNinvMRPM'))
+isProduction && app.use(require('prerender-node').set('prerenderToken', process.env.PRERENDER_TOKEN))
 let redisClient = redis.createClient({
-	url: process.env.NODE_ENV === 'production'
+	url: isProduction
 		? String('redis://' + process.env.REDIS_HOST + ':' + process.env.REDIS_PORT + '/' + process.env.REDIS_DB)
 		: 'redis://127.0.0.1:6379'
 })
@@ -57,7 +58,7 @@ redisClient.connect().then(async () => {
 
 	require('./endPoints')(app, db, redisClient)
 
-	if (process.env.NODE_ENV === 'production') {
+	if (isProduction) {
 		app.get('*', (req, res) => {
 			const url = req.url.substring(1)
 			const filePath = path.resolve(__dirname, '../../build', 'index.html')
