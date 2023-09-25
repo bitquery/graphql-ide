@@ -141,7 +141,7 @@ module.exports = function (app, db, redisClient) {
 	})
 
 	app.get('/api/version', async (req, res) => {
-		res.status(200).send('version 1.0.17')
+		res.status(200).send('v1.1.9-17')
 	})
 
 	app.post('/api/codesnippet', async (req, res) => {
