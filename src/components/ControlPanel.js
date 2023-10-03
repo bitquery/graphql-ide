@@ -95,6 +95,9 @@ const ControlPanel = observer(function ControlPanel() {
 						<a className="nav-link navigation-link-color" href="https://t.me/bloxy_info/"><i className="bi bi-telegram mr-2"></i>Telegram</a>
 					</li>
 					<li className="nav-item d-lg-none" tabIndex='-1'>
+						<a className="nav-link navigation-link-color" href="https://streaming.bitquery.io/tutorial/">Streaming API (V2  API Docs)</a>
+					</li>
+					<li className="nav-item d-lg-none" tabIndex='-1'>
 						<a className="nav-link navigation-link-color" href="https://community.bitquery.io/">Forum</a>
 					</li>
 					<li className="nav-item d-lg-none" tabIndex='-1'>

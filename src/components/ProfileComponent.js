@@ -27,6 +27,7 @@ const Profile = observer(() => {
 			<a aria-label='telegram' className='link__hire navigation-link-color' target='_blank' href='https://t.me/bloxy_info/'>
 				<i className="bi bi-telegram"></i>
 			</a>
+			<a className='link__hire navigation-link-color' target='_blank' href='https://streaming.bitquery.io/tutorial/'>Streaming API (V2  API Docs)</a>
 			<a className='link__hire navigation-link-color' target='_blank' href='https://community.bitquery.io/'>Forum</a>
 			<a className='link__hire navigation-link-color' target='_blank' href='https://community.bitquery.io/t/how-to-get-started-with-bitquerys-blockchain-graphql-apis/13'>Getting started</a>
 			<a className='link__hire navigation-link-color' target='_blank' href='https://angel.co/company/bitquery/jobs'>We are hiring!</a>
