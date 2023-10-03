@@ -110,6 +110,7 @@ const TabsComponent = observer(() => {
 								variables.token = token
 								patch.variables = JSON.stringify(variables)
 							}
+							patch.account_id = data.isOwner ? user.id : null
 							updateQuery({ ...data, ...patch }, index, data.id)
 							setQueryName({ [currentTab]: data.name })
 							if (!user.id) {

@@ -264,7 +264,11 @@ module.exports = function (app, db, redisClient) {
 					: [teamAdmin, teamAdmin, req.params.tag]
 		}
 		const results = await query(sql.query, sql.param)
-		res.status(200).send(results)
+		const queries = results.map(res => {
+			const { account_id, aid, ...q} = res
+			return q
+		})
+		res.status(200).send(queries)
 	})
 
 	app.post('/api/tags', async (req, res) => {
@@ -365,10 +369,11 @@ module.exports = function (app, db, redisClient) {
 	const handleAddQuery = async (req, res) => {
 		let sql = `INSERT INTO queries SET ?`
 		let { executed, config, widget_id, displayed_data,
-			isDraggable, isResizable, data_type, tags,
+			isDraggable, isResizable, data_type, tags, isOwner,
 			...params } = req.body.params
 		params.id = null
 		params.published = params.url ? true : null
+		params.account_id = req.account_id
 		if (params.published && !/^https:\/\/.+\.bitquery\.io.*/gm.test(params.endpoint_url)) {
 			res.status(400).send({ msg: 'You can not save query with non-bitquery.io URL' })
 			return
@@ -661,7 +666,9 @@ module.exports = function (app, db, redisClient) {
 			if (!result.length) {
 				res.send('There is no such querie with same url...')
 			} else {
-				res.send(result[0])
+				const { account_id, ...query} = result[0]
+				query.isOwner = account_id === req.account_id
+				res.send(query)
 			}
 		})
 	})

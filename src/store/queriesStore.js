@@ -112,7 +112,7 @@ class Queries {
 	get queryParams() {
 		return {
 			id: this.currentQuery.id,
-			account_id: UserStore.user && (UserStore.user.id || null),
+			isOwner: this.currentQuery.isOwner,
 			query: this.currentQuery.query,
 			variables: this.currentQuery.variables,
 			config: this.currentQuery.config,
@@ -165,7 +165,8 @@ class Queries {
 		}
 		if (typeof params.displayed_data === 'string') this.query[index].displayed_data = params.displayed_data
 		if (params.data_type) this.query[index].data_type = params.data_type
-		if (params.account_id) this.query[index].account_id = params.account_id
+		if (params.isOwner) this.query[index].isOwner = params.isOwner
+		if ('account_id' in params) this.query[index].account_id = params.account_id
 		if (params.endpoint_url || params.endpoint_url === '')  this.query[index].endpoint_url = params.endpoint_url
 		if ('gettingPointsCount' in params) this.query[index].gettingPointsCount = params.gettingPointsCount
 		if (params.url || params.url===null) this.query[index].url = params.url
@@ -248,7 +249,7 @@ class Queries {
 		if ( !this.currentQuery.id ) { return }
 		const params = {
 			id: this.currentQuery.id,
-			account_id: this.currentQuery.account_id,
+			account_id: UserStore.user.id,
 			success: !errors,
 			error: JSON.stringify(errors)
 		}
