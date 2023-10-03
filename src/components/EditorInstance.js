@@ -404,6 +404,7 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 		abortController.current = new AbortController()
 		let key = user ? user.key : null
 		let keyHeader = { 'X-API-KEY': key }
+		const start = new Date().getTime()
 		const response = await fetch(
 			currentQuery.endpoint_url,
 			{
@@ -418,6 +419,7 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 				credentials: 'same-origin',
 			},
 		)
+		const responseTime = new Date().getTime() - start
 		if (!response.ok) {
 			if (response.status === 401) throw new Error("Authorization Required")
 			throw new Error(`HTTP Status ${response.status}`)
@@ -426,7 +428,8 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 			const graphqlRequested = response.headers.get('X-GraphQL-Requested') === 'true'
 			updateQuery({
 				graphqlQueryID: response.headers.get('X-GraphQL-Query-ID'),
-				graphqlRequested: graphqlRequested,
+				graphqlRequested,
+				responseTime,
 				points: graphqlRequested ? undefined : 0,
 				saved: currentQuery.saved,
 				gettingPointsCount: 0
@@ -601,6 +604,7 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 							<WidgetView
 								widget={widget}
 								dataSource={dataSource}
+								ready={queryStatus.readyToExecute}
 							>
 								<FullscreenIcon onClick={
 									isMobile ? () => setMobile(false) :

@@ -1,5 +1,15 @@
 $top-bar-height: 44px;
 
+.response-time {
+  position: absolute;
+  top: 0;
+  right: 20px;
+  z-index: 1;
+  i {
+    color: green;
+    font-weight: bold;
+  }
+}
 .bitqueditor {
   height: 100%;
   width: 100%;
