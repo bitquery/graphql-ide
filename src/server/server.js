@@ -20,6 +20,7 @@ app.use(bodyParser.json())
 app.use(express.static(path.join(__dirname, '../../build'), { index: false }))
 app.use(cors())
 app.use(cookieParser())
+isProduction && app.use(require('prerender-node').set('prerenderToken', process.env.PRERENDER_TOKEN))
 let redisClient = redis.createClient({
 	url: isProduction
 		? String('redis://' + process.env.REDIS_HOST + ':' + process.env.REDIS_PORT + '/' + process.env.REDIS_DB)
