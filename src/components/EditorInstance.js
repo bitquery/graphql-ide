@@ -100,13 +100,13 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 			try {
 				cachedData = cachedData ? cachedData : await fetcher({ ...payload, variables })
 				if ( queryNotLogged ) {
-					logQuery(cachedData.errors)
+					logQuery(error)
 					queryNotLogged = false
 				}
 				queryDispatcher.onqueryend()
-				callbacks.forEach(cb => cb(cachedData, variables))
+				cachedData && callbacks.forEach(cb => cb(cachedData, variables))
 			} catch (error) {
-				queryDispatcher.onerror(error)
+				queryDispatcher.onerror(error.message)
 			}
 		}
 	
@@ -438,6 +438,8 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 		const { data, errors } = await response.json()
 		if (errors) {
 			setError(errors[0].message)
+		} else {
+			setError(null)
 		}
 		return data
 	}
