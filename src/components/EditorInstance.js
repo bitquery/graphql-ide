@@ -3,11 +3,7 @@ import { observer } from 'mobx-react-lite'
 import ReactTooltip from 'react-tooltip'
 import { vegaPlugins } from 'vega-widgets'
 import { tablePlugin } from 'table-widget'
-import { graphPlugins } from '@bitquery/ide-graph'
-import { timeChartPlugins } from '@bitquery/ide-charts'
-import { tradingView } from '@bitquery/ide-tradingview'
 import './bitqueditor/App.scss'
-import '@bitquery/ide-graph/dist/graphs.min.css'
 import getQueryFacts from '../utils/getQueryFacts'
 import GraphqlEditor from './bitqueditor/components/GraphqlEditor'
 import {
@@ -34,7 +30,7 @@ import WidgetView from './bitqueditor/components/WidgetView'
 import { GalleryStore } from '../store/galleryStore.js';
 import CodeSnippetComponent from './CodeSnippetComponent.js';
 import { useHistory } from 'react-router-dom';
-import { useToasts } from 'react-toast-notifications'
+import { toast } from 'react-toastify'
 import { createClient } from "graphql-ws"
 import { InteractionButton } from './InteractionButton.js';
 
@@ -45,7 +41,6 @@ const queryStatusReducer = (state, action) => {
 }
 
 const EditorInstance = observer(function EditorInstance({ number }) {
-	const { addToast } = useToasts()
 	const { tabs, currentTab, index } = TabsStore
 	const { tagListIsOpen } = GalleryStore
 	const { user } = UserStore
@@ -355,7 +350,7 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 		}
 	}, [schema[currentQuery.endpoint_url]])
 
-	const plugins = useMemo(() => [JsonPlugin, tradingView, ...vegaPlugins, ...graphPlugins, ...timeChartPlugins, tablePlugin], [])
+	const plugins = useMemo(() => [JsonPlugin, ...vegaPlugins, tablePlugin], [])
 	let indexx = plugins.map(plugin => plugin.id).indexOf(currentQuery.widget_id)
 	const WidgetComponent = indexx >= 0 ? plugins[indexx] : plugins[0]
 
@@ -461,7 +456,7 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 					dispatchQueryStatus('readyToExecute')
 				} catch (error) {
 					const message = /401 Authorization Required/.test(error.message) ? '401 Authorization Required' : error.message
-					addToast(message, { appearance: 'error' })
+					toast(message, {type: 'error'} )
 					dispatchQueryStatus('schemaError')
 					if (error.message === '401') {
 						history.push('/auth/login')

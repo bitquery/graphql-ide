@@ -1,6 +1,6 @@
 import React from 'react'
 import copy from 'copy-to-clipboard'
-import { useToasts } from 'react-toast-notifications'
+import { toast } from 'react-toastify'
 import modalStore from '../../store/modalStore'
 import { QueriesStore, UserStore } from '../../store/queriesStore'
 import { useRouteMatch } from 'react-router-dom'
@@ -8,7 +8,6 @@ import { observer } from 'mobx-react-lite'
 import ReactTooltip from 'react-tooltip'
 
 const QueriesControls = observer(({query, isSaved}) => {
-	const { addToast } = useToasts()
 	const { url } = useRouteMatch()
 	const { saveQuery, queryParams, setQuery } = QueriesStore
 	const { toggleModal, toggleEditDialog } = modalStore
@@ -26,7 +25,7 @@ const QueriesControls = observer(({query, isSaved}) => {
 	}
 	const handleCopy = (queryurl) => {
 		copy(`${window.location.protocol}//${window.location.host}/${queryurl}`)
-		addToast('Link copied to clipboard', {appearance: 'success'})
+		toast('Link copied to clipboard', {type: 'success'})
 	}
 	const handleSave = (query) => {
 		if (user) {
@@ -37,7 +36,7 @@ const QueriesControls = observer(({query, isSaved}) => {
 				saveQuery(queryParams)
 			}
 		} else {
-			addToast('Login required to save or share queries', {appearance: 'error'})
+			toast('Login required to save or share queries', {type: 'error'})
 		}
 	}
 

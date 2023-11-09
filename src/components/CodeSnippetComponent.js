@@ -3,7 +3,7 @@ import { observer } from 'mobx-react'
 import { QueriesStore, UserStore } from '../store/queriesStore'
 import RawCodeMirror from './bitqueditor/components/RawCodeMirror'
 import copy from 'copy-to-clipboard'
-import { useToasts } from 'react-toast-notifications'
+import { toast } from 'react-toastify'
 import { getCodeSnippet } from '../api/api'
 import { languageList } from '../utils/snippetLanguageList'
 
@@ -11,7 +11,6 @@ const CodeSnippetComponent = observer(function CodeSnippetComponent() {
 
 	const { currentQuery: { endpoint_url, query, variables } } = QueriesStore
 	const { user } = UserStore
-	const { addToast } = useToasts()
 
 	const [language, setLanguage] = useState(
 		{
@@ -25,7 +24,7 @@ const CodeSnippetComponent = observer(function CodeSnippetComponent() {
 
 	const handleCopy = () => {
 		copy(snippet)
-		addToast('Copied to clipboard', {appearance: 'success'})
+		toast('Copied to clipboard', {type: 'success'})
 	}
 
 	const main = async () => {

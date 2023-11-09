@@ -3,14 +3,13 @@ import modalStore from '../../store/modalStore'
 import { UserStore } from '../../store/queriesStore'
 import { makekey } from '../../utils/common'
 import copy from 'copy-to-clipboard'
-import { useToasts } from 'react-toast-notifications'
+import { toast } from 'react-toastify'
 import { observer } from 'mobx-react-lite'
 import { Button, Form, Modal } from 'react-bootstrap'
 import ConfirmationWindow from './ConfirmationWindow'
 
 const ApiKeyModal = observer(function ApiKeyModal({ active }) {
     const { user, regenKey } = UserStore
-	const { addToast } = useToasts()
 	const { toggleModal, toggleApiKey, toggleConfirmation } = modalStore
 	const closeHandler = e => {
 		e.preventDefault()
@@ -19,7 +18,7 @@ const ApiKeyModal = observer(function ApiKeyModal({ active }) {
 	}
 	const handleCopy = () => {
 		copy(user.key)
-		addToast('Copied to clipboard', {appearance: 'success'})
+		toast('Copied to clipboard', {type: 'success'})
 	}
 	const confirm = () => {
 		toggleConfirmation('You are re-creating API key. All applications that uses this key will not work, Are you sure?', 
