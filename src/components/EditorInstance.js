@@ -33,6 +33,8 @@ import { useHistory } from 'react-router-dom';
 import { toast } from 'react-toastify'
 import { createClient } from "graphql-ws"
 import { InteractionButton } from './InteractionButton.js';
+import { getSessionStreamingToken} from "../api/api";
+
 
 const queryStatusReducer = (state, action) => {
 	let newState = { ...state }
@@ -63,6 +65,7 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 	const widgetDisplay = useRef(null)
 	const abortController = useRef(null)
 	const resultWrapper = useRef(null)
+	const [streamingAccessToken, setStreamingAccessToken] = useState(null)
 
 	const [queryStatus, dispatchQueryStatus] = useReducer(queryStatusReducer, {
 		readyToExecute: Object.keys(schema).length ? true : false,
@@ -80,6 +83,7 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 			setError(error)
 		}
 	}
+
 
 	const history = useHistory()
 
@@ -394,8 +398,31 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 		setAccordance(false)
 		// eslint-disable-next-line 
 	}, [user, schema[debouncedURL], queryTypes, index])
-	
+
+	//=================================================================
+	useEffect(() => {
+		async function fetchToken() {
+			try {
+				const token = await getSessionStreamingToken();
+				setStreamingAccessToken(token)
+			} catch (error) {
+				console.error('Error in getSessionStreamingToken ', error);
+			}
+		}
+		fetchToken();
+	}, []);
+	//=================================================================
 	const fetcher = async (graphQLParams) => {
+		if (!streamingAccessToken.data.accessToken.access_token || streamingAccessToken.data.accessToken.streaming_expires_on <= Date.now()) {
+			try {
+				const newToken = await getSessionStreamingToken();
+				setStreamingAccessToken(newToken);
+			} catch (error) {
+				console.error('Error in refreshing token', error);
+				throw new Error('Token refresh failed');
+			}
+		}
+		const token = streamingAccessToken.data.accessToken.access_token;
 		abortController.current = new AbortController()
 		let key = user ? user.key : null
 		let keyHeader = { 'X-API-KEY': key }
@@ -408,6 +435,7 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 				headers: {
 					Accept: 'application/json',
 					'Content-Type': 'application/json',
+					'Authorization': `Bearer ${token}`,
 					...keyHeader
 				},
 				body: JSON.stringify(graphQLParams),

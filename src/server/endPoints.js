@@ -4,6 +4,7 @@ const path = require('path')
 const sdk = require('postman-collection')
 const codegen = require('postman-code-generators')
 const bodyParser = require('body-parser')
+const axios = require('axios');
 
 const getCodeSnippet = (lang, query, variables, key, endpoint_url) =>
 	new Promise((resolve, reject) => {
@@ -794,5 +795,59 @@ module.exports = function (app, db, redisClient) {
 			res.send(js)
 		})
 	})
+	app.get('/api/addkey', async (req, res) => {
+		await redisClient.set('session:55555', JSON.stringify({account_id: 136}))
+		res.sendStatus(200)
+	})
 
+	const getCredentials = async (req) => {
+		const results = await query(`SELECT client_id, client_secret FROM applications WHERE account_id = ? AND client_name = '_ide_application'`, [req.account_id]);
+		if (results.length) {
+			return {
+				client_id: results[0].client_id,
+				client_secret: results[0].client_secret,
+			};
+		} else {
+			return null
+		}
+	};
+	let cachedAccessToken = undefined;
+
+	const getStreamingAccessToken = async (client_id, client_secret) => {
+		if (cachedAccessToken && cachedAccessToken.streaming_expires_on > Date.now()) {
+			return cachedAccessToken
+		}
+		const url = "https://oauth2.bitquery.io/oauth2/token"
+		const params = `grant_type=client_credentials&client_id=${client_id}&client_secret=${client_secret}&scope=api`
+		const response = await axios.post(url, params, {
+			headers: {
+				"Content-Type": "application/x-www-form-urlencoded"
+			}
+		})
+		if (response.status === 200) {
+			const body = response.data
+			cachedAccessToken = {
+				access_token: body.access_token,
+				expires_in: body.expires_in,
+				streaming_expires_on: body.expires_in * 1000 + Date.now()
+			};
+			return cachedAccessToken
+		} else {
+			throw new Error(`Request failed with status ${response.status}`)
+		}
+	};
+
+	app.get("/api/applications", async (req, res) => {
+		try {
+			const credentials = await getCredentials(req)
+			if (credentials) {
+				const accessToken = await getStreamingAccessToken(credentials.client_id, credentials.client_secret)
+				res.status(200).send({ accessToken })
+			} else {
+				res.status(404).send({ message: "Credentials are not found" })
+			}
+		} catch (error) {
+			res.status(500).send({ message: error.message })
+		}
+	});
 }

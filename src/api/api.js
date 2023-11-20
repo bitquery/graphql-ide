@@ -64,3 +64,5 @@ export const getQueryByID = queryID => axios.get(`/api/bygraphqlqueryid/${queryI
 export const getWidgetConfig = id =>  axios.get(`/api/getwidgetconfig/${id}`)
 
 export const getQueryTemplates = (address, symbol) => axios.get(`/api/querytss/${address}/${symbol}`)
+
+export const getSessionStreamingToken = () => axios.get('/api/applications')
