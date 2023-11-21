@@ -829,7 +829,7 @@ module.exports = function (app, db, redisClient) {
 			cachedAccessToken = {
 				access_token: body.access_token,
 				expires_in: body.expires_in,
-				streaming_expires_on: body.expires_in * 1000 + Date.now()
+				streaming_expires_on: body.expires_in * 1000 + Date.now() - 5 * 60000,
 			};
 			return cachedAccessToken
 		} else {
