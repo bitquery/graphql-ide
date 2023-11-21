@@ -413,6 +413,7 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 	}, []);
 	//=================================================================
 	const fetcher = async (graphQLParams) => {
+		console.log('graphQLParams',graphQLParams)
 		if (!streamingAccessToken.data.accessToken.access_token || streamingAccessToken.data.accessToken.streaming_expires_on <= Date.now()) {
 			try {
 				const newToken = await getSessionStreamingToken();
@@ -477,6 +478,7 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 					query: introspectionQuery,
 					operationName: introspectionQueryName,
 				}
+				console.log('graphQLParams',graphQLParams)
 				try {
 					const data = await fetcher(graphQLParams)
 					let newSchema = buildClientSchema(data)
