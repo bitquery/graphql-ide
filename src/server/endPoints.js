@@ -14,7 +14,6 @@ const getCodeSnippet = (lang, query, variables, key, endpoint_url) =>
 			header: { 'Content-Type': 'application/json', 'X-API-KEY': key },
 			body: JSON.stringify({ query, variables })
 		})
-		console.log('request from getCodeSnippet')
 		const language = lang.key
 		const variant = lang.variant
 		const options = {
@@ -643,6 +642,7 @@ module.exports = function (app, db, redisClient) {
 				graphql_legacy_url: process.env.GRAPHQL_LEGACY_URL,
 				graphql_url: process.env.GRAPHQL_URL
 			}]
+			console.log('user',user)
 			res.status(200).send({ user })
 		} else {
 			res.status(200).send({

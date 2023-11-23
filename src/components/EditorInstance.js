@@ -399,7 +399,6 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 		// eslint-disable-next-line 
 	}, [user, schema[debouncedURL], queryTypes, index])
 
-	//=================================================================
 	useEffect(() => {
 		async function fetchToken() {
 			try {
@@ -411,9 +410,7 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 		}
 		fetchToken();
 	}, []);
-	//=================================================================
 	const fetcher = async (graphQLParams) => {
-		console.log('graphQLParams',graphQLParams)
 		if (!streamingAccessToken.data.accessToken.access_token || streamingAccessToken.data.accessToken.streaming_expires_on <= Date.now()) {
 			try {
 				const newToken = await getSessionStreamingToken();
@@ -428,6 +425,8 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 		let key = user ? user.key : null
 		let keyHeader = { 'X-API-KEY': key }
 		const start = new Date().getTime()
+		console.log('start time',start)
+
 		const response = await fetch(
 			currentQuery.endpoint_url,
 			{
@@ -436,7 +435,7 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 				headers: {
 					Accept: 'application/json',
 					'Content-Type': 'application/json',
-					'Authorization': `Bearer ${token}`,
+					// 'Authorization': `Bearer ${token}`,
 					...keyHeader
 				},
 				body: JSON.stringify(graphQLParams),
@@ -444,6 +443,7 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 			},
 		)
 		const responseTime = new Date().getTime() - start
+		console.log('responseTime',responseTime)
 		if (!response.ok) {
 			if (response.status === 401) throw new Error("Authorization Required")
 			throw new Error(`HTTP Status ${response.status}`)
@@ -478,7 +478,6 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 					query: introspectionQuery,
 					operationName: introspectionQueryName,
 				}
-				console.log('graphQLParams',graphQLParams)
 				try {
 					const data = await fetcher(graphQLParams)
 					let newSchema = buildClientSchema(data)
