@@ -63,7 +63,7 @@ redisClient.connect().then(async () => {
 
 	require('./endPoints')(app, db, redisClient)
 
-	if (isProduction) {
+	// if (isProduction) {
 		app.get('*', (req, res) => {
 			const url = req.url.substring(1)
 			const filePath = path.resolve(__dirname, '../../build', 'index.html')
@@ -110,7 +110,7 @@ redisClient.connect().then(async () => {
 				})
 			}
 		})
-	}
+	// }
 
 	app.listen(+process.env.PORT || 4000, () => {
 		console.log("The app listening on port " + process.env.PORT)
