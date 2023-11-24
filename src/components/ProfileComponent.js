@@ -13,7 +13,6 @@ const Profile = observer(() => {
 
 		// eslint-disable-next-line
 	}, [])
-console.log('user',user)
 	console.log('user?.graphql_admin_url',user?.graphql_admin_url)
 	return !user?.id ? (
 		<div className="flex profile__menu d-none d-lg-block" >

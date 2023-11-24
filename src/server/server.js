@@ -32,16 +32,13 @@ redisClient.on('error', err => console.log('Redis Client Error', err));
 redisClient.connect().then(async () => {
 	const getAccountIdFromSession = req =>
 		new Promise(async (resolve) => {
-			console.log('resolve',resolve)
-
 			const session = req.cookies['_app_session_key']
-			console.log('session',session)
+			console.log('session redisClient.connect().then',session)
 			if (session) {
 				const value = await redisClient.get(`session:${session}`)
 				if (value) {
 					const json = JSON.parse(value)
-					console.log('json',json)
-					console.log('resolve(json?.account_id)',resolve(json?.account_id))
+					console.log('json redisClient.connect().then',json)
 					resolve(json?.account_id)
 				} else {
 					resolve(undefined)
@@ -55,8 +52,9 @@ redisClient.connect().then(async () => {
 	const authMiddleware = async (req, res, next) => {
 		const account_id = await getAccountIdFromSession(req)
 		console.log('account_id in authMiddleware',account_id)
-		console.log('account_id',account_id)
 		req.account_id = isNaN(account_id) ? 0 : +account_id
+		console.log('req.account_id authMiddleware',req.account_id)
+
 		return next()
 	}
 

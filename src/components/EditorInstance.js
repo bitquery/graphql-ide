@@ -425,7 +425,6 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 		let key = user ? user.key : null
 		let keyHeader = { 'X-API-KEY': key }
 		const start = new Date().getTime()
-		console.log('start time',start)
 
 		const response = await fetch(
 			currentQuery.endpoint_url,
@@ -435,7 +434,7 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 				headers: {
 					Accept: 'application/json',
 					'Content-Type': 'application/json',
-					// 'Authorization': `Bearer ${token}`,
+					'Authorization': `Bearer ${token}`,
 					...keyHeader
 				},
 				body: JSON.stringify(graphQLParams),
@@ -443,7 +442,6 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 			},
 		)
 		const responseTime = new Date().getTime() - start
-		console.log('responseTime',responseTime)
 		if (!response.ok) {
 			if (response.status === 401) throw new Error("Authorization Required")
 			throw new Error(`HTTP Status ${response.status}`)
