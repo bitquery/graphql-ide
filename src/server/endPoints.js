@@ -642,6 +642,8 @@ module.exports = function (app, db, redisClient) {
 				graphql_legacy_url: process.env.GRAPHQL_LEGACY_URL,
 				graphql_url: process.env.GRAPHQL_URL
 			}]
+			console.trace()
+
 			console.log('user',user)
 			res.status(200).send({ user })
 		} else {
