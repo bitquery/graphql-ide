@@ -642,9 +642,6 @@ module.exports = function (app, db, redisClient) {
 				graphql_legacy_url: process.env.GRAPHQL_LEGACY_URL,
 				graphql_url: process.env.GRAPHQL_URL
 			}]
-			console.trace()
-
-			console.log('user',user)
 			res.status(200).send({ user })
 		} else {
 			res.status(200).send({
@@ -797,10 +794,6 @@ module.exports = function (app, db, redisClient) {
 			let js = data?.match(/async function[^{]+\{([\s\S]*)\}/)[0]
 			res.send(js)
 		})
-	})
-	app.get('/api/addkey', async (req, res) => {
-		await redisClient.set('session:55555', JSON.stringify({account_id: 136}))
-		res.sendStatus(200)
 	})
 
 	const getCredentials = async (req) => {
