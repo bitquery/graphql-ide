@@ -33,9 +33,6 @@ import { useHistory } from 'react-router-dom';
 import { toast } from 'react-toastify'
 import { createClient } from "graphql-ws"
 import { InteractionButton } from './InteractionButton.js';
-import {getSessionStreamingToken, getUser} from "../api/api";
-import axios from "axios";
-
 
 const queryStatusReducer = (state, action) => {
 	let newState = { ...state }
@@ -66,7 +63,6 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 	const widgetDisplay = useRef(null)
 	const abortController = useRef(null)
 	const resultWrapper = useRef(null)
-	const [streamingAccessToken, setStreamingAccessToken] = useState(null)
 
 	const [queryStatus, dispatchQueryStatus] = useReducer(queryStatusReducer, {
 		readyToExecute: Object.keys(schema).length ? true : false,
@@ -85,7 +81,6 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 		}
 	}
 
-
 	const history = useHistory()
 
 	function HistoryDataSource(payload, queryDispatcher) {
@@ -94,7 +89,7 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 		let cachedData
 		let queryNotLogged = true
 		let variables = payload.variables
-	
+
 		const getNewData = async () => {
 			queryDispatcher.onquerystarted()
 			try {
@@ -109,11 +104,11 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 				queryDispatcher.onerror(error.message)
 			}
 		}
-	
+
 		this.setCallback = cb => {
 			callbacks.push(cb)
 		}
-	
+
 		this.changeVariables = async deltaVariables => {
 			if (deltaVariables) {
 				variables = { ...payload.variables, ...deltaVariables }
@@ -123,7 +118,7 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 		}
 
 		this.getInterval = () => variables.interval
-	
+
 		return this
 	}
 
@@ -133,7 +128,7 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 		let callbacks = []
 		let queryNotLogged = true
 		let variables = payload.variables
-	
+
 		const subscribe = () => {
 			const currentUrl = currentQuery.endpoint_url.replace(/^http/, 'ws');
 			const client = createClient({ url: currentUrl });
@@ -155,9 +150,9 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 				},
 				complete: () => {},
 			});
-				
-		} 
-	
+
+		}
+
 		this.setCallback = cb => {
 			callbacks.push(cb)
 		}
@@ -169,7 +164,7 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 		this.setEmptyWidget = cb => {
 			empty = cb
 		}
-	
+
 		this.changeVariables = async deltaVariables => {
 			if (deltaVariables) {
 				variables = { ...payload.variables, ...deltaVariables }
@@ -187,7 +182,7 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 		}
 
 		this.getInterval = () => variables.interval
-	
+
 		return this
 	}
 
@@ -372,7 +367,7 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 			const historyDataSource = new HistoryDataSource(payload, queryDispatcher)
 			setDataSource({ historyDataSource })
 		}
-		// eslint-disable-next-line 
+		// eslint-disable-next-line
 	}, [JSON.stringify(currentQuery), schema[debouncedURL], JSON.stringify(queryTypes), user?.id])
 
 	const editQueryHandler = useCallback(handleSubject => {
@@ -388,7 +383,7 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 			let queryType = getQueryTypes(handleSubject.query)
 			if (JSON.stringify(queryType) !== JSON.stringify(queryTypes)) {
 				(typeof queryType === 'object' && Object.keys(queryType).length)
-					&& setQueryTypes(queryType)
+				&& setQueryTypes(queryType)
 			}
 		}
 		if (user && query[index].account_id === user.id) {
@@ -397,26 +392,23 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 			updateQuery({ ...handleSubject, saved: false, url: null, account_id: user.id }, index, null)
 		}
 		setAccordance(false)
-		// eslint-disable-next-line 
+		// eslint-disable-next-line
 	}, [user, schema[debouncedURL], queryTypes, index])
 
 	const fetcher = async (graphQLParams) => {
-
-		// if (!user.accessToken.access_token || user.accessToken.streaming_expires_on <= Date.now()) {
-		// 	try {
-		// 		const newUser = await getUser()
-		//
-		// 	} catch (error) {
-		// 		console.error('Error in refreshing token', error);
-		// 		throw new Error('Token refresh failed');
-		// 	}
-		// }
-
+		 // if(!user.accessToken.access_token || user.accessToken.streaming_expires_on <= Date.now()) {
+			//     try {
+			//        const newUser = await getUser()
+		 //
+			//     } catch (error) {
+			//        console.error('Error in refreshing token', error);
+			//        throw new Error('Token refresh failed');
+			//     }
+			// }
 		abortController.current = new AbortController()
 		let key = user ? user.key : null
 		let keyHeader = { 'X-API-KEY': key }
 		const start = new Date().getTime()
-
 		const response = await fetch(
 			currentQuery.endpoint_url,
 			{
@@ -486,7 +478,7 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 		if (debouncedURL in schema && queryStatus.schemaError) {
 			dispatchQueryStatus('readyToExecute')
 		}
-		// eslint-disable-next-line 
+		// eslint-disable-next-line
 	}, [debouncedURL, user])
 
 	const fullscreenHandle = useFullScreenHandle()
@@ -545,19 +537,19 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 				/>
 
 				<button className="execute-button"
-					data-tip={(queryStatus.activeFetch || queryStatus.activeSubscription) ? 'Interrupt' : 'Execute query (Ctrl-Enter)'}
-					ref={executeButton}
-					disabled={queryStatus.schemaLoading}
-					onClick={(queryStatus.activeFetch || queryStatus.activeSubscription) ? abortRequest : getResult}
+						data-tip={(queryStatus.activeFetch || queryStatus.activeSubscription) ? 'Interrupt' : 'Execute query (Ctrl-Enter)'}
+						ref={executeButton}
+						disabled={queryStatus.schemaLoading}
+						onClick={(queryStatus.activeFetch || queryStatus.activeSubscription) ? abortRequest : getResult}
 				>
-					<InteractionButton 
+					<InteractionButton
 						queryStatus={queryStatus}
 						accordance={accordance}
 					/>
 				</button>
 				<div className="workspace__wrapper"
-					ref={workspace}
-					onMouseDown={workspaceResizer}
+					 ref={workspace}
+					 onMouseDown={workspaceResizer}
 				>
 					{!currentQuery.layout && <GraphqlEditor
 						readOnly={!!currentQuery?.url && !!currentQuery.id}
@@ -586,7 +578,7 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 						number={number}
 					/>
 					<div className="widget">
-						<CodePlugin.renderer 
+						<CodePlugin.renderer
 							values={currentQuery.config}
 							pluginIndex={0}
 							setWidget={setWidget}
@@ -595,8 +587,8 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 				</div>
 				<div className={'widget-display widget-display-wrapper position-relative' +
 					(isMobile ? ' widget-display-wrapper-fullscreen' : '')}
-					ref={widgetDisplay}
-					style={{backgroundColor: '#f6f7f8'}}
+					 ref={widgetDisplay}
+					 style={{backgroundColor: '#f6f7f8'}}
 				>
 					<div
 						className="sizeChanger"
