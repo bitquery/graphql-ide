@@ -13,8 +13,7 @@ const Profile = observer(() => {
 
 		// eslint-disable-next-line
 	}, [])
-	console.log('user?.graphql_admin_url',user?.graphql_admin_url)
-	console.trace()
+
 	return !user?.id ? (
 		<div className="flex profile__menu d-none d-lg-block" >
 			<a className="profile__email" href={`${user?.graphql_admin_url}/auth/login?redirect_to=${window.location.href}`}>

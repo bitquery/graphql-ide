@@ -33,7 +33,8 @@ import { useHistory } from 'react-router-dom';
 import { toast } from 'react-toastify'
 import { createClient } from "graphql-ws"
 import { InteractionButton } from './InteractionButton.js';
-import { getSessionStreamingToken} from "../api/api";
+import {getSessionStreamingToken, getUser} from "../api/api";
+import axios from "axios";
 
 
 const queryStatusReducer = (state, action) => {
@@ -399,28 +400,18 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 		// eslint-disable-next-line 
 	}, [user, schema[debouncedURL], queryTypes, index])
 
-	useEffect(() => {
-		async function fetchToken() {
-			try {
-				const token = await getSessionStreamingToken();
-				setStreamingAccessToken(token)
-			} catch (error) {
-				console.error('Error in getSessionStreamingToken ', error);
-			}
-		}
-		fetchToken();
-	}, []);
 	const fetcher = async (graphQLParams) => {
-		if (!streamingAccessToken.data.accessToken.access_token || streamingAccessToken.data.accessToken.streaming_expires_on <= Date.now()) {
+
+		if (!user.accessToken.access_token || user.accessToken.streaming_expires_on <= Date.now()) {
 			try {
-				const newToken = await getSessionStreamingToken();
-				setStreamingAccessToken(newToken);
+				const newUser = await getUser()
+
 			} catch (error) {
 				console.error('Error in refreshing token', error);
 				throw new Error('Token refresh failed');
 			}
 		}
-		const token = streamingAccessToken.data.accessToken.access_token;
+
 		abortController.current = new AbortController()
 		let key = user ? user.key : null
 		let keyHeader = { 'X-API-KEY': key }
@@ -434,7 +425,7 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 				headers: {
 					Accept: 'application/json',
 					'Content-Type': 'application/json',
-					'Authorization': `Bearer ${token}`,
+					'Authorization': `Bearer ${user.accessToken.access_token}`,
 					...keyHeader
 				},
 				body: JSON.stringify(graphQLParams),
