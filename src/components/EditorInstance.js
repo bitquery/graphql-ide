@@ -408,6 +408,7 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 				headers: {
 					Accept: 'application/json',
 					'Content-Type': 'application/json',
+					'Authorization': `Bearer ${user.accessToken.access_token}`,
 					...keyHeader
 				},
 				body: JSON.stringify(graphQLParams),

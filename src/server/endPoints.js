@@ -4,6 +4,7 @@ const path = require('path')
 const sdk = require('postman-collection')
 const codegen = require('postman-code-generators')
 const bodyParser = require('body-parser')
+const axios = require('axios')
 
 const getCodeSnippet = (lang, query, variables, key, endpoint_url) =>
 	new Promise((resolve, reject) => {
@@ -618,7 +619,30 @@ module.exports = function (app, db, redisClient) {
 				response.send('Query logged')
 			})
 	})
-
+	let cachedAccessToken =undefined
+	const getStreamingAccessToken = async (client_id,client_secret) => {
+		if (cachedAccessToken && cachedAccessToken.streaming_expires_on > Date.now()) {
+			return cachedAccessToken
+		}
+		const url = "https://oauth2.bitquery.io/oauth2/token"
+		const params = `grant_type=client_credentials&client_id=${client_id}&client_secret=${client_secret}&scope=api`
+		const response = await axios.post(url, params, {
+			headers: {
+				"Content-Type": "application/x-www-form-urlencoded"
+			}
+		})
+		if (response.status === 200) {
+			const body = response.data
+			cachedAccessToken = {
+				access_token: body.access_token,
+				expires_in: body.expires_in,
+				streaming_expires_on: body.expires_in * 1000 + Date.now() - 5 * 60000,
+			};
+			return cachedAccessToken
+		} else {
+			throw new Error(`Request failed with status ${response.status}`)
+		}
+	}
 	app.get("/api/user", async (req, res) => {
 		const results = await query(`SELECT a.*, ak.\`key\` FROM accounts a
 			JOIN api_keys ak
@@ -627,6 +651,9 @@ module.exports = function (app, db, redisClient) {
 			AND ak.active = true`,
 			[req.account_id])
 		if (results.length) {
+			const clientResults = await query(`SELECT client_id, client_secret FROM applications 
+       WHERE account_id = ? AND client_name = '_ide_application'`, [req.account_id])
+			const accessToken = await getStreamingAccessToken(clientResults[0].client_id,clientResults[0].client_secret)
 			let user = [{
 				id: results[0].id,
 				key: results[0].key,
@@ -639,7 +666,8 @@ module.exports = function (app, db, redisClient) {
 				ancestry: results[0].ancestry,
 				graphql_admin_url: process.env.GRAPHQL_ADMIN_URL,
 				graphql_legacy_url: process.env.GRAPHQL_LEGACY_URL,
-				graphql_url: process.env.GRAPHQL_URL
+				graphql_url: process.env.GRAPHQL_URL,
+				accessToken:accessToken,
 			}]
 			res.status(200).send({ user })
 		} else {
