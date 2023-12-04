@@ -717,10 +717,10 @@ module.exports = function (app, db, redisClient) {
                                                WHERE account_id = ?
                                                  AND client_name = '_ide_application'`, [req.account_id])
             console.log('clientResults', clientResults)
+            console.log('clientResults.length', clientResults.length)
             console.log('clientResults[0].client_id, clientResults[0].client_secret', clientResults[0].client_id, clientResults[0].client_secret)
             let accessToken = {}
-console.log('clientResults.length',clientResults.length)
-            if (clientResults.length>0) {
+            if (clientResults.length > 0) {
                 accessToken = await getStreamingAccessToken(clientResults[0].client_id, clientResults[0].client_secret)
             }
             console.log('accessToken', accessToken)
@@ -747,11 +747,6 @@ console.log('clientResults.length',clientResults.length)
                     graphql_url: process.env.GRAPHQL_URL,
                     graphql_admin_url: process.env.GRAPHQL_ADMIN_URL,
                     key: 'key',
-                    accessToken: {
-                        access_token: 'fgbfghfhfg',
-                        expires_in: '',
-                        streaming_expires_on: Date.now(),
-                    },
                 }]
             })
         }
