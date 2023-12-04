@@ -718,10 +718,10 @@ module.exports = function (app, db, redisClient) {
                                                  AND client_name = '_ide_application'`, [req.account_id])
             console.log('clientResults', clientResults)
             console.log('clientResults.length', clientResults.length)
-            console.log('clientResults[0].client_id, clientResults[0].client_secret', clientResults[0].client_id, clientResults[0].client_secret)
             let accessToken = {}
             if (clientResults.length > 0) {
                 accessToken = await getStreamingAccessToken(clientResults[0].client_id, clientResults[0].client_secret)
+            console.log('clientResults[0].client_id, clientResults[0].client_secret', clientResults[0].client_id, clientResults[0].client_secret)
             }
             console.log('accessToken', accessToken)
             let user = [{
