@@ -716,6 +716,7 @@ module.exports = function (app, db, redisClient) {
                                            FROM applications
                                            WHERE account_id = ?
                                              AND client_name = '_ide_application'`, [req.account_id])
+            console.log(clientResults[0].client_id, clientResults[0].client_secret)
         const accessToken = await getStreamingAccessToken(clientResults[0].client_id, clientResults[0].client_secret)
             console.log('accessToken',accessToken)
             let user = [{
