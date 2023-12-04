@@ -406,9 +406,6 @@ const EditorInstance = observer(function EditorInstance({number}) {
         let key = user ? user.key : null
         let keyHeader = {'X-API-KEY': key}
         const start = new Date().getTime()
-        if (user && user.accessToken && user.accessToken.access_token){
-            let authorizationToken = {'Authorization': `Bearer ${user.accessToken.access_token}`}
-        }
         const response = await fetch(
             currentQuery.endpoint_url,
             {
@@ -418,7 +415,7 @@ const EditorInstance = observer(function EditorInstance({number}) {
                     Accept: 'application/json',
                     'Content-Type': 'application/json',
                     ...keyHeader,
-                    ...(user && user.accessToken && user.accessToken.access_token&& {'Authorization': `Bearer ${user.accessToken.access_token}`}),
+                    ...(user?.accessToken?.access_token && { 'Authorization': `Bearer ${user.accessToken.access_token}` }),
                 },
                 body: JSON.stringify(graphQLParams),
                 credentials: 'same-origin',
