@@ -412,6 +412,7 @@ const EditorInstance = observer(function EditorInstance({number}) {
             ...(user?.key && { 'X-API-KEY': user.key }),
             ...(user?.accessToken?.access_token && { 'Authorization': `Bearer ${user.accessToken.access_token}` }),
         }
+        console.log('headers',headers)
         const response = await fetch(
             currentQuery.endpoint_url,
             {
