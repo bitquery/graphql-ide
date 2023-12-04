@@ -404,19 +404,20 @@ const EditorInstance = observer(function EditorInstance({number}) {
     const fetcher = async (graphQLParams) => {
         abortController.current = new AbortController()
         let key = user ? user.key : null
-        let keyHeader = {'X-API-KEY': key}
+        // let keyHeader = {'X-API-KEY': key}
         const start = new Date().getTime()
+        const headers = {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            ...(user?.key && { 'X-API-KEY': user.key }),
+            ...(user?.accessToken?.access_token && { 'Authorization': `Bearer ${user.accessToken.access_token}` }),
+        }
         const response = await fetch(
             currentQuery.endpoint_url,
             {
                 signal: abortController.current.signal,
                 method: 'POST',
-                headers: {
-                    Accept: 'application/json',
-                    'Content-Type': 'application/json',
-                    ...keyHeader,
-                    ...(user?.accessToken?.access_token && { 'Authorization': `Bearer ${user.accessToken.access_token}` }),
-                },
+                headers: headers,
                 body: JSON.stringify(graphQLParams),
                 credentials: 'same-origin',
             },
