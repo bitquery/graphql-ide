@@ -692,7 +692,7 @@ module.exports = function (app, db, redisClient) {
         })
         if (response.status === 200) {
             const body = response.data
-            console.log('body',body)
+            console.log('body', body)
             cachedAccessToken = {
                 access_token: body.access_token,
                 expires_in: body.expires_in,
@@ -712,18 +712,22 @@ module.exports = function (app, db, redisClient) {
                                        AND ak.active = true`,
             [req.account_id])
         if (results.length) {
-        const clientResults = await query(`SELECT client_id, client_secret
-                                           FROM applications
-                                           WHERE account_id = ?
-                                             AND client_name = '_ide_application'`, [req.account_id])
-            console.log('clientResults',clientResults)
-            console.log('clientResults[0].client_id, clientResults[0].client_secret',clientResults[0].client_id, clientResults[0].client_secret)
-        const accessToken = await getStreamingAccessToken(clientResults[0].client_id, clientResults[0].client_secret)
-            console.log('accessToken',accessToken)
+            const clientResults = await query(`SELECT client_id, client_secret
+                                               FROM applications
+                                               WHERE account_id = ?
+                                                 AND client_name = '_ide_application'`, [req.account_id])
+            console.log('clientResults', clientResults)
+            console.log('clientResults[0].client_id, clientResults[0].client_secret', clientResults[0].client_id, clientResults[0].client_secret)
+            let accessToken = {}
+
+            if (clientResults.length) {
+                accessToken = await getStreamingAccessToken(clientResults[0].client_id, clientResults[0].client_secret)
+            }
+            console.log('accessToken', accessToken)
             let user = [{
                 id: results[0].id,
                 key: results[0].key,
-                email: results[0].email,
+                email: results[0].email,/**/
                 active: results[0].active,
                 updated_at: results[0].updated_at,
                 created_at: results[0].created_at,
