@@ -402,13 +402,13 @@ const EditorInstance = observer(function EditorInstance({number}) {
     }, [user, schema[debouncedURL], queryTypes, index])
 
     const fetcher = async (graphQLParams) => {
-        if(user?.accessToken && user.accessToken.streaming_expires_on <= Date.now()) {
+        if (user?.accessToken && user.accessToken.streaming_expires_on <= Date.now()) {
             try {
-               const newUser = await getUser()
+                const newUser = await getUser()
 
             } catch (error) {
-               console.error('Error in refreshing token', error)
-               throw new Error('Token refresh failed')
+                console.error('Error in refreshing token', error)
+                throw new Error('Token refresh failed')
             }
         }
         abortController.current = new AbortController()
@@ -418,8 +418,8 @@ const EditorInstance = observer(function EditorInstance({number}) {
         const headers = {
             'Accept': 'application/json',
             'Content-Type': 'application/json',
-            ...(user?.key && { 'X-API-KEY': user.key }),
-            ...(user?.accessToken?.access_token && { 'Authorization': `Bearer ${user.accessToken.access_token}` }),
+            ...(user?.key && {'X-API-KEY': user.key}),
+            ...(user?.accessToken?.access_token && {'Authorization': `Bearer ${user.accessToken.access_token}`}),
         }
         const response = await fetch(
             currentQuery.endpoint_url,

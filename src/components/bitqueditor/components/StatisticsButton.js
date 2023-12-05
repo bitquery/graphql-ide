@@ -17,7 +17,8 @@ const StatisticsButton = observer(function StatisticsButton({number}) {
 				"headers": {
 					"accept": "application/json",
 					"content-type": "application/json",
-					"x-api-key": user.key
+					"x-api-key": user.key,
+					...(user?.accessToken?.access_token && { 'Authorization': `Bearer ${user.accessToken.access_token}` })
 				},
 				"body": `{\"query\":\"query MyQuery {\\n utilities {\\n  metrics(queryId: \\\"${graphqlQueryID}\\\", options: {seed: ${new Date().getTime()}}) {\\n    points\\n  \\n}}\\n}\\n\",\"variables\":\"{}\"}`,
 				"method": "POST"

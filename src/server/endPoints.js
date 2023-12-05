@@ -6,14 +6,15 @@ const codegen = require('postman-code-generators')
 const bodyParser = require('body-parser')
 const axios = require('axios')
 
-const getCodeSnippet = (lang, query, variables, key, endpoint_url) =>
+const getCodeSnippet = (lang, query, variables, key, endpoint_url, token) =>
     new Promise((resolve, reject) => {
             const request = new sdk.Request({
                 url: endpoint_url,
                 method: 'POST',
-                header: {'Content-Type': 'application/json', 'X-API-KEY': key},
+                header: {'Content-Type': 'application/json', 'X-API-KEY': key, 'Authorization': `Bearer ${token}`},
                 body: JSON.stringify({query, variables})
             })
+            // , 'Authorization': `Bearer ${access_token}`
             const language = lang.key
             const variant = lang.variant
             const options = {
@@ -147,8 +148,8 @@ module.exports = function (app, db, redisClient) {
     })
 
     app.post('/api/codesnippet', async (req, res) => {
-        const {language, query, variables, endpoint_url, key} = req.body
-        const snippet = await getCodeSnippet(language, query, variables, key, endpoint_url)
+        const {language, query, variables, endpoint_url, key,token} = req.body
+        const snippet = await getCodeSnippet(language, query, variables, key, endpoint_url,token)
         res.status(200).send({snippet})
     })
 
@@ -692,7 +693,6 @@ module.exports = function (app, db, redisClient) {
         })
         if (response.status === 200) {
             const body = response.data
-            console.log('body', body)
             cachedAccessToken = {
                 access_token: body.access_token,
                 expires_in: body.expires_in,
@@ -735,6 +735,7 @@ module.exports = function (app, db, redisClient) {
                 graphql_url: process.env.GRAPHQL_URL,
                 accessToken: accessToken,
             }]
+
             res.status(200).send({user})
         } else {
             res.status(200).send({
