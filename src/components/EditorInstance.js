@@ -407,8 +407,8 @@ const EditorInstance = observer(function EditorInstance({number}) {
                const newUser = await getUser()
 
             } catch (error) {
-               console.error('Error in refreshing token', error);
-               throw new Error('Token refresh failed');
+               console.error('Error in refreshing token', error)
+               throw new Error('Token refresh failed')
             }
         }
         abortController.current = new AbortController()
