@@ -6,7 +6,8 @@ WORKDIR /app
 
 COPY package.json package-lock.json* ./
 
-RUN chown node:node -R /app
+RUN mkdir /app/static && \
+  chown node:node -R /app
 
 USER node
 
