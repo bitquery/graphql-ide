@@ -402,6 +402,15 @@ const EditorInstance = observer(function EditorInstance({number}) {
     }, [user, schema[debouncedURL], queryTypes, index])
 
     const fetcher = async (graphQLParams) => {
+        if(user?.accessToken && user.accessToken.streaming_expires_on <= Date.now()) {
+            try {
+               const newUser = await getUser()
+
+            } catch (error) {
+               console.error('Error in refreshing token', error);
+               throw new Error('Token refresh failed');
+            }
+        }
         abortController.current = new AbortController()
         let key = user ? user.key : null
         // let keyHeader = {'X-API-KEY': key}
