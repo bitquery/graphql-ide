@@ -712,7 +712,8 @@ module.exports = function (app, db, redisClient) {
                                        AND ak.active = true`,
             [req.account_id])
         console.log('results',results)
-        if (results.length) {
+        console.log('length',results.length)
+        if (results.length>0) {
             const clientResults = await query(`SELECT client_id, client_secret
                                                FROM applications
                                                WHERE account_id = ?
