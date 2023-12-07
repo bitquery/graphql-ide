@@ -503,7 +503,7 @@ module.exports = function (app, db, redisClient) {
     })
 
     app.post('/api/getwidget', (req, response) => {
-        console.log(req.body)
+        // console.log(req.body)
         db.query(`SELECT a.dashboard_id, a.widget_id as widget_number, a.query_index, b.*, q.*
                   FROM queries_to_dashboards a
                            LEFT JOIN (SELECT * FROM widgets) b
@@ -697,7 +697,7 @@ module.exports = function (app, db, redisClient) {
                 access_token: body.access_token,
                 expires_in: body.expires_in,
                 streaming_expires_on: body.expires_in * 1000 + Date.now() - 5 * 60000,
-            };
+            }
             // return cachedAccessToken
         } else {
             throw new Error(`Request failed with status ${response.status}`)

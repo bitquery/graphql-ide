@@ -33,6 +33,7 @@ import {useHistory} from 'react-router-dom';
 import {toast} from 'react-toastify'
 import {createClient} from "graphql-ws"
 import {InteractionButton} from './InteractionButton.js';
+import {getUser} from "../api/api";
 
 const queryStatusReducer = (state, action) => {
     let newState = {...state}
@@ -404,7 +405,7 @@ const EditorInstance = observer(function EditorInstance({number}) {
     const fetcher = async (graphQLParams) => {
         if (user?.accessToken && user.accessToken.streaming_expires_on <= Date.now()) {
             try {
-                const newUser = await getUser()
+                await getUser()
 
             } catch (error) {
                 console.error('Error in refreshing token', error)
