@@ -503,7 +503,6 @@ module.exports = function (app, db, redisClient) {
     })
 
     app.post('/api/getwidget', (req, response) => {
-        // console.log(req.body)
         db.query(`SELECT a.dashboard_id, a.widget_id as widget_number, a.query_index, b.*, q.*
                   FROM queries_to_dashboards a
                            LEFT JOIN (SELECT * FROM widgets) b
@@ -704,6 +703,7 @@ module.exports = function (app, db, redisClient) {
         }
     }
     app.get("/api/user", async (req, res) => {
+        console.log('start query')
         const results = await query(`SELECT a.*, ak.\`key\`
                                      FROM accounts a
                                               JOIN api_keys ak
@@ -711,6 +711,7 @@ module.exports = function (app, db, redisClient) {
                                      WHERE a.id = ?
                                        AND ak.active = true`,
             [req.account_id])
+        console.log('results',results)
         if (results.length) {
             const clientResults = await query(`SELECT client_id, client_secret
                                                FROM applications
