@@ -148,8 +148,8 @@ module.exports = function (app, db, redisClient) {
     })
 
     app.post('/api/codesnippet', async (req, res) => {
-        const {language, query, variables, endpoint_url, key,token} = req.body
-        const snippet = await getCodeSnippet(language, query, variables, key, endpoint_url,token)
+        const {language, query, variables, endpoint_url, key, token} = req.body
+        const snippet = await getCodeSnippet(language, query, variables, key, endpoint_url, token)
         res.status(200).send({snippet})
     })
 
@@ -683,25 +683,31 @@ module.exports = function (app, db, redisClient) {
         // if (cachedAccessToken && cachedAccessToken.streaming_expires_on > Date.now()) {
         //     return cachedAccessToken
         // }
-        const url = "https://oauth2.bitquery.io/oauth2/token"
-        const params = `grant_type=client_credentials&client_id=${client_id}&client_secret=${client_secret}&scope=api`
-        const response = await axios.post(url, params, {
-            headers: {
-                "Content-Type": "application/x-www-form-urlencoded"
+        try {
+            const url = "https://oauth2.bitquery.io/oauth2/token"
+            const params = `grant_type=client_credentials&client_id=${client_id}&client_secret=${client_secret}&scope=api`
+            const response = await axios.post(url, params, {
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                }
+            })
+            if (response.status === 200) {
+                const body = response.data;
+                return {
+                    access_token: body.access_token,
+                    expires_in: body.expires_in,
+                    streaming_expires_on: body.expires_in * 1000 + Date.now() - 5 * 60000,
+                }
+                // return cachedAccessToken
+            } else {
+                throw new Error(`Request failed with status ${response.status}`)
+                // console.log(`Request failed with status ${response.status}`) // This line is unreachable
             }
-        })
-        if (response.status === 200) {
-            const body = response.data
-             return {
-                access_token: body.access_token,
-                expires_in: body.expires_in,
-                streaming_expires_on: body.expires_in * 1000 + Date.now() - 5 * 60000,
-            }
-            // return cachedAccessToken
-        } else {
-            throw new Error(`Request failed with status ${response.status}`)
+        } catch (error) {
+            console.log('no token, something wrong with query', error)
         }
     }
+
     app.get("/api/user", async (req, res) => {
         console.log('start query')
         const results = await query(`SELECT a.*, ak.\`key\`
@@ -711,15 +717,15 @@ module.exports = function (app, db, redisClient) {
                                      WHERE a.id = ?
                                        AND ak.active = true`,
             [req.account_id])
-        console.log('results',results)
-        console.log('length',results.length)
-        if (results.length>0) {
+        console.log('results', results)
+        console.log('length', results.length)
+        if (results.length > 0) {
             const clientResults = await query(`SELECT client_id, client_secret
                                                FROM applications
                                                WHERE account_id = ?
                                                  AND client_name = '_ide_application'`, [req.account_id])
             let accessToken = {}
-            console.log('req.account_id: ',req.account_id,'clientResults[0].client_id: ',clientResults[0].client_id,' clientResults[0].client_secret: ',clientResults[0].client_secret)
+            console.log('req.account_id: ', req.account_id, 'clientResults[0].client_id: ', clientResults[0].client_id, ' clientResults[0].client_secret: ', clientResults[0].client_secret)
             if (clientResults.length > 0) {
                 accessToken = await getStreamingAccessToken(clientResults[0].client_id, clientResults[0].client_secret)
             }
