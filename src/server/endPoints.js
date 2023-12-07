@@ -679,11 +679,11 @@ module.exports = function (app, db, redisClient) {
                 response.send('Query logged')
             })
     })
-    let cachedAccessToken = undefined
+    // let cachedAccessToken = undefined
     const getStreamingAccessToken = async (client_id, client_secret) => {
-        if (cachedAccessToken && cachedAccessToken.streaming_expires_on > Date.now()) {
-            return cachedAccessToken
-        }
+        // if (cachedAccessToken && cachedAccessToken.streaming_expires_on > Date.now()) {
+        //     return cachedAccessToken
+        // }
         const url = "https://oauth2.bitquery.io/oauth2/token"
         const params = `grant_type=client_credentials&client_id=${client_id}&client_secret=${client_secret}&scope=api`
         const response = await axios.post(url, params, {
@@ -693,12 +693,12 @@ module.exports = function (app, db, redisClient) {
         })
         if (response.status === 200) {
             const body = response.data
-            cachedAccessToken = {
+             return {
                 access_token: body.access_token,
                 expires_in: body.expires_in,
                 streaming_expires_on: body.expires_in * 1000 + Date.now() - 5 * 60000,
             };
-            return cachedAccessToken
+            // return cachedAccessToken
         } else {
             throw new Error(`Request failed with status ${response.status}`)
         }
@@ -717,6 +717,7 @@ module.exports = function (app, db, redisClient) {
                                                WHERE account_id = ?
                                                  AND client_name = '_ide_application'`, [req.account_id])
             let accessToken = {}
+            console.log('req.account_id: ',req.account_id,'clientResults[0].client_id: ',clientResults[0].client_id,' clientResults[0].client_secret: ',clientResults[0].client_secret)
             if (clientResults.length > 0) {
                 accessToken = await getStreamingAccessToken(clientResults[0].client_id, clientResults[0].client_secret)
             }
