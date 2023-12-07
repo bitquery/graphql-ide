@@ -11,10 +11,10 @@ const getCodeSnippet = (lang, query, variables, key, endpoint_url, token) =>
             const request = new sdk.Request({
                 url: endpoint_url,
                 method: 'POST',
-                header: {'Content-Type': 'application/json', 'X-API-KEY': key},
+                header: {'Content-Type': 'application/json', 'X-API-KEY': key, 'Authorization': `Bearer ${token}`},
                 body: JSON.stringify({query, variables})
             })
-            // , 'Authorization': `Bearer ${token}`
+            // , 'Authorization': `Bearer ${access_token}`
             const language = lang.key
             const variant = lang.variant
             const options = {
@@ -716,8 +716,6 @@ module.exports = function (app, db, redisClient) {
                                                FROM applications
                                                WHERE account_id = ?
                                                  AND client_name = '_ide_application'`, [req.account_id])
-            console.log(results[0].id,req.account_id,clientResults[0].client_id)
-
             let accessToken = {}
             if (clientResults.length > 0) {
                 accessToken = await getStreamingAccessToken(clientResults[0].client_id, clientResults[0].client_secret)
