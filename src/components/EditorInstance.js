@@ -419,7 +419,7 @@ const EditorInstance = observer(function EditorInstance({number}) {
             'Accept': 'application/json',
             'Content-Type': 'application/json',
             ...(user?.key && {'X-API-KEY': user.key}),
-            ...(user?.accessToken?.access_token && {'Authorization': `Bearer ${user.accessToken.access_token}`}),
+            // ...(user?.accessToken?.access_token && {'Authorization': `Bearer ${user.accessToken.access_token}`}),
         }
         const response = await fetch(
             currentQuery.endpoint_url,
