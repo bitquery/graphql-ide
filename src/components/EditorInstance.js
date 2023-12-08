@@ -403,10 +403,13 @@ const EditorInstance = observer(function EditorInstance({number}) {
     }, [user, schema[debouncedURL], queryTypes, index])
 
     const fetcher = async (graphQLParams) => {
+        if (user?.accessToken?.error) {
+            console.error('Error in accessToken:', user.accessToken.error)
+            throw new Error(user.accessToken.error)
+        }
         if (user?.accessToken && user.accessToken.streaming_expires_on <= Date.now()) {
             try {
-                await getUser()
-
+                await getUser();
             } catch (error) {
                 console.error('Error in refreshing token', error)
                 throw new Error('Token refresh failed')

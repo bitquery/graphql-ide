@@ -678,7 +678,7 @@ module.exports = function (app, db, redisClient) {
                 response.send('Query logged')
             })
     })
-    const getStreamingAccessToken = async (res,client_id, client_secret) => {
+    const getStreamingAccessToken = async (client_id, client_secret) => {
         try {
             const url = "https://oauth2.bitquery.io/oauth2/token"
             const params = `grant_type=client_credentials&client_id=${client_id}&client_secret=${client_secret}&scope=api`
@@ -696,14 +696,13 @@ module.exports = function (app, db, redisClient) {
                 }
             }
         } catch (error) {
-            res.status(400).send('Error generating access token')
-
-            console.log('Error generating access token', error)
+            // res.status(400).send('Error generating access token')
+            // throw new Error('Error generating access token')
+            return  { error: 'Error generating access token' }
         }
     }
 
     app.get("/api/user", async (req, res) => {
-        console.log('start query')
         const results = await query(`SELECT a.*, ak.\`key\`
                                      FROM accounts a
                                               JOIN api_keys ak
@@ -712,7 +711,6 @@ module.exports = function (app, db, redisClient) {
                                        AND ak.active = true`,
             [req.account_id])
         console.log('results', results)
-        console.log('length', results.length)
         if (results.length > 0) {
             const clientResults = await query(`SELECT client_id, client_secret
                                                FROM applications
@@ -721,7 +719,12 @@ module.exports = function (app, db, redisClient) {
             let accessToken = {}
             console.log('req.account_id: ', req.account_id, 'clientResults[0].client_id: ', clientResults[0].client_id, ' clientResults[0].client_secret: ', clientResults[0].client_secret)
             if (clientResults.length > 0) {
-                accessToken = await getStreamingAccessToken(res,clientResults[0].client_id, clientResults[0].client_secret)
+                const tokenResponse = await getStreamingAccessToken(clientResults[0].client_id, clientResults[0].client_secret);
+                if (!tokenResponse.error) {
+                    accessToken = tokenResponse
+                } else {
+                    accessToken.error = tokenResponse.error
+                }
             }
             let user = [{
                 id: results[0].id,
