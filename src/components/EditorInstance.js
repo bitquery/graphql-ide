@@ -33,6 +33,7 @@ import {useHistory} from 'react-router-dom';
 import {toast} from 'react-toastify'
 import {createClient} from "graphql-ws"
 import {InteractionButton} from './InteractionButton.js';
+import {getUser} from "../api/api";
 
 const queryStatusReducer = (state, action) => {
     let newState = {...state}
@@ -402,10 +403,13 @@ const EditorInstance = observer(function EditorInstance({number}) {
     }, [user, schema[debouncedURL], queryTypes, index])
 
     const fetcher = async (graphQLParams) => {
+        if (user?.accessToken?.error) {
+            console.error('Error in accessToken:', user.accessToken.error)
+            toast.error('Error in accessToken: ' + user.accessToken.error)
+        }
         if (user?.accessToken && user.accessToken.streaming_expires_on <= Date.now()) {
             try {
-                const newUser = await getUser()
-
+                await getUser();
             } catch (error) {
                 console.error('Error in refreshing token', error)
                 throw new Error('Token refresh failed')
@@ -433,8 +437,10 @@ const EditorInstance = observer(function EditorInstance({number}) {
         )
         const responseTime = new Date().getTime() - start
         if (!response.ok) {
-            if (response.status === 401) throw new Error("Authorization Required")
-            throw new Error(`HTTP Status ${response.status}`)
+            if (response.status === 401) {
+                const responseBody = await response.text()
+                throw new Error(`Error: ${responseBody}`)
+            }
         }
         if (!('operationName' in graphQLParams)) {
             const graphqlRequested = response.headers.get('X-GraphQL-Requested') === 'true'

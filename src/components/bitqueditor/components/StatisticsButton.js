@@ -2,6 +2,7 @@ import { useInterval } from '../../../utils/useInterval'
 import modalStore from '../../../store/modalStore';
 import { QueriesStore, UserStore, TabsStore } from '../../../store/queriesStore';
 import { observer } from 'mobx-react';
+import {toast} from "react-toastify";
 
 const StatisticsButton = observer(function StatisticsButton({number}) {
 	const { toggleModal, toggleStatisticsModal } = modalStore
@@ -13,6 +14,9 @@ const StatisticsButton = observer(function StatisticsButton({number}) {
 	const getPoints = async () => {
 		if (user.key && number === index ) {
 			updateQuery({gettingPointsCount: gettingPointsCount + 1 || 0}, index)
+			if (user?.accessToken?.error) {
+				toast.error('Error in accessToken: ' + user.accessToken.error)
+			}
 			const response = await fetch(user?.graphql_legacy_url, {
 				"headers": {
 					"accept": "application/json",

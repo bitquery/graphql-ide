@@ -5,6 +5,7 @@ const sdk = require('postman-collection')
 const codegen = require('postman-code-generators')
 const bodyParser = require('body-parser')
 const axios = require('axios')
+const {toast} = require("react-toastify");
 
 const getCodeSnippet = (lang, query, variables, key, endpoint_url, token) =>
     new Promise((resolve, reject) => {
@@ -29,6 +30,7 @@ const getCodeSnippet = (lang, query, variables, key, endpoint_url, token) =>
                 }
                 resolve(snippet)
             })
+
         }
     )
 
@@ -148,8 +150,8 @@ module.exports = function (app, db, redisClient) {
     })
 
     app.post('/api/codesnippet', async (req, res) => {
-        const {language, query, variables, endpoint_url, key,token} = req.body
-        const snippet = await getCodeSnippet(language, query, variables, key, endpoint_url,token)
+        const {language, query, variables, endpoint_url, key, token} = req.body
+        const snippet = await getCodeSnippet(language, query, variables, key, endpoint_url, token)
         res.status(200).send({snippet})
     })
 
@@ -503,7 +505,6 @@ module.exports = function (app, db, redisClient) {
     })
 
     app.post('/api/getwidget', (req, response) => {
-        console.log(req.body)
         db.query(`SELECT a.dashboard_id, a.widget_id as widget_number, a.query_index, b.*, q.*
                   FROM queries_to_dashboards a
                            LEFT JOIN (SELECT * FROM widgets) b
@@ -679,30 +680,28 @@ module.exports = function (app, db, redisClient) {
                 response.send('Query logged')
             })
     })
-    let cachedAccessToken = undefined
     const getStreamingAccessToken = async (client_id, client_secret) => {
-        if (cachedAccessToken && cachedAccessToken.streaming_expires_on > Date.now()) {
-            return cachedAccessToken
-        }
-        const url = "https://oauth2.bitquery.io/oauth2/token"
-        const params = `grant_type=client_credentials&client_id=${client_id}&client_secret=${client_secret}&scope=api`
-        const response = await axios.post(url, params, {
-            headers: {
-                "Content-Type": "application/x-www-form-urlencoded"
+        try {
+            const url = "https://oauth2.bitquery.io/oauth2/token"
+            const params = `grant_type=client_credentials&client_id=${client_id}&client_secret=${client_secret}&scope=api`
+            const response = await axios.post(url, params, {
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                }
+            })
+            if (response.status === 200) {
+                const body = response.data;
+                return {
+                    access_token: body.access_token,
+                    expires_in: body.expires_in,
+                    streaming_expires_on: body.expires_in * 1000 + Date.now() - 5 * 60000,
+                }
             }
-        })
-        if (response.status === 200) {
-            const body = response.data
-            cachedAccessToken = {
-                access_token: body.access_token,
-                expires_in: body.expires_in,
-                streaming_expires_on: body.expires_in * 1000 + Date.now() - 5 * 60000,
-            };
-            return cachedAccessToken
-        } else {
-            throw new Error(`Request failed with status ${response.status}`)
+        } catch (error) {
+            return {error: 'Error generating access token'}
         }
     }
+
     app.get("/api/user", async (req, res) => {
         const results = await query(`SELECT a.*, ak.\`key\`
                                      FROM accounts a
@@ -711,14 +710,25 @@ module.exports = function (app, db, redisClient) {
                                      WHERE a.id = ?
                                        AND ak.active = true`,
             [req.account_id])
-        if (results.length) {
+        console.log('results', results)
+        if (results.length > 0) {
             const clientResults = await query(`SELECT client_id, client_secret
                                                FROM applications
                                                WHERE account_id = ?
-                                                 AND client_name = '_ide_application'`, [req.account_id])
+                                                 AND client_name = '_ide_application '
+                                                 AND is_deleted = 0
+                                                 AND is_internal = 1
+            `, [req.account_id])
+
             let accessToken = {}
+            console.log('req.account_id: ', req.account_id, 'clientResults[0].client_id: ', clientResults[0].client_id, ' clientResults[0].client_secret: ', clientResults[0].client_secret)
             if (clientResults.length > 0) {
-                accessToken = await getStreamingAccessToken(clientResults[0].client_id, clientResults[0].client_secret)
+                const tokenResponse = await getStreamingAccessToken(clientResults[0].client_id, clientResults[0].client_secret);
+                if (!tokenResponse.error) {
+                    accessToken = tokenResponse
+                } else {
+                    accessToken.error = tokenResponse.error
+                }
             }
             let user = [{
                 id: results[0].id,

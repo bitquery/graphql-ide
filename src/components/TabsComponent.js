@@ -10,6 +10,7 @@ import GraphqlIcon from './icons/GraphqlIcon'
 import { GalleryStore } from '../store/galleryStore'
 import { generateTags } from '../utils/generateTags'
 import { useQuery } from '../utils/useQuery'
+import {toast} from "react-toastify";
 
 const TabsComponent = observer(() => {
 	const history = useHistory()
@@ -43,6 +44,9 @@ const TabsComponent = observer(() => {
 					} catch (error) {
 						if (error.response.status === 400) {
 							try {
+								if (user?.accessToken?.error) {
+									toast.error('Error in accessToken: ' + user.accessToken.error)
+								}
 								const response = await fetch(user?.graphql_legacy_url, {
 									"headers": {
 										"accept": "application/json",
