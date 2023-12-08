@@ -4,6 +4,7 @@ import { QueriesStore, TabsStore, UserStore } from '../../store/queriesStore'
 import { useInterval } from '../../utils/useInterval'
 import modalStore from '../../store/modalStore'
 import Loader from "react-loader-spinner"
+import {toast} from "react-toastify";
 
 const METRICS_INFO = [
 	'Memory consumption by the query.',
@@ -26,6 +27,9 @@ const StatisticsModal = observer(function StatisticsModal({active}) {
 	const getMetrics = async () => {
 		if (user?.key && active) {
 			updateQuery({gettingPointsCount: gettingPointsCount + 1 || 0}, index)
+			if (user?.accessToken?.error) {
+				toast.error('Error in accessToken: ' + user.accessToken.error)
+			}
 			const response = await fetch(user?.graphql_legacy_url, {
 				"headers": {
 					"accept": "application/json",
