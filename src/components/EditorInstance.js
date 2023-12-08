@@ -439,6 +439,9 @@ const EditorInstance = observer(function EditorInstance({number}) {
         if (!response.ok) {
             if (response.status === 401) throw new Error("Authorization Required")
         }
+        if(response.ok && response.status === 401){
+            throw new Error("Check your API key")
+        }
         if (!('operationName' in graphQLParams)) {
             const graphqlRequested = response.headers.get('X-GraphQL-Requested') === 'true'
             updateQuery({
