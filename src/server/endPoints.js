@@ -715,7 +715,10 @@ module.exports = function (app, db, redisClient) {
             const clientResults = await query(`SELECT client_id, client_secret
                                                FROM applications
                                                WHERE account_id = ?
-                                                 AND client_name = '_ide_application'`, [req.account_id])
+                                                 AND client_name = '_ide_application'
+                                           `, [req.account_id])
+            // AND is_deleted=0
+            // AND is_internal=1
             let accessToken = {}
             console.log('req.account_id: ', req.account_id, 'clientResults[0].client_id: ', clientResults[0].client_id, ' clientResults[0].client_secret: ', clientResults[0].client_secret)
             if (clientResults.length > 0) {

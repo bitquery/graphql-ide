@@ -405,7 +405,7 @@ const EditorInstance = observer(function EditorInstance({number}) {
     const fetcher = async (graphQLParams) => {
         if (user?.accessToken?.error) {
             console.error('Error in accessToken:', user.accessToken.error)
-            throw new Error(user.accessToken.error)
+            toast.error('Error in accessToken: ' + user.accessToken.error)
         }
         if (user?.accessToken && user.accessToken.streaming_expires_on <= Date.now()) {
             try {
@@ -438,7 +438,6 @@ const EditorInstance = observer(function EditorInstance({number}) {
         const responseTime = new Date().getTime() - start
         if (!response.ok) {
             if (response.status === 401) throw new Error("Authorization Required")
-            throw new Error(`HTTP Status ${response.status}`)
         }
         if (!('operationName' in graphQLParams)) {
             const graphqlRequested = response.headers.get('X-GraphQL-Requested') === 'true'
