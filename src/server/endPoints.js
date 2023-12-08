@@ -678,7 +678,7 @@ module.exports = function (app, db, redisClient) {
                 response.send('Query logged')
             })
     })
-    const getStreamingAccessToken = async (client_id, client_secret) => {
+    const getStreamingAccessToken = async (res,client_id, client_secret) => {
         try {
             const url = "https://oauth2.bitquery.io/oauth2/token"
             const params = `grant_type=client_credentials&client_id=${client_id}&client_secret=${client_secret}&scope=api`
@@ -696,60 +696,59 @@ module.exports = function (app, db, redisClient) {
                 }
             }
         } catch (error) {
-            console.log('no token, something wrong with query', error)
-            throw new Error(`Error generating access token. Request failed with status ${error}`)
+            res.status(400).send('Error generating access token')
+
+            console.log('Error generating access token', error)
         }
     }
 
     app.get("/api/user", async (req, res) => {
-        try {
-            const results = await query(`SELECT a.*, ak.\`key\`
-                                         FROM accounts a
-                                                  JOIN api_keys ak
-                                                       ON a.id = ak.account_id
-                                         WHERE a.id = ?
-                                           AND ak.active = true`,
-                [req.account_id])
-            console.log('results', results)
-            if (results.length > 0) {
-                const clientResults = await query(`SELECT client_id, client_secret
-                                                   FROM applications
-                                                   WHERE account_id = ?
-                                                     AND client_name = '_ide_application'`, [req.account_id])
-                let accessToken = {}
-                console.log('req.account_id: ', req.account_id, 'clientResults[0].client_id: ', clientResults[0].client_id, ' clientResults[0].client_secret: ', clientResults[0].client_secret)
-                if (clientResults.length > 0) {
-                    accessToken = await getStreamingAccessToken(clientResults[0].client_id, clientResults[0].client_secret)
-                }
-                let user = [{
-                    id: results[0].id,
-                    key: results[0].key,
-                    email: results[0].email,/**/
-                    active: results[0].active,
-                    updated_at: results[0].updated_at,
-                    created_at: results[0].created_at,
-                    role: results[0].role,
-                    children_count: +results[0].children_count,
-                    ancestry: results[0].ancestry,
-                    graphql_admin_url: process.env.GRAPHQL_ADMIN_URL,
+        console.log('start query')
+        const results = await query(`SELECT a.*, ak.\`key\`
+                                     FROM accounts a
+                                              JOIN api_keys ak
+                                                   ON a.id = ak.account_id
+                                     WHERE a.id = ?
+                                       AND ak.active = true`,
+            [req.account_id])
+        console.log('results', results)
+        console.log('length', results.length)
+        if (results.length > 0) {
+            const clientResults = await query(`SELECT client_id, client_secret
+                                               FROM applications
+                                               WHERE account_id = ?
+                                                 AND client_name = '_ide_application'`, [req.account_id])
+            let accessToken = {}
+            console.log('req.account_id: ', req.account_id, 'clientResults[0].client_id: ', clientResults[0].client_id, ' clientResults[0].client_secret: ', clientResults[0].client_secret)
+            if (clientResults.length > 0) {
+                accessToken = await getStreamingAccessToken(res,clientResults[0].client_id, clientResults[0].client_secret)
+            }
+            let user = [{
+                id: results[0].id,
+                key: results[0].key,
+                email: results[0].email,/**/
+                active: results[0].active,
+                updated_at: results[0].updated_at,
+                created_at: results[0].created_at,
+                role: results[0].role,
+                children_count: +results[0].children_count,
+                ancestry: results[0].ancestry,
+                graphql_admin_url: process.env.GRAPHQL_ADMIN_URL,
+                graphql_legacy_url: process.env.GRAPHQL_LEGACY_URL,
+                graphql_url: process.env.GRAPHQL_URL,
+                accessToken: accessToken,
+            }]
+
+            res.status(200).send({user})
+        } else {
+            res.status(200).send({
+                user: [{
                     graphql_legacy_url: process.env.GRAPHQL_LEGACY_URL,
                     graphql_url: process.env.GRAPHQL_URL,
-                    accessToken: accessToken,
+                    graphql_admin_url: process.env.GRAPHQL_ADMIN_URL,
+                    key: 'key',
                 }]
-
-                res.status(200).send({user})
-            } else {
-                res.status(200).send({
-                    user: [{
-                        graphql_legacy_url: process.env.GRAPHQL_LEGACY_URL,
-                        graphql_url: process.env.GRAPHQL_URL,
-                        graphql_admin_url: process.env.GRAPHQL_ADMIN_URL,
-                        key: 'key',
-                    }]
-                })
-            }
-        } catch (error) {
-            res.status(400).send({error: error.message})
+            })
         }
     })
 
