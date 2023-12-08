@@ -40,6 +40,7 @@ const CodeSnippetComponent = observer(function CodeSnippetComponent() {
         }
 
     const {data: {snippet}} = await getCodeSnippet(body)
+
     setSnippet(snippet)
 }
 

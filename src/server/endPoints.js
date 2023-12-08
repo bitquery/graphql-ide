@@ -5,6 +5,7 @@ const sdk = require('postman-collection')
 const codegen = require('postman-code-generators')
 const bodyParser = require('body-parser')
 const axios = require('axios')
+const {toast} = require("react-toastify");
 
 const getCodeSnippet = (lang, query, variables, key, endpoint_url, token) =>
     new Promise((resolve, reject) => {
@@ -29,6 +30,7 @@ const getCodeSnippet = (lang, query, variables, key, endpoint_url, token) =>
                 }
                 resolve(snippet)
             })
+
         }
     )
 
@@ -696,9 +698,7 @@ module.exports = function (app, db, redisClient) {
                 }
             }
         } catch (error) {
-            // res.status(400).send('Error generating access token')
-            // throw new Error('Error generating access token')
-            return  { error: 'Error generating access token' }
+            return {error: 'Error generating access token'}
         }
     }
 
@@ -715,10 +715,11 @@ module.exports = function (app, db, redisClient) {
             const clientResults = await query(`SELECT client_id, client_secret
                                                FROM applications
                                                WHERE account_id = ?
-                                                 AND client_name = '_ide_application'
-                                           `, [req.account_id])
-            // AND is_deleted=0
-            // AND is_internal=1
+                                                 AND client_name = '_ide_application '
+                                                 AND is_deleted = 0
+                                                 AND is_internal = 1
+            `, [req.account_id])
+
             let accessToken = {}
             console.log('req.account_id: ', req.account_id, 'clientResults[0].client_id: ', clientResults[0].client_id, ' clientResults[0].client_secret: ', clientResults[0].client_secret)
             if (clientResults.length > 0) {
