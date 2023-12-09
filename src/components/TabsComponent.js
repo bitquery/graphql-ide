@@ -2,7 +2,7 @@ import { observer } from 'mobx-react-lite'
 import React, { useEffect, useState } from 'react'
 import { useCallback } from 'react'
 import { useHistory, useRouteMatch } from 'react-router-dom'
-import { getQuery, getTransferedQuery, getQueryByID, getWidgetConfig } from '../api/api'
+import {getQuery, getTransferedQuery, getQueryByID, getWidgetConfig, getUser} from '../api/api'
 import { TabsStore, QueriesStore, UserStore } from '../store/queriesStore'
 import handleState from '../utils/handleState'
 import useEventListener from '../utils/useEventListener'
@@ -44,7 +44,16 @@ const TabsComponent = observer(() => {
 					} catch (error) {
 						if (error.response.status === 400) {
 							try {
+								if (user?.accessToken && user.accessToken.streaming_expires_on <= Date.now()) {
+									try {
+										await getUser();
+									} catch (error) {
+										console.error('Error in refreshing token', error)
+										throw new Error('Token refresh failed')
+									}
+								}
 								if (user?.accessToken?.error) {
+									console.error('Error in accessToken:', user.accessToken.error)
 									toast.error('Error in accessToken: ' + user.accessToken.error)
 								}
 								const response = await fetch(user?.graphql_legacy_url, {

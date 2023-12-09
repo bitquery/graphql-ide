@@ -5,6 +5,7 @@ import { useInterval } from '../../utils/useInterval'
 import modalStore from '../../store/modalStore'
 import Loader from "react-loader-spinner"
 import {toast} from "react-toastify";
+import {getUser} from "../../api/api";
 
 const METRICS_INFO = [
 	'Memory consumption by the query.',
@@ -27,7 +28,16 @@ const StatisticsModal = observer(function StatisticsModal({active}) {
 	const getMetrics = async () => {
 		if (user?.key && active) {
 			updateQuery({gettingPointsCount: gettingPointsCount + 1 || 0}, index)
+			if (user?.accessToken && user.accessToken.streaming_expires_on <= Date.now()) {
+				try {
+					await getUser();
+				} catch (error) {
+					console.error('Error in refreshing token', error)
+					throw new Error('Token refresh failed')
+				}
+			}
 			if (user?.accessToken?.error) {
+				console.error('Error in accessToken:', user.accessToken.error)
 				toast.error('Error in accessToken: ' + user.accessToken.error)
 			}
 			const response = await fetch(user?.graphql_legacy_url, {
