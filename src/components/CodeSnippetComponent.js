@@ -46,7 +46,7 @@ const CodeSnippetComponent = observer(function CodeSnippetComponent() {
 
 useEffect(() => {
     main()
-}, [language, user, query, variables, endpoint_url,user.accessToken.access_token])
+}, [language, user, query, variables, endpoint_url,user?.accessToken?.access_token])
 
 return (
     <section className='codesnippet__root'>

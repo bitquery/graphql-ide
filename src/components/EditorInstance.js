@@ -33,7 +33,7 @@ import {useHistory} from 'react-router-dom';
 import {toast} from 'react-toastify'
 import {createClient} from "graphql-ws"
 import {InteractionButton} from './InteractionButton.js';
-import {getUser} from "../api/api";
+
 
 const queryStatusReducer = (state, action) => {
     let newState = {...state}
@@ -403,27 +403,23 @@ const EditorInstance = observer(function EditorInstance({number}) {
     }, [user, schema[debouncedURL], queryTypes, index])
 
     const fetcher = async (graphQLParams) => {
-        if (user?.accessToken?.error) {
-            console.error('Error in accessToken:', user.accessToken.error)
-            toast.error('Error in accessToken: ' + user.accessToken.error)
-        }
-        if (user?.accessToken && user.accessToken.streaming_expires_on <= Date.now()) {
+        if (user?.accessToken && user?.accessToken?.streaming_expires_on <= Date.now()) {
             try {
-                await getUser();
+                await UserStore.getToken()
             } catch (error) {
-                console.error('Error in refreshing token', error)
-                throw new Error('Token refresh failed')
+                toast.error('Token refresh failed')
             }
         }
         abortController.current = new AbortController()
         let key = user ? user.key : null
         // let keyHeader = {'X-API-KEY': key}
         const start = new Date().getTime()
+
         const headers = {
             'Accept': 'application/json',
             'Content-Type': 'application/json',
             ...(user?.key && {'X-API-KEY': user.key}),
-            ...(user?.accessToken?.access_token && {'Authorization': `Bearer ${user.accessToken.access_token}`}),
+            ...(user.accessToken?.access_token && {'Authorization': `Bearer ${UserStore.user.accessToken.access_token}`}),
         }
         const response = await fetch(
             currentQuery.endpoint_url,
@@ -435,6 +431,8 @@ const EditorInstance = observer(function EditorInstance({number}) {
                 credentials: 'same-origin',
             },
         )
+        if (user?.accessToken?.error) toast.error(`Error in accessToken: ${user?.accessToken?.error}`)
+
         const responseTime = new Date().getTime() - start
         if (!response.ok) {
             if (response.status === 401) {
@@ -442,6 +440,7 @@ const EditorInstance = observer(function EditorInstance({number}) {
                 throw new Error(`Error: ${responseBody}`)
             }
         }
+
         if (!('operationName' in graphQLParams)) {
             const graphqlRequested = response.headers.get('X-GraphQL-Requested') === 'true'
             updateQuery({

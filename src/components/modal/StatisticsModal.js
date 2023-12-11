@@ -5,6 +5,7 @@ import { useInterval } from '../../utils/useInterval'
 import modalStore from '../../store/modalStore'
 import Loader from "react-loader-spinner"
 import {toast} from "react-toastify";
+import {getUser} from "../../api/api"
 
 const METRICS_INFO = [
 	'Memory consumption by the query.',
@@ -15,7 +16,7 @@ const METRICS_INFO = [
 	'CPU time spent seen by OS. Does not include involuntary waits due to virtualization.',
 	'Number of SQL requests.'
 ]
-  
+
 const StatisticsModal = observer(function StatisticsModal({active}) {
 	const { currentQuery: { graphqlQueryID, graphqlRequested, gettingPointsCount }, updateQuery } = QueriesStore
 	const { user } = UserStore
@@ -27,20 +28,26 @@ const StatisticsModal = observer(function StatisticsModal({active}) {
 	const getMetrics = async () => {
 		if (user?.key && active) {
 			updateQuery({gettingPointsCount: gettingPointsCount + 1 || 0}, index)
-			if (user?.accessToken?.error) {
-				toast.error('Error in accessToken: ' + user.accessToken.error)
+			if (user?.accessToken && user?.accessToken?.streaming_expires_on <= Date.now()) {
+				try {
+					await UserStore.getToken()
+				} catch (error) {
+					toast.error('Token refresh failed')
+				}
 			}
 			const response = await fetch(user?.graphql_legacy_url, {
 				"headers": {
 					"accept": "application/json",
 					"content-type": "application/json",
 					"x-api-key": user.key,
-					...(user?.accessToken?.access_token && {'Authorization': `Bearer ${user.accessToken.access_token}`}),
+					...(user?.accessToken?.access_token && {'Authorization': `Bearer ${UserStore.user.accessToken.access_token}`}),
 				},
 				"body": `{\"query\":\"query MyQuery {\\n utilities {\\n  metrics(queryId: \\\"${graphqlQueryID}\\\", options: {seed: ${new Date().getTime()}}) {\\n    points\\n    id\\n    sqlRequestsCount\\n    list {\\n      cost\\n      max\\n      min\\n      name\\n      price\\n      value\\n      divider\\n      maxUnit\\n      minUnit\\n      valueUnit\\n    \\n} }\\n  }\\n}\\n\",\"variables\":\"{}\"}`,
 				"method": "POST",
 				"mode": "cors",
 			})
+            if (user?.accessToken?.error) toast.error(`Error in accessToken: ${user?.accessToken?.error}`)
+
 			const { data } = await response.json()
 			if (data?.utilities?.metrics && 'points' in data.utilities.metrics) {
 				setMetrics(data.utilities.metrics)
@@ -82,7 +89,7 @@ const StatisticsModal = observer(function StatisticsModal({active}) {
 								{metrics.list.map(metric => {return (
 									<tr>
 										<th scope="row">
-											<span 
+											<span
 												className="metrics__helper"
 												onMouseEnter={e => setMetricNumber(e.target.parentNode.parentNode.rowIndex-1)}
 												onMouseLeave={()=>setMetricNumber(null)}
@@ -114,7 +121,7 @@ const StatisticsModal = observer(function StatisticsModal({active}) {
 					</div>
 		}
 	}
-	
+
 	return active ? modal : null
 })
 
