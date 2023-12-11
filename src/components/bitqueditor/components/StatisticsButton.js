@@ -20,14 +20,11 @@ const StatisticsButton = observer(function StatisticsButton({number}) {
             updateQuery({gettingPointsCount: gettingPointsCount + 1 || 0}, index)
             if (user?.accessToken && user?.accessToken?.streaming_expires_on <= Date.now()) {
                 try {
-                    console.log('getPoints gewtToken')
-
                     await UserStore.getToken()
                 } catch (error) {
                     toast.error('Token refresh failed')
                 }
             }
-            console.log('UserStore.user.accessToken.access_token',user.accessToken.access_token)
             const response = await fetch(user?.graphql_legacy_url, {
                 "headers": {
                     "accept": "application/json",
