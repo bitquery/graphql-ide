@@ -403,7 +403,7 @@ const EditorInstance = observer(function EditorInstance({number}) {
     }, [user, schema[debouncedURL], queryTypes, index])
 
     const fetcher = async (graphQLParams) => {
-        if (UserStore.user?.accessToken && UserStore.user.accessToken.streaming_expires_on <= Date.now()) {
+        if (user?.accessToken && user?.accessToken?.streaming_expires_on <= Date.now()) {
             try {
                 await UserStore.getToken()
             } catch (error) {
@@ -419,7 +419,7 @@ const EditorInstance = observer(function EditorInstance({number}) {
             'Accept': 'application/json',
             'Content-Type': 'application/json',
             ...(user?.key && {'X-API-KEY': user.key}),
-            ...(UserStore.user?.accessToken?.access_token && {'Authorization': `Bearer ${UserStore.user.accessToken.access_token}`}),
+            ...(user.accessToken?.access_token && {'Authorization': `Bearer ${UserStore.user.accessToken.access_token}`}),
         }
         const response = await fetch(
             currentQuery.endpoint_url,
@@ -431,7 +431,7 @@ const EditorInstance = observer(function EditorInstance({number}) {
                 credentials: 'same-origin',
             },
         )
-        if (user?.accessToken?.error) toast.error(`Error in accessToken: ${user.accessToken.error}`)
+        if (user?.accessToken?.error) toast.error(`Error in accessToken: ${user?.accessToken?.error}`)
 
         const responseTime = new Date().getTime() - start
         if (!response.ok) {

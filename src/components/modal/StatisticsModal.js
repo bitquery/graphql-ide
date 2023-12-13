@@ -28,7 +28,7 @@ const StatisticsModal = observer(function StatisticsModal({active}) {
 	const getMetrics = async () => {
 		if (user?.key && active) {
 			updateQuery({gettingPointsCount: gettingPointsCount + 1 || 0}, index)
-			if (UserStore.user?.accessToken && UserStore.user.accessToken.streaming_expires_on <= Date.now()) {
+			if (user?.accessToken && user?.accessToken?.streaming_expires_on <= Date.now()) {
 				try {
 					await UserStore.getToken()
 				} catch (error) {
@@ -40,13 +40,13 @@ const StatisticsModal = observer(function StatisticsModal({active}) {
 					"accept": "application/json",
 					"content-type": "application/json",
 					"x-api-key": user.key,
-					...(UserStore.user?.accessToken?.access_token && {'Authorization': `Bearer ${UserStore.user.accessToken.access_token}`}),
+					...(user?.accessToken?.access_token && {'Authorization': `Bearer ${UserStore.user.accessToken.access_token}`}),
 				},
 				"body": `{\"query\":\"query MyQuery {\\n utilities {\\n  metrics(queryId: \\\"${graphqlQueryID}\\\", options: {seed: ${new Date().getTime()}}) {\\n    points\\n    id\\n    sqlRequestsCount\\n    list {\\n      cost\\n      max\\n      min\\n      name\\n      price\\n      value\\n      divider\\n      maxUnit\\n      minUnit\\n      valueUnit\\n    \\n} }\\n  }\\n}\\n\",\"variables\":\"{}\"}`,
 				"method": "POST",
 				"mode": "cors",
 			})
-            if (user?.accessToken?.error) toast.error(`Error in accessToken: ${user.accessToken.error}`)
+            if (user?.accessToken?.error) toast.error(`Error in accessToken: ${user?.accessToken?.error}`)
 
 			const { data } = await response.json()
 			if (data?.utilities?.metrics && 'points' in data.utilities.metrics) {

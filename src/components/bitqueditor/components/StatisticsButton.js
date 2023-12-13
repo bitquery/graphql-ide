@@ -18,7 +18,7 @@ const StatisticsButton = observer(function StatisticsButton({number}) {
     const getPoints = async () => {
         if (user.key && number === index) {
             updateQuery({gettingPointsCount: gettingPointsCount + 1 || 0}, index)
-            if (UserStore.user?.accessToken && UserStore.user.accessToken.streaming_expires_on <= Date.now()) {
+            if (user?.accessToken && user?.accessToken?.streaming_expires_on <= Date.now()) {
                 try {
                     await UserStore.getToken()
                 } catch (error) {
@@ -30,12 +30,12 @@ const StatisticsButton = observer(function StatisticsButton({number}) {
                     "accept": "application/json",
                     "content-type": "application/json",
                     "x-api-key": user.key,
-                    ...(UserStore.user?.accessToken?.access_token && {'Authorization': `Bearer ${UserStore.user.accessToken.access_token}`})
+                    ...(user?.accessToken?.access_token && {'Authorization': `Bearer ${UserStore.user.accessToken.access_token}`})
                 },
                 "body": `{\"query\":\"query MyQuery {\\n utilities {\\n  metrics(queryId: \\\"${graphqlQueryID}\\\", options: {seed: ${new Date().getTime()}}) {\\n    points\\n  \\n}}\\n}\\n\",\"variables\":\"{}\"}`,
                 "method": "POST"
             })
-            if (user?.accessToken?.error) toast.error(`Error in accessToken: ${user.accessToken.error}`)
+            if (user?.accessToken?.error) toast.error(`Error in accessToken: ${user?.accessToken?.error}`)
 
             const {data} = await response.json()
             if (data?.utilities?.metrics && 'points' in data.utilities.metrics) {
