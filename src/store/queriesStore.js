@@ -11,6 +11,7 @@ class User {
             user: observable,
             getUser: action,
             setUser: action,
+            getToken:action
         })
     }
 
@@ -30,7 +31,15 @@ class User {
             console.log(error.response?.data)
         }
     }
-
+    getToken = async () => {
+        try {
+            const {data} = await getUser()
+            this.setUser(data.user[0])
+        } catch (error) {
+            this.setUser(undefined)
+            console.log(error.response?.data)
+        }
+    }
 
     regenKey = async (key) => {
         try {

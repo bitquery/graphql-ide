@@ -79,8 +79,7 @@ const EditDialog = observer(function EditDialog({active}) {
 			data = await saveQuery({...params, isDraggable: false, isResizable: false})
 			if (data.status !== 400) {
 				renameCurrentTab(name)
-				data.url && history.push(`/${data.url}`)
-				updateQuery({tags: tags.join(',')}, index)
+				updateQuery({tags: tags.join(','), url: data.url}, index)
 				data.msg && toast(<div id={data.id}>{data.msg}</div>, {type: 'success'})
 				closeHandler()
 			} else { 

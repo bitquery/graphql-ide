@@ -405,7 +405,7 @@ const EditorInstance = observer(function EditorInstance({number}) {
     const fetcher = async (graphQLParams) => {
         if (user?.accessToken && user?.accessToken?.streaming_expires_on <= Date.now()) {
             try {
-                await UserStore.getUser()
+                await UserStore.getToken()
             } catch (error) {
                 toast.error('Token refresh failed')
             }

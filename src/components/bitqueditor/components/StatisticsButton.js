@@ -20,7 +20,7 @@ const StatisticsButton = observer(function StatisticsButton({number}) {
             updateQuery({gettingPointsCount: gettingPointsCount + 1 || 0}, index)
             if (user?.accessToken && user?.accessToken?.streaming_expires_on <= Date.now()) {
                 try {
-                    await UserStore.getUser()
+                    await UserStore.getToken()
                 } catch (error) {
                     toast.error('Token refresh failed')
                 }
