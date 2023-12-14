@@ -18,7 +18,7 @@ const StatisticsButton = observer(function StatisticsButton({number}) {
     const getPoints = async () => {
         if (user.key && number === index) {
             updateQuery({gettingPointsCount: gettingPointsCount + 1 || 0}, index)
-            if (UserStore.user?.accessToken && UserStore.user.accessToken.streaming_expires_on <= Date.now()) {
+            if (user?.accessToken && user.accessToken.streaming_expires_on <= Date.now()) {
                 try {
                     await UserStore.getToken()
                 } catch (error) {

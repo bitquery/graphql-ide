@@ -405,7 +405,7 @@ const EditorInstance = observer(function EditorInstance({number}) {
     }, [user, schema[debouncedURL], queryTypes, index])
 
     const fetcher = async (graphQLParams) => {
-        if (UserStore.user?.accessToken && UserStore.user.accessToken.streaming_expires_on <= Date.now()) {
+        if (user?.accessToken && user.accessToken.streaming_expires_on <= Date.now()) {
             try {
                 await UserStore.getToken()
             } catch (error) {
