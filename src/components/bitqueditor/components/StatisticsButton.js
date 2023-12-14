@@ -3,7 +3,6 @@ import modalStore from '../../../store/modalStore';
 import {QueriesStore, UserStore, TabsStore} from '../../../store/queriesStore';
 import {observer} from 'mobx-react';
 import {toast} from "react-toastify";
-import {getUser} from "../../../api/api";
 
 const StatisticsButton = observer(function StatisticsButton({number}) {
     const {toggleModal, toggleStatisticsModal} = modalStore
@@ -11,7 +10,7 @@ const StatisticsButton = observer(function StatisticsButton({number}) {
         currentQuery: {points, graphqlQueryID, saved, gettingPointsCount, graphqlRequested},
         updateQuery
     } = QueriesStore
-    const {user} = UserStore
+    const {user, getUser} = UserStore
     const {index} = TabsStore
     const {statisticsModalIsOpen} = modalStore
 
@@ -20,7 +19,7 @@ const StatisticsButton = observer(function StatisticsButton({number}) {
             updateQuery({gettingPointsCount: gettingPointsCount + 1 || 0}, index)
             if (user?.accessToken && user?.accessToken?.streaming_expires_on <= Date.now()) {
                 try {
-                    await UserStore.getUser()
+                    await getUser('update_token')
                 } catch (error) {
                     toast.error('Token refresh failed')
                 }

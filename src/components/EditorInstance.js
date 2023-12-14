@@ -29,7 +29,7 @@ import useDebounce from '../utils/useDebounce'
 import WidgetView from './bitqueditor/components/WidgetView'
 import {GalleryStore} from '../store/galleryStore.js';
 import CodeSnippetComponent from './CodeSnippetComponent.js';
-import {useHistory} from 'react-router-dom';
+import {useHistory, useParams} from 'react-router-dom';
 import {toast} from 'react-toastify'
 import {createClient} from "graphql-ws"
 import {InteractionButton} from './InteractionButton.js';
@@ -46,7 +46,7 @@ const queryStatusReducer = (state, action) => {
 const EditorInstance = observer(function EditorInstance({number}) {
     const {tabs, currentTab, index} = TabsStore
     const {tagListIsOpen} = GalleryStore
-    const {user} = UserStore
+    const {user, getUser} = UserStore
     const {
         query, updateQuery, currentQuery, isMobile,
         setMobile, showSideBar, schema, setSchema, logQuery
@@ -87,6 +87,7 @@ const EditorInstance = observer(function EditorInstance({number}) {
     }
 
     const history = useHistory()
+    const { queryurl } = useParams()
 
     function HistoryDataSource(payload, queryDispatcher) {
 
@@ -394,10 +395,11 @@ const EditorInstance = observer(function EditorInstance({number}) {
             }
         }
         if (user && query[index].account_id === user.id) {
-            updateQuery({...handleSubject, saved: false}, index)
+            updateQuery({...handleSubject, saved: false, url: null}, index)
         } else {
             updateQuery({...handleSubject, saved: false, url: null, account_id: user.id}, index, null)
         }
+        if (queryurl) history.push('/')
         setAccordance(false)
         // eslint-disable-next-line
     }, [user, schema[debouncedURL], queryTypes, index])
@@ -405,21 +407,23 @@ const EditorInstance = observer(function EditorInstance({number}) {
     const fetcher = async (graphQLParams) => {
         if (user?.accessToken && user?.accessToken?.streaming_expires_on <= Date.now()) {
             try {
-                await UserStore.getUser()
+                await getUser('update_token')
             } catch (error) {
                 toast.error('Token refresh failed')
             }
         }
         abortController.current = new AbortController()
-        let key = user ? user.key : null
-        // let keyHeader = {'X-API-KEY': key}
+        const key = user ? user.key : null
+        const keyHeader = {'X-API-KEY': key}
+        const accessToken = user ? user.accessToken.access_token : null 
+        const authorizationHeader = {'Authorization': `Bearer ${accessToken}`}
         const start = new Date().getTime()
 
         const headers = {
             'Accept': 'application/json',
             'Content-Type': 'application/json',
-            ...(user?.key && {'X-API-KEY': user.key}),
-            ...(user.accessToken?.access_token && {'Authorization': `Bearer ${UserStore.user.accessToken.access_token}`}),
+            ...keyHeader,
+            ...authorizationHeader,
         }
         const response = await fetch(
             currentQuery.endpoint_url,
