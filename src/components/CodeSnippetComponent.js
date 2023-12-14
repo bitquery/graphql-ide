@@ -29,7 +29,7 @@ const CodeSnippetComponent = observer(function CodeSnippetComponent() {
 
     const main = async () => {
         if (!user) return
-        const token =  user.accessToken.access_token
+        const token =  UserStore.user.accessToken.access_token
         const body = {
             language,
             query,
