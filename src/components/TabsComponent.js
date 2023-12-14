@@ -2,7 +2,7 @@ import {observer} from 'mobx-react-lite'
 import React, {useEffect, useState} from 'react'
 import {useCallback} from 'react'
 import {useHistory, useRouteMatch} from 'react-router-dom'
-import {getQuery, getTransferedQuery, getQueryByID, getWidgetConfig, getUser} from '../api/api'
+import {getQuery, getTransferedQuery, getQueryByID, getWidgetConfig} from '../api/api'
 import {TabsStore, QueriesStore, UserStore} from '../store/queriesStore'
 import handleState from '../utils/handleState'
 import useEventListener from '../utils/useEventListener'
@@ -17,7 +17,7 @@ const TabsComponent = observer(() => {
     const history = useHistory()
     const queryParams = useQuery()
     const {queriesListIsOpen, toggleQueriesList} = GalleryStore
-    const {user} = UserStore
+    const {user, getUser} = UserStore
     const {tabs, currentTab, switchTab, index} = TabsStore
     const match = useRouteMatch(`/:queryurl`)
     const {
@@ -26,7 +26,6 @@ const TabsComponent = observer(() => {
         query,
         updateQuery,
         currentQuery,
-        isLoaded,
         setIsLoaded,
         setQueryIsTransfered
     } = QueriesStore
@@ -56,7 +55,7 @@ const TabsComponent = observer(() => {
                             try {
                                 if (user?.accessToken && user?.accessToken?.streaming_expires_on <= Date.now()) {
                                     try {
-                                        await UserStore.getToken()
+                                        await getUser('update_token')
                                     } catch (error) {
                                         toast.error('Token refresh failed')
                                     }

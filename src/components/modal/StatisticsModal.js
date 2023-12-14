@@ -19,7 +19,7 @@ const METRICS_INFO = [
 
 const StatisticsModal = observer(function StatisticsModal({active}) {
 	const { currentQuery: { graphqlQueryID, graphqlRequested, gettingPointsCount }, updateQuery } = QueriesStore
-	const { user } = UserStore
+	const { user, getUser } = UserStore
 	const { index } = TabsStore
 	const { toggleModal, toggleStatisticsModal } = modalStore
 	const [metrics, setMetrics] = useState(undefined)
@@ -30,7 +30,7 @@ const StatisticsModal = observer(function StatisticsModal({active}) {
 			updateQuery({gettingPointsCount: gettingPointsCount + 1 || 0}, index)
 			if (user?.accessToken && user?.accessToken?.streaming_expires_on <= Date.now()) {
 				try {
-					await UserStore.getToken()
+					await getUser('update_token')
 				} catch (error) {
 					toast.error('Token refresh failed')
 				}
