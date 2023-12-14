@@ -11,7 +11,6 @@ class User {
             user: observable,
             getUser: action,
             setUser: action,
-            getToken:action
         })
     }
 
@@ -25,24 +24,13 @@ class User {
             this.setUser(data.user[0])
             const searchParams = new URL(document.location).searchParams
             const endpoint_url = searchParams.get('endpoint') ? searchParams.get('endpoint') : data.user[0].graphql_legacy_url
-           console.log(searchParams)
-           console.log(endpoint_url)
-           console.log(QueriesStore)
             QueriesStore.updateQuery({endpoint_url}, 0)
         } catch (error) {
             this.setUser(undefined)
             console.log(error.response?.data)
         }
     }
-    getToken = async () => {
-        try {
-            const {data} = await getUser()
-            this.setUser(data.user[0])
-        } catch (error) {
-            this.setUser(undefined)
-            console.log(error.response?.data)
-        }
-    }
+
 
     regenKey = async (key) => {
         try {

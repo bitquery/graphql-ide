@@ -75,6 +75,7 @@ module.exports = function (app, db, redisClient) {
         if (tags) {
             const date = new Date(new Date()).toISOString().split('T')[0]
             let newTagsXML = ''
+            console.log(url)
             let newUrl = url ? `\n<url>
 	<loc>https://ide.bitquery.io/${encodeURIComponent(url)}</loc>
 	<lastmod>${date}</lastmod>
@@ -101,10 +102,12 @@ module.exports = function (app, db, redisClient) {
             if (newTagsXML || newUrl) {
                 const sitemappath = path.resolve('./static', 'sitemap.xml')
                 fs.readFile(sitemappath, 'utf8', (err, data) => {
+                   console.log(data)
                     const splitArray = data.split('\n')
                     splitArray.splice(-2, 2)
                     let result = splitArray.join('\n')
                     result = result + newUrl + newTagsXML
+                    console.log(result)
                     fs.writeFile(sitemappath, `${result}\n</urlset>\n`, err => {
                         console.log(err)
                         msg ? res.status(201).send(msg) : res.sendStatus(201)
@@ -213,6 +216,7 @@ module.exports = function (app, db, redisClient) {
         const results = await query(`select id
                                      from queries
                                      where url = ?`, [req.body.url])
+        console.log(results)
         if (results.length) {
             res.sendStatus(200)
         } else {
@@ -396,6 +400,7 @@ module.exports = function (app, db, redisClient) {
             isDraggable, isResizable, data_type, tags, isOwner,
             ...params
         } = req.body.params
+        console.log('params',params)
         params.id = null
         params.published = params.url ? true : null
         params.account_id = req.account_id
@@ -415,10 +420,12 @@ module.exports = function (app, db, redisClient) {
             return
         }
         const fixURL = async (url) => {
+            console.log('fixURL', url)
             let u = url
             const fixRequired = await query(`select id
                                              from queries
                                              where url = ?`, [u])
+            console.log('fixRequired',fixRequired)
             if (fixRequired.length) {
                 const replacer = u.match(/[0-9]$/gm)?.[0]
                 u = fixURL(replacer ? `${u.replaceAll(`_${replacer}`, '')}_${+replacer + 1}` : `${url}_${1}`)
@@ -426,6 +433,7 @@ module.exports = function (app, db, redisClient) {
             return u
         }
         params.url = await fixURL(params.url)
+        console.log('params.url',params.url)
         const {insertId: query_id} = await query(sql, params)
         let newParam = {
             displayed_data,
@@ -435,6 +443,7 @@ module.exports = function (app, db, redisClient) {
             config: JSON.stringify(config)
         }
         const msg = await addWidgetConfig(res, newParam, params.url)
+        console.log(msg)
         handleTags(query_id, tags, res, msg, false, params.url)
     }
     const handleUpdateQuery = async (req, res, db) => {
