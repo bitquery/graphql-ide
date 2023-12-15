@@ -84,6 +84,7 @@ const EditDialog = observer(function EditDialog({active}) {
 				closeHandler()
 			} else { 
 				toast(data.data.msg, {type: 'error'})
+
 			}
 		} else { toast('Name is required', {type: 'error'}) }
 	}

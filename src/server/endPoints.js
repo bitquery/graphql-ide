@@ -396,6 +396,8 @@ module.exports = function (app, db, redisClient) {
             isDraggable, isResizable, data_type, tags, isOwner,
             ...params
         } = req.body.params
+        console.log('req.body.params', req.body.params)
+        console.log('params', params)
         params.id = null
         params.published = params.url ? true : null
         params.account_id = req.account_id
@@ -419,6 +421,7 @@ module.exports = function (app, db, redisClient) {
             const fixRequired = await query(`select id
                                              from queries
                                              where url = ?`, [u])
+
             if (fixRequired.length) {
                 const replacer = u.match(/[0-9]$/gm)?.[0]
                 u = fixURL(replacer ? `${u.replaceAll(`_${replacer}`, '')}_${+replacer + 1}` : `${url}_${1}`)
@@ -453,7 +456,6 @@ module.exports = function (app, db, redisClient) {
             const response = await query(`select published
                                           from queries
                                           where id = ?`, [req.body.params.id])
-            console.log(response[0].published)
             if (!response[0].published) {
                 await query(`UPDATE queries
                              SET ?
