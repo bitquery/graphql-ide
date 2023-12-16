@@ -41,10 +41,7 @@ services:
     depends_on:
       runtime-config:
         condition: service_completed_successfully
-    <<: *common-network
-    <<: *common-dns
-    <<: *common-restart
-    <<: *common-logging
+    <<: [*common-network, *common-dns, *common-restart, *common-logging]
   ide:
     image: ${LC_COMPOSE_IMAGE}:${LC_COMPOSE_IMAGE_TAG}
     command: [
@@ -71,9 +68,7 @@ services:
       - PRERENDER_TOKEN=${LC_COMPOSE_PRERENDER_TOKEN}
     depends_on:
       - nginx
-    <<: *common-dns
-    <<: *common-network
-    <<: *common-restart
+    <<: [*common-dns, *common-network, *common-restart]
 
 
 networks:
