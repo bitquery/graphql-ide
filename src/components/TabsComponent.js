@@ -56,7 +56,7 @@ const TabsComponent = observer(() => {
                             try {
                                 if (user?.accessToken && user?.accessToken?.streaming_expires_on <= Date.now()) {
                                     try {
-                                        await UserStore.getToken()
+                                        await UserStore.getUser()
                                     } catch (error) {
                                         toast.error('Token refresh failed')
                                     }
