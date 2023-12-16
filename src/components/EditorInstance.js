@@ -137,7 +137,16 @@ const EditorInstance = observer(function EditorInstance({number}) {
 
         const subscribe = () => {
             const currentUrl = currentQuery.endpoint_url.replace(/^http/, 'ws');
-            const client = createClient({url: currentUrl});
+            const client = createClient({
+                url: currentUrl,
+                connectionParams:async () => {
+                    return {
+                        headers: {
+                            Authorization: `Bearer ${UserStore.user.accessToken.access_token}`,
+                        },
+                    };
+                },
+            });
 
             queryDispatcher.onquerystarted()
             cleanSubscription = client.subscribe({...payload, variables}, {
@@ -415,7 +424,7 @@ const EditorInstance = observer(function EditorInstance({number}) {
         abortController.current = new AbortController()
         const key = user ? user.key : null
         const keyHeader = {'X-API-KEY': key}
-        const accessToken = user ? UserStore.user?.accessToken?.access_token : null
+        const accessToken = user ? UserStore.user.accessToken.access_token : null
         const authorizationHeader = {'Authorization': `Bearer ${accessToken}`}
         const start = new Date().getTime()
 
@@ -435,7 +444,7 @@ const EditorInstance = observer(function EditorInstance({number}) {
                 credentials: 'same-origin',
             },
         )
-        if (user?.accessToken?.error) toast.error(`Error with accessToken: ${user?.accessToken?.error}`)
+        if (user?.accessToken?.error) toast.error(`Error in accessToken: ${user?.accessToken?.error}`)
 
         const responseTime = new Date().getTime() - start
         if (!response.ok) {
