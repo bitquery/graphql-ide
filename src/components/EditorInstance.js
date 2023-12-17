@@ -87,7 +87,7 @@ const EditorInstance = observer(function EditorInstance({number}) {
     }
 
     const history = useHistory()
-    const { queryurl } = useParams()
+    const {queryurl} = useParams()
 
     function HistoryDataSource(payload, queryDispatcher) {
 
@@ -128,16 +128,31 @@ const EditorInstance = observer(function EditorInstance({number}) {
         return this
     }
 
-    function SubscriptionDataSource(payload, queryDispatcher) {
+     function SubscriptionDataSource(payload, queryDispatcher) {
 
         let cleanSubscription, clean, empty
         let callbacks = []
         let queryNotLogged = true
         let variables = payload.variables
 
-        const subscribe = () => {
+        const subscribe = async () => {
+            if (user?.accessToken && user?.accessToken?.streaming_expires_on <= Date.now()) {
+                try {
+                    await getUser('update_token');
+                } catch (error) {
+                    toast.error('Token refresh failed');
+                }
+            }
             const currentUrl = currentQuery.endpoint_url.replace(/^http/, 'ws');
-            const client = createClient({url: currentUrl});
+            const client = createClient({
+                url: currentUrl, connectionParams: async () => {
+                    return {
+                        headers: {
+                            ...(user?.accessToken?.access_token && {'Authorization': `Bearer ${UserStore.user?.accessToken?.access_token}`}),
+                        },
+                    };
+                },
+            })
 
             queryDispatcher.onquerystarted()
             cleanSubscription = client.subscribe({...payload, variables}, {
