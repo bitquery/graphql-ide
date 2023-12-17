@@ -415,7 +415,7 @@ const EditorInstance = observer(function EditorInstance({number}) {
         abortController.current = new AbortController()
         const key = user ? user.key : null
         const keyHeader = {'X-API-KEY': key}
-        const accessToken = user ? user.accessToken.access_token : null 
+        const accessToken = user ? UserStore.user.accessToken.access_token : null
         const authorizationHeader = {'Authorization': `Bearer ${accessToken}`}
         const start = new Date().getTime()
 
