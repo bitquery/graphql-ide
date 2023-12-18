@@ -145,14 +145,12 @@ const EditorInstance = observer(function EditorInstance({number}) {
             }
             const currentUrl = currentQuery.endpoint_url.replace(/^http/, 'ws');
             const client = createClient({
-                url: currentUrl, connectionParams: async () => {
-                    return {
-                        headers: {
-                            ...(user?.accessToken?.access_token && {'Authorization': `Bearer ${UserStore.user?.accessToken?.access_token}`}),
-                        },
-                    };
-                },
-            })
+                url: currentUrl,
+                connectionParams: {
+                    'Authorization': `Bearer ${UserStore.user?.accessToken?.access_token}`
+                }
+            });
+
 
             queryDispatcher.onquerystarted()
             cleanSubscription = client.subscribe({...payload, variables}, {
