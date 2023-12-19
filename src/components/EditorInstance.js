@@ -128,7 +128,7 @@ const EditorInstance = observer(function EditorInstance({number}) {
         return this
     }
 
-     function SubscriptionDataSource(payload, queryDispatcher) {
+    function SubscriptionDataSource(payload, queryDispatcher) {
 
         let cleanSubscription, clean, empty
         let callbacks = []
@@ -144,12 +144,21 @@ const EditorInstance = observer(function EditorInstance({number}) {
                 }
             }
             const currentUrl = currentQuery.endpoint_url.replace(/^http/, 'ws');
+
+            const token = UserStore.user?.accessToken?.access_token;
             const client = createClient({
-                url: currentUrl,
-                connectionParams: {
-                    'Authorization': `Bearer ${UserStore.user?.accessToken?.access_token}`
-                }
-            });
+                url: ` ${currentUrl}?token=${token}`,
+                // connectionParams: () => {
+                //     if (token) {
+                //         return {
+                //             headers: {
+                //                 'Authorization': `Bearer ${token}`
+                //             }
+                //         }
+                //     }
+                //     return {}
+                // }
+            })
 
 
             queryDispatcher.onquerystarted()
@@ -418,6 +427,9 @@ const EditorInstance = observer(function EditorInstance({number}) {
     }, [user, schema[debouncedURL], queryTypes, index])
 
     const fetcher = async (graphQLParams) => {
+        if (!user.id) {
+            toast.error('Hello! To continue using our services, please log in or register. Logging in will allow you to access all the features and keep track of your activities.')
+        }
         if (user?.accessToken && user?.accessToken?.streaming_expires_on <= Date.now()) {
             try {
                 await getUser('update_token')
