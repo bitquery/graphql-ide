@@ -429,8 +429,16 @@ const EditorInstance = observer(function EditorInstance({number}) {
 
     const fetcher = async (graphQLParams) => {
         if (!user.id) {
-            toast.error('Hello! To continue using our services, please log in or register. Logging in will allow you to access all the features and keep track of your activities.')
+            toast.info((
+                <div>
+                    Hello! To continue using our services, please
+                    <a href="https://account.bitquery.io/auth/login?redirect_to=https://ide.bitquery.io/"> log in </a> or
+                    <a href="https://account.bitquery.io/auth/login?redirect_to=https://ide.bitquery.io/"> register </a>
+                    Logging in will allow you to access all the features and keep track of your activities.
+                </div>
+            ), { autoClose: 15000 });
         }
+
         if (user?.accessToken && user?.accessToken?.streaming_expires_on <= Date.now()) {
             try {
                 await getUser('update_token')
