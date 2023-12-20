@@ -148,17 +148,18 @@ const EditorInstance = observer(function EditorInstance({number}) {
             const token = UserStore.user?.accessToken?.access_token;
             const client = createClient({
                 url: ` ${currentUrl}?token=${token}`,
-                // connectionParams: () => {
-                //     if (token) {
-                //         return {
-                //             headers: {
-                //                 'Authorization': `Bearer ${token}`
-                //             }
-                //         }
-                //     }
-                //     return {}
-                // }
+                connectionParams: () => {
+                    if (token) {
+                        return {
+                            headers: {
+                                'Authorization': `Bearer ${token}`
+                            }
+                        }
+                    }
+                    return {}
+                },
             })
+
 
 
             queryDispatcher.onquerystarted()
