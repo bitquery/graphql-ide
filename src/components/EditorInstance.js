@@ -161,7 +161,6 @@ const EditorInstance = observer(function EditorInstance({number}) {
             })
 
 
-
             queryDispatcher.onquerystarted()
             cleanSubscription = client.subscribe({...payload, variables}, {
                 next: ({data}) => {
@@ -428,17 +427,6 @@ const EditorInstance = observer(function EditorInstance({number}) {
     }, [user, schema[debouncedURL], queryTypes, index])
 
     const fetcher = async (graphQLParams) => {
-        if (!user.id) {
-            toast.info((
-                <div>
-                    Hello! To continue using our services, please
-                    <a href="https://account.bitquery.io/auth/login?redirect_to=https://ide.bitquery.io/"> log in </a> or
-                    <a href="https://account.bitquery.io/auth/login?redirect_to=https://ide.bitquery.io/"> register </a>
-                    Logging in will allow you to access all the features and keep track of your activities.
-                </div>
-            ), { autoClose: 15000 });
-        }
-
         if (user?.accessToken && user?.accessToken?.streaming_expires_on <= Date.now()) {
             try {
                 await getUser('update_token')
@@ -469,14 +457,25 @@ const EditorInstance = observer(function EditorInstance({number}) {
                 credentials: 'same-origin',
             },
         )
-        if (user?.accessToken?.error) toast.error(`Error with accessToken: ${user?.accessToken?.error}`)
 
         const responseTime = new Date().getTime() - start
         if (!response.ok) {
-            if (response.status === 401) {
+            if (response.status === 401 && !user.id) {
+
+                toast.info((
+                    <div>
+                        Hello! To continue using our services, please
+                        <a href="https://account.bitquery.io/auth/login?redirect_to=https://ide.bitquery.io/"> log
+                            in </a> or
+                        <a href="https://account.bitquery.io/auth/login?redirect_to=https://ide.bitquery.io/"> register </a>
+                        Logging in will allow you to access all the features and keep track of your activities.
+                    </div>
+                ), {autoClose: 15000});
+            } else {
                 const responseBody = await response.text()
                 throw new Error(`Error: ${responseBody}`)
             }
+
         }
 
         if (!('operationName' in graphQLParams)) {
@@ -516,7 +515,7 @@ const EditorInstance = observer(function EditorInstance({number}) {
                     dispatchQueryStatus('readyToExecute')
                 } catch (error) {
                     const message = /401 Authorization Required/.test(error.message) ? '401 Authorization Required' : error.message
-                    toast(message, {type: 'error'})
+                    // toast(message, {type: 'error'})
                     dispatchQueryStatus('schemaError')
                     if (error.message === '401') {
                         history.push('/auth/login')
