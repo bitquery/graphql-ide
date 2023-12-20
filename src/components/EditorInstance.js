@@ -460,8 +460,7 @@ const EditorInstance = observer(function EditorInstance({number}) {
 
         const responseTime = new Date().getTime() - start
         if (!response.ok) {
-            if (response.status === 401 && !user.id) {
-
+            if ((response.status === 401 && !user.id ) || !user.id) {
                 toast.info((
                     <div>
                         Hello! To continue using our services, please
@@ -515,7 +514,7 @@ const EditorInstance = observer(function EditorInstance({number}) {
                     dispatchQueryStatus('readyToExecute')
                 } catch (error) {
                     const message = /401 Authorization Required/.test(error.message) ? '401 Authorization Required' : error.message
-                    // toast(message, {type: 'error'})
+                    toast(message, {type: 'error'})
                     dispatchQueryStatus('schemaError')
                     if (error.message === '401') {
                         history.push('/auth/login')
