@@ -710,7 +710,6 @@ module.exports = function (app, db, redisClient) {
                                      WHERE a.id = ?
                                        AND ak.active = true`,
             [req.account_id])
-        console.log('results', results)
         if (results.length > 0) {
             const clientResults = await query(`SELECT client_id, client_secret
                                                FROM applications
@@ -721,7 +720,6 @@ module.exports = function (app, db, redisClient) {
             `, [req.account_id])
 
             let accessToken = {}
-            console.log('req.account_id: ', req.account_id, 'clientResults[0].client_id: ', clientResults[0].client_id, ' clientResults[0].client_secret: ', clientResults[0].client_secret)
             if (clientResults.length > 0) {
                 const tokenResponse = await getStreamingAccessToken(clientResults[0].client_id, clientResults[0].client_secret);
                 if (!tokenResponse.error) {

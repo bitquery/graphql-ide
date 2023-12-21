@@ -54,28 +54,26 @@ const TabsComponent = observer(() => {
                     } catch (error) {
                         if (error.response.status === 400) {
                             try {
-                                if (user?.accessToken && user.accessToken.streaming_expires_on <= Date.now()) {
+                                if (UserStore.user?.accessToken && UserStore.user.accessToken.streaming_expires_on <= Date.now()) {
                                     try {
                                         await UserStore.getToken()
                                     } catch (error) {
-                                        console.error('Error in refreshing token', error)
                                         toast.error('Token refresh failed')
                                     }
-                                }
-                                if (user?.accessToken?.error) {
-                                    toast.error('Error in accessToken: ' + UserStore.user.accessToken.error)
                                 }
                                 const response = await fetch(user?.graphql_legacy_url, {
                                     "headers": {
                                         "accept": "application/json",
                                         "content-type": "application/json",
                                         "x-api-key": user.key,
-                                        ...(user?.accessToken?.access_token && {'Authorization': `Bearer ${UserStore.user.accessToken.access_token}`}),
+                                        ...(UserStore.user?.accessToken?.access_token && {'Authorization': `Bearer ${UserStore.user.accessToken.access_token}`}),
                                     },
                                     "body": `{\"query\":\"query MyQuery {\\n\\tsystem {\\n\\t  userRequests(graphqlQueryId: {is: \\\"${queryID}\\\"}) {\\n\\t\\trequest {\\n\\t\\t  json\\n\\t\\t}\\n\\t\\tvariables {\\n\\t\\t  json\\n\\t\\t}\\n\\t  }\\n\\t}\\n  }\",\"variables\":\"{}\"}`,
                                     "method": "POST",
                                     "mode": "cors"
                                 })
+                                if (user?.accessToken?.error) toast.error(`Error in accessToken: ${user.accessToken.error}`)
+
                                 const {data} = await response.json()
                                 const query = data.system.userRequests[0].request.json
                                 const variables = data.system.userRequests[0].variables.json

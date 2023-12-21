@@ -10,7 +10,8 @@ class User {
         makeObservable(this, {
             user: observable,
             getUser: action,
-            setUser: action
+            setUser: action,
+            getToken:action
         })
     }
 
