@@ -34,7 +34,6 @@ const StatisticsButton = observer(function StatisticsButton({number}) {
                 "body": `{\"query\":\"query MyQuery {\\n utilities {\\n  metrics(queryId: \\\"${graphqlQueryID}\\\", options: {seed: ${new Date().getTime()}}) {\\n    points\\n  \\n}}\\n}\\n\",\"variables\":\"{}\"}`,
                 "method": "POST"
             })
-            if (user?.accessToken?.error) toast.error(`Error in accessToken: ${user?.accessToken?.error}`)
 
             const {data} = await response.json()
             if (data?.utilities?.metrics && 'points' in data.utilities.metrics) {

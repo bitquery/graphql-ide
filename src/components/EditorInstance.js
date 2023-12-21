@@ -457,7 +457,6 @@ const EditorInstance = observer(function EditorInstance({number}) {
                 credentials: 'same-origin',
             },
         )
-
         const responseTime = new Date().getTime() - start
         if (!response.ok) {
             if ((response.status === 401 && !user.id ) || !user.id) {
@@ -474,19 +473,19 @@ const EditorInstance = observer(function EditorInstance({number}) {
                 const responseBody = await response.text()
                 throw new Error(`Error: ${responseBody}`)
             }
-
         }
 
         if (!('operationName' in graphQLParams)) {
-            const graphqlRequested = response.headers.get('X-GraphQL-Requested') === 'true'
+            const graphqlRequested = response.headers.get('X-GraphQL-Requested') === 'true' || response.headers.get('X-Bitquery-Gql-Query-Id') === 'true'
             updateQuery({
-                graphqlQueryID: response.headers.get('X-GraphQL-Query-ID'),
+                graphqlQueryID: response.headers.get('X-GraphQL-Query-ID')|| response.headers.get('X-Bitquery-Gql-Query-Id'),
                 graphqlRequested,
                 responseTime,
                 points: graphqlRequested ? undefined : 0,
                 saved: currentQuery.saved,
                 gettingPointsCount: 0
             }, index)
+
         }
         const {data, errors} = await response.json()
         if (errors) {
@@ -514,7 +513,7 @@ const EditorInstance = observer(function EditorInstance({number}) {
                     dispatchQueryStatus('readyToExecute')
                 } catch (error) {
                     const message = /401 Authorization Required/.test(error.message) ? '401 Authorization Required' : error.message
-                    toast(message, {type: 'error'})
+                    // toast(message, {type: 'error'})
                     dispatchQueryStatus('schemaError')
                     if (error.message === '401') {
                         history.push('/auth/login')
