@@ -459,7 +459,7 @@ const EditorInstance = observer(function EditorInstance({number}) {
         )
         const responseTime = new Date().getTime() - start
         if (!response.ok) {
-            if ((response.status === 401 && !user.id ) || !user.id) {
+            if ((response.status === 401 && !user.id) || !user.id) {
                 toast.info((
                     <div>
                         Hello! To continue using our services, please
@@ -476,16 +476,15 @@ const EditorInstance = observer(function EditorInstance({number}) {
         }
 
         if (!('operationName' in graphQLParams)) {
-            const graphqlRequested = response.headers.get('X-GraphQL-Requested') === 'true' || response.headers.get('X-Bitquery-Gql-Query-Id') === 'true'
+            const graphqlRequested = response.headers.get('X-GraphQL-Requested') !== 'false'
             updateQuery({
-                graphqlQueryID: response.headers.get('X-GraphQL-Query-ID')|| response.headers.get('X-Bitquery-Gql-Query-Id'),
+                graphqlQueryID: response.headers.get('X-GraphQL-Query-ID') || response.headers.get('X-Bitquery-Gql-Query-Id'),
                 graphqlRequested,
                 responseTime,
                 points: graphqlRequested ? undefined : 0,
                 saved: currentQuery.saved,
                 gettingPointsCount: 0
             }, index)
-
         }
         const {data, errors} = await response.json()
         if (errors) {
