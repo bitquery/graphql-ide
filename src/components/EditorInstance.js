@@ -476,7 +476,7 @@ const EditorInstance = observer(function EditorInstance({number}) {
         }
 
         if (!('operationName' in graphQLParams)) {
-            const graphqlRequested = response.headers.get('X-GraphQL-Requested') !== 'false'
+            const graphqlRequested = response.headers.get('X-GraphQL-Requested') === 'true' || response.headers.get('X-Bitquery-Graphql-Requested') === 'true'
             updateQuery({
                 graphqlQueryID: response.headers.get('X-GraphQL-Query-ID') || response.headers.get('X-Bitquery-Gql-Query-Id'),
                 graphqlRequested,
