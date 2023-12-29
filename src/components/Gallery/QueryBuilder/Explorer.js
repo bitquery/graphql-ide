@@ -2330,7 +2330,6 @@ class Explorer extends React.PureComponent<Props, State> {
     }
   };
 
-  
   render() {
     const {schema, query, makeDefaultArg} = this.props;
 

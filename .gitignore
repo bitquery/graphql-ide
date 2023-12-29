@@ -118,3 +118,4 @@ api.http
 .vscode
 launch.json
 static/
+.idea

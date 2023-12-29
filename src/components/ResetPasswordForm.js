@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { useToasts } from 'react-toast-notifications'
+import { toast } from 'react-toastify'
 import { Link } from 'react-router-dom'
 import axios from 'axios'
 
@@ -12,7 +12,6 @@ function ResetPasswordForm() {
 	}
 	const [password, setPassword] = useState('')
 	let { token } = useParams()
-	const { addToast } = useToasts()
 	const resetPassword = async e => {
 		e.preventDefault()
 		try {
@@ -20,10 +19,10 @@ function ResetPasswordForm() {
 				password,
 				token
 			})
-			addToast(data, {appearance: 'success'})
+			toast(data, {type: 'success'})
 		} catch (e) {
 			console.log(e.response.data)
-			addToast(e.response.data, {appearance: 'error'})
+			toast(e.response.data, {type: 'error'})
 		}
 	}
 	return (

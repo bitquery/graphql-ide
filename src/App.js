@@ -13,6 +13,8 @@ import { GalleryStore } from './store/galleryStore'
 import TabsComponent from './components/TabsComponent'
 import ExploreComponent from './components/ExploreComponent'
 import { TokenPagesAPI } from './components/TokenPagesAPI'
+import { ToastContainer, toast } from 'react-toastify'
+import "react-toastify/dist/ReactToastify.css";
 
 if (process.env.NODE_ENV === 'development') {
 	/* require('@welldone-software/why-did-you-render')(React, {
@@ -46,6 +48,9 @@ const App = observer(function App() {
 	return (
 		<div className="App">
 			<ControlPanel />
+			<ToastContainer 
+				position={toast.POSITION.TOP_RIGHT}
+			/>
 			<ModalWindow />
 			<Switch>
 				<Route path='/reset' >

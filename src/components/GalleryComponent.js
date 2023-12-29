@@ -2,7 +2,7 @@ import { observer } from 'mobx-react-lite'
 import React, { useEffect, useState } from 'react'
 import { UserStore, QueriesStore, TabsStore } from '../store/queriesStore'
 import QueriesComponent from './Gallery/QueriesComponent'
-import { useToasts } from 'react-toast-notifications'
+import { toast } from 'react-toastify'
 import QueryBuilder from './Gallery/QueryBuilder/index'
 import { getAllQueries, getMyQueries } from '../api/api'
 import { makeDefaultArg, getDefaultScalarArgValue } from "./Gallery/QueryBuilder/CustomArgs"
@@ -18,19 +18,18 @@ const GalleryComponent = observer(function GalleryComponent() {
 		queryJustSaved, updateQuery, schema } = QueriesStore
 	const { index } = TabsStore
 	const { user } = UserStore
-	const { addToast } = useToasts()
 
 	useEffect(() => {
-		const handler = () => addToast((
+		const handler = () => toast((
 			<a href="https://bitquery.io/blog/blockchain-graphql-query" target="_blank" rel="noopener noreferrer">
 				Create your first GraphQL Query
 			</a>), 
 			{
-				appearance: 'info'
+				type: 'info'
 			})
 		window.addEventListener('unauth', handler)
 		return () => window.removeEventListener('unauth', handler)
-	}, [addToast])
+	}, [])
 	
 	useEffect(() => {
 		const getQueries = async () => {
@@ -43,7 +42,7 @@ const GalleryComponent = observer(function GalleryComponent() {
 					setQueryIsTransfered(true)
 				}
 			}
-			data1.data.msg && addToast('Account activated!', {appearance: 'success'})
+			data1.data.msg && toast('Account activated!', {type: 'success'})
 			if (data2.data.length !== myQueries.length) {
 				setMyQueries({queries: data2.data})
 			}

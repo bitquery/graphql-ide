@@ -1,5 +1,3 @@
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.collectVariables = void 0;
 var graphql_1 = require("graphql");
 function getQueryFacts(schema, documentStr) {
     if (!documentStr) {
@@ -23,7 +21,6 @@ function getQueryFacts(schema, documentStr) {
     });
     return { variableToType: variableToType, operations: operations };
 }
-exports.default = getQueryFacts;
 function collectVariables(schema, documentAST) {
     var variableToType = Object.create(null);
     documentAST.definitions.forEach(function (definition) {
@@ -42,4 +39,5 @@ function collectVariables(schema, documentAST) {
     });
     return variableToType;
 }
-exports.collectVariables = collectVariables;
+
+export default getQueryFacts

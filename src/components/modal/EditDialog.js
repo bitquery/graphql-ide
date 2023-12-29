@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useHistory } from 'react-router-dom'
-import { useToasts } from 'react-toast-notifications'
+import { toast } from 'react-toastify'
 import modalStore from '../../store/modalStore'
 import { QueriesStore, TabsStore } from '../../store/queriesStore'
 import { deleteQuery } from '../../api/api'
@@ -12,7 +12,6 @@ import useEventListener from '../../utils/useEventListener'
 import { Modal, Form, Button } from 'react-bootstrap'
 
 const EditDialog = observer(function EditDialog({active}) {
-	const { addToast } = useToasts()
 	const { saveQuery, queryParams, currentQuery,
 		saveToggle, query, removeQuery, updateQuery } = QueriesStore
 	const { index } = TabsStore
@@ -80,14 +79,14 @@ const EditDialog = observer(function EditDialog({active}) {
 			data = await saveQuery({...params, isDraggable: false, isResizable: false})
 			if (data.status !== 400) {
 				renameCurrentTab(name)
-				data.url && history.push(`/${data.url}`)
-				updateQuery({tags: tags.join(',')}, index)
-				data.msg && addToast(<div id={data.id}>{data.msg}</div>, {appearance: 'success'})
+				updateQuery({tags: tags.join(','), url: data.url}, index)
+				data.msg && toast(<div id={data.id}>{data.msg}</div>, {type: 'success'})
 				closeHandler()
 			} else { 
-				addToast(data.data.msg, {appearance: 'error'})
+				toast(data.data.msg, {type: 'error'})
+
 			}
-		} else { addToast('Name is required', {appearance: 'error'}) }
+		} else { toast('Name is required', {type: 'error'}) }
 	}
 	const confirm = () => {
 		toggleConfirmation('Are you sure you want to delete this query?', 
@@ -99,7 +98,7 @@ const EditDialog = observer(function EditDialog({active}) {
 		closeHandler()
 		let id = query.map(query=>query.id).indexOf(currentQuery.id)
 		removeQuery(id)
-		addToast(data.data, {appearance: 'success'})
+		toast(data.data, {type: 'success'})
 	}
 
 	const deleteTag = tag => {

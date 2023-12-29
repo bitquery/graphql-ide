@@ -2,7 +2,7 @@ import { observer } from 'mobx-react-lite'
 import { QueriesStore, UserStore, TabsStore } from '../../../store/queriesStore'
 import { copyQuery } from '../../../api/api'
 import modalStore from '../../../store/modalStore'
-import { useToasts } from 'react-toast-notifications'
+import { toast } from 'react-toastify'
 import { parse as parseGql } from 'graphql/language'
 import { print } from 'graphql'
 import React, { useState, useEffect } from 'react'
@@ -20,7 +20,6 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 	const { index } = TabsStore
 	const { user }  = UserStore
 	const { toggleModal, toggleEditDialog, toggleDashboardSettings } = modalStore
-	const { addToast } = useToasts()
 	const [mode, setMode] = useState(false)
 	const [dashboardOwner,setOwner] = useState(false)
 	useEffect(() => {
@@ -104,7 +103,7 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 			link = `${window.location.protocol}//${window.location.host}/${currentQuery.url}`
 		}
 		copy(link)
-		addToast('Link copied to clipboard', {appearance: 'success'})
+		toast('Link copied to clipboard', {type: 'success'})
 	}
 
 	const toolbar = <div className="topBarWrap">
