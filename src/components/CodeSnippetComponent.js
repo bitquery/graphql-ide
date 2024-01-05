@@ -50,8 +50,14 @@ useEffect(() => {
 
 return (
     <section className='codesnippet__root'>
-        <div className="doc-explorer-title-bar">
+        <div>
             <div className="doc-explorer-title">Code snippet</div>
+            <p className="alert alert-warning" role="alert" style={{textIndent: '15px'}}> You HAVE TO replace the
+                token with the token generated for your application with large enough
+                lifetime OR use the code to refresh the token. <br/> Our Code snippet doesn`t generate code for subscription, you should do it yourself (<a
+                    href='https://docs.bitquery.io/docs/start/websocket/' target="_blank" rel="noopener noreferrer"
+                    title='Go to docs.bitquery.io'>documentation</a>)
+            </p>
         </div>
         <div className="options flex">
             <div className="navbar-collapse mr-auto" id="navbarCodeSnippet">
