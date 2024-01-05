@@ -15,7 +15,6 @@ const getCodeSnippet = (lang, query, variables, key, endpoint_url, token) =>
                 header: {'Content-Type': 'application/json', 'X-API-KEY': key, 'Authorization': `Bearer ${token}`},
                 body: JSON.stringify({query, variables})
             })
-            // , 'Authorization': `Bearer ${access_token}`
             const language = lang.key
             const variant = lang.variant
             const options = {
