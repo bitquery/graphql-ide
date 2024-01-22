@@ -471,9 +471,12 @@ const EditorInstance = observer(function EditorInstance({number}) {
                 ), {autoClose: 15000});
             } else {
                 const responseBody = await response.text()
-                throw new Error(`Error: ${responseBody}`)
+                // throw new Error(`Error: ${responseBody}`)
+                throw new Error(`Error: Something is wrong. We will fix it as soon as possible`)
+
             }
         }
+
 
         if (!('operationName' in graphQLParams)) {
             const graphqlRequested = response.headers.get('X-GraphQL-Requested') === 'true' || response.headers.get('X-Bitquery-Graphql-Requested') === 'true'
