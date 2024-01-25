@@ -826,12 +826,16 @@ module.exports = function (app, db, redisClient) {
         const storageTime = req.account_id ? 10000 : 60 * 60 * 24
         const queryLink = `/${req.body.url}`
         await redisClient.set(code, JSON.stringify(req.body), {EX: storageTime})
-        const ps = `${queryLink}?config=${code}`
+        const utm_source = req.boby.utm_source ||''
+        const utm_medium= req.boby.utm_medium ||''
+        const utm_campaign= req.boby.utm_campaign ||''
+        const utm_content= req.boby.utm_content ||''
+        const ps = `${queryLink}?config=${code}&utm_source=${utm_source}&utm_medium=${utm_medium}&utm_campaign=${utm_campaign}&utm_content=${utm_content}`
         if (req.account_id) {
             res.set('Location', ps)
         } else {
             const fullUrl = req.protocol + '://' + req.get('host') + ps
-            res.set('Location', `${process.env.GRAPHQL_ADMIN_URL}/auth/login?redirect_to=${encodeURIComponent(fullUrl)}`)
+            res.set('Location', `${process.env.GRAPHQL_ADMIN_URL}/auth/login?redirect_to=${encodeURIComponent(fullUrl)}&utm_source=${utm_source}&utm_medium=${utm_medium}&utm_campaign=${utm_campaign}&utm_content=${utm_content}`)
         }
         res.sendStatus(302)
     })
