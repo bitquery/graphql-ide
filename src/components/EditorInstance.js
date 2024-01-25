@@ -540,8 +540,10 @@ const EditorInstance = observer(function EditorInstance({number}) {
     }
 
     const abortRequest = () => {
+            dataSource.subscriptionDataSource.unsubscribe()
         if (queryStatus.activeSubscription) {
             dataSource.subscriptionDataSource.unsubscribe()
+
             return
         }
         if (abortController.current) {
