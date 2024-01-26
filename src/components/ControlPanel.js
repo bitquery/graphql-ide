@@ -106,6 +106,9 @@ const ControlPanel = observer(function ControlPanel() {
 					<li className="nav-item d-lg-none" tabIndex='-1'>
 						<a className="nav-link navigation-link-color" href="https://angel.co/company/bitquery/jobs">We are hiring!</a>
 					</li>
+					<li className="nav-item d-lg-none" tabIndex='-1'>
+						<a className="nav-link navigation-link-color" href="https://account.bitquery.io/user/billing">Upgrade</a>
+					</li>
 					{!user?.id && <li className="nav-item d-lg-none">
 						<a className="nav-link navigation-link-color" href={`${user?.graphql_admin_url}/auth/login?redirect_to=${window.location.href}`}>Login</a>
 					</li>}
