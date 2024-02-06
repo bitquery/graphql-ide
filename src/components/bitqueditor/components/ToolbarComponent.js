@@ -15,7 +15,7 @@ import DocsIcon from '../../icons/DocsIcon'
 
 const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOpen, toggleDocExplorer, toggleCodeSnippet, codeSnippetOpen, number}) => {
 	const { currentQuery, updateQuery, setQuery,
-		queryIsTransfered, setQueryIsTransfered,queryJustSaved, query } = QueriesStore
+		queryIsTransfered, setQueryIsTransfered, queryJustSaved, query } = QueriesStore
 	const { tagListIsOpen, toggleTagsList } = GalleryStore
 	const { index } = TabsStore
 	const { user }  = UserStore
@@ -139,7 +139,7 @@ const ToolbarComponent = observer(({ queryEditor, variablesEditor, docExplorerOp
 				onClick={handleFork}
 				visible={true}
 			/>
-			{queryJustSaved && <ToolbarButton
+			{queryJustSaved || currentQuery.url && <ToolbarButton
 				title='Copy query URL'
 				onClick={handleCopy}
 				visible={!!currentQuery.graphqlQueryID || !!currentQuery.url}
