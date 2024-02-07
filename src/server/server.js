@@ -64,8 +64,9 @@ redisClient.connect().then(async () => {
 			const filePath = path.resolve(__dirname, '../../build', 'index.html')
 			const fullUrl = req.protocol + '://' + req.get('host') + req.originalUrl
 			const replaceData = (data, meta) => {
+				console.log('Before replacement:', data);
 				return data
-					.replace(/__TITLE__/g, meta.title)
+					.replace(/__TITLE__/g,`${ meta.title} - Blockchain Data API`)
 					.replace(/__DESCRIPTION__/g, meta.description)
 					.replace(/__URL__/g, fullUrl)
 			}

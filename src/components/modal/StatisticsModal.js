@@ -114,13 +114,13 @@ const StatisticsModal = observer(function StatisticsModal({active}) {
                     <td>{metrics.points.toFixed(2)}</td>
                     </tfoot>
                 </table>
-                {queryJustSaved && <p>Query ID: {graphqlQueryID}</p>}
+                <p>Query ID: {graphqlQueryID}</p>
                 {metricNumber !== null && <div className="metrics__info">{METRICS_INFO[metricNumber]}</div>}
             </div>
         } else {
             modal = <div className={'modal__form ' + (!active && 'modal__form_hide')}>
                 <i className="handler handler__close fas fa-times" onClick={closeHandler}/>
-                {queryJustSaved && <p>Query ID: {graphqlQueryID}</p>}
+                <p>Query ID: {graphqlQueryID}</p>
                 <p>Waiting for processing of this query...</p>
                 <Loader type='Triangle'/>
             </div>
