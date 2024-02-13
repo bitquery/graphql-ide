@@ -5,7 +5,7 @@ function QueryErrorIndicator({error, removeError}) {
         <>
             <div className="error__wrapper">
                 <p className="error__message">
-                    {JSON.stringify(error, null, 2)}
+                    {error}
                 </p>
                 
             </div>

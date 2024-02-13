@@ -1,7 +1,8 @@
 import React, { useEffect, useRef } from 'react'
 import { QueriesStore } from '../../../store/queriesStore'
 import { observer } from 'mobx-react'
-import JsonWidget from "./JsonWidget"
+
+import JsonWidget from "./JsonComponent";
 
 const WidgetView = observer(function WidgetView({ children, widget, dataSource, ready }) {
 	const { currentQuery } = QueriesStore
