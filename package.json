@@ -42,7 +42,8 @@
     "sass": "^1.32.13",
     "table-widget": "^1.0.3",
     "vega-widgets": "^2.0.3",
-    "web-vitals": "^1.1.2"
+    "web-vitals": "^1.1.2",
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11"
   },
   "scripts": {
     "createdb": "node ./src/server/createDatabase.js",
