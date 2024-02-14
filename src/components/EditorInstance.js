@@ -89,8 +89,6 @@ const EditorInstance = observer(function EditorInstance({number}) {
             } else if (typeof error === 'string') {
                 setError(error);
             } else {
-                console.log('error',error)
-                console.log('error type', typeof error)
                 setError('Connection error, your token unauthorized')
             }
         }
@@ -173,6 +171,8 @@ const EditorInstance = observer(function EditorInstance({number}) {
                     connected: () => {
                         queryDispatcher.onsubscribe()
                         setError(null);
+                        const message = 'We are waiting for the initiation data'
+                        callbacks.forEach(cb => cb(message, variables))
                     },
                     error: error => {
                         logQuery(error)
