@@ -48,6 +48,10 @@ export default class JsonComponent {
 			this.subscriptionDataSource.setEmptyWidget(this.emptyWidget.bind(this))
 			run && this.subscriptionDataSource.changeVariables()
 		}
+		if(this.subscriptionDataSource && ''){
+			this.subscriptionDataSource.setEmptyWidget(this.emptyWidget.bind(this))
+
+		}
 	}
 
 	clean() {
@@ -78,5 +82,5 @@ export default class JsonComponent {
 				this.viewer.replaceRange( newTime, { line: lineNumber, ch: 0 }, { line: lineNumber, ch: 30 } )
 			}
 		}, 1000)
-	}		
+	}
 }

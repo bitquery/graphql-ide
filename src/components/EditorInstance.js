@@ -178,10 +178,11 @@ const EditorInstance = observer(function EditorInstance({number}) {
                         logQuery(error)
                         queryNotLogged = false
                         queryDispatcher.onerror(error)
+                        this.unsubscribe()
+
                     },
                 },
             })
-
 
             setError(null)
             queryDispatcher.onquerystarted()
@@ -196,12 +197,16 @@ const EditorInstance = observer(function EditorInstance({number}) {
                         logQuery(false)
                         queryNotLogged = false
                     }
+                    if(data){
                     callbacks.forEach(cb => cb(data, variables))
+                    }
                 },
                 error: error => {
                     logQuery(error)
                     queryNotLogged = false
                     queryDispatcher.onerror(error)
+                    this.unsubscribe()
+
                 },
                 complete: () => {
                 },
