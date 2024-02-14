@@ -12,7 +12,6 @@ import {
 } from 'graphql'
 import {visit} from 'graphql/language/visitor'
 import {parse as parseGql} from 'graphql/language'
-import JsonPlugin from './bitqueditor/components/JsonWidget'
 import CodePlugin from './bitqueditor/components/CodeEditor'
 import ToolbarComponent from './bitqueditor/components/ToolbarComponent'
 import {TabsStore, QueriesStore, UserStore} from '../store/queriesStore'
@@ -33,6 +32,7 @@ import {useHistory, useParams} from 'react-router-dom';
 import {toast} from 'react-toastify'
 import {createClient} from "graphql-ws"
 import {InteractionButton} from './InteractionButton.js';
+import JsonPlugin from "./bitqueditor/components/JsonComponent";
 
 
 const queryStatusReducer = (state, action) => {
@@ -82,7 +82,15 @@ const EditorInstance = observer(function EditorInstance({number}) {
         onsubscribe: () => dispatchQueryStatus('activeSubscription'),
         onerror: (error) => {
             dispatchQueryStatus('readyToExecute')
-            setError(error)
+            if (Array.isArray(error) && error.length > 0 && error[0].message && error[0].locations) {
+                let location = error[0].locations[0];
+                let err = `${error[0].message} Location: Line ${location.line}, Column ${location.column}`;
+                setError(err);
+            } else if (typeof error === 'string') {
+                setError(error);
+            } else {
+                setError('Connection error, your token unauthorized')
+            }
         }
     }
 
@@ -129,7 +137,6 @@ const EditorInstance = observer(function EditorInstance({number}) {
     }
 
     function SubscriptionDataSource(payload, queryDispatcher) {
-
         let cleanSubscription, clean, empty
         let callbacks = []
         let queryNotLogged = true
@@ -141,13 +148,15 @@ const EditorInstance = observer(function EditorInstance({number}) {
                     await getUser('update_token');
                 } catch (error) {
                     toast.error('Token refresh failed');
+                    logQuery(error);
+                    queryDispatcher.onerror(error);
+                    return
                 }
             }
             const currentUrl = currentQuery.endpoint_url.replace(/^http/, 'ws');
-
             const token = UserStore.user?.accessToken?.access_token;
             const client = createClient({
-                url: ` ${currentUrl}?token=${token}`,
+                url: `${currentUrl}?token=${token}`,
                 connectionParams: () => {
                     if (token) {
                         return {
@@ -158,13 +167,31 @@ const EditorInstance = observer(function EditorInstance({number}) {
                     }
                     return {}
                 },
+                on: {
+                    connected: () => {
+                        queryDispatcher.onsubscribe()
+                        setError(null);
+                        const message = 'We are waiting for the initiation data'
+                        callbacks.forEach(cb => cb(message, variables))
+                    },
+                    error: error => {
+                        logQuery(error)
+                        queryNotLogged = false
+                        queryDispatcher.onerror(error)
+                    },
+                },
             })
 
 
+            setError(null)
             queryDispatcher.onquerystarted()
             cleanSubscription = client.subscribe({...payload, variables}, {
-                next: ({data}) => {
-                    queryDispatcher.onsubscribe()
+                next: ({data,errors}) => {
+                    if(errors){
+                        logQuery(errors)
+                        queryNotLogged = false
+                        queryDispatcher.onerror(errors[0].message)
+                    }
                     if (queryNotLogged) {
                         logQuery(false)
                         queryNotLogged = false
@@ -465,7 +492,7 @@ const EditorInstance = observer(function EditorInstance({number}) {
                         Hello! To continue using our services, please
                         <a href="https://account.bitquery.io/auth/login?redirect_to=https://ide.bitquery.io/"> log
                             in </a> or
-                        <a href="https://account.bitquery.io/auth/login?redirect_to=https://ide.bitquery.io/"> register </a>
+                        <a href="https://account.bitquery.io/auth/signup"> register </a>
                         Logging in will allow you to access all the features and keep track of your activities.
                     </div>
                 ), {autoClose: 15000});
@@ -540,7 +567,7 @@ const EditorInstance = observer(function EditorInstance({number}) {
     }
 
     const abortRequest = () => {
-            dataSource.subscriptionDataSource.unsubscribe()
+        dataSource.subscriptionDataSource.unsubscribe()
         if (queryStatus.activeSubscription) {
             dataSource.subscriptionDataSource.unsubscribe()
 

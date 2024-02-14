@@ -18,7 +18,7 @@ export const InteractionButton = ({ queryStatus, accordance }) => {
 		return <StopIcon />
 	}
 	if (queryStatus.readyToExecute) {
-		return <PlayIcon fill={accordance ? '#eee' : '#14ff41'} />
+		return <PlayIcon fill='#14ff41' />
 	}
 	if (queryStatus.schemaError) {
 		return <ErrorIcon fill={'#FF2D00'} />

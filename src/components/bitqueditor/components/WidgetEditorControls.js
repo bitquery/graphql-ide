@@ -5,8 +5,8 @@ import ResponseDataType from './ResponseDataType'
 import { QueriesStore, TabsStore } from '../../../store/queriesStore'
 import { observer } from 'mobx-react-lite'
 import { getWidgetConfig } from '../../../api/api'
-import JsonWidget from './JsonWidget'
 import ToolbarButton from './ToolbarButton'
+import JsonWidget from "./JsonComponent";
 
 const WidgetEditorControls = observer(
 	function WidgetEditorControls({abortRequest}) {
