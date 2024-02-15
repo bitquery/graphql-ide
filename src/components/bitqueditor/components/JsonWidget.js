@@ -48,10 +48,6 @@ export default class JsonComponent {
 			this.subscriptionDataSource.setEmptyWidget(this.emptyWidget.bind(this))
 			run && this.subscriptionDataSource.changeVariables()
 		}
-		if(this.subscriptionDataSource && ''){
-			this.subscriptionDataSource.setEmptyWidget(this.emptyWidget.bind(this))
-
-		}
 	}
 
 	clean() {

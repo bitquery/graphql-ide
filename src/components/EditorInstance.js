@@ -178,8 +178,7 @@ const EditorInstance = observer(function EditorInstance({number}) {
                         logQuery(error)
                         queryNotLogged = false
                         queryDispatcher.onerror(error)
-                        this.unsubscribe()
-
+                        empty()
                     },
                 },
             })
@@ -188,10 +187,12 @@ const EditorInstance = observer(function EditorInstance({number}) {
             queryDispatcher.onquerystarted()
             cleanSubscription = client.subscribe({...payload, variables}, {
                 next: ({data,errors}) => {
+
                     if(errors){
                         logQuery(errors)
                         queryNotLogged = false
                         queryDispatcher.onerror(errors[0].message)
+                        empty()
                     }
                     if (queryNotLogged) {
                         logQuery(false)
@@ -205,8 +206,7 @@ const EditorInstance = observer(function EditorInstance({number}) {
                     logQuery(error)
                     queryNotLogged = false
                     queryDispatcher.onerror(error)
-                    this.unsubscribe()
-
+                    empty()
                 },
                 complete: () => {
                 },
