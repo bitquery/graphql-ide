@@ -171,7 +171,7 @@ const EditorInstance = observer(function EditorInstance({number}) {
                     connected: () => {
                         queryDispatcher.onsubscribe()
                         setError(null);
-                        const message = 'We are waiting for the initiation data'
+                        const message = 'initial data pending...'
                         callbacks.forEach(cb => cb(message, variables))
                     },
                     error: error => {
@@ -187,7 +187,6 @@ const EditorInstance = observer(function EditorInstance({number}) {
             queryDispatcher.onquerystarted()
             cleanSubscription = client.subscribe({...payload, variables}, {
                 next: ({data,errors}) => {
-
                     if(errors){
                         logQuery(errors)
                         queryNotLogged = false
