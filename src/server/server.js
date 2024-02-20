@@ -69,7 +69,7 @@ redisClient.connect().then(async () => {
 			const replaceData = (data, meta) => {
 				return data
 					.replace(/__TITLE__/g,`${ meta.title} - Blockchain Data API`)
-					.replace(/__URL_OF_CODE_SNIPPET_IMAGE__/g, `/api/generateimage/:${meta.queryURL}`)
+					.replace(/__URL_OF_CODE_SNIPPET_IMAGE__/g, meta.queryURL)
 					.replace(/__DESCRIPTION__/g, meta.description)
 					.replace(/__URL__/g, fullUrl)
 			}
@@ -85,7 +85,6 @@ redisClient.connect().then(async () => {
 							data = replaceData(data, {
 								title: defaultmeta.title,
 								description: defaultmeta.description,
-								queryImage: 'favicon_new.png',
 								queryURL:'favicon_new.png',
 							})
 							res.send(data)
@@ -93,8 +92,7 @@ redisClient.connect().then(async () => {
 							data = replaceData(data, {
 								title: result[0].name,
 								description: result[0].description ? result[0].description : defaultmeta.description,
-								queryImage: result[0].query,
-								queryURL: result[0].url
+								queryURL: `/api/generateimage/:${result[0].url}`
 							})
 							res.send(data)
 
