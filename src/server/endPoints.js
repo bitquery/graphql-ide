@@ -957,7 +957,6 @@ module.exports = function (app, db, redisClient) {
 
             const codeQuery = queries[0]
             const code = codeQuery.query
-console.log('code',code)
             const imageBuffer = await generateCodeImage(code);
             res.setHeader('Content-Type', 'image/png');
             res.send(imageBuffer);
