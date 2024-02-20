@@ -3,9 +3,11 @@
   "version": "1.0.17",
   "private": true,
   "dependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "axios": "^0.21.4",
     "body-parser": "^1.19.0",
     "bootstrap": "^5.3.2",
+    "canvas": "^2.11.2",
     "codemirror": "^5.65.0",
     "codemirror-graphql": "^1.2.11",
     "connect-redis": "^6.0.0",
@@ -16,6 +18,7 @@
     "express": "^4.17.1",
     "graphql": "^15.5.0",
     "graphql-ws": "^5.14.2",
+    "highlight.js": "^11.9.0",
     "http-proxy-middleware": "^0.19.1",
     "markdown-it": "^12.3.2",
     "mobx": "^6.3.2",
@@ -42,8 +45,7 @@
     "sass": "^1.32.13",
     "table-widget": "^1.0.3",
     "vega-widgets": "^2.0.3",
-    "web-vitals": "^1.1.2",
-    "@babel/plugin-proposal-private-property-in-object": "^7.21.11"
+    "web-vitals": "^1.1.2"
   },
   "scripts": {
     "createdb": "node ./src/server/createDatabase.js",

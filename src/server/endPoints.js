@@ -5,7 +5,9 @@ const sdk = require('postman-collection')
 const codegen = require('postman-code-generators')
 const bodyParser = require('body-parser')
 const axios = require('axios')
-const {toast} = require("react-toastify");
+const {toast} = require("react-toastify")
+const {createCanvas, registerFont, loadImage} = require('canvas')
+const hljs = require('highlight.js')
 
 const getCodeSnippet = (lang, query, variables, key, endpoint_url, token) =>
     new Promise((resolve, reject) => {
@@ -826,10 +828,10 @@ module.exports = function (app, db, redisClient) {
         const storageTime = req.account_id ? 10000 : 60 * 60 * 24
         const queryLink = `/${req.body.url}`
         await redisClient.set(code, JSON.stringify(req.body), {EX: storageTime})
-        const utm_source = req.body.utm_source ||''
-        const utm_medium= req.body.utm_medium ||''
-        const utm_campaign= req.body.utm_campaign ||''
-        const utm_content= req.body.utm_content ||''
+        const utm_source = req.body.utm_source || ''
+        const utm_medium = req.body.utm_medium || ''
+        const utm_campaign = req.body.utm_campaign || ''
+        const utm_content = req.body.utm_content || ''
         const ps = `${queryLink}?config=${code}&utm_source=${utm_source}&utm_medium=${utm_medium}&utm_campaign=${utm_campaign}&utm_content=${utm_content}`
         if (req.account_id) {
             res.set('Location', ps)
@@ -908,5 +910,62 @@ module.exports = function (app, db, redisClient) {
             res.send(js)
         })
     })
+
+    async function generateCodeImage(code) {
+        const highlightedCode = hljs.highlight(code, {language: 'graphql'}).value;
+        const canvas = createCanvas(800, 600);
+        const ctx = canvas.getContext('2d');
+
+        ctx.fillStyle = '#FFF';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        const plainText = highlightedCode.replace(/<[^>]*>/g, '');
+        const lines = plainText.split('\n');
+        const maxFontSize = 60;
+        const minFontSize = 16;
+        let fontSize = maxFontSize;
+        let lineHeight = fontSize * 1.2;
+        let textHeight = lines.length * lineHeight;
+
+        while (textHeight > canvas.height && fontSize > minFontSize) {
+            fontSize -= 1;
+            lineHeight = fontSize * 1.2;
+            textHeight = lines.length * lineHeight;
+        }
+
+        ctx.font = `${fontSize}px Arial`;
+        ctx.fillStyle = '#000';
+
+        let y = fontSize;
+
+        lines.forEach((line) => {
+            ctx.fillText(line, 0, y);
+            y += lineHeight;
+        });
+
+        return canvas.toBuffer();
+    }
+
+
+    app.get('/api/generateimage/:name', async (req, res) => {
+        try {
+            const queries = await query(`SELECT * FROM queries WHERE url = ?`, [req.params.name]);
+
+            if (queries.length === 0) {
+                return res.status(404).send('Query not found');
+            }
+
+            const codeQuery = queries[0]
+            const code = codeQuery.query
+console.log('code',code)
+            const imageBuffer = await generateCodeImage(code);
+            res.setHeader('Content-Type', 'image/png');
+            res.send(imageBuffer);
+        } catch (error) {
+            console.error('Error generating image:', error);
+            res.status(500).send('Server error generating image');
+        }
+    })
+
 
 }

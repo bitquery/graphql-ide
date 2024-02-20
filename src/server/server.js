@@ -59,13 +59,17 @@ redisClient.connect().then(async () => {
 	require('./endPoints')(app, db, redisClient)
 
 	if (isProduction) {
-		app.get('*', (req, res) => {
+		app.get('*',  (req, res) => {
 			const url = req.url.substring(1)
 			const filePath = path.resolve(__dirname, '../../build', 'index.html')
 			const fullUrl = req.protocol + '://' + req.get('host') + req.originalUrl
+
+//favicon_new.png'
+
 			const replaceData = (data, meta) => {
 				return data
 					.replace(/__TITLE__/g,`${ meta.title} - Blockchain Data API`)
+					.replace(/__URL_OF_CODE_SNIPPET_IMAGE__/g, `/api/generateimage/:${meta.queryURL}`)
 					.replace(/__DESCRIPTION__/g, meta.description)
 					.replace(/__URL__/g, fullUrl)
 			}
@@ -80,15 +84,20 @@ redisClient.connect().then(async () => {
 						if (!result?.length) {
 							data = replaceData(data, {
 								title: defaultmeta.title,
-								description: defaultmeta.description
+								description: defaultmeta.description,
+								queryImage: 'favicon_new.png',
+								queryURL:'favicon_new.png',
 							})
 							res.send(data)
 						} else {
 							data = replaceData(data, {
 								title: result[0].name,
-								description: result[0].description ? result[0].description : defaultmeta.description
+								description: result[0].description ? result[0].description : defaultmeta.description,
+								queryImage: result[0].query,
+								queryURL: result[0].url
 							})
 							res.send(data)
+
 						}
 					})
 				})
@@ -110,4 +119,5 @@ redisClient.connect().then(async () => {
 	app.listen(+process.env.PORT || 4000, () => {
 		console.log("The app listening on port " + process.env.PORT)
 	})
+
 })
