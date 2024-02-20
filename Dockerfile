@@ -1,4 +1,4 @@
-FROM node:16-alpine AS builder
+FROM node:16-bookworm-slim AS builder
 
 LABEL maintainer="Andrey Gridin <andrey@bitquery.io>"
 

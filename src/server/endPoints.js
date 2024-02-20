@@ -6,7 +6,7 @@ const codegen = require('postman-code-generators')
 const bodyParser = require('body-parser')
 const axios = require('axios')
 const {toast} = require("react-toastify")
-const {createCanvas, registerFont, loadImage} = require('canvas')
+const {createCanvas} = require('canvas')
 const hljs = require('highlight.js')
 
 const getCodeSnippet = (lang, query, variables, key, endpoint_url, token) =>
