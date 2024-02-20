@@ -913,7 +913,7 @@ module.exports = function (app, db, redisClient) {
 
     async function generateCodeImage(code) {
         const highlightedCode = hljs.highlight(code, {language: 'graphql'}).value;
-        const canvas = createCanvas(800, 600);
+        const canvas = createCanvas(800, 600, 'png');
         const ctx = canvas.getContext('2d');
 
         ctx.fillStyle = '#FFF';
@@ -933,7 +933,7 @@ module.exports = function (app, db, redisClient) {
             textHeight = lines.length * lineHeight;
         }
 
-        ctx.font = `${fontSize}px Arial`;
+        ctx.font = `${fontSize}px SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace`;
         ctx.fillStyle = '#000';
 
         let y = fontSize;
@@ -943,18 +943,38 @@ module.exports = function (app, db, redisClient) {
             y += lineHeight;
         });
 
-        return canvas.toBuffer();
+        return canvas.toBuffer('image/png');
     }
 
 
     app.get('/api/generateimage/:name', async (req, res) => {
         try {
+        // const code ='query ($network: evm_network, $limit: Int, $offset: Int!, $from: String, $till: String) {\n' +
+        //     '  EVM(network: $network, dataset: combined) {\n' +
+        //     '    Blocks(\n' +
+        //     '      limit: {count: $limit, offset: $offset}\n' +
+        //     '      orderBy: {descending: Block_Time}\n' +
+        //     '      where: {Block: {Date: {till: $till, since: $from}}}\n' +
+        //     '    ) {\n' +
+        //     '      Block {\n' +
+        //     '        Coinbase\n' +
+        //     '        Time\n' +
+        //     '        TxCount\n' +
+        //     '        Number\n' +
+        //     '        Hash\n' +
+        //     '        GasUsed\n' +
+        //     '        TxHash\n' +
+        //     '        BaseFee\n' +
+        //     '      }\n' +
+        //     '      ChainId\n' +
+        //     '    }\n' +
+        //     '  }\n' +
+        //     '}\n'
             const queries = await query(`SELECT * FROM queries WHERE url = ?`, [req.params.name]);
 
             if (queries.length === 0) {
                 return res.status(404).send('Query not found');
             }
-
             const codeQuery = queries[0]
             const code = codeQuery.query
             const imageBuffer = await generateCodeImage(code);
