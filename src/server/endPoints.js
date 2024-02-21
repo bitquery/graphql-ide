@@ -956,13 +956,12 @@ module.exports = function (app, db, redisClient) {
                 res.setHeader('Content-Type', 'image/png')
                 res.send(buffer)
             } else {
-                const queries = await db.query(`SELECT * FROM queries WHERE url = ?`, [req.params.url])
+                const queries = db.query(`SELECT query FROM queries WHERE url = ?`, [req.params.url])
                 if (queries.length === 0) {
                     return res.status(404).send('Query not found')
                 }
                 const codeQuery = queries[0]
-                codeQuery.query
-                const imageBuffer = await generateCodeImage(code)
+                const imageBuffer = await generateCodeImage(codeQuery)
                 await redisClient.set(cacheKey, imageBuffer.toString('base64'), 'EX', 86400)
                 res.setHeader('Content-Type', 'image/png')
                 res.setHeader('Cache-Control', 'public, max-age=86400')
