@@ -933,7 +933,7 @@ module.exports = function (app, db, redisClient) {
             textHeight = lines.length * lineHeight
         }
 
-        ctx.font = `${fontSize}px SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace`;
+        ctx.font = `${fontSize}px`;
         ctx.fillStyle = '#000'
 
         let y = fontSize
