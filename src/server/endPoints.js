@@ -912,79 +912,68 @@ module.exports = function (app, db, redisClient) {
     })
 
     async function generateCodeImage(code) {
-        const highlightedCode = hljs.highlight(code, {language: 'graphql'}).value;
-        const canvas = createCanvas(800, 600, 'png');
-        const ctx = canvas.getContext('2d');
+        const highlightedCode = hljs.highlight(code, {language: 'graphql'}).value
+        const canvas = createCanvas(800, 600)
+        const ctx = canvas.getContext('2d')
 
-        ctx.fillStyle = '#FFF';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = '#FFF'
+        ctx.fillRect(0, 0, canvas.width, canvas.height)
 
-        const plainText = highlightedCode.replace(/<[^>]*>/g, '');
-        const lines = plainText.split('\n');
-        const maxFontSize = 60;
-        const minFontSize = 16;
-        let fontSize = maxFontSize;
-        let lineHeight = fontSize * 1.2;
-        let textHeight = lines.length * lineHeight;
+        const plainText = highlightedCode.replace(/<[^>]*>/g, '')
+        const lines = plainText.split('\n')
+        const maxFontSize = 60
+        const minFontSize = 16
+        let fontSize = maxFontSize
+        let lineHeight = fontSize * 1.2
+        let textHeight = lines.length * lineHeight
 
         while (textHeight > canvas.height && fontSize > minFontSize) {
-            fontSize -= 1;
-            lineHeight = fontSize * 1.2;
-            textHeight = lines.length * lineHeight;
+            fontSize -= 1
+            lineHeight = fontSize * 1.2
+            textHeight = lines.length * lineHeight
         }
 
         ctx.font = `${fontSize}px SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace`;
-        ctx.fillStyle = '#000';
+        ctx.fillStyle = '#000'
 
-        let y = fontSize;
+        let y = fontSize
 
         lines.forEach((line) => {
-            ctx.fillText(line, 0, y);
-            y += lineHeight;
+            ctx.fillText(line, 0, y)
+            y += lineHeight
         });
 
-        return canvas.toBuffer('image/png');
+        return canvas.toBuffer('image/png')
     }
 
 
     app.get('/api/generateimage/:url', async (req, res) => {
+        const cacheKey = `image_cache:${req.params.url}`
         try {
-        // const code ='query ($network: evm_network, $limit: Int, $offset: Int!, $from: String, $till: String) {\n' +
-        //     '  EVM(network: $network, dataset: combined) {\n' +
-        //     '    Blocks(\n' +
-        //     '      limit: {count: $limit, offset: $offset}\n' +
-        //     '      orderBy: {descending: Block_Time}\n' +
-        //     '      where: {Block: {Date: {till: $till, since: $from}}}\n' +
-        //     '    ) {\n' +
-        //     '      Block {\n' +
-        //     '        Coinbase\n' +
-        //     '        Time\n' +
-        //     '        TxCount\n' +
-        //     '        Number\n' +
-        //     '        Hash\n' +
-        //     '        GasUsed\n' +
-        //     '        TxHash\n' +
-        //     '        BaseFee\n' +
-        //     '      }\n' +
-        //     '      ChainId\n' +
-        //     '    }\n' +
-        //     '  }\n' +
-        //     '}\n'
-            const queries = await db.query(`SELECT * FROM queries WHERE url = ?`, 'Latest-Blocks_4') //[req.params.url]
-console.log(queries)
-            if (queries.length === 0) {
-                return res.status(404).send('Query not found');
+            const cachedImage = await redisClient.get(cacheKey)
+            if (cachedImage) {
+                const buffer = Buffer.from(cachedImage, 'base64')
+                res.setHeader('Content-Type', 'image/png')
+                res.send(buffer)
+            } else {
+                const queries = await db.query(`SELECT * FROM queries WHERE url = ?`, [req.params.url])
+                if (queries.length === 0) {
+                    return res.status(404).send('Query not found')
+                }
+                const codeQuery = queries[0]
+                codeQuery.query
+                const imageBuffer = await generateCodeImage(code)
+                await redisClient.set(cacheKey, imageBuffer.toString('base64'), 'EX', 86400)
+                res.setHeader('Content-Type', 'image/png')
+                res.setHeader('Cache-Control', 'public, max-age=86400')
+                res.send(imageBuffer)
             }
-            const codeQuery = queries[0]
-            const code = codeQuery.query
-            const imageBuffer = await generateCodeImage(code);
-            res.setHeader('Content-Type', 'image/png');
-            res.send(imageBuffer);
         } catch (error) {
-            console.error('Error generating image:', error);
-            res.status(500).send('Server error generating image');
+            console.error('Error generating or retrieving image:', error)
+            res.status(500).send('Server error')
         }
-    })
+    });
+
 
 
 }
