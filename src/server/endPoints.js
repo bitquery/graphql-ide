@@ -6,7 +6,7 @@ const codegen = require('postman-code-generators')
 const bodyParser = require('body-parser')
 const axios = require('axios')
 const {toast} = require("react-toastify")
-const {createCanvas} = require('canvas')
+const {createCanvas, registerFont} = require('canvas')
 const hljs = require('highlight.js')
 
 const getCodeSnippet = (lang, query, variables, key, endpoint_url, token) =>
@@ -912,6 +912,7 @@ module.exports = function (app, db, redisClient) {
     })
 
     async function generateCodeImage(query) {
+        registerFont('roboto.ttf', { family: 'Roboto' })
         const highlightedCode = hljs.highlight(query, {language: 'graphql'}).value
         const canvas = createCanvas(800, 600)
         const ctx = canvas.getContext('2d')
@@ -933,7 +934,7 @@ module.exports = function (app, db, redisClient) {
             textHeight = lines.length * lineHeight
         }
 
-        ctx.font = `${fontSize}px`;
+        ctx.font = `${fontSize}px 'Roboto'`
         ctx.fillStyle = '#000'
 
         let y = fontSize
@@ -961,7 +962,7 @@ module.exports = function (app, db, redisClient) {
                     return res.status(404).send('Query not found')
                 }
                 const imageBuffer = await generateCodeImage(queries[0].query)
-                await redisClient.set(cacheKey, imageBuffer.toString('base64'), 'EX', 86400)
+                // await redisClient.set(cacheKey, imageBuffer.toString('base64'), 'EX', 86400)
                 res.setHeader('Content-Type', 'image/png')
                 res.setHeader('Cache-Control', 'public, max-age=86400')
                 res.send(imageBuffer)
