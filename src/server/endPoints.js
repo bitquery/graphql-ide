@@ -911,8 +911,8 @@ module.exports = function (app, db, redisClient) {
         })
     })
 
-    async function generateCodeImage(code) {
-        const highlightedCode = hljs.highlight(code, {language: 'graphql'}).value
+    async function generateCodeImage(query) {
+        const highlightedCode = hljs.highlight(query, {language: 'graphql'}).value
         const canvas = createCanvas(800, 600)
         const ctx = canvas.getContext('2d')
 
@@ -946,7 +946,6 @@ module.exports = function (app, db, redisClient) {
         return canvas.toBuffer('image/png')
     }
 
-
     app.get('/api/generateimage/:url', async (req, res) => {
         const cacheKey = `image_cache:${req.params.url}`
         try {
@@ -954,14 +953,14 @@ module.exports = function (app, db, redisClient) {
             if (cachedImage) {
                 const buffer = Buffer.from(cachedImage, 'base64')
                 res.setHeader('Content-Type', 'image/png')
+                res.setHeader('Cache-Control', 'public, max-age=86400')
                 res.send(buffer)
             } else {
-                const queries = db.query(`SELECT query FROM queries WHERE url = ?`, [req.params.url])
+                const queries = await query(`SELECT query FROM queries WHERE url = ?`, [req.params.url])
                 if (queries.length === 0) {
                     return res.status(404).send('Query not found')
                 }
-                const codeQuery = queries[0]
-                const imageBuffer = await generateCodeImage(codeQuery)
+                const imageBuffer = await generateCodeImage(queries[0].query)
                 await redisClient.set(cacheKey, imageBuffer.toString('base64'), 'EX', 86400)
                 res.setHeader('Content-Type', 'image/png')
                 res.setHeader('Cache-Control', 'public, max-age=86400')
@@ -971,8 +970,8 @@ module.exports = function (app, db, redisClient) {
             console.error('Error generating or retrieving image:', error)
             res.status(500).send('Server error')
         }
-    });
 
+    })
 
 
 }
