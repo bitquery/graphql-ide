@@ -1,6 +1,6 @@
 module.exports = {
     title: 'GraphQL IDE',
     description: 'Bitquery is analytical engine for blockchains',
-    queryURL:'favicon_new.png',
+    queryURL:'https://ide.bitquery.io/favicon_new.png',
 
 }

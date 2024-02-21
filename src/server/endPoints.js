@@ -914,7 +914,7 @@ module.exports = function (app, db, redisClient) {
     async function generateCodeImage(query) {
         registerFont('roboto.ttf', { family: 'Roboto' })
         const highlightedCode = hljs.highlight(query, {language: 'graphql'}).value
-        const canvas = createCanvas(800, 600)
+        const canvas = createCanvas(900, 900)
         const ctx = canvas.getContext('2d')
 
         ctx.fillStyle = '#FFF'
