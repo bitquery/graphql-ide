@@ -85,7 +85,7 @@ redisClient.connect().then(async () => {
 							data = replaceData(data, {
 								title: defaultmeta.title,
 								description: defaultmeta.description,
-								queryURL:'favicon_new.png',
+								queryURL:'https://ide.bitquery.io/favicon_new.png',
 							})
 							res.send(data)
 						} else {
