@@ -947,7 +947,7 @@ module.exports = function (app, db, redisClient) {
     }
 
 
-    app.get('/api/generateimage/:name', async (req, res) => {
+    app.get('/api/generateimage/:url', async (req, res) => {
         try {
         // const code ='query ($network: evm_network, $limit: Int, $offset: Int!, $from: String, $till: String) {\n' +
         //     '  EVM(network: $network, dataset: combined) {\n' +
@@ -970,8 +970,8 @@ module.exports = function (app, db, redisClient) {
         //     '    }\n' +
         //     '  }\n' +
         //     '}\n'
-            const queries = await query(`SELECT * FROM queries WHERE url = ?`, [req.params.name]);
-
+            const queries = await db.query(`SELECT * FROM queries WHERE url = ?`, 'Latest-Blocks_4') //[req.params.url]
+console.log(queries)
             if (queries.length === 0) {
                 return res.status(404).send('Query not found');
             }

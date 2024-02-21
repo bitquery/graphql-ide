@@ -92,7 +92,7 @@ redisClient.connect().then(async () => {
 							data = replaceData(data, {
 								title: result[0].name,
 								description: result[0].description ? result[0].description : defaultmeta.description,
-								queryURL: `/api/generateimage/${result[0].url}`
+								queryURL: `ide.bitquery.io/api/generateimage/${result[0].url}`
 							})
 							res.send(data)
 
