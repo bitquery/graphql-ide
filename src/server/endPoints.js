@@ -8,6 +8,7 @@ const axios = require('axios')
 const {toast} = require("react-toastify")
 const {createCanvas, registerFont} = require('canvas')
 const hljs = require('highlight.js')
+const puppeteer = require('puppeteer')
 
 const getCodeSnippet = (lang, query, variables, key, endpoint_url, token) =>
     new Promise((resolve, reject) => {
@@ -911,68 +912,116 @@ module.exports = function (app, db, redisClient) {
         })
     })
 
-    async function generateCodeImage(query) {
-        registerFont('roboto.ttf', { family: 'Roboto' })
-        const highlightedCode = hljs.highlight(query, {language: 'graphql'}).value
-        const canvas = createCanvas(900, 900)
-        const ctx = canvas.getContext('2d')
+    // async function generateCodeImage(query) {
+    //     registerFont('roboto.ttf', { family: 'Roboto' })
+    //     const highlightedCode = hljs.highlight(query, {language: 'graphql'}).value
+    //     const canvas = createCanvas(900, 900)
+    //     const ctx = canvas.getContext('2d')
+    //
+    //     ctx.fillStyle = '#FFF'
+    //     ctx.fillRect(0, 0, canvas.width, canvas.height)
+    //
+    //     const plainText = highlightedCode.replace(/<[^>]*>/g, '')
+    //     const lines = plainText.split('\n')
+    //     const maxFontSize = 60
+    //     const minFontSize = 16
+    //     let fontSize = maxFontSize
+    //     let lineHeight = fontSize * 1.2
+    //     let textHeight = lines.length * lineHeight
+    //
+    //     while (textHeight > canvas.height && fontSize > minFontSize) {
+    //         fontSize -= 1
+    //         lineHeight = fontSize * 1.2
+    //         textHeight = lines.length * lineHeight
+    //     }
+    //
+    //     ctx.font = `${fontSize}px 'Roboto'`
+    //     ctx.fillStyle = '#000'
+    //
+    //     let y = fontSize
+    //
+    //     lines.forEach((line) => {
+    //         ctx.fillText(line, 0, y)
+    //         y += lineHeight
+    //     });
+    //
+    //     return canvas.toBuffer('image/png')
+    // }
+    //
+    // app.get('/api/generateimage/:url', async (req, res) => {
+    //     const cacheKey = `image_cache:${req.params.url}`
+    //     try {
+    //         const cachedImage = await redisClient.get(cacheKey)
+    //         if (cachedImage) {
+    //             const buffer = Buffer.from(cachedImage, 'base64')
+    //             res.setHeader('Content-Type', 'image/png')
+    //             res.setHeader('Cache-Control', 'public, max-age=86400')
+    //             res.send(buffer)
+    //         } else {
+    //             const queries = await query(`SELECT query FROM queries WHERE url = ?`, [req.params.url])
+    //             if (queries.length === 0) {
+    //                 return res.status(404).send('Query not found')
+    //             }
+    //             const imageBuffer = await generateCodeImage(queries[0].query)
+    //             // await redisClient.set(cacheKey, imageBuffer.toString('base64'), 'EX', 86400)
+    //             res.setHeader('Content-Type', 'image/png')
+    //             res.setHeader('Cache-Control', 'public, max-age=86400')
+    //             res.send(imageBuffer)
+    //         }
+    //     } catch (error) {
+    //         console.error('Error generating or retrieving image:', error)
+    //         res.status(500).send('Server error')
+    //     }
+    //
+    // })
 
-        ctx.fillStyle = '#FFF'
-        ctx.fillRect(0, 0, canvas.width, canvas.height)
+    async function generateHighlightedCodeImage(code) {
+        const browser = await puppeteer.launch();
+        const page = await browser.newPage();
 
-        const plainText = highlightedCode.replace(/<[^>]*>/g, '')
-        const lines = plainText.split('\n')
-        const maxFontSize = 60
-        const minFontSize = 16
-        let fontSize = maxFontSize
-        let lineHeight = fontSize * 1.2
-        let textHeight = lines.length * lineHeight
+        await page.setContent(`
+    <html>
+      <head>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.0/styles/default.min.css">
+        <style>pre { margin: 0; }</style>
+      </head>
+      <body>
+        <pre><code class="language-graphql">${code}</code></pre>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.0/highlight.min.js"></script>
+        <script>hljs.highlightAll();</script>
+      </body>
+    </html>
+  `, { waitUntil: 'networkidle0' });
 
-        while (textHeight > canvas.height && fontSize > minFontSize) {
-            fontSize -= 1
-            lineHeight = fontSize * 1.2
-            textHeight = lines.length * lineHeight
-        }
-
-        ctx.font = `${fontSize}px 'Roboto'`
-        ctx.fillStyle = '#000'
-
-        let y = fontSize
-
-        lines.forEach((line) => {
-            ctx.fillText(line, 0, y)
-            y += lineHeight
-        });
-
-        return canvas.toBuffer('image/png')
+        const buffer = await page.screenshot({ fullPage: true });
+        await browser.close();
+        return buffer;
     }
 
     app.get('/api/generateimage/:url', async (req, res) => {
-        const cacheKey = `image_cache:${req.params.url}`
+        const cacheKey = `image_cache:${req.params.url}`;
         try {
-            const cachedImage = await redisClient.get(cacheKey)
+            const cachedImage = await redisClient.get(cacheKey);
             if (cachedImage) {
-                const buffer = Buffer.from(cachedImage, 'base64')
-                res.setHeader('Content-Type', 'image/png')
-                res.setHeader('Cache-Control', 'public, max-age=86400')
-                res.send(buffer)
+                const buffer = Buffer.from(cachedImage, 'base64');
+                res.setHeader('Content-Type', 'image/png');
+                res.setHeader('Cache-Control', 'public, max-age=86400');
+                res.send(buffer);
             } else {
-                const queries = await query(`SELECT query FROM queries WHERE url = ?`, [req.params.url])
+                const queries = await query(`SELECT query FROM queries WHERE url = ?`, [req.params.url]);
                 if (queries.length === 0) {
-                    return res.status(404).send('Query not found')
+                    return res.status(404).send('Query not found');
                 }
-                const imageBuffer = await generateCodeImage(queries[0].query)
-                // await redisClient.set(cacheKey, imageBuffer.toString('base64'), 'EX', 86400)
-                res.setHeader('Content-Type', 'image/png')
-                res.setHeader('Cache-Control', 'public, max-age=86400')
-                res.send(imageBuffer)
+                const imageBuffer = await generateHighlightedCodeImage(queries[0].query);
+                // await redisClient.set(cacheKey, imageBuffer.toString('base64'), 'EX', 86400);
+                res.setHeader('Content-Type', 'image/png');
+                res.setHeader('Cache-Control', 'public, max-age=86400');
+                res.send(imageBuffer);
             }
         } catch (error) {
-            console.error('Error generating or retrieving image:', error)
-            res.status(500).send('Server error')
+            console.error('Error generating or retrieving image:', error);
+            res.status(500).send('Server error');
         }
-
-    })
-
+    });
 
 }
