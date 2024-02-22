@@ -949,13 +949,13 @@ module.exports = function (app, db, redisClient) {
     async function generateCodeImage(code) {
         const highlightedCode = hljs.highlight(code, { language: 'graphql' }).value;
 
-        const canvas = createCanvas(600, 700);
+        const canvas = createCanvas(1200, 630);
         const ctx = canvas.getContext('2d');
 
         ctx.fillStyle = '#FFF';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        let fontSize = 16;
+        let fontSize = 22;
         let lineHeight = fontSize * 1.2;
 
         ctx.font = `${fontSize}px Roboto`;
@@ -1073,7 +1073,7 @@ module.exports = function (app, db, redisClient) {
                     return res.status(404).send('Query not found')
                 }
                 const imageBuffer = await generateCodeImage(queries[0].query)
-                await redisClient.set(cacheKey, imageBuffer.toString('base64'), 'EX', 86400)
+                // await redisClient.set(cacheKey, imageBuffer.toString('base64'), 'EX', 86400)
                 res.setHeader('Content-Type', 'image/png')
                 res.setHeader('Cache-Control', 'public, max-age=86400')
                 res.send(imageBuffer)
