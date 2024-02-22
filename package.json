@@ -30,7 +30,6 @@
     "postman-code-generators": "^1.2.2",
     "postman-collection": "^4.1.5",
     "prerender-node": "^3.7.0",
-    "puppeteer": "^22.1.0",
     "react": "^18.2.0",
     "react-bootstrap": "^2.9.1",
     "react-dom": "^18.0.2",

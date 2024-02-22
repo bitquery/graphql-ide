@@ -8,7 +8,6 @@ const axios = require('axios')
 const {toast} = require("react-toastify")
 const {createCanvas, registerFont} = require('canvas')
 const hljs = require('highlight.js')
-const puppeteer = require('puppeteer')
 
 const getCodeSnippet = (lang, query, variables, key, endpoint_url, token) =>
     new Promise((resolve, reject) => {
@@ -912,10 +911,10 @@ module.exports = function (app, db, redisClient) {
         })
     })
 
+        registerFont('roboto.ttf', { family: 'Roboto' })
     // async function generateCodeImage(query) {
-    //     registerFont('roboto.ttf', { family: 'Roboto' })
     //     const highlightedCode = hljs.highlight(query, {language: 'graphql'}).value
-    //     const canvas = createCanvas(900, 900)
+    //     const canvas = createCanvas(600,700)
     //     const ctx = canvas.getContext('2d')
     //
     //     ctx.fillStyle = '#FFF'
@@ -947,81 +946,145 @@ module.exports = function (app, db, redisClient) {
     //
     //     return canvas.toBuffer('image/png')
     // }
-    //
-    // app.get('/api/generateimage/:url', async (req, res) => {
-    //     const cacheKey = `image_cache:${req.params.url}`
-    //     try {
-    //         const cachedImage = await redisClient.get(cacheKey)
-    //         if (cachedImage) {
-    //             const buffer = Buffer.from(cachedImage, 'base64')
-    //             res.setHeader('Content-Type', 'image/png')
-    //             res.setHeader('Cache-Control', 'public, max-age=86400')
-    //             res.send(buffer)
-    //         } else {
-    //             const queries = await query(`SELECT query FROM queries WHERE url = ?`, [req.params.url])
-    //             if (queries.length === 0) {
-    //                 return res.status(404).send('Query not found')
-    //             }
-    //             const imageBuffer = await generateCodeImage(queries[0].query)
-    //             // await redisClient.set(cacheKey, imageBuffer.toString('base64'), 'EX', 86400)
-    //             res.setHeader('Content-Type', 'image/png')
-    //             res.setHeader('Cache-Control', 'public, max-age=86400')
-    //             res.send(imageBuffer)
-    //         }
-    //     } catch (error) {
-    //         console.error('Error generating or retrieving image:', error)
-    //         res.status(500).send('Server error')
-    //     }
-    //
-    // })
+    async function generateCodeImage(code) {
+        const highlightedCode = hljs.highlight(code, { language: 'graphql' }).value;
 
-    async function generateHighlightedCodeImage(code) {
-        const browser = await puppeteer.launch();
-        const page = await browser.newPage();
+        const canvas = createCanvas(600, 700);
+        const ctx = canvas.getContext('2d');
 
-        await page.setContent(`
-    <html>
-      <head>
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.0/styles/default.min.css">
-        <style>pre { margin: 0; }</style>
-      </head>
-      <body>
-        <pre><code class="language-graphql">${code}</code></pre>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.0/highlight.min.js"></script>
-        <script>hljs.highlightAll();</script>
-      </body>
-    </html>
-  `, { waitUntil: 'networkidle0' });
+        ctx.fillStyle = '#FFF';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        const buffer = await page.screenshot({ fullPage: true });
-        await browser.close();
-        return buffer;
-    }
+        let fontSize = 16;
+        let lineHeight = fontSize * 1.2;
 
-    app.get('/api/generateimage/:url', async (req, res) => {
-        const cacheKey = `image_cache:${req.params.url}`;
-        try {
-            const cachedImage = await redisClient.get(cacheKey);
-            if (cachedImage) {
-                const buffer = Buffer.from(cachedImage, 'base64');
-                res.setHeader('Content-Type', 'image/png');
-                res.setHeader('Cache-Control', 'public, max-age=86400');
-                res.send(buffer);
+        ctx.font = `${fontSize}px Roboto`;
+        ctx.fillStyle = '#2061A0';
+
+        const lines = highlightedCode.split('\n');
+
+        let y = lineHeight;
+        lines.forEach((line) => {
+            if (line.includes('<span')) {
+                const parts = line.split(/(<\/?span[^>]*>)/g).filter(part => part.trim() !== '');
+                let x = lineHeight;
+                parts.forEach((part) => {
+                    if (part.startsWith('<span')) {
+                        const colorClass = part.match(/class="([^"]+)"/)[1];
+                        switch (colorClass) {
+                            case 'hljs-keyword':
+                                ctx.fillStyle = '#B11A03'
+                                break;
+                            case 'hljs-string':
+                                ctx.fillStyle = '#6a8759'
+                                break;
+                            case 'hljs-number':
+                                ctx.fillStyle = '#6897bb'
+                                break;
+                            case 'hljs-comment':
+                                ctx.fillStyle = '#808080'
+                                break;
+                            case 'hljs-preprocessor':
+                                ctx.fillStyle = '#bc9458'
+                                break;
+                            case 'hljs-variable':
+                                ctx.fillStyle = '#397D12'
+                                break;
+                            case 'hljs-params':
+                                ctx.fillStyle = '#9876aa'
+                                break;
+                            case 'hljs-class .hljs-title':
+                                ctx.fillStyle = '#ffc66d'
+                                break;
+                            case 'hljs-type':
+                                ctx.fillStyle = '#a5c261'
+                                break;
+                            case 'hljs-punctuation':
+                                ctx.fillStyle = '#555555'
+                                break;
+                            case 'hljs-symbol':
+                                ctx.fillStyle = '#f92672'
+                                break;
+                            case 'hljs-builtin-name':
+                                ctx.fillStyle = '#f92672'
+                                break;
+                            case 'hljs-attr':
+                                ctx.fillStyle = '#bf79db'
+                                break;
+                            case 'hljs-selector-id':
+                                ctx.fillStyle = '#8b8b8b'
+                                break;
+                            case 'hljs-selector-class':
+                                ctx.fillStyle = '#e7c547'
+                                break;
+                            case 'hljs-tag':
+                                ctx.fillStyle = '#e8bf6a'
+                                break;
+                            case 'hljs-name':
+                                ctx.fillStyle = '#e8bf6a'
+                                break;
+                            case 'hljs-regexp':
+                                ctx.fillStyle = '#e9c062'
+                                break;
+                            case 'hljs-link':
+                                ctx.fillStyle = '#5e5e5e'
+                                break;
+                            case 'hljs-meta':
+                                ctx.fillStyle = '#555'
+                                break;
+                            case 'hljs-deletion':
+                                ctx.fillStyle = '#f92672'
+                                break;
+                            case 'hljs-addition':
+                                ctx.fillStyle = '#a6e22e'
+                                break;
+                            default:
+                                ctx.fillStyle = '#CA9800'
+                        }
+
+                    } else if (part === '</span>') {
+                        ctx.fillStyle = '#2061A0';
+                    } else {
+                        const escapedPart = part.replace(/&lt;/g, '<').replace(/&gt;/g, '>');
+                        ctx.fillText(escapedPart, x, y);
+                        x += ctx.measureText(escapedPart).width;
+                    }
+                });
             } else {
-                const queries = await query(`SELECT query FROM queries WHERE url = ?`, [req.params.url]);
+                ctx.fillText(line, 0, y);
+            }
+            y += lineHeight;
+        });
+
+        return canvas.toBuffer('image/png');
+    }
+    app.get('/api/generateimage/:url', async (req, res) => {
+        const cacheKey = `image_cache:${req.params.url}`
+        try {
+            const cachedImage = await redisClient.get(cacheKey)
+            if (cachedImage) {
+                const buffer = Buffer.from(cachedImage, 'base64')
+                res.setHeader('Content-Type', 'image/png')
+                res.setHeader('Cache-Control', 'public, max-age=86400')
+                res.send(buffer)
+            } else {
+                const queries = await query(`SELECT query FROM queries WHERE url = ?`, [req.params.url])
                 if (queries.length === 0) {
-                    return res.status(404).send('Query not found');
+                    return res.status(404).send('Query not found')
                 }
-                const imageBuffer = await generateHighlightedCodeImage(queries[0].query);
-                // await redisClient.set(cacheKey, imageBuffer.toString('base64'), 'EX', 86400);
-                res.setHeader('Content-Type', 'image/png');
-                res.setHeader('Cache-Control', 'public, max-age=86400');
-                res.send(imageBuffer);
+                const imageBuffer = await generateCodeImage(queries[0].query)
+                await redisClient.set(cacheKey, imageBuffer.toString('base64'), 'EX', 86400)
+                res.setHeader('Content-Type', 'image/png')
+                res.setHeader('Cache-Control', 'public, max-age=86400')
+                res.send(imageBuffer)
             }
         } catch (error) {
-            console.error('Error generating or retrieving image:', error);
-            res.status(500).send('Server error');
+            console.error('Error generating or retrieving image:', error)
+            res.status(500).send('Server error')
         }
-    });
+
+    })
+
+
 
 }
