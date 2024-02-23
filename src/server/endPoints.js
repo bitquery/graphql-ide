@@ -944,7 +944,7 @@ module.exports = function (app, db, redisClient) {
     async function generateCodeImage(code) {
         const highlightedCode = hljs.highlight(code, { language: 'graphql' }).value
 
-        const canvas = createCanvas(900, 630)
+        const canvas = createCanvas(1200, 630)
         const ctx = canvas.getContext('2d')
 
         ctx.fillStyle = '#FFF'
