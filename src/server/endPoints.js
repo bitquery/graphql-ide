@@ -911,119 +911,79 @@ module.exports = function (app, db, redisClient) {
         })
     })
 
-        registerFont('roboto.ttf', { family: 'Roboto' })
-    async function generateCodeImage(code) {
-        const highlightedCode = hljs.highlight(code, { language: 'graphql' }).value;
-
-        const canvas = createCanvas(1200, 630);
-        const ctx = canvas.getContext('2d');
-
-        ctx.fillStyle = '#FFF';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-        let fontSize = 22;
-        let lineHeight = fontSize * 1.2;
-
-        ctx.font = `${fontSize}px Roboto`;
-        ctx.fillStyle = '#2061A0';
-
-        const lines = highlightedCode.split('\n');
-
-        let y = lineHeight;
-        lines.forEach((line) => {
-            if (line.includes('<span')) {
-                const parts = line.split(/(<\/?span[^>]*>)/g).filter(part => part.trim() !== '');
-                let x = 10;
-                parts.forEach((part) => {
-                    if (part.startsWith('<span')) {
-                        const colorClass = part.match(/class="([^"]+)"/)[1];
-                        switch (colorClass) {
-                            case 'hljs-keyword':
-                                ctx.fillStyle = '#B11A03'
-                                break;
-                            case 'hljs-string':
-                                ctx.fillStyle = '#6a8759'
-                                break;
-                            case 'hljs-number':
-                                ctx.fillStyle = '#6897bb'
-                                break;
-                            case 'hljs-comment':
-                                ctx.fillStyle = '#808080'
-                                break;
-                            case 'hljs-preprocessor':
-                                ctx.fillStyle = '#bc9458'
-                                break;
-                            case 'hljs-variable':
-                                ctx.fillStyle = '#397D12'
-                                break;
-                            case 'hljs-params':
-                                ctx.fillStyle = '#9876aa'
-                                break;
-                            case 'hljs-class .hljs-title':
-                                ctx.fillStyle = '#ffc66d'
-                                break;
-                            case 'hljs-type':
-                                ctx.fillStyle = '#a5c261'
-                                break;
-                            case 'hljs-punctuation':
-                                ctx.fillStyle = '#555555'
-                                break;
-                            case 'hljs-symbol':
-                                ctx.fillStyle = '#f92672'
-                                break;
-                            case 'hljs-builtin-name':
-                                ctx.fillStyle = '#f92672'
-                                break;
-                            case 'hljs-attr':
-                                ctx.fillStyle = '#bf79db'
-                                break;
-                            case 'hljs-selector-id':
-                                ctx.fillStyle = '#8b8b8b'
-                                break;
-                            case 'hljs-selector-class':
-                                ctx.fillStyle = '#e7c547'
-                                break;
-                            case 'hljs-tag':
-                                ctx.fillStyle = '#e8bf6a'
-                                break;
-                            case 'hljs-name':
-                                ctx.fillStyle = '#e8bf6a'
-                                break;
-                            case 'hljs-regexp':
-                                ctx.fillStyle = '#e9c062'
-                                break;
-                            case 'hljs-link':
-                                ctx.fillStyle = '#5e5e5e'
-                                break;
-                            case 'hljs-meta':
-                                ctx.fillStyle = '#555'
-                                break;
-                            case 'hljs-deletion':
-                                ctx.fillStyle = '#f92672'
-                                break;
-                            case 'hljs-addition':
-                                ctx.fillStyle = '#a6e22e'
-                                break;
-                            default:
-                                ctx.fillStyle = '#CA9800'
-                        }
-
-                    } else if (part === '</span>') {
-                        ctx.fillStyle = '#2061A0';
-                    } else {
-                        const escapedPart = part.replace(/&lt;/g, '<').replace(/&gt;/g, '>');
-                        ctx.fillText(escapedPart, x, y);
-                        x += ctx.measureText(escapedPart).width;
-                    }
-                });
-            } else {
-                ctx.fillText(line, 0, y);
-            }
-            y += lineHeight;
-        });
-
-        return canvas.toBuffer('image/png');
+    registerFont('roboto.ttf', {family: 'Roboto'})
+    function getColorForClass(colorClass) {
+        const colorMap = {
+            'hljs-keyword': '#B11A03',
+            'hljs-string': '#6a8759',
+            'hljs-number': '#6897bb',
+            'hljs-comment': '#808080',
+            'hljs-preprocessor': '#bc9458',
+            'hljs-variable': '#397D12',
+            'hljs-params': '#9876aa',
+            'hljs-class .hljs-title': '#ffc66d',
+            'hljs-type': '#a5c261',
+            'hljs-punctuation': '#555555',
+            'hljs-symbol': '#f92672',
+            'hljs-builtin-name': '#f92672',
+            'hljs-attr': '#bf79db',
+            'hljs-selector-id': '#8b8b8b',
+            'hljs-selector-class': '#e7c547',
+            'hljs-tag': '#e8bf6a',
+            'hljs-name': '#e8bf6a',
+            'hljs-regexp': '#e9c062',
+            'hljs-link': '#5e5e5e',
+            'hljs-meta': '#555',
+            'hljs-deletion': '#f92672',
+            'hljs-addition': '#a6e22e',
+            'default': '#CA9800'
+        };
+        return colorMap[colorClass] || colorMap['default']
     }
+
+    async function generateCodeImage(code) {
+        const highlightedCode = hljs.highlight(code, { language: 'graphql' }).value
+
+        const canvas = createCanvas(900, 630)
+        const ctx = canvas.getContext('2d')
+
+        ctx.fillStyle = '#FFF'
+        ctx.fillRect(0, 0, canvas.width, canvas.height)
+
+        let fontSize = 18
+        let lineHeight = fontSize * 1.2
+
+        ctx.font = `${fontSize}px Roboto`
+        const defaultFillColor = '#2061A0'
+        ctx.fillStyle = defaultFillColor
+
+        const lines = highlightedCode.split('\n')
+
+        let y = lineHeight
+        for (const line of lines) {
+            let x = 10
+            if (line.includes('<span')) {
+                const parts = line.split(/(<\/?span[^>]*>)/g).filter(part => part.trim())
+                for (const part of parts) {
+                    if (part.startsWith('<span')) {
+                        const colorClass = part.match(/class="([^"]+)"/)[1]
+                        ctx.fillStyle = getColorForClass(colorClass)
+                    } else if (part === '</span>') {
+                        ctx.fillStyle = defaultFillColor
+                    } else {
+                        const escapedPart = part.replace(/&lt;/g, '<').replace(/&gt;/g, '>')
+                        ctx.fillText(escapedPart, x, y)
+                        x += ctx.measureText(escapedPart).width
+                    }
+                }
+            } else {
+                ctx.fillText(line, 10, y)
+            }
+            y += lineHeight
+        }
+        return canvas.toBuffer('image/png')
+    }
+
     app.get('/api/generateimage/:url', async (req, res) => {
         const cacheKey = `image_cache:${req.params.url}`
         try {
@@ -1034,7 +994,9 @@ module.exports = function (app, db, redisClient) {
                 res.setHeader('Cache-Control', 'public, max-age=86400')
                 res.send(buffer)
             } else {
-                const queries = await query(`SELECT query FROM queries WHERE url = ?`, [req.params.url])
+                const queries = await query(`SELECT query
+                                             FROM queries
+                                             WHERE url = ?`, [req.params.url])
                 if (queries.length === 0) {
                     return res.status(404).send('Query not found')
                 }
@@ -1050,7 +1012,6 @@ module.exports = function (app, db, redisClient) {
         }
 
     })
-
 
 
 }
