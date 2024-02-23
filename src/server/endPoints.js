@@ -912,40 +912,6 @@ module.exports = function (app, db, redisClient) {
     })
 
         registerFont('roboto.ttf', { family: 'Roboto' })
-    // async function generateCodeImage(query) {
-    //     const highlightedCode = hljs.highlight(query, {language: 'graphql'}).value
-    //     const canvas = createCanvas(600,700)
-    //     const ctx = canvas.getContext('2d')
-    //
-    //     ctx.fillStyle = '#FFF'
-    //     ctx.fillRect(0, 0, canvas.width, canvas.height)
-    //
-    //     const plainText = highlightedCode.replace(/<[^>]*>/g, '')
-    //     const lines = plainText.split('\n')
-    //     const maxFontSize = 60
-    //     const minFontSize = 16
-    //     let fontSize = maxFontSize
-    //     let lineHeight = fontSize * 1.2
-    //     let textHeight = lines.length * lineHeight
-    //
-    //     while (textHeight > canvas.height && fontSize > minFontSize) {
-    //         fontSize -= 1
-    //         lineHeight = fontSize * 1.2
-    //         textHeight = lines.length * lineHeight
-    //     }
-    //
-    //     ctx.font = `${fontSize}px 'Roboto'`
-    //     ctx.fillStyle = '#000'
-    //
-    //     let y = fontSize
-    //
-    //     lines.forEach((line) => {
-    //         ctx.fillText(line, 0, y)
-    //         y += lineHeight
-    //     });
-    //
-    //     return canvas.toBuffer('image/png')
-    // }
     async function generateCodeImage(code) {
         const highlightedCode = hljs.highlight(code, { language: 'graphql' }).value;
 
@@ -967,7 +933,7 @@ module.exports = function (app, db, redisClient) {
         lines.forEach((line) => {
             if (line.includes('<span')) {
                 const parts = line.split(/(<\/?span[^>]*>)/g).filter(part => part.trim() !== '');
-                let x = lineHeight;
+                let x = 10;
                 parts.forEach((part) => {
                     if (part.startsWith('<span')) {
                         const colorClass = part.match(/class="([^"]+)"/)[1];
