@@ -1342,3 +1342,27 @@ li:focus-visible {
 	  opacity: 1
 	}
   }
+
+.drop-down-fix{
+	border: none;
+	padding: 0;
+	margin: 0;
+	height: 31px;
+	border-radius: 0;
+	background: #EFEFEE;
+	&:focus{
+		background: #EFEFEE;
+
+	}
+}
+.input-url-fix{
+	border: none;
+	height: 31px;
+}
+
+.input-group-fix{
+	border: 1.2px solid #ced4da;
+	border-radius: 0.25rem;
+	height: 32.5px;
+	overflow: hidden;
+}
