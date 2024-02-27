@@ -944,7 +944,7 @@ module.exports = function (app, db, redisClient) {
     async function generateCodeImage(code) {
         const highlightedCode = hljs.highlight(code, { language: 'graphql' }).value
 
-        const canvas = createCanvas(1200, 630)
+        const canvas = createCanvas(910, 478)
         const ctx = canvas.getContext('2d')
 
         ctx.fillStyle = '#FFF'
@@ -984,7 +984,7 @@ module.exports = function (app, db, redisClient) {
         return canvas.toBuffer('image/png')
     }
 
-    app.get('/api/generateimage/:url', async (req, res) => {
+    app.get('/api/generateimage/:url.png', async (req, res) => {
         const cacheKey = `image_cache:${req.params.url}`
         try {
             const cachedImage = await redisClient.get(cacheKey)
