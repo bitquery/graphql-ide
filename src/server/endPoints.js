@@ -1001,7 +1001,7 @@ module.exports = function (app, db, redisClient) {
                     return res.status(404).send('Query not found')
                 }
                 const imageBuffer = await generateCodeImage(queries[0].query)
-                await redisClient.set(cacheKey, imageBuffer.toString('base64'), 'EX', 86400)
+                // await redisClient.set(cacheKey, imageBuffer.toString('base64'), 'EX', 86400)
                 res.setHeader('Content-Type', 'image/png')
                 res.setHeader('Cache-Control', 'public, max-age=86400')
                 res.send(imageBuffer)
