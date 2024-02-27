@@ -981,10 +981,10 @@ module.exports = function (app, db, redisClient) {
             }
             y += lineHeight
         }
-        return canvas.toBuffer('image/png')
+        return canvas.toDataURL('image/png')
     }
 
-    app.get('/api/generateimage/:url.png', async (req, res) => {
+    app.get('/api/generateimage/:url', async (req, res) => {
         const cacheKey = `image_cache:${req.params.url}`
         try {
             const cachedImage = await redisClient.get(cacheKey)
