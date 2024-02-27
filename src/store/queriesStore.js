@@ -24,10 +24,13 @@ class User {
             this.setUser(data.user[0])
             if (!updateToken) {
                 const searchParams = new URL(document.location).searchParams
-                const endpoint_url = searchParams.get('endpoint') ? searchParams.get('endpoint') : data.user[0].graphql_legacy_url
+                const hasWidgetParams = searchParams.has('widgetParam')
+                const endpoint_url = searchParams.get('endpoint') ? searchParams.get('endpoint') : (hasWidgetParams ? data.user[0].graphql_legacy_url : data.user[0].graphql_url)
+                // const endpoint_url = searchParams.get('endpoint') ? searchParams.get('endpoint') : data.user[0].graphql_legacy_url
                 // const endpoint_url = searchParams.get('endpoint') ? searchParams.get('endpoint') : data.user[0].graphql_url
                 QueriesStore.updateQuery({endpoint_url}, 0)
             }
+
         } catch (error) {
             this.setUser(undefined)
             console.log(error.response?.data)

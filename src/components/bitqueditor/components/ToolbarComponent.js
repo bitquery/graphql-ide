@@ -61,7 +61,6 @@ const ToolbarComponent = observer(({
         updateQuery({endpoint_url: e.target.value}, index)
     }
     const handleDropdownSelect = (url) => {
-        // const url = e.target.value
         updateQuery({endpoint_url: url}, index)
         setSelectedUrl(url)
     }
