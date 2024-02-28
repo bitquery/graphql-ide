@@ -989,6 +989,8 @@ module.exports = function (app, db, redisClient) {
         const cacheKey = `image_cache:${req.params.url}`
         try {
             const cachedImage = await redisClient.get(cacheKey)
+            console.log(req.url.substring(1))
+
             if (cachedImage) {
                 const buffer = Buffer.from(cachedImage, 'base64')
                 res.setHeader('Content-Type', 'image/png')

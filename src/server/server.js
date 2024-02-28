@@ -60,7 +60,7 @@ redisClient.connect().then(async () => {
 
 	if (isProduction) {
 		app.get('*',  (req, res) => {
-			const url = req.url.substring(1)
+			const url = req.url.split('?')[0].substring(1) //req.params.url
 			const filePath = path.resolve(__dirname, '../../build', 'index.html')
 			const fullUrl = req.protocol + '://' + req.get('host') + req.originalUrl
 
@@ -92,6 +92,7 @@ redisClient.connect().then(async () => {
 							data = replaceData(data, {
 								title: result[0].name,
 								description: result[0].description ? result[0].description : defaultmeta.description,
+								// req.params.url
 								queryURL: `https://ide.bitquery.io/api/generateimage/${result[0].url}`
 							})
 							res.send(data)
