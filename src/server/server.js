@@ -64,8 +64,6 @@ redisClient.connect().then(async () => {
 			const filePath = path.resolve(__dirname, '../../build', 'index.html')
 			const fullUrl = req.protocol + '://' + req.get('host') + req.originalUrl
 
-//favicon_new.png'
-
 			const replaceData = (data, meta) => {
 				return data
 					.replace(/__TITLE__/g,`${ meta.title} - Blockchain Data API`)
@@ -92,7 +90,6 @@ redisClient.connect().then(async () => {
 							data = replaceData(data, {
 								title: result[0].name,
 								description: result[0].description ? result[0].description : defaultmeta.description,
-								// req.params.url
 								queryURL: `https://ide.bitquery.io/api/generateimage/${result[0].url}.png`
 							})
 							res.send(data)
