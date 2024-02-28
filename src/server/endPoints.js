@@ -1005,6 +1005,12 @@ module.exports = function (app, db, redisClient) {
                 }
                 res.setHeader('Content-Type', 'image/png')
                 res.setHeader('Cache-Control', 'public, max-age=86400')
+                res.header("Access-Control-Allow-Origin", "*")
+                res.header("Access-Control-Allow-Methods", "GET, POST")
+                res.header("Access-Control-Allow-Headers", "Content-Type, X-PINGOTHER")
+                res.header("Access-Control-Allow-Credentials", "true")
+                res.header("Access-Control-Expose-Headers", "*")
+                res.header("Access-Control-Max-Age", "86400")
                 const imageBuffer = await generateCodeImage(queries[0].query)
                 imageBuffer.pipe(res)
                 // await redisClient.set(cacheKey, imageBuffer.toString('base64'), 'EX', 86400)
