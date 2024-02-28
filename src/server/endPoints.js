@@ -981,16 +981,22 @@ module.exports = function (app, db, redisClient) {
             }
             y += lineHeight
         }
-        // console.log(canvas.createPNGStream())
         return canvas.createPNGStream()
     }
 
-    app.get('/api/generateimage/:url', async (req, res) => {
+    app.get('/api/generateimage/:url.png', async (req, res) => {
         const cacheKey = `image_cache:${req.params.url}`
         try {
             const cachedImage = await redisClient.get(cacheKey)
             console.log(req.url.substring(1))
-
+            res.setHeader('Content-Type', 'image/png')
+            res.setHeader('Cache-Control', 'public, max-age=86400')
+            res.header("Access-Control-Allow-Origin", "*")
+            res.header("Access-Control-Allow-Methods", "GET")
+            res.header("Access-Control-Allow-Headers", "Content-Type, X-Requested-With")
+            res.header("Access-Control-Allow-Credentials", "true")
+            res.header("Access-Control-Expose-Headers", "Content-Length, X-Kitten-Count")
+            res.header("Access-Control-Max-Age", "86400")
             if (cachedImage) {
                 const buffer = Buffer.from(cachedImage, 'base64')
                 res.setHeader('Content-Type', 'image/png')
@@ -1003,14 +1009,7 @@ module.exports = function (app, db, redisClient) {
                 if (queries.length === 0) {
                     return res.status(404).send('Query not found')
                 }
-                res.setHeader('Content-Type', 'image/png')
-                res.setHeader('Cache-Control', 'public, max-age=86400')
-                res.header("Access-Control-Allow-Origin", "*")
-                res.header("Access-Control-Allow-Methods", "GET")
-                res.header("Access-Control-Allow-Headers", "Content-Type, X-Requested-With")
-                res.header("Access-Control-Allow-Credentials", "true")
-                res.header("Access-Control-Expose-Headers", "Content-Length, X-Kitten-Count")
-                res.header("Access-Control-Max-Age", "86400")
+
                 const imageBuffer = await generateCodeImage(queries[0].query)
                 imageBuffer.pipe(res)
                 // await redisClient.set(cacheKey, imageBuffer.toString('base64'), 'EX', 86400)
