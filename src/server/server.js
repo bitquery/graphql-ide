@@ -93,7 +93,7 @@ redisClient.connect().then(async () => {
 								title: result[0].name,
 								description: result[0].description ? result[0].description : defaultmeta.description,
 								// req.params.url
-								queryURL: `https://ide.bitquery.io/api/generateimage/${result[0].url}.png`
+								queryURL: `https://ide.bitquery.io/api/generateimage/${result[0].url}`
 							})
 							res.send(data)
 
