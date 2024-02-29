@@ -6,7 +6,7 @@ const codegen = require('postman-code-generators')
 const bodyParser = require('body-parser')
 const axios = require('axios')
 const {toast} = require("react-toastify")
-const {createCanvas, registerFont} = require('canvas')
+const {createCanvas, registerFont,loadImage} = require('canvas')
 const hljs = require('highlight.js')
 
 const getCodeSnippet = (lang, query, variables, key, endpoint_url, token) =>
@@ -942,45 +942,50 @@ module.exports = function (app, db, redisClient) {
     }
 
     async function generateCodeImage(code) {
-        const highlightedCode = hljs.highlight(code, { language: 'graphql' }).value
-
-        const canvas = createCanvas(910, 478)
+        const canvas = createCanvas(1200, 630)
         const ctx = canvas.getContext('2d')
 
-        ctx.fillStyle = '#FFF'
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.1)'
         ctx.fillRect(0, 0, canvas.width, canvas.height)
 
-        let fontSize = 18
+        ctx.globalAlpha = 0.05
+        const filePath = path.resolve(__dirname, '../../public/bitquery_logo_w.png')
+        const image = await loadImage(filePath)
+        ctx.drawImage(image,50, 150,  canvas.width -100 , canvas.height /2)
+
+
+        ctx.globalAlpha = 1.0
+        let fontSize = 16
         let lineHeight = fontSize * 1.2
-
         ctx.font = `${fontSize}px Roboto`
+
+        const highlightedCode = hljs.highlight(code, { language: 'graphql' }).value
         const defaultFillColor = '#2061A0'
-        ctx.fillStyle = defaultFillColor
-
         const lines = highlightedCode.split('\n')
-
-        let y = lineHeight
+        let y = lineHeight +20
         for (const line of lines) {
-            let x = 10
+            let x = 20
             if (line.includes('<span')) {
-                const parts = line.split(/(<\/?span[^>]*>)/g).filter(part => part.trim())
+                const parts = line.split(/(<\/?span[^>]*>)/g)
                 for (const part of parts) {
                     if (part.startsWith('<span')) {
                         const colorClass = part.match(/class="([^"]+)"/)[1]
                         ctx.fillStyle = getColorForClass(colorClass)
                     } else if (part === '</span>') {
                         ctx.fillStyle = defaultFillColor
-                    } else {
+                    }
+                    else {
                         const escapedPart = part.replace(/&lt;/g, '<').replace(/&gt;/g, '>')
                         ctx.fillText(escapedPart, x, y)
                         x += ctx.measureText(escapedPart).width
                     }
                 }
             } else {
-                ctx.fillText(line, 10, y)
+                ctx.fillText(line, x, y)
             }
             y += lineHeight
         }
+
         return canvas.createPNGStream()
     }
 
@@ -988,7 +993,6 @@ module.exports = function (app, db, redisClient) {
         const cacheKey = `image_cache:${req.params.url}`
         try {
             const cachedImage = await redisClient.get(cacheKey)
-            console.log(req.url.substring(1))
             res.setHeader('Content-Type', 'image/png')
             res.setHeader('Cache-Control', 'public, max-age=86400')
             res.header("Access-Control-Allow-Origin", "*")
@@ -1013,7 +1017,6 @@ module.exports = function (app, db, redisClient) {
                 const imageBuffer = await generateCodeImage(queries[0].query)
                 imageBuffer.pipe(res)
                 // await redisClient.set(cacheKey, imageBuffer.toString('base64'), 'EX', 86400)
-                // res.send(imageBuffer)
             }
         } catch (error) {
             console.error('Error generating or retrieving image:', error)
