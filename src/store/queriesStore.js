@@ -22,7 +22,6 @@ class User {
         try {
             const {data} = await getUser()
             this.setUser(data.user[0])
-            console.log(QueriesStore.queryParams.query)
             if (!updateToken) {
                 const searchParams = new URL(document.location).searchParams
                 let endpoint_url
