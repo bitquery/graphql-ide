@@ -24,13 +24,13 @@ class User {
             this.setUser(data.user[0])
             if (!updateToken) {
                 const searchParams = new URL(document.location).searchParams
-                let widget_id = searchParams.get('widget')
+                let widget_ids = searchParams.get('widget_ids')
                 let endpoint_url
-                // if (widget_id) {
+                if (widget_ids) {
                     endpoint_url = searchParams.get('endpoint') ? searchParams.get('endpoint') : data.user[0].graphql_legacy_url
-                // } else {
-                //     endpoint_url = searchParams.get('endpoint') ? searchParams.get('endpoint') : data.user[0].graphql_url
-                // }
+                } else {
+                    endpoint_url = searchParams.get('endpoint') ? searchParams.get('endpoint') : data.user[0].graphql_url
+                }
                 QueriesStore.updateQuery({endpoint_url}, 0)
             }
 
