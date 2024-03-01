@@ -23,13 +23,12 @@ class User {
             const {data} = await getUser()
             this.setUser(data.user[0])
             let endpoint_url
-                const searchParams = new URL(document.location).searchParams
+            const searchParams = new URL(document.location).searchParams
             if (!searchParams.get('endpoint') && updateToken) {
                 endpoint_url = searchParams.get('endpoint') ? searchParams.get('endpoint') : data.user[0].graphql_legacy_url
             }
             if (!updateToken) {
-
-                    endpoint_url = searchParams.get('endpoint') ? searchParams.get('endpoint') : data.user[0].graphql_url
+                endpoint_url = searchParams.get('endpoint') ? searchParams.get('endpoint') : data.user[0].graphql_url
                 QueriesStore.updateQuery({endpoint_url}, 0)
             }
 
