@@ -953,7 +953,6 @@ module.exports = function (app, db, redisClient) {
         const image = await loadImage(filePath)
         ctx.drawImage(image,50, 150,  canvas.width -100 , canvas.height /2)
 
-
         ctx.globalAlpha = 1.0
         let fontSize = 16
         let lineHeight = fontSize * 1.2
@@ -985,12 +984,11 @@ module.exports = function (app, db, redisClient) {
             }
             y += lineHeight
         }
-
         return canvas.createPNGStream()
     }
 
     app.get('/api/generateimage/:url.png', async (req, res) => {
-        const cacheKey = `image_cache:${req.params.url}`
+        const cacheKey = `image_query:${req.params.url}`
         try {
             const cachedImage = await redisClient.get(cacheKey)
             res.setHeader('Content-Type', 'image/png')
@@ -1013,10 +1011,9 @@ module.exports = function (app, db, redisClient) {
                 if (queries.length === 0) {
                     return res.status(404).send('Query not found')
                 }
-
                 const imageBuffer = await generateCodeImage(queries[0].query)
+                await redisClient.set(cacheKey, imageBuffer.toString('base64'), 'EX', 86400)
                 imageBuffer.pipe(res)
-                // await redisClient.set(cacheKey, imageBuffer.toString('base64'), 'EX', 86400)
             }
         } catch (error) {
             console.error('Error generating or retrieving image:', error)
