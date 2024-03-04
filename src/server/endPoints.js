@@ -954,7 +954,7 @@ module.exports = function (app, db, redisClient) {
         ctx.drawImage(image,50, 150,  canvas.width -100 , canvas.height /2)
 
         ctx.globalAlpha = 1.0
-        let fontSize = 16
+        let fontSize = 21
         let lineHeight = fontSize * 1.2
         ctx.font = `${fontSize}px Roboto`
 
@@ -974,13 +974,14 @@ module.exports = function (app, db, redisClient) {
                         ctx.fillStyle = defaultFillColor
                     }
                     else {
-                        const escapedPart = part.replace(/&lt;/g, '<').replace(/&gt;/g, '>')
+                        const escapedPart = part.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"')
                         ctx.fillText(escapedPart, x, y)
                         x += ctx.measureText(escapedPart).width
                     }
                 }
             } else {
-                ctx.fillText(line, x, y)
+                const correctedLine = line.replace(/&quot;/g, '"')
+                ctx.fillText(correctedLine, x, y)
             }
             y += lineHeight
         }
