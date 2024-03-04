@@ -776,7 +776,7 @@ module.exports = function (app, db, redisClient) {
         db.query(sql, [req.params.url], (err, result) => {
             if (err) console.log(err)
             if (!result.length) {
-                res.send('There is no such querie with same url...')
+                res.send('There is no such queries with the same url...')
             } else {
                 const {account_id, ...query} = result[0]
                 query.isOwner = account_id === req.account_id
