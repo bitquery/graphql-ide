@@ -25,11 +25,11 @@ class User {
             if (!updateToken) {
                 const searchParams = new URL(document.location).searchParams
                 let endpoint_url
-                if ( !searchParams.get('endpoint')  &&  QueriesStore.currentQuery.endpoint_url && QueriesStore.currentQuery.endpoint_url === 'https://graphql.bitquery.io') {
-                    endpoint_url =  data.user[0].graphql_legacy_url
-                } else {
-                    endpoint_url = searchParams.get('endpoint') ? searchParams.get('endpoint') : data.user[0].graphql_url
-                }
+                // if (!searchParams.get('endpoint') && QueriesStore.currentQuery.endpoint_url && QueriesStore.currentQuery.endpoint_url === 'https://graphql.bitquery.io') {
+                    endpoint_url = searchParams.get('endpoint') ? searchParams.get('endpoint') : data.user[0].graphql_legacy_url
+                // } else {
+                //     endpoint_url = searchParams.get('endpoint') ? searchParams.get('endpoint') : data.user[0].graphql_url
+                // }
                 QueriesStore.updateQuery({endpoint_url}, 0)
             }
         } catch (error) {
