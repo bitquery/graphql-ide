@@ -86,8 +86,6 @@ const TabsComponent = observer(() => {
                 gqbi()
             } else if (/^\/transfer\/[0-9a-fA-F]{6}$/.test(history.location.pathname)) {
                 const code = history.location.pathname.match(/[0-9a-fA-F]{6}/)[0]
-                setQueryIsTransfered(true)
-
                 const gtf = async () => {
                     const {data} = await getTransferedQuery(code)
                     //query string goes from explorer JSON.stringify'ed twice
@@ -101,7 +99,7 @@ const TabsComponent = observer(() => {
                         // endpoint_url: isSubscription && 'https://streaming.bitquery.io/graphql'
                         endpoint_url: 'https://graphql.bitquery.io'
                     }, index)
-                    // setQueryIsTransfered(true)
+                    setQueryIsTransfered(true)
                     setx(2)
                     setIsLoaded()
                 }
