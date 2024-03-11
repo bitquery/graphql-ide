@@ -961,9 +961,9 @@ module.exports = function (app, db, redisClient) {
         const highlightedCode = hljs.highlight(code, { language: 'graphql' }).value
         const defaultFillColor = '#2061A0'
         const lines = highlightedCode.split('\n')
-        let y = lineHeight +20
+        let y = lineHeight +40
         for (const line of lines) {
-            let x = 20
+            let x = 80
             if (line.includes('<span')) {
                 const parts = line.split(/(<\/?span[^>]*>)/g)
                 for (const part of parts) {
