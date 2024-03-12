@@ -989,21 +989,8 @@ module.exports = function (app, db, redisClient) {
     }
 
     app.get('/api/generateimage/:url.png', async (req, res) => {
-        // const cacheKey = `image_querysы:${req.params.url}`
         try {
-            // const cachedImage = await redisClient.get(cacheKey)
             res.setHeader('Content-Type', 'image/png')
-            // res.setHeader('Cache-Control', 'public, max-age=86400')
-            // res.header("Access-Control-Allow-Origin", "*")
-            // res.header("Access-Control-Allow-Methods", "GET")
-            // res.header("Access-Control-Allow-Headers", "Content-Type, X-Requested-With")
-            // res.header("Access-Control-Allow-Credentials", "true")
-            // res.header("Access-Control-Expose-Headers", "Content-Length, X-Kitten-Count")
-            // res.header("Access-Control-Max-Age", "86400")
-            // if (cachedImage) {
-            //     const buffer = Buffer.from(cachedImage, 'base64')
-            //     res.send(buffer)
-            // } else {
                 const queries = await query(`SELECT query
                                              FROM queries
                                              WHERE url = ?`, [req.params.url])
@@ -1012,8 +999,6 @@ module.exports = function (app, db, redisClient) {
                 }
                 const imageBuffer = await generateCodeImage(queries[0].query)
                 imageBuffer.pipe(res)
-                // await redisClient.set(cacheKey, imageBuffer.toString('base64'), 'EX', 86400)
-            // }
         } catch (error) {
             console.error('Error generating or retrieving image:', error)
             res.status(500).send('Server error')
