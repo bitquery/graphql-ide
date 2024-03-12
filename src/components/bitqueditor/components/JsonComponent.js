@@ -67,16 +67,21 @@ export default class JsonComponent {
     }
 
     onSubscriptionData(data) {
-        this.viewer.replaceRange('0 seconds ago\n', {line: 0, ch: 0})
+        this.viewer.replaceRange('0.000 seconds ago\n', {line: 0, ch: 0})
         this.viewer.replaceRange(`${JSON.stringify(data, null, 2)}\n`, {line: 1, ch: 0})
-        this.timers[new Date().getTime()] = this.viewer.getLineHandle(0)
+        this.timers[String(new Date().getTime())] = this.viewer.getLineHandle(0)
         this.clean()
         this.interval = setInterval(() => {
-            for (const time in this.timers) {
-                const lineNumber = this.viewer.lineInfo(this.timers[time]).line
-                const newTime = `${Math.floor((new Date().getTime() - time) / 1000)} seconds ago`
-                this.viewer.replaceRange(newTime, {line: lineNumber, ch: 0}, {line: lineNumber, ch: 30})
+            for (const timeString in this.timers) {
+                const time = parseInt(timeString, 10)
+                const lineNumber = this.viewer.lineInfo(this.timers[timeString]).line
+                const timeDifference = new Date().getTime() - time
+                const seconds = Math.floor(timeDifference / 1000)
+                const milliseconds = timeDifference % 1000
+                const newTime = `${seconds}.${milliseconds.toString().padStart(3, '0')} seconds ago`
+                this.viewer.replaceRange(newTime, {line: lineNumber, ch: 0}, {line: lineNumber, ch: Infinity})
             }
-        }, 1000)
+        }, 10)
     }
+
 }
