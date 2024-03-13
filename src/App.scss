@@ -173,11 +173,18 @@
 .tag-active, .tag-active:hover {
 	background-color: #ddd;
 }
+.nav-bg{
+	//background: linear-gradient(#f9f9f9, #ececec);
+	background: #F6F7F8;
+}
 .nav-active {
 	color: #000 !important;
 }
 .nav-link.dropdown-toggle.dropdown-toggle-color {
 	color: #4f4f4f;
+}
+.border-none{
+	border: none !important;
 }
 .dropdown-toggler {
 	color: rgba(0,0,0,.5);;
@@ -266,7 +273,6 @@ body {
 	display: flex;
 	flex-direction: column;
 	overflow: hidden;
-	padding-top: 5px;
 }
 #switchview {
 	// display: none;

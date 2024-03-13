@@ -76,7 +76,7 @@ const ControlPanel = observer(function ControlPanel() {
     }
 
     return (
-        <div className="navbar navbar-expand-lg navbar-light bg-white mb-2">
+        <div className="navbar navbar-expand-lg navbar-light nav-bg">
             <a href="#tabs" className="skip-to-main-content">Skip to main content</a>
             <a href='/' className="navbar-brand topBar__logo">
                 <img
