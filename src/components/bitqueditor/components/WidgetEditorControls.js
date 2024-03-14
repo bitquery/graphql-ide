@@ -22,12 +22,12 @@ const WidgetEditorControls = observer(
 		<ToolbarButton
 			title='JSON'
 			onClick={() => onClick('json.widget')}
-			style={{color: currentQuery.widget_id === 'json.widget' ? 'blue' : '#555'}}
+			style={{color: currentQuery.widget_id === 'json.widget' ? '#007bff' : '#555'}}
 		/>
 		<ToolbarButton
 			title='Widget'
 			onClick={() => onClick('config.widget')}
-			style={{color: currentQuery.widget_id === 'config.widget' ? 'blue' : '#555'}}
+			style={{color: currentQuery.widget_id === 'config.widget' ? '#007bff' : '#555'}}
 		/>
 	</div>
 })

@@ -205,7 +205,7 @@ const TabsComponent = observer(() => {
         }
     }
 
-    return <div className="tabs" id="tabs">
+    return <div className="tabs mt-1" id="tabs">
         <ul className="nav nav-tabs" role="tablist" aria-label="List of query tabs">
             {
                 tabs.map((tab, i) => (

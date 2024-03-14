@@ -7,6 +7,7 @@ import {Link, useHistory, useLocation} from 'react-router-dom'
 import logo from '../assets/images/bitquery_logo_w.png'
 import {GalleryStore} from '../store/galleryStore'
 import {useQuery} from '../utils/useQuery'
+import {Dropdown, NavDropdown} from 'react-bootstrap'
 
 const ControlPanel = observer(function ControlPanel() {
     const {user} = UserStore
@@ -19,10 +20,10 @@ const ControlPanel = observer(function ControlPanel() {
     const location = useLocation()
     const query = useQuery()
     const menuItems = {
-        queries: { name: 'Queries', icon: <i className="bi bi-terminal mr-2"></i> },
-        explore: { name: 'Explore', icon: <i className="bi bi-terminal mr-2"></i> },
-        myqueries: { name: 'My Queries', icon: <i className="bi bi-star mr-2"></i> },
-        teamqueries: { name: 'Team Queries', icon: <i className="bi bi-people mr-2"></i> }
+        queries: {name: 'Queries', icon: <i className="bi bi-terminal mr-2"></i>},
+        explore: {name: 'Explore', icon: <i className="bi bi-terminal mr-2"></i>},
+        myqueries: {name: 'My Queries', icon: <i className="bi bi-star mr-2"></i>},
+        teamqueries: {name: 'Team Queries', icon: <i className="bi bi-people mr-2"></i>}
     }
     const [queriesMenuTitle, setQueriesMenuTitle] = useState(menuItems.queries)
     useEffect(() => {
@@ -63,10 +64,10 @@ const ControlPanel = observer(function ControlPanel() {
         setSearch('')
         document.title = title
     }
-	const onClickWithStartTitle = title => {
+    const onClickWithStartTitle = title => {
         setSearch('')
         document.title = title
-		setQueriesMenuTitle(menuItems.queries)
+        setQueriesMenuTitle(menuItems.queries)
 
     }
     const onClickWithTitle = (itemKey) => {
@@ -76,7 +77,7 @@ const ControlPanel = observer(function ControlPanel() {
     }
 
     return (
-        <div className="navbar navbar-expand-lg navbar-light nav-bg">
+        <div className="navbar navbar-expand-lg navbar-light nav-bg p-0">
             <a href="#tabs" className="skip-to-main-content">Skip to main content</a>
             <a href='/' className="navbar-brand topBar__logo">
                 <img
@@ -97,40 +98,32 @@ const ControlPanel = observer(function ControlPanel() {
                            aria-label="Search"/>
                 </form>
                 <ul className="navbar-nav mr-auto mt-2 mt-lg-0">
-                    <li className='nav-item' tabIndex='-1'>
+                    <li className='nav-item mr-3' tabIndex='-1'>
                         <Link className={`nav-link ${active === 1 ? 'nav-active' : 'navigation-link-color'}`} to='/'
                               onClick={() => onClickWithStartTitle(currentQuery.name || 'New Query')}><i
-                            className="bi bi-play mr-2"></i>Develop</Link>
+                            className="bi bi-play"></i>Develop</Link>
                     </li>
-                    {/*<li className='nav-item' tabIndex='-1'>*/}
-                    {/*	<Link className={`nav-link ${active === 2 ? 'nav-active' : 'navigation-link-color'}`} to={`/explore/All%20queries`} onClick={() => onClick('Explore')} ><i className="bi bi-terminal mr-2"></i>Explore</Link>*/}
-                    {/*</li>*/}
-                    {/*{user?.id && <li className='nav-item' tabIndex='-1'>*/}
-                    {/*	<Link className={`nav-link ${active === 3 ? 'nav-active' : 'navigation-link-color'}`} to={`/myqueries/All%20queries`} onClick={() => onClick('My Queries')}><i className="bi bi-star mr-2"></i>My Queries</Link>*/}
-                    {/*</li>}*/}
-                    {/*{(user?.children_count || user?.ancestry) && <li className='nav-item' tabIndex='-1'>*/}
-                    {/*	<Link className={`nav-link ${active === 4 ? 'nav-active' : 'navigation-link-color'}`} to={`/team/All%20queries`} onClick={() => onClick('Team')}><i className="bi bi-people mr-2"></i>Team</Link>*/}
-                    {/*</li>}*/}
-                    <li className="nav-item dropdown"  tabIndex='-1'>
-                        <a className={`nav-link ${(active === 2 || active === 3 ||active === 4 || active === 5 )? 'nav-active' : 'navigation-link-color'} dropdown-toggle`}   href="#"
-                           id="navbarDropdownMenuLink" role="button"
-                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            {queriesMenuTitle.icon}
-                            {queriesMenuTitle.name}
-                        </a>
-                        <div className="dropdown-menu" aria-labelledby="navbarDropdownMenuLink"  tabIndex='-1'>
-                            <Link className={`nav-link ${active === 3 ? 'nav-active' : 'navigation-link-color'} dropdown-item`} to={`/explore/All%20queries`}
-                                  onClick={() => onClickWithTitle('explore')}>{menuItems.explore.icon}Explore</Link>
-                            {user?.id &&
-                                <Link className={`nav-link ${active === 4 ? 'nav-active' : 'navigation-link-color'} dropdown-item`} to={`/myqueries/All%20queries`}
-                                      onClick={() => onClickWithTitle('myqueries')}>{menuItems.myqueries.icon}My
-                                    Queries</Link>}
-                            {(user?.children_count || user?.ancestry) &&
-                                <Link   className={`nav-link ${active === 5 ? 'nav-active' : 'navigation-link-color'} dropdown-item`} to={`/team/All%20queries`}
-                                      onClick={() => onClickWithTitle('teamqueries')}>{menuItems.teamqueries.icon}Team
-                                    Queries</Link>}
-                        </div>
-                    </li>
+
+                    <NavDropdown id="navbarDropdownMenuLink" tabIndex='-1' title={<>{queriesMenuTitle.icon} {queriesMenuTitle.name}</>}
+                                 className={`${(active === 0 || active === 3 || active === 4 || active === 5) ? 'nav-active' : 'navigation-link-color'}`}>
+                        <NavDropdown.Item><Link
+                            className={`${active === 3 ? 'nav-active' : 'navigation-link-color'}`}
+                            to={`/explore/All%20queries`}
+                            onClick={() => onClickWithTitle('explore')}>{menuItems.explore.icon}Explore</Link></NavDropdown.Item>
+                        <NavDropdown.Item>{user?.id &&
+                            <Link
+                                className={`${active === 4 ? 'nav-active' : 'navigation-link-color'}`}
+                                to={`/myqueries/All%20queries`}
+                                onClick={() => onClickWithTitle('myqueries')}>{menuItems.myqueries.icon}My
+                                Queries</Link>}</NavDropdown.Item>
+                        <NavDropdown.Item>{(user?.children_count || user?.ancestry) &&
+                            <Link
+                                className={`${active === 5 ? 'nav-active' : 'navigation-link-color'}`}
+                                to={`/team/All%20queries`}
+                                onClick={() => onClickWithTitle('teamqueries')}>{menuItems.teamqueries.icon}Team
+                                Queries</Link>}</NavDropdown.Item>
+                    </NavDropdown>
+
                     <li className="nav-item d-lg-none" tabIndex='-1'>
                         <a className="nav-link navigation-link-color" href="https://discord.gg/EEBVTQnb2E"><i
                             className="bi bi-discord mr-2"></i>Discord</a>
@@ -140,7 +133,8 @@ const ControlPanel = observer(function ControlPanel() {
                             className="bi bi-telegram mr-2"></i>Telegram</a>
                     </li>
                     <li className="nav-item d-lg-none" tabIndex='-1'>
-                        <a className="nav-link navigation-link-color" href="https://streaming.bitquery.io/tutorial/">Documentation</a>
+                        <a className="nav-link navigation-link-color"
+                           href="https://streaming.bitquery.io/tutorial/">Documentation</a>
                     </li>
                     <li className="nav-item d-lg-none" tabIndex='-1'>
                         <a className="nav-link navigation-link-color" href="https://community.bitquery.io/">Forum</a>
