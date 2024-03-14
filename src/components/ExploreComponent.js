@@ -45,7 +45,7 @@ const ExploreComponent = observer(function ExploreComponent() {
 	}
 
 	return (
-		<div className="container-fluid overflow-auto">
+		<div className="container-fluid overflow-auto mt-2">
 			<div className="row">
 				<div className="col-lg-3 mb-3">
 					<div className="card">

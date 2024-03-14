@@ -175,7 +175,11 @@
 }
 .nav-bg{
 	//background: linear-gradient(#f9f9f9, #ececec);
-	background: #F6F7F8;
+	background: #F6F7F8 !important;
+}
+.nav-shadow{
+	box-shadow: 0 3px 4px rgba(0, 0, 0, 0.1);
+	margin-bottom: 10px;
 }
 .nav-active {
 	color: #555 !important;

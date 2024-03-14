@@ -77,7 +77,7 @@ const ControlPanel = observer(function ControlPanel() {
     }
 
     return (
-        <div className="navbar navbar-expand-lg navbar-light nav-bg p-0">
+        <div className="navbar navbar-expand-lg navbar-light nav-bg nav-shadow p-0">
             <a href="#tabs" className="skip-to-main-content">Skip to main content</a>
             <a href='/' className="navbar-brand topBar__logo">
                 <img
@@ -86,12 +86,12 @@ const ControlPanel = observer(function ControlPanel() {
                     alt="Bitquery"
                 />
             </a>
-            <button className="navbar-toggler" type="button" data-toggle="collapse"
+            <button className="navbar-toggler m-2" type="button" data-toggle="collapse"
                     data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
                     aria-label="Toggle navigation">
                 <span className="navbar-toggler-icon"></span>
             </button>
-            <div className="collapse navbar-collapse" id="navbarSupportedContent">
+            <div className="collapse navbar-collapse pl-3" id="navbarSupportedContent">
                 <form className="form-inline my-2 my-lg-0" onSubmit={searchHandler} action="search">
                     <input value={search} onChange={e => setSearch(e.target.value)}
                            className="form-control form-control-sm mr-sm-2" type="search" placeholder="Search Queries"
