@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react'
+import React, {useEffect, useState, useRef} from 'react'
 import {observer} from 'mobx-react'
 import {getTaggedQueriesList} from '../../api/api'
 import {GalleryStore} from '../../store/galleryStore'
@@ -20,66 +20,38 @@ const QueriesList = observer(function QueriesList() {
     const [list, setList] = useState([])
     const [thereIsNext, setNext] = useState(false)
     const searchQuery = useQuery()
-    const [isLoading, setIsLoading] = useState(false)
+    const prevSearchParams = useRef({ search: '', pathname: '' })
+
 
     useEffect(() => {
         const search = searchQuery.get('search')
         if (search) {
             setSearchValue(search)
         }
-    }, [])
-
-    const main = async (page) => {
-        setIsLoading(true)
-        const queryListType = location.pathname.match(/[a-zA-Z]+/gm)[0]
-        try {
-            const {data} = await getTaggedQueriesList(currentTag, page * queriesOnPage, queryListType)
-            data.length > queriesOnPage ? setNext(true) : setNext(false)
-            setList(data)
-        } catch (error) {
-            console.error("Failed to fetch data:", error)
-        } finally {
-            setIsLoading(false)
-        }
-    };
-    useEffect(() => {
-        const search = searchQuery.get('search');
-        if (search) {
-            setSearchValue(search);
-        }
     }, [searchQuery])
 
     useEffect(() => {
-        if (!isLoading && currentTag && searchQuery.get('search') === '') {
-            main(currentPage);
-        }
-    }, [currentTag, currentPage, queriesOnPage])
-
-    useEffect(() => {
-        if (!isLoading) {
-            if (searchQuery.get('search') === '') {
-                main(currentPage);
-            } else {
-                setNext(false);
-                setCurrentPage(0);
-                const fetchSearchResults = async () => {
-                    setIsLoading(true);
-                    try {
-                        const {data} = await getSearchResults(searchQuery.get('search'));
-                        history.push(`/explore/All%20queries?search=${searchQuery.get('search')}`);
-                        setList(data);
-                    } catch (error) {
-                        console.error("Failed to fetch search results:", error);
-                    } finally {
-                        setIsLoading(false);
-                    }
-                };
-                fetchSearchResults();
+        const fetchData = async () => {
+            const search = searchQuery.get('search')
+            const pathname = location.pathname
+            if (search !== prevSearchParams.current.search || pathname !== prevSearchParams.current.pathname) {
+                if (!search) {
+                    const queryListType = location.pathname.match(/[a-zA-Z]+/gm)[0]
+                    const { data } = await getTaggedQueriesList(currentTag, currentPage * queriesOnPage, queryListType)
+                    data.length > queriesOnPage ? setNext(true) : setNext(false)
+                    setList(data)
+                } else {
+                    setNext(false)
+                    setCurrentPage(0)
+                    const { data } = await getSearchResults(search)
+                    history.push(`/explore/All%20queries?search=${search}`)
+                    setList(data)
+                }
+                prevSearchParams.current = { search, pathname }
             }
         }
-    }, [searchQuery])
-
-
+        fetchData()
+    }, [searchQuery, location.pathname, currentTag, currentPage, queriesOnPage, history])
     const handleClick = queryFromGallery => {
     if (query.map(query => query.id).indexOf(queryFromGallery.id) === -1) {
         setQuery(queryFromGallery, queryFromGallery.id)
