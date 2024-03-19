@@ -1,25 +1,24 @@
 .bitquery-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  @include flex-between-center;
   font-size: 0.95rem;
   width: 100%;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
   padding: 7px 13px;
 
+
   .bitquery-logo {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    @include flex-between-center;
     width: 200px;
+    &:hover{
+      cursor:pointer;
+    }
 
     &_link {
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      @include flex-between-center;
     }
 
     &_text, &_graph {
-      cursor:default;
+      cursor: default;
       font-size: 1rem;
       font-weight: 600;
     }
@@ -31,6 +30,7 @@
 
   .bitquery-divider, .bitquery-divider_little {
     display: inline-block;
+    width: 1px;
     content: '';
     background: $background-gray-d;
 
@@ -39,7 +39,7 @@
     }
 
     &.bitquery-divider_little {
-      height: 11px;
+      height: 1rem;
 
       @media (max-width: 991px) {
         display: none;
@@ -53,9 +53,9 @@
   height: 32px;
   width: 300px;
   border-radius: 8px;
-  padding: 0 0 0 16px;
+  padding: 0 16px;
   font-weight: 400;
-  font-size: 11px;
+  font-size: 0.9rem;
   line-height: 18px;
   border: none;
 
@@ -69,31 +69,37 @@
   }
 }
 
-.bitquery-links, .bitquery-nav_item, #navbarDropdownMenuQueries, #nav-dropdown, #profileButton {
+.bitquery-links,  #navbarDropdownMenuQueries, #nav-dropdown, #profileButton {
   @include link-style;
 
   &:after {
     color: $color-primary-active;
   }
 }
-
+.bitquery-nav_item{
+  color:$base-font-color;
+}
 .bitquery-link_active {
   cursor: pointer;
-  color: $color-primary-hover !important;
+    color: $color-primary-active !important;
 
   &:hover, &:focus, &:target {
-    color: $color-primary-active !important;
+  color: $color-primary-hover !important;
   }
 }
 
+.bitquery-nav_container {
+  @include flex-between-center;
+}
 
 .bitquery-profile-button {
-margin-left:auto;
+  margin-left: auto;
 }
-.profile-email{
+
+.profile-email {
   color: $text-color-gray-d !important;
 
-  &:hover{
+  &:hover {
     cursor: default;
     color: $text-color-gray-d !important;
 
