@@ -1,0 +1,23 @@
+@mixin focus-style {
+  outline: 2px solid $color-primary-active !important;
+}
+
+@mixin link-style {
+  display: flex;
+  align-items: center;
+  color: $base-font-color !important;
+  text-decoration: none !important;
+
+  &:hover, &:focus, &:target {
+    cursor: pointer;
+    color: $color-primary-hover !important;
+    text-decoration: none;
+    border-color: transparent;
+    background-color: transparent !important;
+  }
+
+  &:active {
+    color: $color-primary-active !important;
+    background-color: transparent !important;
+  }
+}

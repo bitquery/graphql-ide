@@ -1,7 +1,13 @@
-@import "./components/Gallery/newGallery.scss";
-@import "./components/Gallery/queriesList.scss";
-@import "./components/modal/editDialog.scss";
-@import "./components/codeSnippet.scss";
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap');
+@import "scss/variables";
+@import "scss/reset";
+@import "scss/mixins";
+@import "scss/components";
+@import "scss/header";
+@import "components/Gallery/newGallery";
+@import "components/Gallery/queriesList";
+@import "components/modal/editDialog";
+@import "components/codeSnippet";
 @media (min-width: 900px) {
 	.api_subject {
 
@@ -277,6 +283,10 @@ body {
 	display: flex;
 	flex-direction: column;
 	overflow: hidden;
+	font-family: $base-font-family !important;
+	color: $base-font-color;
+
+
 }
 #switchview {
 	// display: none;
@@ -743,7 +753,7 @@ li:focus-visible {
 .navigation-link-color {
 	color: #007bff !important;
 }
-#navbarDropdownMenuLink{
+#navbarDropdownMenuContact{
 	color: inherit;
 }
 .dashboard {

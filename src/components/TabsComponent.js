@@ -206,13 +206,14 @@ const TabsComponent = observer(() => {
     }
 
     return <div className="tabs" id="tabs">
-        <ul className="nav nav-tabs" role="tablist" aria-label="List of query tabs">
+        <ul className="nav nav-tabs" style={{background:'#F8F8F8' }} role="tablist" aria-label="List of query tabs">
             {
                 tabs.map((tab, i) => (
                     <li
                         role="tab"
                         aria-selected={currentTab === tab.id ? 'true' : 'false'}
                         className="nav-item" key={i}
+                        style={{marginTop:'4px'}}
                         onClick={() => currentTab !== tab.id && switchTabHandler(tab.id)}
                     >
                         <a href="# " className={'nav-link ' + (currentTab === tab.id && 'active')} key={i}>

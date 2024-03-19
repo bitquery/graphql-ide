@@ -1,0 +1,13 @@
+//Links
+.bitquery-link_active {
+  cursor: pointer;
+  color: $color-primary-hover !important;
+  &:hover, &:focus, &:target {
+    color: $color-primary-active !important;
+  }
+}
+
+//Icons
+.bitquery-ico {
+  color: $color-primary-active !important;
+}

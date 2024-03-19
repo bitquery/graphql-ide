@@ -1,0 +1,104 @@
+.bitquery-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.95rem;
+  width: 100%;
+  padding: 7px 13px;
+
+  .bitquery-logo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 200px;
+
+    &_link {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    &_text, &_graph {
+      cursor:default;
+      font-size: 1rem;
+      font-weight: 600;
+    }
+  }
+
+  .bitquery-graphQL {
+    color: #CE4372;
+  }
+
+  .bitquery-divider, .bitquery-divider_little {
+    display: inline-block;
+    content: '';
+    background: $background-gray-d;
+
+    &.bitquery-divider {
+      height: 24px;
+    }
+
+    &.bitquery-divider_little {
+      height: 11px;
+
+      @media (max-width: 991px) {
+        display: none;
+      }
+    }
+  }
+}
+
+.bitquery-search {
+  background: $base-gradient;
+  height: 32px;
+  width: 300px;
+  border-radius: 8px;
+  padding: 0 0 0 16px;
+  font-weight: 400;
+  font-size: 11px;
+  line-height: 18px;
+  border: none;
+
+  &::placeholder {
+    color: $text-color-gray-l;
+  }
+
+  &:active, &:target, &:focus {
+    @include focus-style;
+
+  }
+}
+
+.bitquery-links, .bitquery-nav_item, #navbarDropdownMenuQueries, #nav-dropdown, #profileButton {
+  @include link-style;
+
+  &:after {
+    color: $color-primary-active;
+  }
+}
+
+.bitquery-link_active {
+  cursor: pointer;
+  color: $color-primary-hover !important;
+
+  &:hover, &:focus, &:target {
+    color: $color-primary-active !important;
+  }
+}
+
+
+.bitquery-profile-button {
+margin-left:auto;
+}
+.profile-email{
+  color: $text-color-gray-d !important;
+
+  &:hover{
+    cursor: default;
+    color: $text-color-gray-d !important;
+
+    text-decoration: none;
+    border-color: transparent;
+    background-color: transparent !important;
+  }
+}
