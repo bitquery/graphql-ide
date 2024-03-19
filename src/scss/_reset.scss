@@ -1,0 +1,11 @@
+
+a {
+  outline: none;
+  border: none;
+  box-shadow: none !important;
+  text-decoration: none !important;
+  &:hover,&:focus,&:target{
+    text-decoration: none !important;
+
+  }
+}
