@@ -53,7 +53,7 @@ const ControlPanel = observer(function ControlPanel() {
 
     const searchHandler = (e) => {
         e.preventDefault()
-        if (e.which = 13) {
+        if (e.which === 13) {
             return false
         } else {
             setSearch('')
