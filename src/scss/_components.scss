@@ -1,13 +1,54 @@
 //Links
 .bitquery-link_active {
   cursor: pointer;
-  color: $color-primary-hover !important;
+  color: $color-primary-active !important;
+
   &:hover, &:focus, &:target {
-    color: $color-primary-active !important;
+    color: $color-primary-hover !important;
   }
 }
 
 //Icons
 .bitquery-ico {
   color: $color-primary-active !important;
+
+  &:hover {
+    color: $color-primary-hover !important;
+
+  }
+}
+
+.bitquery-ico-gray {
+  color: $background-gray-d !important;
+}
+
+.bitquery-ico-black {
+  color: $base-font-color !important;
+}
+
+//Buttons
+.bitquery-btn {
+  border: 1px solid $color-primary-active;
+  border-radius: 8px;
+  background-color: #FFFFFF;
+  padding: 4px 10px;
+  color: $color-primary-active;
+  @include transition-btn;
+  &:hover, &:active, &:focus, &:target {
+    @include hover-btn
+
+  }
+}
+
+.bitquery-little-btn {
+  @include transition-btn;
+  border: 1px solid $color-primary-active;
+  border-radius: 8px;
+  background-color: #FFFFFF;
+  padding: 4px 10px;
+  color: $color-primary-active;
+  &:hover, &:active, &:focus, &:target {
+    @include hover-btn
+
+  }
 }

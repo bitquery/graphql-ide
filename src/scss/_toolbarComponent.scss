@@ -1,0 +1,41 @@
+.bitquery-inputUrl {
+  //background-image: linear-gradient( #CA356814, #FFFFFF);
+//background-color:#CA356814;
+  background: linear-gradient(180deg, #CA356814 0%, #FFF6F9 100%);
+  border-radius: 8px;
+  font-weight: 400;
+  font-size: 0.9rem;
+  line-height: 18px;
+  border: none;
+
+  &::placeholder {
+    color: $text-color-gray-l;
+  }
+
+  &:active, &:target, &:focus {
+outline: transparent !important;
+    box-shadow: none;
+  }
+}
+.bitquery-little-btn{
+  height: 32px;
+  width: 32px;
+  padding: 10px 5px;
+  cursor: pointer;
+  border-radius: 5px;
+  border: 1px solid $color-primary-active;
+  color:$color-primary-active;
+
+  &.active {
+    color:$color-primary-hover;
+    border: 1px solid $color-primary-hover;
+  }
+
+  &:hover {
+    color:$color-primary-hover;
+    border: 1px solid $color-primary-hover;
+  }
+}
+.bi-code-slash:hover {
+  background-color: inherit;
+}

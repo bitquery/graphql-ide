@@ -626,6 +626,7 @@ const EditorInstance = observer(function EditorInstance({number}) {
                         queryStatus={queryStatus}
                         accordance={accordance}
                     />
+                    <span className="execute-button__text">Run query</span>
                 </button>
                 <div className="workspace__wrapper"
                      ref={workspace}

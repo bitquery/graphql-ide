@@ -4,8 +4,18 @@ a {
   border: none;
   box-shadow: none !important;
   text-decoration: none !important;
-  &:hover,&:focus,&:target{
+  &:hover, &:focus, &:target {
     text-decoration: none !important;
+    outline: transparent
 
   }
+}
+i{
+  &:hover, &:focus, &:target,&:active {
+   background-color: transparent !important;
+
+  }
+}
+button {
+  outline: transparent
 }

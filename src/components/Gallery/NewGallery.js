@@ -39,7 +39,7 @@ const NewGallery = observer(function NewGallery() {
 	return (
 		<div className="newGallery__root">
 			<div className="newGallery__topbar">
-				<i className="bi bi-chevron-double-left cursor-pointer mr-2 text-primary" onClick={toggleTagsList} />
+				<i className="bi bi-chevron-double-left cursor-pointer mr-2 text-primary bitquery-ico" onClick={toggleTagsList} />
 				Builder
 			</div>
 			<QueryBuilder

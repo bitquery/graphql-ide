@@ -2,30 +2,36 @@
   @include flex-between-center;
   font-size: 0.95rem;
   width: 100%;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 1px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
   padding: 7px 13px;
+  margin-bottom: 7px;
 
 
   .bitquery-logo {
     @include flex-between-center;
     width: 200px;
-    &:hover{
-      cursor:pointer;
-    }
 
     &_link {
       @include flex-between-center;
     }
 
     &_text, &_graph {
-      cursor: default;
       font-size: 1rem;
       font-weight: 600;
     }
+
+    &_text {
+      cursor: pointer;
+    }
+
   }
 
   .bitquery-graphQL {
     color: #CE4372;
+  }
+
+  .bitquery-graph {
+    cursor: default;
   }
 
   .bitquery-divider, .bitquery-divider_little {
@@ -69,27 +75,39 @@
   }
 }
 
-.bitquery-links,  #navbarDropdownMenuQueries, #nav-dropdown, #profileButton {
+.bitquery-links, #navbarDropdownMenuQueries, #nav-dropdown, #profileButton {
   @include link-style;
 
   &:after {
     color: $color-primary-active;
   }
 }
-.bitquery-nav_item{
-  color:$base-font-color;
-}
-.bitquery-link_active {
-  cursor: pointer;
-    color: $color-primary-active !important;
 
-  &:hover, &:focus, &:target {
-  color: $color-primary-hover !important;
-  }
+.bitquery-nav_item {
+  color: $base-font-color;
 }
+
 
 .bitquery-nav_container {
   @include flex-between-center;
+  @media (max-width: 991px) {
+    align-items: start;
+  }
+}
+
+#profileButton {
+  @include transition-btn;
+  border: 1px solid transparent;
+  border-radius: 8px;
+
+  &:hover, &:active, &:focus, &:target {
+    cursor: pointer;
+    color: $color-primary-hover !important;
+    border-radius: 8px;
+    background-color:$color-primary-hover !important;
+    @include hover-btn
+
+  }
 }
 
 .bitquery-profile-button {
@@ -98,11 +116,8 @@
 
 .profile-email {
   color: $text-color-gray-d !important;
-
-  &:hover {
+  &:hover, &:active, &:focus, &:target {
     cursor: default;
-    color: $text-color-gray-d !important;
-
     text-decoration: none;
     border-color: transparent;
     background-color: transparent !important;

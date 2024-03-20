@@ -143,6 +143,7 @@ const ToolbarComponent = observer(({
             {dashboardOwner && !(!currentQuery.id || !currentQuery.saved) && currentQuery.layout
                 && <button type="button" className="topBar__button" onClick={switchMode}>Edit</button>}
             {user?.id && <ToolbarButton
+                className='bitquery-btn'
                 aria-labelledby={currentQuery.id}
                 title='Save'
                 onClick={() => {
@@ -152,7 +153,7 @@ const ToolbarComponent = observer(({
                 visible={((currentQuery.account_id === user?.id) || (!currentQuery.id && !currentQuery.account_id)) && !(!!currentQuery?.url && !!currentQuery.id)}
             />}
             {!currentQuery.saved && currentQuery.layout &&
-                <button type="button" className="topBar__button" onClick={cancelHandle}>Cancel</button>}
+                <button type="button" className="topBar__button bitquery-btn" onClick={cancelHandle}>Cancel</button>}
             {dashboardOwner && currentQuery.layout &&
                 <div
                     className="grid-stack-item droppable-element"
@@ -166,10 +167,12 @@ const ToolbarComponent = observer(({
             {(currentQuery?.url && currentQuery.id)
                 ? null
                 : <ToolbarButton
+                    className='bitquery-btn'
                     title='Prettify'
                     onClick={prettifyQuery}
                 />}
             <ToolbarButton
+                className='bitquery-btn'
                 title='Fork'
                 onClick={handleFork}
                 visible={true}
@@ -179,7 +182,7 @@ const ToolbarComponent = observer(({
                 onClick={handleCopy}
                 visible={!!currentQuery.graphqlQueryID || !!currentQuery.url}
             />}
-            <InputGroup className="input-group-fix">
+            <InputGroup className="input-group-fix bitquery-inputUrl">
                 <Form.Group>
                     <Form.Control
                         as="select"
@@ -197,7 +200,7 @@ const ToolbarComponent = observer(({
                               aria-label="endpoint-url"
                               value={currentQuery.endpoint_url}
                               onChange={handleInputURLChange}
-                              className="input-url-fix"
+                              className="input-url-fix  bitquery-inputUrl"
                 />
             </InputGroup>
             {user?.id && query[number].graphqlQueryID && <StatisticsButton number={number}/>}
@@ -208,13 +211,13 @@ const ToolbarComponent = observer(({
             >
                 Download from Cloud
             </a>}
-            <button className="newGallery__topbar" aria-label="Documentation Explorer" onClick={toggleDocExplorer}>
+            <span className="cursor-pointer" aria-label="Documentation Explorer" onClick={toggleDocExplorer}>
                 <DocsIcon className={"docs_icon" + (docExplorerOpen ? " active" : '')} data-toggle="tooltip"
                           data-placement="top" title="Tooltip on top"/>
-            </button>
-            <button className="newGallery__topbar" aria-label="Code Snippet" onClick={toggleCodeSnippet}>
+            </span>
+            <span className="d-flex align-items-center justify-content-center bitquery-little-btn" aria-label="Code Snippet" onClick={toggleCodeSnippet}>
                 <i className={"bi bi-code-slash" + (codeSnippetOpen ? " active" : '')}/>
-            </button>
+            </span>
         </div>
     </div>
     return toolbar

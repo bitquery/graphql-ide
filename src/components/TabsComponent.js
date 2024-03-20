@@ -205,7 +205,7 @@ const TabsComponent = observer(() => {
         }
     }
 
-    return <div className="tabs" id="tabs">
+    return <div className="tabs bitquery-tabs" id="tabs">
         <ul className="nav nav-tabs" style={{background:'#F8F8F8' }} role="tablist" aria-label="List of query tabs">
             {
                 tabs.map((tab, i) => (
@@ -213,13 +213,13 @@ const TabsComponent = observer(() => {
                         role="tab"
                         aria-selected={currentTab === tab.id ? 'true' : 'false'}
                         className="nav-item" key={i}
-                        style={{marginTop:'4px'}}
+
                         onClick={() => currentTab !== tab.id && switchTabHandler(tab.id)}
                     >
                         <a href="# " className={'nav-link ' + (currentTab === tab.id && 'active')} key={i}>
                             {query[i].layout ? <i className="fas fa-th"></i>
                                 : query[i].widget_id === 'json.widget' || !query[i].widget_id
-                                    ? <GraphqlIcon fill={'#000000'} width={'16px'} height={'16px'}/>
+                                    ? <GraphqlIcon fill={'#B71F54'} width={'16px'} height={'16px'}/>
                                     : <i className="fas fa-chart-bar"></i>}
                             {
                                 (editTabName && currentTab === tab.id)
@@ -242,16 +242,16 @@ const TabsComponent = observer(() => {
 										</span>
                             }
                             <i role="button" aria-label='close tab' tabIndex={currentTab === tab.id ? "0" : "1"}
-                               className="tab__close bi bi-x" onClick={e => removeTabHandler(i, e)}/>
+                               className="tab__close bi bi-x bitquery-ico-black" onClick={e => removeTabHandler(i, e)}/>
                         </a>
                     </li>
                 ))
             }
             <li
-                className="nav-item"
+                className="nav-item tab__add"
                 onClick={addNewTabHandler}
-            ><a href="# " role="button" aria-label="add new tab" className="nav-link nav-link-add"><i
-                className="tab__add bi bi-plus"/></a></li>
+            ><a href="#" role="button" aria-label="add new tab" className="nav-link"><i
+                className="bi bi-plus bitquery-ico-black"/></a></li>
         </ul>
     </div>
 

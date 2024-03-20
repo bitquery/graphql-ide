@@ -208,7 +208,7 @@ const ControlPanel = observer(function ControlPanel() {
                             are hiring!</a>
                     </li>
                     <li className="nav-item d-lg-none bitquery-links" tabIndex='-1'>
-                        <a className="nav-link"
+                        <a className="nav-link bitquery-links"
                            href="https://account.bitquery.io/user/billing">Upgrade</a>
                     </li>
                     {!user?.id && <li className="nav-item d-lg-none">
