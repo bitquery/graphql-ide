@@ -579,6 +579,7 @@ const EditorInstance = observer(function EditorInstance({number}) {
     }
 
     useEffect(() => {
+        console.log(currentQuery.config)
         if (-resultWrapper.current.scrollTop < resultWrapper.current.scrollHeight * 0.9) {
             resultWrapper.current.scrollTop = -resultWrapper.current.scrollHeight
         }
@@ -611,7 +612,7 @@ const EditorInstance = observer(function EditorInstance({number}) {
                     delayShow={350}
                 />
 
-                <button className="execute-button"
+                <button className={`execute-button ${queryStatus.activeSubscription ? 'pressed-btn' : ''}  `}
                         data-tip={(queryStatus.activeFetch || queryStatus.activeSubscription) ? 'Interrupt' : 'Execute query (Ctrl-Enter)'}
                         ref={executeButton}
                         disabled={queryStatus.schemaLoading}
@@ -621,7 +622,6 @@ const EditorInstance = observer(function EditorInstance({number}) {
                         queryStatus={queryStatus}
                         accordance={accordance}
                     />
-                    <span className="execute-button__text">Run query</span>
                 </button>
                 <div className="workspace__wrapper"
                      ref={workspace}
@@ -643,6 +643,7 @@ const EditorInstance = observer(function EditorInstance({number}) {
                         }}
                     />}
                     <div className="workspace__sizechanger"/>
+                    <div className={`widget ${widget ? 'd-flex' : 'd-none'}`}>
                     <WidgetEditorControls
                         abortRequest={abortRequest}
                         getResult={getResult}
@@ -653,7 +654,6 @@ const EditorInstance = observer(function EditorInstance({number}) {
                         plugins={plugins}
                         number={number}
                     />
-                    <div className="widget">
                         <CodePlugin.renderer
                             values={currentQuery.config}
                             pluginIndex={0}

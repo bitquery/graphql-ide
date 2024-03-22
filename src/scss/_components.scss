@@ -65,6 +65,10 @@
 
   }
 }
+.pressed-btn{
+  @include hover-btn
+
+}
 
 //teg
 .bitquery-teg{

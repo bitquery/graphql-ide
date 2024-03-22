@@ -220,7 +220,7 @@ const TabsComponent = observer(() => {
                             {query[i].layout ? <i className="fas fa-th"></i>
                                 : query[i].widget_id === 'json.widget' || !query[i].widget_id
                                     ? <GraphqlIcon fill={'#B71F54'} width={'16px'} height={'16px'}/>
-                                    : <i className="fas fa-chart-bar"></i>}
+                                    : <i className="fas fa-chart-bar bitquery-ico"></i>}
                             {
                                 (editTabName && currentTab === tab.id)
                                     ? <>

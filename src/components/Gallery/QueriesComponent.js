@@ -65,7 +65,7 @@ const QueriesComponent = observer(function QueriesComponent({ queries }) {
 					{baseQuery.layout ? <i className="fas fa-th"></i> 
 					: baseQuery.widget_id==='json.widget' || !baseQuery.widget_id 
 					? <GraphqlIcon fill={'#000000'} width={'16px'} height={'16px'}/> 
-					: <i className="fas fa-chart-bar"></i>}
+					: <i className="fas fa-chart-bar bitquery-ico"></i>}
 					<LinkComponent propquery={baseQuery} />
 				</div>
 				{ 
