@@ -465,6 +465,18 @@ const EditorInstance = observer(function EditorInstance({number}) {
                 toast.error('Token refresh failed')
             }
         }
+            if (!user.id) {
+                toast.error((
+                    <div>
+                        Hello! To continue using our services, please
+                        <a className='bitquery-ico' href="https://account.bitquery.io/auth/login?redirect_to=https://ide.bitquery.io/"> log
+                            in </a> or
+                        <a className='bitquery-ico' href="https://account.bitquery.io/auth/signup"> register </a>
+                        Logging in will allow you to access all the features and keep track of your activities.
+                    </div>
+                ), {autoClose: 15000});
+            }
+
         abortController.current = new AbortController()
         const key = user ? user.key : null
         const keyHeader = {'X-API-KEY': key}
@@ -489,24 +501,6 @@ const EditorInstance = observer(function EditorInstance({number}) {
             },
         )
         const responseTime = new Date().getTime() - start
-        if (!response.ok) {
-            if ((response.status === 401 && !user.id) || !user.id) {
-                toast.info((
-                    <div>
-                        Hello! To continue using our services, please
-                        <a href="https://account.bitquery.io/auth/login?redirect_to=https://ide.bitquery.io/"> log
-                            in </a> or
-                        <a href="https://account.bitquery.io/auth/signup"> register </a>
-                        Logging in will allow you to access all the features and keep track of your activities.
-                    </div>
-                ), {autoClose: 15000});
-            } else {
-                const responseBody = await response.text()
-                throw new Error(`Error: ${responseBody}`)
-            }
-        }
-
-
         if (!('operationName' in graphQLParams)) {
             const graphqlRequested = response.headers.get('X-GraphQL-Requested') === 'true' || response.headers.get('X-Bitquery-Graphql-Requested') === 'true'
             updateQuery({
@@ -518,6 +512,7 @@ const EditorInstance = observer(function EditorInstance({number}) {
                 gettingPointsCount: 0
             }, index)
         }
+
         const {data, errors} = await response.json()
         if (errors) {
             setError(errors[0].message)
