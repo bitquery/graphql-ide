@@ -1,18 +1,28 @@
 //Links
 .bitquery-link_active {
-  cursor: pointer;
+  cursor: default;
   color: $color-primary-active !important;
 
-  &:hover, &:focus, &:target {
-    color: $color-primary-hover !important;
-  }
+  //&:hover, &:focus, &:target {
+  //  color: $color-primary-hover !important;
+  //}
 }
 
+.bitquery-nav_item {
+  color: $base-font-color !important;
+}
+.bitquery-links-doc{
+  color: $color-primary-active !important;
+&:hover,&:active,&:focus{
+  color: $color-primary-hover !important;
+
+}
+}
 //Icons
 .bitquery-ico {
   color: $color-primary-active !important;
 
-  &:hover {
+  &:hover,&:active,&:focus {
     color: $color-primary-hover !important;
 
   }
@@ -24,6 +34,9 @@
 
 .bitquery-ico-black {
   color: $base-font-color !important;
+  &:hover,&:focus{
+    color: $color-primary-hover !important;
+  }
 }
 
 //Buttons
@@ -51,4 +64,24 @@
     @include hover-btn
 
   }
+}
+
+//teg
+.bitquery-teg{
+  //background-color: $background-gray-m;
+  background-color: $base-teg-color;
+  padding: 4px 8px;
+  border-radius: 16px;
+  color:$text-color-gray-l;
+  font-size: 11px;
+  line-height: 13px;
+}
+.bitquery-teg-color{
+  background-color: $color-primary-active;
+  padding: 4px 8px;
+  border-radius: 16px;
+  color:#ffffff;
+  font-size: 11px;
+  line-height: 13px;
+  margin-left:auto;
 }

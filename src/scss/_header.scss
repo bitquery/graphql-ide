@@ -5,6 +5,7 @@
   box-shadow: 0 1px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
   padding: 7px 13px;
   margin-bottom: 7px;
+  background-color: #ffffff;
 
 
   .bitquery-logo {
@@ -83,10 +84,6 @@
   }
 }
 
-.bitquery-nav_item {
-  color: $base-font-color;
-}
-
 
 .bitquery-nav_container {
   @include flex-between-center;
@@ -103,8 +100,8 @@
   &:hover, &:active, &:focus, &:target {
     cursor: pointer;
     color: $color-primary-hover !important;
+    background-color: transparent;
     border-radius: 8px;
-    background-color:$color-primary-hover !important;
     @include hover-btn
 
   }

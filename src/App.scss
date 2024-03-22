@@ -1,10 +1,11 @@
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap');
 @import "scss/variables";
-@import "scss/reset";
 @import "scss/mixins";
+@import "scss/reset";
 @import "scss/components";
 @import "scss/header";
 @import "scss/toolbarComponent";
+@import "scss/explorerComponent";
 @import "components/Gallery/newGallery";
 @import "components/Gallery/queriesList";
 @import "components/modal/editDialog";
@@ -336,7 +337,7 @@ body {
   overflow: hidden;
   font-family: $base-font-family !important;
   color: $base-font-color;
-
+  background-color:$background-gray-l ;
 
 }
 
@@ -733,7 +734,9 @@ li:focus-visible {
       padding-left: 12px;
 
       &:hover:before {
-        background-color: #ececec;
+        color: $color-primary-hover !important;
+
+        //background-color: #ececec;
         border-radius: 5px;
       }
     }
@@ -953,7 +956,10 @@ li:focus-visible {
 .modal {
   display: flex;
   flex-direction: column;
-
+font-family: $base-font-family;
+  td,th,tr, thead {
+    border-color:$base-color-border !important;
+  }
   &__form {
     .access-control {
       legend {
@@ -1058,6 +1064,7 @@ li:focus-visible {
 }
 
 .statisticsTable {
+  color:$text-color-gray-d;
   tr:nth-child(even) {
     td:before {
       background-color: #fff;
@@ -1066,9 +1073,10 @@ li:focus-visible {
 
   .metrics {
     &__helper {
-      background: linear-gradient(#f9f9f9, #ececec);
-      box-shadow: inset 0 0 0 1px rgb(0 0 0 / 20%), 0 1px 0 hsl(0deg 0% 100% / 70%), inset 0 1px #fff;
-      color: #555;
+      //background: linear-gradient(#f9f9f9, #ececec);
+      background: $base-color-border;
+      //box-shadow: inset 0 0 0 1px rgb(0 0 0 / 20%), 0 1px 0 hsl(0deg 0% 100% / 70%), inset 0 1px #fff;
+      color: $text-color-gray-d;
       border-radius: 50%;
       width: 20px;
       height: 20px;
@@ -1087,6 +1095,7 @@ li:focus-visible {
   }
 
   tbody {
+
     td:nth-child(2):after {
       content: "";
       display: block;
@@ -1333,7 +1342,6 @@ li:focus-visible {
 .nav-link {
   display: flex;
   align-items: center;
-
   &-add {
     height: 100%;
   }
@@ -1609,6 +1617,8 @@ a:focus {
   border-radius: 8px 0 0 8px;
   background: #ffffff;
   cursor: pointer;
+  border-top: transparent;
+  border-bottom: transparent;
   &:focus, &active, &target,&:hover {
     @include hover-btn;
     border-radius: 8px 0 0 8px;

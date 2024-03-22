@@ -2,6 +2,8 @@ import {makeObservable, observable, action, computed} from "mobx"
 import axios from 'axios'
 import {getUser, regenerateKey, setDashboard} from "../api/api"
 import {GalleryStore} from './galleryStore'
+import {toast} from "react-toastify";
+import React from "react";
 
 class User {
     user = null
@@ -34,6 +36,16 @@ class User {
             }
         } catch (error) {
             this.setUser(undefined)
+            toast.error((
+                <div>
+                    Hello! To continue using our services, please
+                    <a  className='bitquery-ico' href="https://account.bitquery.io/auth/login?redirect_to=https://ide.bitquery.io/"> log
+                        in </a> or
+                    <a className='bitquery-ico' href="https://account.bitquery.io/auth/signup"> register </a>
+                    Logging in will allow you to access all the features and keep track of your activities.
+                </div>
+            ), {autoClose: 15000});
+
             console.log(error.response?.data)
         }
     }
@@ -347,7 +359,7 @@ class Tabs {
         this.id = this.id + 1
     }
     switchTab = tabID => {	//tabID - id, not index or serial number
-        console.log('tabID - ', tabID)
+        // console.log('tabID - ', tabID)
         this.currentTab = tabID
         let id = this.index
         QueriesStore.setCurrentQuery(id)

@@ -54,7 +54,7 @@ const ControlPanel = observer(function ControlPanel() {
 
     const searchHandler = (e) => {
         e.preventDefault()
-        if (e.which = 13) {
+        if (e.which === 13) {
             return false
         } else {
             setSearch('')
@@ -114,7 +114,7 @@ const ControlPanel = observer(function ControlPanel() {
 
                     <li className='nav-item' tabIndex='-1'>
                         <Link
-                            className={`nav-link bitquery-links  ${active === 1 ? 'bitquery-link_active' : 'bitquery-nav_item'}`}
+                            className={`nav-link ${active === 1 ? 'bitquery-link_active' : 'bitquery-nav_item'}`}
                             to='/'
                             onClick={() => onClickWithStartTitle(currentQuery.name || 'New Query')}><i
                             className="bi bi-play bitquery-ico"></i>Development</Link>
@@ -122,8 +122,8 @@ const ControlPanel = observer(function ControlPanel() {
                     <span className="bitquery-divider_little"></span>
 
                     <NavDropdown id="navbarDropdownMenuQueries" tabIndex='-1'
-                                 title={<>{queriesMenuTitle.icon} {queriesMenuTitle.name}</>}
-                                 className={`bitquery-links ${(active === 1 || active === 3 || active === 4 || active === 5) ? 'bitquery-link_active' : 'bitquery-nav_item'}`}>
+                                 className={`bitquery-links ${(active === 2 || active === 3 || active === 4 || active === 5) ? 'bitquery-link_active' : 'bitquery-nav_item'}`}
+                                 title={<>{queriesMenuTitle.icon} {queriesMenuTitle.name}</>}>
                         <NavDropdown.Item className='bitquery-links'><Link
                             className={`bitquery-links ${active === 3 ? 'bitquery-link_active' : 'bitquery-nav_item'}`}
                             to={`/explore/All%20queries`}

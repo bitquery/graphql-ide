@@ -46,9 +46,9 @@ const ExploreComponent = observer(function ExploreComponent() {
 
 	return (
 		<div className="container-fluid overflow-auto mt-2">
-			<div className="row">
-				<div className="col-lg-3 mb-3">
-					<div className="card">
+			<div className="row bit-test" style={{height:'100vh'}}>
+				<div className="col-lg-3 mb-3" style={{height:'100%'}}>
+					<div className="card bitquery-tagList-container scrollable-container">
 						<div className="card-body">
 							<ul aria-label='of query tags' tabIndex={0} className="list-group list-group-flush">
 								{
@@ -60,8 +60,8 @@ const ExploreComponent = observer(function ExploreComponent() {
 											role='button'
 											tabIndex={0}
 										>
-											<span>{tag_id !==0 && <i className="bi bi-tag"></i>} { tag } </span>
-											<span className="badge badge-primary badge-pill"> { tags_count } </span>
+											<span style={{wordBreak: 'break-word'}}>{tag_id !==0 && <i  style={{color:'#CE4372'}} className="bi bi-tag"></i>} { tag } </span>
+											<span className="badge  badge-pill"> { tags_count } </span>
 										</li>
 									))
 								}

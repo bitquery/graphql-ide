@@ -38,9 +38,9 @@ const NewGallery = observer(function NewGallery() {
 
 	return (
 		<div className="newGallery__root">
-			<div className="newGallery__topbar">
-				<i className="bi bi-chevron-double-left cursor-pointer mr-2 text-primary bitquery-ico" onClick={toggleTagsList} />
+			<div className="newGallery__topbar justify-content-between" style={{padding:'0 10px'}}>
 				Builder
+				<i className="bi bi-chevron-double-left cursor-pointer mr-2 text-primary bitquery-ico" onClick={toggleTagsList} />
 			</div>
 			<QueryBuilder
 				width={'300px'}

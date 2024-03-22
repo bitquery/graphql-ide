@@ -288,6 +288,8 @@ button.columns_number {
   flex: 1 1;
   flex-direction: column;
   overflow: hidden;
+  cursor:text;
+
 }
 
 .query-editor {
@@ -515,8 +517,7 @@ div.CodeMirror span.CodeMirror-matchingbracket {
 
 .docExplorerWrap {
   position: relative;
-  background-color: #f8f8f8;
-
+  background-color: #ffffff;
   .doc-explorer-contents {
     display: contents;
 
