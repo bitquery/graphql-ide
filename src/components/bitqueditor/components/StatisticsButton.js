@@ -7,14 +7,14 @@ import {toast} from "react-toastify";
 const StatisticsButton = observer(function StatisticsButton({number}) {
     const {toggleModal, toggleStatisticsModal} = modalStore
     const {
-        currentQuery: {points, graphqlQueryID, saved, gettingPointsCount, graphqlRequested},
+        currentQuery: {points, graphqlQueryID, saved, gettingPointsCount, graphqlRequested, query},
         updateQuery
     } = QueriesStore
     const {user, getUser} = UserStore
     const {index} = TabsStore
     const {statisticsModalIsOpen} = modalStore
 
-    const getPoints = async () => {
+    const getPoints = async (query) => {
         if (user.key && number === index) {
             updateQuery({gettingPointsCount: gettingPointsCount + 1 || 0}, index)
             if (user?.accessToken && user?.accessToken?.streaming_expires_on <= Date.now()) {
@@ -43,12 +43,12 @@ const StatisticsButton = observer(function StatisticsButton({number}) {
     }
 
     useInterval(() => {
-        getPoints()
+        getPoints(query)
     }, (gettingPointsCount >= 9 || !graphqlRequested || statisticsModalIsOpen) ? null : 2000)
 
     return (
         <button
-            className="topBar__button"
+            className={`topBar__button  ${query.startsWith('subscription') ? 'd-none' : 'd-inline-block'}`}
             onClick={() => {
                 toggleModal();
                 toggleStatisticsModal();

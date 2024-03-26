@@ -337,7 +337,7 @@ body {
   overflow: hidden;
   font-family: $base-font-family !important;
   color: $base-font-color;
-  background-color:$background-gray-l ;
+  background-color: $background-gray-l;
 
 }
 
@@ -673,15 +673,15 @@ li:focus-visible {
   cursor: pointer;
   border-radius: 5px;
   border: 1px solid $color-primary-active;
-  color:$color-primary-active;
+  color: $color-primary-active;
 
   &.active {
-    color:$color-primary-hover;
+    color: $color-primary-hover;
     border: 1px solid $color-primary-hover;
   }
 
-  &:hover, &:active,&:focus,&:target {
-@include hover-btn
+  &:hover, &:active, &:focus, &:target {
+    @include hover-btn
   }
 }
 
@@ -745,12 +745,17 @@ li:focus-visible {
       display: flex;
       justify-content: center;
       font-size: 1.3rem;
-      width: 40px;
+      width: 46px;
       height: 40px;
       background-color: $background-gray-m;
       border-radius: 8px 8px 0 0;
-      margin-left: 6px;
-      margin-bottom: -3px;
+      //margin-left: 6px;
+      margin-bottom: -4px;
+
+      &:hover {
+        background-color: #ececec;
+
+      }
     }
   }
 
@@ -956,10 +961,12 @@ li:focus-visible {
 .modal {
   display: flex;
   flex-direction: column;
-font-family: $base-font-family;
-  td,th,tr, thead {
-    border-color:$base-color-border !important;
+  font-family: $base-font-family;
+
+  td, th, tr, thead {
+    border-color: $base-color-border !important;
   }
+
   &__form {
     .access-control {
       legend {
@@ -1064,7 +1071,8 @@ font-family: $base-font-family;
 }
 
 .statisticsTable {
-  color:$text-color-gray-d;
+  color: $text-color-gray-d;
+
   tr:nth-child(even) {
     td:before {
       background-color: #fff;
@@ -1342,8 +1350,13 @@ font-family: $base-font-family;
 .nav-link {
   display: flex;
   align-items: center;
+
   &-add {
     height: 100%;
+  }
+
+  &:hover,&:focus {
+    border-color: transparent;
   }
 
   &-title {
@@ -1383,6 +1396,7 @@ font-family: $base-font-family;
 
 .arg-name {
   color: #8B2BB9;
+  //color: #9F48E3;
 }
 
 .arg {
@@ -1608,7 +1622,7 @@ a:focus {
 }
 
 .drop-down-fix {
-  border-left:1px solid transparent;
+  border-left: 1px solid transparent;
   color: $color-primary-active;
   border-right: 1px solid $color-primary-active;
   padding: 0 0 0 5px;
@@ -1619,7 +1633,8 @@ a:focus {
   cursor: pointer;
   border-top: transparent;
   border-bottom: transparent;
-  &:focus, &active, &target,&:hover {
+
+  &:focus, &active, &target, &:hover {
     @include hover-btn;
     border-radius: 8px 0 0 8px;
 
@@ -1630,7 +1645,8 @@ a:focus {
 .input-url-fix {
   border: none;
   height: 31px;
-  &:hover,&:focus,&:active{
+
+  &:hover, &:focus, &:active {
     outline: transparent;
   }
 }

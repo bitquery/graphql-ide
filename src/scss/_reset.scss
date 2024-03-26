@@ -44,4 +44,13 @@ body{
 ::-webkit-scrollbar {
   width: 5px !important;
 }
+input{
+  &::placeholder {
+    color: $text-color-gray-l;
+  }
 
+  &:active, &:target, &:focus {
+    @include focus-style;
+
+  }
+}

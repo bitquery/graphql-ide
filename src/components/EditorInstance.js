@@ -579,7 +579,6 @@ const EditorInstance = observer(function EditorInstance({number}) {
     }
 
     useEffect(() => {
-        console.log(currentQuery.config)
         if (-resultWrapper.current.scrollTop < resultWrapper.current.scrollHeight * 0.9) {
             resultWrapper.current.scrollTop = -resultWrapper.current.scrollHeight
         }

@@ -250,7 +250,7 @@ const TabsComponent = observer(() => {
             <li
                 className="nav-item tab__add"
                 onClick={addNewTabHandler}
-            ><a href="#" role="button" aria-label="add new tab" className="nav-link"><i
+            ><a href="#" role="button" aria-label="add new tab" className="nav-link bitquery-addNewTab"><i
                 className="bi bi-plus bitquery-ico-black"/></a></li>
         </ul>
     </div>
