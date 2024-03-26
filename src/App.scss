@@ -1142,12 +1142,12 @@ li:focus-visible {
 
 .icon {
   &_user {
-    color: red;
+    //color: red;
     width: 35px;
     height: 35px;
     margin: 0 5px;
     cursor: pointer;
-    opacity: .5;
+    opacity: .85;
 
     &#dropdownMenuButton {
       opacity: 1;

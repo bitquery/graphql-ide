@@ -23,6 +23,7 @@ import Loader from "react-loader-spinner"
 import {DocExplorer} from './DocExplorer'
 import {FullScreen, useFullScreenHandle} from "react-full-screen"
 import FullscreenIcon from './icons/FullscreenIcon'
+import ExitFullscreenIcon from "./icons/ExitFullscreenIcon";
 import {getIntrospectionQuery, buildClientSchema} from 'graphql'
 import useDebounce from '../utils/useDebounce'
 import WidgetView from './bitqueditor/components/WidgetView'
@@ -59,6 +60,7 @@ const EditorInstance = observer(function EditorInstance({number}) {
     const [dataSource, setDataSource] = useState(null)
     const [accordance, setAccordance] = useState(true)
     const [widget, setWidget] = useState(null)
+    const [isFullscreen, setIsFullscreen] = useState(false)
     const debouncedURL = useDebounce(currentQuery.endpoint_url, 500)
     const workspace = useRef(null)
     const overwrap = useRef(null)
@@ -76,6 +78,7 @@ const EditorInstance = observer(function EditorInstance({number}) {
         schemaError: false,
         schemaLoading: Object.keys(schema).length ? false : true
     })
+
     const queryDispatcher = {
         onquerystarted: () => dispatchQueryStatus('activeFetch'),
         onqueryend: () => dispatchQueryStatus('readyToExecute'),
@@ -554,7 +557,7 @@ const EditorInstance = observer(function EditorInstance({number}) {
         // eslint-disable-next-line
     }, [debouncedURL, user])
 
-    const fullscreenHandle = useFullScreenHandle()
+    // const fullscreenHandle = useFullScreenHandle()
 
     const toggleDocs = () => {
         codeSnippetOpen && setCodeSnippetOpen(false)
@@ -577,7 +580,10 @@ const EditorInstance = observer(function EditorInstance({number}) {
             dispatchQueryStatus('readyToExecute')
         }
     }
-
+    const fullscreenHandle = useFullScreenHandle({
+        onEnter: () => setIsFullscreen(true),
+        onExit: () => setIsFullscreen(false),
+    })
     useEffect(() => {
         if (-resultWrapper.current.scrollTop < resultWrapper.current.scrollHeight * 0.9) {
             resultWrapper.current.scrollTop = -resultWrapper.current.scrollHeight
@@ -688,12 +694,10 @@ const EditorInstance = observer(function EditorInstance({number}) {
                                 dataSource={dataSource}
                                 ready={queryStatus.readyToExecute}
                             >
-                                <FullscreenIcon onClick={
-                                    isMobile ? () => setMobile(false) :
-                                        fullscreenHandle.active
-                                            ? fullscreenHandle.exit
-                                            : fullscreenHandle.enter}
-                                />
+                                {fullscreenHandle.active ?
+                                    (<ExitFullscreenIcon onClick={fullscreenHandle.exit} />) :
+                                    (<FullscreenIcon onClick={fullscreenHandle.enter} />)
+                                }
                             </WidgetView>
                         </FullScreen>
                     </div>
