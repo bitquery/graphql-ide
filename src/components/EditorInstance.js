@@ -508,8 +508,7 @@ const EditorInstance = observer(function EditorInstance({number}) {
             )
             if (!response.ok) {
                 const errorText = await response.text()
-                console.error(`HTTP error: ${response.status} ${response.statusText}: ${errorText}`);
-                if (response.status === 402) {
+                if (response.status === 402 ) {
                     toast.error(errorText)
                 }
                 return
@@ -535,7 +534,7 @@ const EditorInstance = observer(function EditorInstance({number}) {
             }
             return data
         } catch (error) {
-            console.log('fetch error', error.message)
+            console.log('fetch error:', error.message)
         }
     }
     useEffect(() => {
