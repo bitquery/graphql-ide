@@ -189,8 +189,8 @@ const EditorInstance = observer(function EditorInstance({number}) {
             setError(null)
             queryDispatcher.onquerystarted()
             cleanSubscription = client.subscribe({...payload, variables}, {
-                next: ({data,errors}) => {
-                    if(errors){
+                next: ({data, errors}) => {
+                    if (errors) {
                         logQuery(errors)
                         queryNotLogged = false
                         queryDispatcher.onerror(errors[0].message)
@@ -200,8 +200,8 @@ const EditorInstance = observer(function EditorInstance({number}) {
                         logQuery(false)
                         queryNotLogged = false
                     }
-                    if(data){
-                    callbacks.forEach(cb => cb(data, variables))
+                    if (data) {
+                        callbacks.forEach(cb => cb(data, variables))
                     }
                 },
                 error: error => {
@@ -468,17 +468,19 @@ const EditorInstance = observer(function EditorInstance({number}) {
                 toast.error('Token refresh failed')
             }
         }
-            if (!user.id) {
-                toast.error((
-                    <div>
-                        Hello! To continue using our services, please
-                        <a className='bitquery-ico' href="https://account.bitquery.io/auth/login?redirect_to=https://ide.bitquery.io/"> log
-                            in </a> or
-                        <a className='bitquery-ico' href="https://account.bitquery.io/auth/signup"> register </a>
-                        Logging in will allow you to access all the features and keep track of your activities.
-                    </div>
-                ), {autoClose: 15000});
-            }
+
+        if (!user.id) {
+            toast.error((
+                <div>
+                    Hello! To continue using our services, please
+                    <a className='bitquery-ico'
+                       href="https://account.bitquery.io/auth/login?redirect_to=https://ide.bitquery.io/"> log
+                        in </a> or
+                    <a className='bitquery-ico' href="https://account.bitquery.io/auth/signup"> register </a>
+                    Logging in will allow you to access all the features and keep track of your activities.
+                </div>
+            ), {autoClose: 15000});
+        }
 
         abortController.current = new AbortController()
         const key = user ? user.key : null
@@ -493,36 +495,48 @@ const EditorInstance = observer(function EditorInstance({number}) {
             ...keyHeader,
             ...authorizationHeader,
         }
-        const response = await fetch(
-            currentQuery.endpoint_url,
-            {
-                signal: abortController.current.signal,
-                method: 'POST',
-                headers: headers,
-                body: JSON.stringify(graphQLParams),
-                credentials: 'same-origin',
-            },
-        )
-        const responseTime = new Date().getTime() - start
-        if (!('operationName' in graphQLParams)) {
-            const graphqlRequested = response.headers.get('X-GraphQL-Requested') === 'true' || response.headers.get('X-Bitquery-Graphql-Requested') === 'true'
-            updateQuery({
-                graphqlQueryID: response.headers.get('X-GraphQL-Query-ID') || response.headers.get('X-Bitquery-Gql-Query-Id'),
-                graphqlRequested,
-                responseTime,
-                points: graphqlRequested ? undefined : 0,
-                saved: currentQuery.saved,
-                gettingPointsCount: 0
-            }, index)
-        }
+        try {
+            const response = await fetch(
+                currentQuery.endpoint_url,
+                {
+                    signal: abortController.current.signal,
+                    method: 'POST',
+                    headers: headers,
+                    body: JSON.stringify(graphQLParams),
+                    credentials: 'same-origin',
+                },
+            )
+            if (!response.ok) {
+                const errorText = await response.text()
+                console.error(`HTTP error: ${response.status} ${response.statusText}: ${errorText}`);
+                if (response.status === 402) {
+                    toast.error(errorText)
+                }
+                return
+            }
+            const responseTime = new Date().getTime() - start
+            if (!('operationName' in graphQLParams)) {
+                const graphqlRequested = response.headers.get('X-GraphQL-Requested') === 'true' || response.headers.get('X-Bitquery-Graphql-Requested') === 'true'
+                updateQuery({
+                    graphqlQueryID: response.headers.get('X-GraphQL-Query-ID') || response.headers.get('X-Bitquery-Gql-Query-Id'),
+                    graphqlRequested,
+                    responseTime,
+                    points: graphqlRequested ? undefined : 0,
+                    saved: currentQuery.saved,
+                    gettingPointsCount: 0
+                }, index)
+            }
 
-        const {data, errors} = await response.json()
-        if (errors) {
-            setError(errors[0].message)
-        } else {
-            setError(null)
+            const {data, errors} = await response.json()
+            if (errors) {
+                setError(errors[0].message)
+            } else {
+                setError(null)
+            }
+            return data
+        } catch (error) {
+            console.log('fetch error', error.message)
         }
-        return data
     }
     useEffect(() => {
         if (number === index && user !== null && !(debouncedURL in schema) && debouncedURL) {
@@ -572,7 +586,6 @@ const EditorInstance = observer(function EditorInstance({number}) {
         dataSource.subscriptionDataSource.unsubscribe()
         if (queryStatus.activeSubscription) {
             dataSource.subscriptionDataSource.unsubscribe()
-
             return
         }
         if (abortController.current) {
@@ -617,7 +630,7 @@ const EditorInstance = observer(function EditorInstance({number}) {
                     delayShow={350}
                 />
 
-                <button className={`execute-button ${queryStatus.activeSubscription ? 'pressed-btn' : ''}  `}
+                <button className={`execute-button`}
                         data-tip={(queryStatus.activeFetch || queryStatus.activeSubscription) ? 'Interrupt' : 'Execute query (Ctrl-Enter)'}
                         ref={executeButton}
                         disabled={queryStatus.schemaLoading}
@@ -649,16 +662,16 @@ const EditorInstance = observer(function EditorInstance({number}) {
                     />}
                     <div className="workspace__sizechanger"/>
                     <div className={`widget ${widget ? 'd-flex' : 'd-none'}`}>
-                    <WidgetEditorControls
-                        abortRequest={abortRequest}
-                        getResult={getResult}
-                        model={queryTypes}
-                        dataSource={dataSource}
-                        setDataSource={setDataSource}
-                        name={WidgetComponent.name}
-                        plugins={plugins}
-                        number={number}
-                    />
+                        <WidgetEditorControls
+                            abortRequest={abortRequest}
+                            getResult={getResult}
+                            model={queryTypes}
+                            dataSource={dataSource}
+                            setDataSource={setDataSource}
+                            name={WidgetComponent.name}
+                            plugins={plugins}
+                            number={number}
+                        />
                         <CodePlugin.renderer
                             values={currentQuery.config}
                             pluginIndex={0}
@@ -695,8 +708,8 @@ const EditorInstance = observer(function EditorInstance({number}) {
                                 ready={queryStatus.readyToExecute}
                             >
                                 {fullscreenHandle.active ?
-                                    (<ExitFullscreenIcon onClick={fullscreenHandle.exit} />) :
-                                    (<FullscreenIcon onClick={fullscreenHandle.enter} />)
+                                    (<ExitFullscreenIcon onClick={fullscreenHandle.exit}/>) :
+                                    (<FullscreenIcon onClick={fullscreenHandle.enter}/>)
                                 }
                             </WidgetView>
                         </FullScreen>
