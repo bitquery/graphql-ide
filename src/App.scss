@@ -1657,3 +1657,168 @@ a:focus {
   border: 1px solid $color-primary-active;
   overflow: hidden;
 }
+
+// Переменные
+$fontAwesomeFree: "Font Awesome 5 Free";
+$fontWeightBold: 900;
+$opacity: 0.7;
+$colorGray: #9AA1A6;
+$borderStyle: 2.5px dotted $colorGray;
+
+// Общие стили для дерева
+.ul-tree, .li-tree, #tree {
+  position: relative;
+  list-style: none;
+  line-height: 1.6em;
+
+  #tree & {
+    > .li-tree:after, > .li-tree:before {
+      display: none;
+    }
+  }
+
+  .li-tree {
+    &.last-child:after {
+      display: none;
+    }
+
+    &:before, &:after {
+      position: absolute;
+      left: -1.9em;
+      content: '';
+      width: 0.65em;
+      opacity: $opacity;
+    }
+
+    &:before {
+      top: 0;
+      height: 0.93em;
+    }
+
+    &:after {
+      bottom: 0;
+      height: 100%;
+    }
+  }
+
+  .summary-tree {
+    &.no-children:before {
+      display: none;
+    }
+
+    &:before {
+      position: absolute;
+      left: -1.35em;
+      font-size: 20px;
+      font-family: $fontAwesomeFree;
+      content: "\25B8";
+      font-weight: $fontWeightBold;
+      background: inherit;
+      opacity: $opacity;
+      color: $colorGray;
+      display: block;
+      width: 20px;
+      height: 20px;
+      z-index: 100500;
+      text-align: center;
+      line-height: .80em;
+    }
+
+    details[open] & {
+      &:before {
+        content: "\25BE";
+      }
+    }
+  }
+}
+
+// Стили для summary
+.summary-tree {
+  cursor: pointer;
+  list-style: none;
+
+  &.no-children {
+    cursor: default;
+
+    &:hover {
+      color: inherit;
+    }
+  }
+
+  &::marker, &::-webkit-details-marker {
+    display: none;
+  }
+
+  &.no-children:before {
+    font-family: $fontAwesomeFree;
+    content: "\25BE";
+    font-weight: $fontWeightBold;
+    opacity: $opacity;
+  }
+}
+
+// Сброс стилей
+.resetcss-tree {
+  list-style: none;
+  padding-left: 27px;
+}
+
+// Стили для вложенных элементов
+.ul-tree {
+  line-height: 1.5em;
+  padding-inline-start: 28px;
+  padding-left: 23px;
+}
+
+// Стили для текста
+.event-tree, .content-tree {
+  display: flex;
+  align-items: center;
+  gap: 0 5px;
+}
+
+.content-tree {
+  gap: 0 9px;
+  flex-wrap: wrap;
+  padding: 0 2px;
+}
+
+.no-children {
+  &:hover {
+    opacity: 1;
+  }
+
+  &::before {
+    font-family: $fontAwesomeFree;
+    content: "\25BE";
+    font-weight: $fontWeightBold;
+    opacity: $opacity;
+  }
+}
+
+// Стили для кнопок дерева
+.button-container {
+  display: flex;
+  flex-direction: row;
+  gap: 0 20px;
+  padding: 0 0 8px 22px;
+}
+
+.collapse-button-tree, .expand-button-tree {
+  details {
+    transition: all 0.3s ease;
+  }
+
+  &:focus {
+    outline: none;
+    box-shadow: none;
+  }
+}
+
+.text-block, .value-tree {
+  display: flex;
+  gap: 3px 5px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+}
