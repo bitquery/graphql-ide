@@ -51,6 +51,9 @@ const ToolbarComponent = observer(({
             case 'https://streaming.bitquery.io/graphql':
                 setSelectedUrl('https://streaming.bitquery.io/graphql')
                 break
+            case 'https://streaming.bitquery.io/eap':
+                setSelectedUrl('https://streaming.bitquery.io/eap')
+                break
             default:
                 setSelectedUrl('')
                 break
@@ -193,6 +196,7 @@ const ToolbarComponent = observer(({
                     >
                         <option value="https://graphql.bitquery.io">API v1</option>
                         <option value="https://streaming.bitquery.io/graphql">API v2</option>
+                        <option value="https://streaming.bitquery.io/eap">EAP</option>
                         <option value="">Other...</option>
                     </Form.Control>
                 </Form.Group>
@@ -215,7 +219,8 @@ const ToolbarComponent = observer(({
                 <DocsIcon className={"docs_icon" + (docExplorerOpen ? " active" : '')} data-toggle="tooltip"
                           data-placement="top" title="Tooltip on top"/>
             </span>
-            <span className="d-flex align-items-center justify-content-center bitquery-little-btn" aria-label="Code Snippet" onClick={toggleCodeSnippet}>
+            <span className="d-flex align-items-center justify-content-center bitquery-little-btn"
+                  aria-label="Code Snippet" onClick={toggleCodeSnippet}>
                 <i className={"bi bi-code-slash" + (codeSnippetOpen ? " active" : '')}/>
             </span>
         </div>
