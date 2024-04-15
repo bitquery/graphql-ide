@@ -1,1 +1,36 @@
-servises:
+x-common-dns: &common-dns
+  dns: ${LC_COMPOSE_NAMESERVER}
+  dns_search: ${LC_COMPOSE_CLUSTER}.local
+  dns_opt: [ 'ndots:0' ]
+
+services:
+  nginx:
+    image: nginx:1.22-alpine
+    ports:
+      - 80:80
+  redis:
+    image: redis:latest
+  ide:
+    image: ide-docker-dev
+    command: [
+      "node", "./src/server/server.js"
+    ]
+    ports:
+      - 3005:3005
+    environment:
+      - REDIS_HOST=redis
+      - NODE_ENV=production
+      - DB_HOST=${DB_HOST}
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_PORT=${DB_PORT}
+      - REDIS_PORT=${REDIS_PORT:-6379}
+      - REDIS_DB=10
+      - GRAPHQL_ADMIN_URL=${GRAPHQL_ADMIN_URL}
+      - GRAPHQL_LEGACY_URL=${GRAPHQL_LEGACY_URL}
+      - GRAPHQL_URL=${GRAPHQL_URL}
+      - PORT=3005
+    volumes:
+      - /dev:/graphql-ide
+    <<: *common-dns
