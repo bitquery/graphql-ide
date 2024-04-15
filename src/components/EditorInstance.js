@@ -92,7 +92,8 @@ const EditorInstance = observer(function EditorInstance({number}) {
             } else if (typeof error === 'string') {
                 setError(error);
             } else {
-                setError('Your token unauthorized')
+                // setError('Your token unauthorized')
+                setError(error)
             }
         }
     }
@@ -101,7 +102,6 @@ const EditorInstance = observer(function EditorInstance({number}) {
     const {queryurl} = useParams()
 
     function HistoryDataSource(payload, queryDispatcher) {
-
         let callbacks = []
         let cachedData
         let queryNotLogged = true
