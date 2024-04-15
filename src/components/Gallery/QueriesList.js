@@ -105,8 +105,7 @@ const QueriesList = observer(function QueriesList() {
                                         </div>
                                         <span
                                             className='bitquery-querylist__text'>{item.description !== null && `${item.description}. `}</span>
-                                        <span className='bitquery-querylist__info'>Created
-                                        by: <strong>{item.owner_name}</strong>  <span
+                                        <span className='bitquery-querylist__info'>Created by: <strong>{item.owner_name}</strong>  <span
                                                 className="bitquery-divider_little"></span>at {Math.floor((new Date().getTime() - new Date(item.created_at).getTime()) / (1000 * 60 * 60 * 24))} days
                                         ago</span>
                                     </div>

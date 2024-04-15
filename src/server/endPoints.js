@@ -159,7 +159,6 @@ module.exports = function (app, db, redisClient) {
     app.post('/api/search', async (req, res) => {
         try {
             const searchText = req.body.search;
-            console.log(req.body.search);
             const results = await query(`
             SELECT DISTINCT *,
                    MATCH(q.name, q.description) AGAINST(? IN BOOLEAN MODE) as relevance
