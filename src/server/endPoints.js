@@ -158,42 +158,56 @@ module.exports = function (app, db, redisClient) {
 
     app.post('/api/search', async (req, res) => {
         try {
-            const results = await query(`SELECT DISTINCT *
-                                         from queries q
-                                                  INNER JOIN (SELECT name as owner_name, id as aid
-                                                              from accounts) a
-                                                             ON a.aid = q.account_id
-                                                  LEFT JOIN (SELECT query_id, GROUP_CONCAT(t.tag) AS tags
-                                                             FROM tags_to_queries tq
-                                                                      INNER JOIN tags t ON t.id = tq.tag_id
-                                                             GROUP BY query_id) t
-                                                            ON q.id = t.query_id
-                                                  LEFT JOIN (select id as noid, count(1) cnt
-                                                             from query_logs
-                                                             where success = 1
-                                                             GROUP by id) q_cnt on q_cnt.noid = q.id
-                                                  LEFT JOIN (SELECT w.id as w_id,
-                                                                    w.widget_id,
-                                                                    w.displayed_data,
-                                                                    w.query_id,
-                                                                    w.config,
-                                                                    w.active,
-                                                                    w.data_type
-                                                             FROM widgets w
-                                                             WHERE id IN (SELECT MAX(id) AS id
-                                                                          FROM widgets
-                                                                          GROUP BY query_id)) b
-                                                            ON q.id = b.query_id
-                                         where (q.published = 1 or q.account_id = ?)
-                                           AND (match (q.name, q.description) against (?)
-                                             or q.name like ? or q.description like ? or t.tags like ?)
-                                         ORDER BY q.updated_at DESC`, [req.account_id, req.body.search, `%${req.body.search}%`, `%${req.body.search}%`, `%${req.body.search}%`])
-            res.status(200).send(results)
+            const searchText = req.body.search;
+            console.log(req.body.search);
+            const results = await query(`
+            SELECT DISTINCT *,
+                   MATCH(q.name, q.description) AGAINST(? IN BOOLEAN MODE) as relevance
+            FROM queries q
+            INNER JOIN (
+                SELECT name as owner_name, id as aid
+                FROM accounts
+            ) a ON a.aid = q.account_id
+            LEFT JOIN (
+                SELECT query_id, GROUP_CONCAT(t.tag) AS tags
+                FROM tags_to_queries tq
+                INNER JOIN tags t ON t.id = tq.tag_id
+                GROUP BY query_id
+            ) t ON q.id = t.query_id
+            LEFT JOIN (
+                SELECT id as noid, count(1) cnt
+                FROM query_logs
+                WHERE success = 1
+                GROUP BY id
+            ) q_cnt ON q_cnt.noid = q.id
+            LEFT JOIN (
+                SELECT w.id as w_id, w.widget_id, w.displayed_data, w.query_id, w.config, w.active, w.data_type
+                FROM widgets w
+                WHERE id IN (
+                    SELECT MAX(id) AS id
+                    FROM widgets
+                    GROUP BY query_id
+                )
+            ) b ON q.id = b.query_id
+            WHERE (q.published = 1 OR q.account_id = ?)
+              AND (MATCH(q.name, q.description) AGAINST(? IN BOOLEAN MODE)
+                   OR q.name LIKE ? OR q.description LIKE ? OR t.tags LIKE ?)
+            ORDER BY relevance DESC, q.updated_at DESC
+        `, [
+                searchText,
+                req.account_id,
+                searchText,
+                `%${searchText}%`,
+                `%${searchText}%`,
+                `%${searchText}%`
+            ]);
+            res.status(200).send(results);
         } catch (error) {
-            console.log(error)
-            res.sendStatus(400)
+            console.log(error);
+            res.sendStatus(400);
         }
-    })
+    });
+
 
     app.get('/api/transferedquery/:query', async (req, res) => {
         const query = await redisClient.get(req.params.query)
