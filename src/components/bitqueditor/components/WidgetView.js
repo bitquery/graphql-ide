@@ -11,12 +11,8 @@ const WidgetView = observer(function WidgetView({ children, widget, dataSource, 
 
 	useEffect(() => {
 		const initWidget = async () => {
-			if (!dataSource || (!dataSource.historyDataSource && !dataSource.subscriptionDataSource)) {
-				console.log("Data sources are not available");
-				return;
-			}
-
 			try {
+				if  ((dataSource && dataSource.historyDataSource) || (dataSource && dataSource.subscriptionDataSource)) {
 					if (refJson.current.childNodes.length) {
 						refJson.current.removeChild(refJson.current.firstChild)
 					}
@@ -41,6 +37,7 @@ const WidgetView = observer(function WidgetView({ children, widget, dataSource, 
 							dataSource.subscriptionDataSource.changeVariables()
 						}
 					}
+				}
 			} catch (error){
 				console.error("error init widget:", error);
 			}
