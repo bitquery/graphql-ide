@@ -2617,7 +2617,7 @@ class Explorer extends React.PureComponent<Props, State> {
             flexGrow: '1',
             // overflow: 'scroll',
             overflowY:' auto',
-            overflowX: 'hidden',
+            overflowX: 'auto',
           }}>
           {relevantOperations.map(
             (
