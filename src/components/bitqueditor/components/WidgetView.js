@@ -11,32 +11,37 @@ const WidgetView = observer(function WidgetView({ children, widget, dataSource, 
 
 	useEffect(() => {
 		const initWidget = async () => {
-			if (dataSource) {
-				if (refJson.current.childNodes.length) {
-					refJson.current.removeChild(refJson.current.firstChild)
-				}
-				if (refChart.current.childNodes.length) {
-					refChart.current.removeChild(refChart.current.firstChild)
-				}
-				const jsonWidgetInstance = new JsonWidget(refJson.current, dataSource.historyDataSource, dataSource.subscriptionDataSource)
-				await jsonWidgetInstance.init(!!!widget)
-				if (widget) {
-					//temp for fit height in IDE
-					const explicitHeight = widget.match(/height:.*\d(px| +|)(,|)( +|)$/gm)
-					if (explicitHeight) {
-						widget = widget.replace(explicitHeight[0], '')
+			try {
+				if  ((dataSource && dataSource.historyDataSource) || (dataSource && dataSource.subscriptionDataSource)) {
+					if (refJson.current.childNodes.length) {
+						refJson.current.removeChild(refJson.current.firstChild)
 					}
-					const ChartWidget = eval(`(${widget})`)
-					const chartWidgetInstance = new ChartWidget(refChart.current, dataSource.historyDataSource, dataSource.subscriptionDataSource)
-					await chartWidgetInstance.init()
-					if (dataSource.historyDataSource) {
-						dataSource.historyDataSource.changeVariables()
+					if (refChart.current.childNodes.length) {
+						refChart.current.removeChild(refChart.current.firstChild)
 					}
-					if (dataSource.subscriptionDataSource) {
-						dataSource.subscriptionDataSource.changeVariables()
+					const jsonWidgetInstance = new JsonWidget(refJson.current, dataSource.historyDataSource, dataSource.subscriptionDataSource)
+					await jsonWidgetInstance.init(!!!widget)
+					if (widget) {
+						//temp for fit height in IDE
+						const explicitHeight = widget.match(/height:.*\d(px| +|)(,|)( +|)$/gm)
+						if (explicitHeight) {
+							widget = widget.replace(explicitHeight[0], '')
+						}
+						const ChartWidget = eval(`(${widget})`)
+						const chartWidgetInstance = new ChartWidget(refChart.current, dataSource.historyDataSource, dataSource.subscriptionDataSource)
+						await chartWidgetInstance.init()
+						if (dataSource.historyDataSource) {
+							dataSource.historyDataSource.changeVariables()
+						}
+						if (dataSource.subscriptionDataSource) {
+							dataSource.subscriptionDataSource.changeVariables()
+						}
 					}
 				}
+			} catch (error){
+				console.error("error init widget:", error);
 			}
+
 		}
 		initWidget()
 		// eslint-disable-next-line 
