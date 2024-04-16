@@ -92,8 +92,8 @@ const EditorInstance = observer(function EditorInstance({number}) {
             } else if (typeof error === 'string') {
                 setError(error);
             } else {
-                // setError('Your token unauthorized')
-                setError(error)
+                setError('Your token unauthorized')
+                console.log(error)
             }
         }
     }
