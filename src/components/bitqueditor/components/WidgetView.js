@@ -2,12 +2,14 @@ import React, { useEffect, useRef } from 'react'
 import { QueriesStore } from '../../../store/queriesStore'
 import { observer } from 'mobx-react'
 
-import JsonWidget from "./JsonComponent";
+import JsonWidget from "./JsonComponent"
+
 
 const WidgetView = observer(function WidgetView({ children, widget, dataSource, ready }) {
 	const { currentQuery } = QueriesStore
 	const refJson = useRef(null)
 	const refChart = useRef(null)
+	const [dataLoaded, setDataLoaded] = useState(false)
 
 	useEffect(() => {
 		const initWidget = async () => {
@@ -21,31 +23,26 @@ const WidgetView = observer(function WidgetView({ children, widget, dataSource, 
 					}
 					const jsonWidgetInstance = new JsonWidget(refJson.current, dataSource.historyDataSource, dataSource.subscriptionDataSource)
 					await jsonWidgetInstance.init(!!!widget)
-					if (widget && (dataSource.historyDataSource || dataSource.subscriptionDataSource)) {
-						//temp for fit height in IDE
-						const explicitHeight = widget.match(/height:.*\d(px| +|)(,|)( +|)$/gm)
-						if (explicitHeight) {
-							widget = widget.replace(explicitHeight[0], '')
-						}
-						const ChartWidget = eval(`(${widget})`)
-						const chartWidgetInstance = new ChartWidget(refChart.current, dataSource.historyDataSource, dataSource.subscriptionDataSource)
-						await chartWidgetInstance.init()
-						if (dataSource.historyDataSource) {
-							dataSource.historyDataSource.changeVariables()
-						}
-						if (dataSource.subscriptionDataSource) {
-							dataSource.subscriptionDataSource.changeVariables()
-						}
-					}
+					setDataLoaded(true)
 				}
 			} catch (error){
 				console.error("error init widget:", error);
 			}
-
 		}
 		initWidget()
-		// eslint-disable-next-line 
 	}, [dataSource])
+
+	useEffect(() => {
+		if (dataLoaded && widget && (dataSource.historyDataSource || dataSource.subscriptionDataSource)) {
+			try {
+				const ChartWidget = eval(`(${widget})`)
+				const chartWidgetInstance = new ChartWidget(refChart.current, dataSource.historyDataSource, dataSource.subscriptionDataSource)
+				chartWidgetInstance.init()
+			} catch (error) {
+				console.error("Error initializing ChartWidget:", error)
+			}
+		}
+	}, [dataLoaded, widget, dataSource])
 
 	useEffect(() => {
 		window.dispatchEvent(new Event('resize'))
