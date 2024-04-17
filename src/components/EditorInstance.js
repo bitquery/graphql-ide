@@ -179,9 +179,10 @@ const EditorInstance = observer(function EditorInstance({number}) {
                     },
                     error: error => {
                         logQuery(error)
-                        queryNotLogged = false
+                        // queryNotLogged = false
                         queryDispatcher.onerror(error)
-                        empty()
+                        // empty()
+                        this.unsubscribe();
                     },
                 },
             })
