@@ -21,7 +21,7 @@ const WidgetView = observer(function WidgetView({ children, widget, dataSource, 
 					}
 					const jsonWidgetInstance = new JsonWidget(refJson.current, dataSource.historyDataSource, dataSource.subscriptionDataSource)
 					await jsonWidgetInstance.init(!!!widget)
-					if (widget && dataSource.historyDataSource || widget && dataSource.subscriptionDataSource) {
+					if (widget && (dataSource.historyDataSource || dataSource.subscriptionDataSource)) {
 						//temp for fit height in IDE
 						const explicitHeight = widget.match(/height:.*\d(px| +|)(,|)( +|)$/gm)
 						if (explicitHeight) {
