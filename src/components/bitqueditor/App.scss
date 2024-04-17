@@ -148,9 +148,9 @@ $top-bar-height: 44px;
     &:before {
       content: ' ';
       display: inline-block;
-      margin: 0 3px -3px 0;
+      margin: 0 3px -4px 0;
       background: url('../../assets/images/error.svg') center no-repeat;
-      height: 16px;
+      height: 25px;
       width: 16px;
     }
   }
