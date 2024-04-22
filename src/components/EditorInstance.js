@@ -92,7 +92,6 @@ const EditorInstance = observer(function EditorInstance({number}) {
             } else if (typeof error === 'string') {
                 setError(error);
             } else {
-                // setError('Your token unauthorized')
                 console.log(error)
             }
         }
@@ -179,19 +178,19 @@ const EditorInstance = observer(function EditorInstance({number}) {
                     },
                     error: error => {
                         logQuery(error)
-                        // queryNotLogged = false
+                        queryNotLogged = false
                         queryDispatcher.onerror(error)
-                        // empty()
+                        empty()
                         this.unsubscribe();
                     },
                 },
             })
 
             setError(null)
-            queryDispatcher.onquerystarted()
+            // queryDispatcher.onquerystarted()
             cleanSubscription = client.subscribe({...payload, variables}, {
                 next: ({data, errors}) => {
-                    queryDispatcher.onsubscribe()
+                    // queryDispatcher.onsubscribe()
 
                     if (errors) {
                         logQuery(errors)
@@ -218,7 +217,6 @@ const EditorInstance = observer(function EditorInstance({number}) {
 
                 },
             });
-
         }
 
         this.setCallback = cb => {
