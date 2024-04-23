@@ -71,19 +71,24 @@ class CodeEditor extends Component {
 	}
 
 	formatResult() {
-		let result = ''
-		if (Array.isArray(this.props.values)) {
-			for (let i=0; i<this.props.values.length-1; i++) {
-				for (let functionName in this.props.values[i]) {
-					window[functionName] = eval(`(${this.props.values[i][functionName]})`.replace('600px', '100%'))
-					result += window[functionName].toString() + '\n'
+		try {
+			let result = ''
+			if (Array.isArray(this.props.values)) {
+				for (let i=0; i<this.props.values.length-1; i++) {
+					for (let functionName in this.props.values[i]) {
+						window[functionName] = eval(`(${this.props.values[i][functionName]})`.replace('600px', '100%'))
+						result += window[functionName].toString() + '\n'
+					}
 				}
+				const Widget = `${this.props.values.at(-1)[Object.keys(this.props.values.at(-1))[0]]}`
+				this.props.setWidget(Widget)
+				result += Widget.toString()
 			}
-			const Widget = `${this.props.values.at(-1)[Object.keys(this.props.values.at(-1))[0]]}`
-			this.props.setWidget(Widget)
-			result += Widget.toString()
+			return result
+		}catch (error){
+			console.log('error in code editor', error)
 		}
-		return result
+
 	}
 
 	render() {

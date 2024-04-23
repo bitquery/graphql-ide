@@ -92,7 +92,7 @@ const EditorInstance = observer(function EditorInstance({number}) {
             } else if (typeof error === 'string') {
                 setError(error);
             } else {
-                setError('Your token unauthorized')
+                console.log(error)
             }
         }
     }
@@ -101,7 +101,6 @@ const EditorInstance = observer(function EditorInstance({number}) {
     const {queryurl} = useParams()
 
     function HistoryDataSource(payload, queryDispatcher) {
-
         let callbacks = []
         let cachedData
         let queryNotLogged = true
@@ -182,14 +181,17 @@ const EditorInstance = observer(function EditorInstance({number}) {
                         queryNotLogged = false
                         queryDispatcher.onerror(error)
                         empty()
+                        this.unsubscribe();
                     },
                 },
             })
 
             setError(null)
-            queryDispatcher.onquerystarted()
+            // queryDispatcher.onquerystarted()
             cleanSubscription = client.subscribe({...payload, variables}, {
                 next: ({data, errors}) => {
+                    // queryDispatcher.onsubscribe()
+
                     if (errors) {
                         logQuery(errors)
                         queryNotLogged = false
@@ -211,9 +213,10 @@ const EditorInstance = observer(function EditorInstance({number}) {
                     empty()
                 },
                 complete: () => {
+                    queryDispatcher.onqueryend()
+
                 },
             });
-
         }
 
         this.setCallback = cb => {
@@ -508,7 +511,7 @@ const EditorInstance = observer(function EditorInstance({number}) {
             )
             if (!response.ok) {
                 const errorText = await response.text()
-                if (response.status === 402 ) {
+                if (response.status === 402) {
                     toast.error(errorText)
                 }
                 return

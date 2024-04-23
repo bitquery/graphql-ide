@@ -239,6 +239,10 @@ module.exports = function (app, db, redisClient) {
         const queryListType = req.body.queryListType
         const teamAdmin = await getTeamAdmin(query, queryListType, req.account_id)
         let sql = {}
+        let orderBy = queryListType === 'myqueries'
+            ? 'q.created_at DESC, q_cnt.cnt DESC'
+            : 'q_cnt.cnt DESC';
+
         sql.query = `SELECT *
                      from queries q
                               INNER JOIN (SELECT name as owner_name, id as aid
@@ -275,7 +279,7 @@ module.exports = function (app, db, redisClient) {
                              : queryListType === 'myqueries'
                                      ? 'account_id = ?'
                                      : 'account_id in (select id from accounts a where a.id = ? or a.ancestry = ?)'} ${req.params.tag === 'All queries' ? '' : 'AND tag = ?'}
-                     ORDER BY q_cnt.cnt DESC
+                     ORDER BY ${orderBy}
                          LIMIT ${req.params.page}, 11`
         if (req.params.tag === 'All queries') {
             sql.param = queryListType === 'team' ? [teamAdmin, teamAdmin] : [req.account_id]
