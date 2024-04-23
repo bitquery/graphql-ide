@@ -113,6 +113,10 @@ const ToolbarComponent = observer(({
         window.dispatchEvent(new Event('setInitialDashboard'))
     }
     const handleFork = () => {
+        if (!currentQuery || !currentQuery.query) {
+            toast('Cannot fork: Query data is not fully loaded.', {type: 'error'});
+            return
+        }
         setQuery({
             ...currentQuery,
             id: null,
@@ -178,7 +182,8 @@ const ToolbarComponent = observer(({
                 className='bitquery-btn'
                 title='Fork'
                 onClick={handleFork}
-                visible={true}
+                // visible={true}
+                visible={currentQuery && currentQuery.query}
             />
             {queryJustSaved || currentQuery.url && <ToolbarButton
                 title='Copy query URL'
