@@ -161,6 +161,21 @@ const ControlPanel = observer(function ControlPanel() {
                     </NavDropdown>
                     <span className="bitquery-divider_little"></span>
 
+                    <NavDropdown title="Monitoring" id="nav-dropdown" className="bitquery-nav_link">
+                        <NavDropdown.Item className="bitquery-links" href='https://status.bitquery.io/'
+                                          target='_blank'>API v1
+                            - V1</NavDropdown.Item>
+                        <Dropdown.Divider/>
+                        <NavDropdown.Item className="bitquery-links" href='https://bitquery-streaming.statuspage.io/'
+                                          target='_blank'>API v2
+                            -V2</NavDropdown.Item>
+                        <Dropdown.Divider/>
+                        <NavDropdown.Item className="bitquery-links"
+                                          href='https://status-streaming-eap.bitquery.io/'
+                                          target='_blank'>EAP Status</NavDropdown.Item>
+                    </NavDropdown>
+                    <span className="bitquery-divider_little"></span>
+
 
                     <NavDropdown title="Contact" id="nav-dropdown" className="bitquery-nav_link">
                         <NavDropdown.Item className="bitquery-links" href='https://community.bitquery.io/'
