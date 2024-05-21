@@ -513,6 +513,8 @@ const EditorInstance = observer(function EditorInstance({number}) {
                 const errorText = await response.text()
                 if (response.status === 402) {
                     toast.error(errorText)
+                } else {
+                    setError(response.statusText)
                 }
                 return
             }
