@@ -509,15 +509,7 @@ const EditorInstance = observer(function EditorInstance({number}) {
                     credentials: 'same-origin',
                 },
             )
-            if (!response.ok) {
-                const errorText = await response.text()
-                if (response.status === 402) {
-                    toast.error(errorText)
-                } else {
-                    setError(response.statusText)
-                }
-                return
-            }
+
             const responseTime = new Date().getTime() - start
             if (!('operationName' in graphQLParams)) {
                 const graphqlRequested = response.headers.get('X-GraphQL-Requested') === 'true' || response.headers.get('X-Bitquery-Graphql-Requested') === 'true'
@@ -531,14 +523,37 @@ const EditorInstance = observer(function EditorInstance({number}) {
                 }, index)
             }
 
-            const {data, errors} = await response.json()
+            const responseBody = await response.text();
+
+            let json;
+            try {
+                json = JSON.parse(responseBody);
+            } catch (e) {
+                console.log(`Failed to parse response body as JSON: ${responseBody}`);
+            }
+
+            if (!response.ok) {
+                if (response.status === 402) {
+                    toast.error(responseBody);
+                } else {
+                    const { errors } = json;
+                    if (errors) {
+                        setError(errors[0].message);
+                    } else {
+                        setError(null);
+                    }
+                }
+            }
+
+            const { data, errors } = json;
             if (errors) {
-                setError(errors[0].message)
+                setError(errors[0].message);
             } else {
-                setError(null)
+                setError(null);
             }
             return data
         } catch (error) {
+            // setError(error.message);
             console.log('fetch error:', error.message)
         }
     }
