@@ -426,7 +426,15 @@ const EditorInstance = observer(function EditorInstance({number}) {
             window.location = `${user?.graphql_admin_url}/auth/login?redirect_to=${window.location.href}`
             return
         }
-        const payload = {query: currentQuery.query, variables: JSON.parse(currentQuery.variables)}
+        let variables;
+        try {
+            variables = JSON.parse(currentQuery.variables);
+        } catch (error) {
+           setError(error.message)
+            return;
+        }
+        const payload = {query: currentQuery.query, variables}
+
         if (currentQuery.query.match(/subscription[^a-zA-z0-9]/gm)) {
             const subscriptionDataSource = new SubscriptionDataSource(payload, queryDispatcher)
             setDataSource({subscriptionDataSource})
@@ -434,6 +442,7 @@ const EditorInstance = observer(function EditorInstance({number}) {
             const historyDataSource = new HistoryDataSource(payload, queryDispatcher)
             setDataSource({historyDataSource})
         }
+
         // eslint-disable-next-line
     }, [JSON.stringify(currentQuery), schema[debouncedURL], JSON.stringify(queryTypes), user?.id])
 
@@ -509,7 +518,20 @@ const EditorInstance = observer(function EditorInstance({number}) {
                     credentials: 'same-origin',
                 },
             )
-
+            if (!response.ok) {
+                const errorText = await response.text()
+                try {
+                    const json = JSON.parse(errorText);
+                    const { errors } = json;
+                    if (errors) {
+                        setError(errors[0].message);
+                    } else {
+                        setError(null);
+                    }
+                } catch (e) {
+                    setError(errorText);
+                }
+            }
             const responseTime = new Date().getTime() - start
             if (!('operationName' in graphQLParams)) {
                 const graphqlRequested = response.headers.get('X-GraphQL-Requested') === 'true' || response.headers.get('X-Bitquery-Graphql-Requested') === 'true'
@@ -523,33 +545,11 @@ const EditorInstance = observer(function EditorInstance({number}) {
                 }, index)
             }
 
-            const responseBody = await response.text();
-
-            let json;
-            try {
-                json = JSON.parse(responseBody);
-            } catch (e) {
-                console.log(`Failed to parse response body as JSON: ${responseBody}`);
-            }
-
-            if (!response.ok) {
-                if (response.status === 402) {
-                    toast.error(responseBody);
-                } else {
-                    const { errors } = json;
-                    if (errors) {
-                        setError(errors[0].message);
-                    } else {
-                        setError(null);
-                    }
-                }
-            }
-
-            const { data, errors } = json;
+            const {data, errors} = await response.json()
             if (errors) {
-                setError(errors[0].message);
+                setError(errors[0].message)
             } else {
-                setError(null);
+                setError(null)
             }
             return data
         } catch (error) {
