@@ -29,7 +29,6 @@
     "postcss": "^8.4.18",
     "postman-code-generators": "^1.2.2",
     "postman-collection": "^4.1.5",
-    "prerender-node": "^3.7.0",
     "react": "^18.2.0",
     "react-bootstrap": "^2.9.1",
     "react-dom": "^18.0.2",
