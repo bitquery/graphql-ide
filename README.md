@@ -17,7 +17,7 @@ Bitquery editor is [open-source](https://github.com/bitquery/graphql-ide), and w
 
 
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This project was bootstrapped with [Create React App](https://github.com/k/create-react-app).
 
 Right click on tab to get query link if it is already shared
 

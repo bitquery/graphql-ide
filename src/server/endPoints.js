@@ -6,7 +6,7 @@ const codegen = require('postman-code-generators')
 const bodyParser = require('body-parser')
 const axios = require('axios')
 const {toast} = require("react-toastify")
-const {createCanvas, registerFont,loadImage} = require('canvas')
+const {createCanvas, registerFont, loadImage} = require('canvas')
 const hljs = require('highlight.js')
 
 const getCodeSnippet = (lang, query, variables, key, endpoint_url, token) =>
@@ -160,39 +160,43 @@ module.exports = function (app, db, redisClient) {
         try {
             const searchText = req.body.search;
             const results = await query(`
-            SELECT DISTINCT *,
-                   MATCH(q.name, q.description) AGAINST(? IN BOOLEAN MODE) as relevance
-            FROM queries q
-            INNER JOIN (
-                SELECT name as owner_name, id as aid
-                FROM accounts
-            ) a ON a.aid = q.account_id
-            LEFT JOIN (
-                SELECT query_id, GROUP_CONCAT(t.tag) AS tags
-                FROM tags_to_queries tq
-                INNER JOIN tags t ON t.id = tq.tag_id
-                GROUP BY query_id
-            ) t ON q.id = t.query_id
-            LEFT JOIN (
-                SELECT id as noid, count(1) cnt
-                FROM query_logs
-                WHERE success = 1
-                GROUP BY id
-            ) q_cnt ON q_cnt.noid = q.id
-            LEFT JOIN (
-                SELECT w.id as w_id, w.widget_id, w.displayed_data, w.query_id, w.config, w.active, w.data_type
-                FROM widgets w
-                WHERE id IN (
-                    SELECT MAX(id) AS id
+                SELECT DISTINCT *, MATCH (q.name, q.description) AGAINST(? IN BOOLEAN MODE) as relevance
+                FROM queries q
+                    INNER JOIN (
+                    SELECT name as owner_name, id as aid
+                    FROM accounts
+                    ) a
+                ON a.aid = q.account_id
+                    LEFT JOIN (
+                    SELECT query_id, GROUP_CONCAT(t.tag) AS tags
+                    FROM tags_to_queries tq
+                    INNER JOIN tags t ON t.id = tq.tag_id
+                    GROUP BY query_id
+                    ) t ON q.id = t.query_id
+                    LEFT JOIN (
+                    SELECT id as noid, count (1) cnt
+                    FROM query_logs
+                    WHERE success = 1
+                    GROUP BY id
+                    ) q_cnt ON q_cnt.noid = q.id
+                    LEFT JOIN (
+                    SELECT w.id as w_id, w.widget_id, w.displayed_data, w.query_id, w.config, w.active, w.data_type
+                    FROM widgets w
+                    WHERE id IN (
+                    SELECT MAX (id) AS id
                     FROM widgets
                     GROUP BY query_id
-                )
-            ) b ON q.id = b.query_id
-            WHERE (q.published = 1 OR q.account_id = ?)
-              AND (MATCH(q.name, q.description) AGAINST(? IN BOOLEAN MODE)
-                   OR q.name LIKE ? OR q.description LIKE ? OR t.tags LIKE ?)
-            ORDER BY relevance DESC, q.updated_at DESC
-        `, [
+                    )
+                    ) b ON q.id = b.query_id
+                WHERE (q.published = 1
+                   OR q.account_id = ?)
+                  AND (MATCH (q.name
+                    , q.description) AGAINST(? IN BOOLEAN MODE)
+                   OR q.name LIKE ?
+                   OR q.description LIKE ?
+                   OR t.tags LIKE ?)
+                ORDER BY relevance DESC, q.updated_at DESC
+            `, [
                 searchText,
                 req.account_id,
                 searchText,
@@ -778,7 +782,8 @@ module.exports = function (app, db, redisClient) {
     })
 
     app.get('/api/getquery/:url', (req, res) => {
-        let sql = `
+       try {
+           let sql = `
             SELECT queries.*,
                    widgets.id as widget_number,
                    widgets.widget_id,
@@ -790,16 +795,20 @@ module.exports = function (app, db, redisClient) {
                                ON widgets.query_id = queries.id
             WHERE queries.url = ?
             ORDER BY widgets.id DESC LIMIT 1`
-        db.query(sql, [req.params.url], (err, result) => {
-            if (err) console.log(err)
-            if (!result.length) {
-                res.send('There is no such queries with the same url...')
-            } else {
-                const {account_id, ...query} = result[0]
-                query.isOwner = account_id === req.account_id
-                res.send(query)
-            }
-        })
+           db.query(sql, [req.params.url], (err, result) => {
+               if (err) console.log(err)
+               if (!result.length) {
+                   res.send('There is no such queries with the same url...')
+               } else {
+                   const {account_id, ...query} = result[0]
+                   query.isOwner = account_id === req.account_id
+                   res.send(query)
+               }
+           })
+       }catch (e){
+           console.log('/api/getquery/:url error: ',e)
+       }
+
     })
     app.get('/api/getqueries', (req, res) => {
         let checkActive = req.session.active
@@ -929,6 +938,7 @@ module.exports = function (app, db, redisClient) {
     })
 
     registerFont('roboto.ttf', {family: 'Roboto'})
+
     function getColorForClass(colorClass) {
         const colorMap = {
             'hljs-keyword': '#B11A03',
@@ -968,17 +978,17 @@ module.exports = function (app, db, redisClient) {
         ctx.globalAlpha = 0.05
         const filePath = path.resolve(__dirname, '../../public/bitquery_logo_w.png')
         const image = await loadImage(filePath)
-        ctx.drawImage(image,50, 150,  canvas.width -100 , canvas.height /2)
+        ctx.drawImage(image, 50, 150, canvas.width - 100, canvas.height / 2)
 
         ctx.globalAlpha = 1.0
         let fontSize = 21
         let lineHeight = fontSize * 1.2
         ctx.font = `${fontSize}px Roboto`
 
-        const highlightedCode = hljs.highlight(code, { language: 'graphql' }).value
+        const highlightedCode = hljs.highlight(code, {language: 'graphql'}).value
         const defaultFillColor = '#2061A0'
         const lines = highlightedCode.split('\n')
-        let y = lineHeight +40
+        let y = lineHeight + 40
         for (const line of lines) {
             let x = 80
             if (line.includes('<span')) {
@@ -989,8 +999,7 @@ module.exports = function (app, db, redisClient) {
                         ctx.fillStyle = getColorForClass(colorClass)
                     } else if (part === '</span>') {
                         ctx.fillStyle = defaultFillColor
-                    }
-                    else {
+                    } else {
                         const escapedPart = part.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"')
                         ctx.fillText(escapedPart, x, y)
                         x += ctx.measureText(escapedPart).width
@@ -1005,9 +1014,12 @@ module.exports = function (app, db, redisClient) {
         return canvas.createPNGStream()
     }
 
-    app.get('/api/generateimage/:url.png', async (req, res) => {
-        try {
-            res.setHeader('Content-Type', 'image/png')
+    // (async () => {
+
+    // })();
+        app.get('/api/generateimage/:url.png', async (req, res) => {
+            try {
+                res.setHeader('Content-Type', 'image/png')
                 const queries = await query(`SELECT query
                                              FROM queries
                                              WHERE url = ?`, [req.params.url])
@@ -1016,10 +1028,15 @@ module.exports = function (app, db, redisClient) {
                 }
                 const imageBuffer = await generateCodeImage(queries[0].query)
                 imageBuffer.pipe(res)
-        } catch (error) {
-            console.error('Error generating or retrieving image:', error)
-            res.status(500).send('Server error')
-        }
+            } catch (error) {
+                console.error('Error generating or retrieving image:', error)
+                res.status(500).send('Server error')
+            }
 
+        })
+
+    app.get('/api/addkey', async (req, res) => {
+        await redisClient.set('session:55555', JSON.stringify({account_id: 27808}))
+        res.sendStatus(200)
     })
 }
