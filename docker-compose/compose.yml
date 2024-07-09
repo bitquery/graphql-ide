@@ -65,7 +65,7 @@ services:
       - GRAPHQL_ADMIN_URL=${LC_COMPOSE_GRAPHQL_ADMIN_URL}
       - GRAPHQL_LEGACY_URL=${LC_COMPOSE_GRAPHQL_LEGACY_URL}
       - GRAPHQL_URL=${LC_COMPOSE_GRAPHQL_URL}
-      - PRERENDER_TOKEN=${LC_COMPOSE_PRERENDER_TOKEN}
+#      - PRERENDER_TOKEN=${LC_COMPOSE_PRERENDER_TOKEN}
     depends_on:
       - nginx
     <<: [*common-dns, *common-network, *common-restart]
