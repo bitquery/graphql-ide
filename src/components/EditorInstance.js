@@ -492,6 +492,7 @@ const EditorInstance = observer(function EditorInstance({number}) {
                     Logging in will allow you to access all the features and keep track of your activities.
                 </div>
             ), {autoClose: 15000});
+            return
         }
 
         abortController.current = new AbortController()
