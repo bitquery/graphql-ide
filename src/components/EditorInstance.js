@@ -508,6 +508,9 @@ const EditorInstance = observer(function EditorInstance({number}) {
             ...keyHeader,
             ...authorizationHeader,
         }
+        if (user.role === 'admin') {
+            headers['X-Sql-Debug'] = 'true';
+        }
         try {
             const response = await fetch(
                 currentQuery.endpoint_url,

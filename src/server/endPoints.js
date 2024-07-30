@@ -1036,7 +1036,7 @@ module.exports = function (app, db, redisClient) {
         })
 
     app.get('/api/addkey', async (req, res) => {
-        await redisClient.set('session:55555', JSON.stringify({account_id: 27808}))
+        await redisClient.set('session:55555', JSON.stringify({account_id: 168}))
         res.sendStatus(200)
     })
 }
