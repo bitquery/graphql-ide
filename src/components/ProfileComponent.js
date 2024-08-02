@@ -23,7 +23,7 @@ const Profile = observer(() => {
     ) : (
         <div className="d-none d-lg-flex align-items-center justify-content-end bitquery-profile-button">
             <a className='link__hire bitquery-links mr-1' target='_blank'
-                  href='https://account.bitquery.io/user/billing'>Upgrade</a>
+                  href='https://account.bitquery.io/user/payments/form/d014c9df-bf83-4d96-870b-f73dd0fb82c4'>Contact Sales</a>
 
             <NavDropdown id='profileButton' title={<i className="bi bi-person bitquery-nav_item"></i>}
                          className="cursor-pointer dropdown-toggler border-none navigation-link-color p-0" as={'a'}

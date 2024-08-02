@@ -224,7 +224,7 @@ const ControlPanel = observer(function ControlPanel() {
                     </li>
                     <li className="nav-item d-lg-none bitquery-links" tabIndex='-1'>
                         <a className="nav-link bitquery-links"
-                           href="https://account.bitquery.io/user/billing">Upgrade</a>
+                           href="https://account.bitquery.io/user/payments/form/d014c9df-bf83-4d96-870b-f73dd0fb82c4">Contact Sales</a>
                     </li>
                     {!user?.id && <li className="nav-item d-lg-none">
                         <a className="nav-link bitquery-links"
