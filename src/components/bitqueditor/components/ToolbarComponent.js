@@ -213,13 +213,6 @@ const ToolbarComponent = observer(({
                 />
             </InputGroup>
             {user?.id && query[number].graphqlQueryID && <StatisticsButton number={number}/>}
-            {!!currentQuery.graphqlQueryID && user?.id && <a
-                target='_blank'
-                className='topBar__button'
-                href={`https://share.hsforms.com/1jhT3wGXlR4-mzU5DYZCHHA3rc4g?account_id=${user.id}&query_id=${currentQuery.graphqlQueryID}`}
-            >
-                Download from Cloud
-            </a>}
             <span className="cursor-pointer" aria-label="Documentation Explorer" onClick={toggleDocExplorer}>
                 <DocsIcon className={"docs_icon" + (docExplorerOpen ? " active" : '')} data-toggle="tooltip"
                           data-placement="top" title="Tooltip on top"/>
