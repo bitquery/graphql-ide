@@ -4,11 +4,11 @@ import {QueriesStore, UserStore} from '../store/queriesStore'
 import {observer} from 'mobx-react-lite'
 import useDebounce from '../utils/useDebounce'
 import {Link, useHistory, useLocation} from 'react-router-dom'
-import logo from '../assets/images/bitquery_logo_w.png'
 import bitqueryLogo from '../assets/images/bitquery_logo.svg'
 import {GalleryStore} from '../store/galleryStore'
 import {useQuery} from '../utils/useQuery'
 import {Dropdown, NavDropdown} from 'react-bootstrap'
+import uuid from 'uuid-random'
 
 const ControlPanel = observer(function ControlPanel() {
     const {user} = UserStore
@@ -178,7 +178,10 @@ const ControlPanel = observer(function ControlPanel() {
 
 
                     <NavDropdown title="Contact" id="nav-dropdown" className="bitquery-nav_link">
-                        <NavDropdown.Item className="bitquery-links" href='https://community.bitquery.io/'
+                        <NavDropdown.Item className="bitquery-links" href={`https://account.bitquery.io/user/payments/form/${uuid()}}`}
+                                          target='_blank'>Contact Sales</NavDropdown.Item>
+                        <Dropdown.Divider/>
+                         <NavDropdown.Item className="bitquery-links" href='https://community.bitquery.io/'
                                           target='_blank'>Forum</NavDropdown.Item>
                         <Dropdown.Divider/>
 
@@ -224,7 +227,7 @@ const ControlPanel = observer(function ControlPanel() {
                     </li>
                     <li className="nav-item d-lg-none bitquery-links" tabIndex='-1'>
                         <a className="nav-link bitquery-links"
-                           href="https://account.bitquery.io/user/payments/form/d014c9df-bf83-4d96-870b-f73dd0fb82c4">Contact Sales</a>
+                           href={`https://account.bitquery.io/user/payments/form/${uuid()}`}>Contact Sales</a>
                     </li>
                     {!user?.id && <li className="nav-item d-lg-none">
                         <a className="nav-link bitquery-links"
