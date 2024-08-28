@@ -16,6 +16,7 @@ const Profile = observer(() => {
 
     }, [])
     useEffect(() => {
+        if(!user.id){
         toast.error((
             <div>
                 Hello! To continue using our services, please
@@ -26,7 +27,8 @@ const Profile = observer(() => {
                 Logging in will allow you to access all the features and keep track of your activities.
             </div>
         ), {autoClose: 15000});
-    }, [!user?.id]);
+        }
+    }, [user.id]);
     return !user?.id ? (
         <div className="flex profile__menu d-none d-lg-block ml-auto">
             <a className="profile__email bitquery-links"
