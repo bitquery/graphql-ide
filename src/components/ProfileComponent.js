@@ -28,7 +28,7 @@ const Profile = observer(() => {
             </div>
         ), {autoClose: 15000});
         }
-    }, [user.id]);
+    }, [user?.id]);
     return !user?.id ? (
         <div className="flex profile__menu d-none d-lg-block ml-auto">
             <a className="profile__email bitquery-links"
