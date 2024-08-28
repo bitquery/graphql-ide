@@ -4,6 +4,7 @@ import {UserStore} from '../store/queriesStore';
 import UserIcon from './icons/UserIcon';
 import {Dropdown, NavDropdown} from 'react-bootstrap';
 import uuid from 'uuid-random'
+import {toast} from "react-toastify";
 
 
 const Profile = observer(() => {
@@ -12,6 +13,16 @@ const Profile = observer(() => {
     useEffect(() => {
         getUser();
         // eslint-disable-next-line
+        toast.error((
+            <div>
+                Hello! To continue using our services, please
+                <a className='bitquery-ico'
+                   href={`https://account.bitquery.io/auth/login?redirect_to=${window.location.href}`}> log
+                    in </a> or
+                <a className='bitquery-ico' href="https://account.bitquery.io/auth/signup"> register </a>
+                Logging in will allow you to access all the features and keep track of your activities.
+            </div>
+        ), {autoClose: 15000});
     }, [])
 
     return !user?.id ? (

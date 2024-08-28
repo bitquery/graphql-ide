@@ -36,20 +36,12 @@ class User {
             }
         } catch (error) {
             this.setUser(undefined)
-            toast.error((
-                <div>
-                    Hello! To continue using our services, please
-                    <a className='bitquery-ico'
-                       href={`${user?.graphql_admin_url}/auth/login?redirect_to=${window.location.href}`}> log
-                        in </a> or
-                    <a className='bitquery-ico' href="https://account.bitquery.io/auth/signup"> register </a>
-                    Logging in will allow you to access all the features and keep track of your activities.
-                </div>
-            ), {autoClose: 15000});
+
 
             console.log(error.response?.data)
         }
     }
+
     regenKey = async (key) => {
         try {
             await regenerateKey(key)
