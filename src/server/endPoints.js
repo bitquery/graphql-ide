@@ -211,7 +211,6 @@ module.exports = function (app, db, redisClient) {
         }
     });
 
-
     app.get('/api/transferedquery/:query', async (req, res) => {
         const query = await redisClient.get(req.params.query)
         if (query !== null) {
@@ -906,7 +905,7 @@ module.exports = function (app, db, redisClient) {
             res.set('Location', queryLink)
         } else {
             const fullUrl = req.protocol + '://' + req.get('host') + queryLink
-            res.set('Location', `${process.env.GRAPHQL_ADMIN_URL}/auth/login?redirect_to=${encodeURIComponent(fullUrl)}`)
+            // res.set('Location', `${process.env.GRAPHQL_ADMIN_URL}/auth/login?redirect_to=${encodeURIComponent(fullUrl)}`)
         }
         res.sendStatus(302)
     })
@@ -1014,9 +1013,6 @@ module.exports = function (app, db, redisClient) {
         return canvas.createPNGStream()
     }
 
-    // (async () => {
-
-    // })();
         app.get('/api/generateimage/:url.png', async (req, res) => {
             try {
                 res.setHeader('Content-Type', 'image/png')
