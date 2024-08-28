@@ -50,7 +50,6 @@ class User {
             console.log(error.response?.data)
         }
     }
-
     regenKey = async (key) => {
         try {
             await regenerateKey(key)
