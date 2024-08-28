@@ -906,6 +906,7 @@ module.exports = function (app, db, redisClient) {
         } else {
             const fullUrl = req.protocol + '://' + req.get('host') + queryLink
             // res.set('Location', `${process.env.GRAPHQL_ADMIN_URL}/auth/login?redirect_to=${encodeURIComponent(fullUrl)}`)
+            res.set('Location', `${fullUrl}`)
         }
         res.sendStatus(302)
     })
