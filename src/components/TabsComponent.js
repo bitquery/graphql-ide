@@ -98,7 +98,7 @@ const TabsComponent = observer(() => {
                         variables: data.transferedQuery.variables,
                         // endpoint_url: isSubscription && 'https://streaming.bitquery.io/graphql'
                         // endpoint_url: 'https://graphql.bitquery.io'
-                        endpoint_url: data.transferedQuery.endpointURL
+                        endpoint_url: data.transferedQuery.endpointURL || 'https://graphql.bitquery.io'
                     }, index)
                     setQueryIsTransfered(true)
                     setx(2)
