@@ -16,7 +16,7 @@ const Profile = observer(() => {
 
     }, [])
     useEffect(() => {
-        if(!user.id){
+        if(!user?.id){
         toast.error((
             <div>
                 Hello! To continue using our services, please
