@@ -8,6 +8,7 @@ const axios = require('axios')
 const {toast} = require("react-toastify")
 const {createCanvas, registerFont, loadImage} = require('canvas')
 const hljs = require('highlight.js')
+const React = require("react");
 
 const getCodeSnippet = (lang, query, variables, key, endpoint_url, token) =>
     new Promise((resolve, reject) => {
@@ -907,6 +908,16 @@ module.exports = function (app, db, redisClient) {
             const fullUrl = req.protocol + '://' + req.get('host') + queryLink
             // res.set('Location', `${process.env.GRAPHQL_ADMIN_URL}/auth/login?redirect_to=${encodeURIComponent(fullUrl)}`)
             res.set('Location', `${fullUrl}`)
+            toast.error((
+                <div>
+                    Hello! To continue using our services, please
+                    <a className='bitquery-ico'
+                       href={`https://account.bitquery.io/auth/login?redirect_to=${fullUrl}`}> log
+                        in </a> or
+                    <a className='bitquery-ico' href="https://account.bitquery.io/auth/signup"> register </a>
+                    Logging in will allow you to access all the features and keep track of your activities.
+                </div>
+            ), {autoClose: 3000});
         }
         res.sendStatus(302)
     })
