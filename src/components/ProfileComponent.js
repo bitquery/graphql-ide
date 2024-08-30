@@ -10,27 +10,28 @@ import {toast} from "react-toastify";
 const Profile = observer(() => {
     const {getUser, user} = UserStore;
     const [toastShown, setToastShown] = useState(false)
-
+const [toastLink, setToastLink] = useState(window.location.href)
     useEffect(() => {
         getUser();
         // eslint-disable-next-line
 
     }, [])
-    // useEffect(() => {
-    //     if (!toastShown && !user?.id) {
-    //             toast.error((
-    //                 <div>
-    //                     Hello! To continue using our services, please
-    //                     <a className='bitquery-ico'
-    //                        href={`https://account.bitquery.io/auth/login?redirect_to=${window.location.href}`}> log
-    //                         in </a> or
-    //                     <a className='bitquery-ico' href="https://account.bitquery.io/auth/signup"> register </a>
-    //                     Logging in will allow you to access all the features and keep track of your activities.
-    //                 </div>
-    //             ), {autoClose: 2000});
-    //         setToastShown(true)
-    //     }
-    // }, [toastShown, user?.id])
+
+    useEffect(() => {
+        if (!toastShown && !user?.id) {
+                toast.error((
+                    <div>
+                        Hello! To continue using our services, please
+                        <a className='bitquery-ico'
+                           href={`https://account.bitquery.io/auth/login?redirect_to=${toastLink}`}> log
+                            in </a> or
+                        <a className='bitquery-ico' href="https://account.bitquery.io/auth/signup"> register </a>
+                        Logging in will allow you to access all the features and keep track of your activities.
+                    </div>
+                ), {autoClose: 2000});
+            setToastShown(true)
+        }
+    }, [toastShown, user?.id])
 
     return !user?.id ? (
         <div className="flex profile__menu d-none d-lg-block ml-auto">
