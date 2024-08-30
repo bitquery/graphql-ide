@@ -18,7 +18,8 @@ const [toastLink, setToastLink] = useState(window.location.href)
     }, [])
 
     useEffect(() => {
-        if (!toastShown && !user?.id) {
+        const timer = setTimeout(() => {
+            if (!toastShown && !user?.id) {
                 toast.error((
                     <div>
                         Hello! To continue using our services, please
@@ -29,8 +30,11 @@ const [toastLink, setToastLink] = useState(window.location.href)
                         Logging in will allow you to access all the features and keep track of your activities.
                     </div>
                 ), {autoClose: 2000});
-            setToastShown(true)
-        }
+                setToastShown(true)
+            }
+        }, 2000);
+
+        return () => clearTimeout(timer);
     }, [toastShown, user?.id])
 
     return !user?.id ? (
