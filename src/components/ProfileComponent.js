@@ -16,25 +16,21 @@ const Profile = observer(() => {
         // eslint-disable-next-line
 
     }, [])
-    useEffect(() => {
-            const timer = setTimeout(() => {
-        if (!toastShown && !user?.id) {
-                toast.error((
-                    <div>
-                        Hello! To continue using our services, please
-                        <a className='bitquery-ico'
-                           href={`https://account.bitquery.io/auth/login?redirect_to=${window.location.href}`}> log
-                            in </a> or
-                        <a className='bitquery-ico' href="https://account.bitquery.io/auth/signup"> register </a>
-                        Logging in will allow you to access all the features and keep track of your activities.
-                    </div>
-                ), {autoClose: 2000});
-            setToastShown(true)
-        }
-            }, 2000);
-
-            return () => clearTimeout(timer);
-    }, [toastShown, user?.id])
+    // useEffect(() => {
+    //     if (!toastShown && !user?.id) {
+    //             toast.error((
+    //                 <div>
+    //                     Hello! To continue using our services, please
+    //                     <a className='bitquery-ico'
+    //                        href={`https://account.bitquery.io/auth/login?redirect_to=${window.location.href}`}> log
+    //                         in </a> or
+    //                     <a className='bitquery-ico' href="https://account.bitquery.io/auth/signup"> register </a>
+    //                     Logging in will allow you to access all the features and keep track of your activities.
+    //                 </div>
+    //             ), {autoClose: 2000});
+    //         setToastShown(true)
+    //     }
+    // }, [toastShown, user?.id])
 
     return !user?.id ? (
         <div className="flex profile__menu d-none d-lg-block ml-auto">

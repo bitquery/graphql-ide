@@ -482,16 +482,16 @@ const EditorInstance = observer(function EditorInstance({number}) {
         }
 
         if (!user.id) {
-            // toast.error((
-            //     <div>
-            //         Hello! To continue using our services, please
-            //         <a className='bitquery-ico'
-            //            href="https://account.bitquery.io/auth/login?redirect_to=https://ide.bitquery.io/"> log
-            //             in </a> or
-            //         <a className='bitquery-ico' href="https://account.bitquery.io/auth/signup"> register </a>
-            //         Logging in will allow you to access all the features and keep track of your activities.
-            //     </div>
-            // ), {autoClose: 15000});
+            toast.error((
+                <div>
+                    Hello! To continue using our services, please
+                    <a className='bitquery-ico'
+                       href={`https://account.bitquery.io/auth/login?redirect_to=${window.location.href}`}> log
+                        in </a> or
+                    <a className='bitquery-ico' href="https://account.bitquery.io/auth/signup"> register </a>
+                    Logging in will allow you to access all the features and keep track of your activities.
+                </div>
+            ), {autoClose: 3000});
             return
         }
 
