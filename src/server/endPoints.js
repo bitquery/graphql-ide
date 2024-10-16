@@ -10,12 +10,19 @@ const {createCanvas, registerFont, loadImage} = require('canvas')
 const hljs = require('highlight.js')
 const React = require("react");
 
-const getCodeSnippet = (lang, query, variables, key, endpoint_url, token) =>
+const getCodeSnippet = (lang, query, variables, headers, key, endpoint_url, token) =>
     new Promise((resolve, reject) => {
+        const customHeaders = typeof headers === 'object' && !Array.isArray(headers) ? headers : {};
+        const allHeaders = {
+            'Content-Type': 'application/json',
+            'X-API-KEY': key,
+            'Authorization': `Bearer ${token}`,
+            ...customHeaders
+        };
             const request = new sdk.Request({
                 url: endpoint_url,
                 method: 'POST',
-                header: {'Content-Type': 'application/json', 'X-API-KEY': key, 'Authorization': `Bearer ${token}`},
+                header: allHeaders,
                 body: JSON.stringify({query, variables})
             })
             const language = lang.key
@@ -152,8 +159,8 @@ module.exports = function (app, db, redisClient) {
     })
 
     app.post('/api/codesnippet', async (req, res) => {
-        const {language, query, variables, endpoint_url, key, token} = req.body
-        const snippet = await getCodeSnippet(language, query, variables, key, endpoint_url, token)
+        const {language, query, variables,headers, endpoint_url, key, token} = req.body
+        const snippet = await getCodeSnippet(language, query, variables,headers, key, endpoint_url, token)
         res.status(200).send({snippet})
     })
 

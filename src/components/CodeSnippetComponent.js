@@ -9,7 +9,7 @@ import {languageList} from '../utils/snippetLanguageList'
 
 const CodeSnippetComponent = observer(function CodeSnippetComponent() {
 
-    const {currentQuery: {endpoint_url, query, variables}} = QueriesStore
+    const {currentQuery: {endpoint_url, query, variables, headers}} = QueriesStore
     const {user} = UserStore
 
     const [language, setLanguage] = useState(
@@ -34,6 +34,7 @@ const CodeSnippetComponent = observer(function CodeSnippetComponent() {
             language,
             query,
             variables,
+            headers,
             endpoint_url,
             key: user.key,
             token: token
@@ -46,7 +47,7 @@ const CodeSnippetComponent = observer(function CodeSnippetComponent() {
 
 useEffect(() => {
     main()
-}, [language, user, query, variables, endpoint_url,user?.accessToken?.access_token])
+}, [language, user, query, variables,headers, endpoint_url,user?.accessToken?.access_token])
 
 return (
     <section className='codesnippet__root'>
@@ -91,7 +92,8 @@ return (
         </div>
         <div className='card'>
             {!query.startsWith('subscription') ? (
-                <RawCodeMirror mode={language.syntax_mode} value={snippet}/>
+                    <RawCodeMirror mode={language.syntax_mode} value={snippet}/>
+
             ) : (
                 <p className="alert alert-warning" role="alert" style={{textIndent: '15px'}}>
                     Our Code snippet doesn`t generate code for subscription, you should do it yourself (

@@ -78,6 +78,7 @@ class Queries {
     currentQuery = {
         query: '',
         variables: '{}',
+        headers: '{}',
         data_type: 'response',
         config: {},
         id: null,
@@ -180,6 +181,7 @@ class Queries {
     updateQuery = (params, index, id) => {
         if (params.query || params.query === '') this.query[index].query = params.query
         if (params.variables || params.variables === '') this.query[index].variables = params.variables
+        if (params.headers || params.headers === '') this.query[index].headers = params.headers
         if (params.config) this.query[index].config = params.config
         if (typeof params.widget_id === 'string') {
             this.query[index].widget_id = params.widget_id

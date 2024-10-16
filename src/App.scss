@@ -1822,3 +1822,36 @@ $borderStyle: 2.5px dotted $colorGray;
   text-overflow: ellipsis;
   max-width: 200px;
 }
+
+
+.headers-label {
+  margin-bottom: 3px;
+  padding-left:5px;
+  font-size: 0.9em;
+  color: #666;
+  display: flex;
+  align-items: center;
+}
+
+.headers-label span[role="img"] {
+  margin-right: 5px;
+}
+
+.hint {
+  font-size: 0.8em;
+  color: #aaa;
+  margin-left: 5px;
+  font-style: italic;
+}
+
+.header-editor {
+  //margin-top: 5px;
+  //background: #fff;
+  //border: 1px solid #e0e0e0;
+  //border-radius: 3px;
+  //padding: 5px;
+  //min-height: 40px;
+  display: flex;
+  flex: 1 1;
+  overflow: hidden;
+}

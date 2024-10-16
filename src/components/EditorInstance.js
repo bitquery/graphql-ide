@@ -35,7 +35,6 @@ import {createClient} from "graphql-ws"
 import {InteractionButton} from './InteractionButton.js';
 import JsonPlugin from "./bitqueditor/components/JsonComponent";
 
-
 const queryStatusReducer = (state, action) => {
     let newState = {...state}
     Object.keys(newState).forEach(status => {
@@ -67,6 +66,7 @@ const EditorInstance = observer(function EditorInstance({number}) {
     const executeButton = useRef(null)
     const queryEditor = useRef(null)
     const variablesEditor = useRef(null)
+    const headersEditor = useRef(null)
     const widgetDisplay = useRef(null)
     const abortController = useRef(null)
     const resultWrapper = useRef(null)
@@ -255,6 +255,8 @@ const EditorInstance = observer(function EditorInstance({number}) {
     useEffect(() => {
         if (currentTab === tabs[number].id) window.dispatchEvent(new Event('resize'))
     }, [currentTab, tabs, number])
+
+
     const setupExecButtonPosition = () => {
         let execButt = workspace.current.offsetWidth / overwrap.current.offsetWidth
         executeButton.current.setAttribute('style', `left: calc(${execButt * 100}% - 25px);`)
@@ -501,12 +503,13 @@ const EditorInstance = observer(function EditorInstance({number}) {
         const accessToken = user ? UserStore.user?.accessToken?.access_token : null
         const authorizationHeader = {'Authorization': `Bearer ${accessToken}`}
         const start = new Date().getTime()
-
+        const customHeaders = currentQuery.headers || {}
         const headers = {
             'Accept': 'application/json',
             'Content-Type': 'application/json',
             ...keyHeader,
             ...authorizationHeader,
+            ...customHeaders,
         }
         if (user.role === 'admin') {
             headers['X-Sql-Debug'] = 'true';
@@ -626,6 +629,12 @@ const EditorInstance = observer(function EditorInstance({number}) {
         }
     }, [dataSource?.streamingValues?.length])
 
+    const editHeadersHandler = useCallback((handleSubject) => {
+        if ('headers' in handleSubject) {
+            updateQuery({ ...query[number], headers: handleSubject.headers, saved: false }, index);
+        }
+    }, [query, index]);
+
     return (
         <div
             className={'graphiql__wrapper ' +
@@ -674,13 +683,16 @@ const EditorInstance = observer(function EditorInstance({number}) {
                         query={query[number].query}
                         number={number}
                         variables={query[number].variables}
+                        headers={query[number].headers}
                         variableToType={_variableToType}
                         onRunQuery={getResult}
                         onEditQuery={editQueryHandler}
                         onEditVariables={editQueryHandler}
+                        onEditHeaders={editHeadersHandler}
                         ref={{
                             ref1: queryEditor,
-                            ref2: variablesEditor
+                            ref2: variablesEditor,
+                            ref3: headersEditor,
                         }}
                     />}
                     <div className="workspace__sizechanger"/>

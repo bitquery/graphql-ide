@@ -74,7 +74,7 @@ export default class VariableEditor extends Component {
 			gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter']
 		}))
 		if (editor) {
-			
+
 			editor.on('change', this._onEdit)
 			editor.on('keyup', this.onKeyUp)
 			editor.setSize(null, height_of(this._node))
@@ -116,13 +116,19 @@ export default class VariableEditor extends Component {
 
 	render() {
 		return (
-			<section
-				className="variable-editor"
-				aria-label="Variables Editor"
-				ref={node => {
-				this._node = node;
-				}}
-			/>
-		)
+			<>
+				<p className="headers-label">
+					<span role="img" aria-label="headers">📝</span> Variables
+					<span className="hint">(add variables)</span>
+				</p>
+				<section
+					className="variable-editor"
+					aria-label="Variables Editor"
+					ref={node => {
+						this._node = node;
+					}}
+				/>
+			</>
+	)
 	}
 }
