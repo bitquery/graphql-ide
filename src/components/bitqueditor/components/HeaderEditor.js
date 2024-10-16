@@ -2,58 +2,60 @@ import React, { Component } from 'react';
 import 'codemirror/lib/codemirror.css';
 import { height_of } from '../../../utils/common';
 
-
 const AUTO_COMPLETE_AFTER_KEY = /^[a-zA-Z0-9_@(]$/;
 
 export default class HeaderEditor extends Component {
     editor = null;
     _node = null;
+    wrapper = null;
     cachedValue = '';
     ignoreChangeEvent = false;
-    wrapperHeight = null
-    number = 0
-
+    wrapperHeight = null;
+    number = 0;
 
     constructor(props) {
         super(props);
         this.state = {
-            start_x: 0,
             start_y: 0,
             start_h: 0,
             mouseDown: false,
         };
-        this.onRelease = this.onRelease.bind(this)
+        this.onRelease = this.onRelease.bind(this);
         this.cachedValue = props.value || '';
-        this.number = props.number
-
+        this.number = props.number;
     }
-    onDrag = (e) => {
-        if (this.editor && this.state.mouseDown) {
-            const deltaY = e.clientY - this.state.start_y;
 
-            const newSize = this.state.start_h - deltaY;
-            this.calculateWrapperHeight();
-            if (newSize <= this.wrapperHeight - 33 && newSize >= 25) {
-                this.editor.setSize(null, newSize + "px");
+    onDrag = (e) => {
+        if (this.wrapper && this.state.mouseDown) {
+            const deltaY = this.state.start_y - e.clientY;
+
+            const newHeight = this.state.start_h + deltaY;
+
+            if (newHeight >= 50 && newHeight <= this.wrapperHeight + 50) {
+                this.wrapper.style.height = `${newHeight}px`;
+                this.editor.setSize(null, newHeight - 40 + "px");
             }
         }
+    };
+
+    onRelease() {
+        this.setState({ mouseDown: false });
     }
-    onRelease(e) {
-        this.setState({mouseDown: false})
-    }
+
     onMouseDown = (e) => {
         this.setState({
-            start_x: e.clientX,
             start_y: e.clientY,
-            start_h: height_of(this._node),
+            start_h: height_of(this.wrapper),
             mouseDown: true
-        })
-    }
+        });
+    };
+
     onKeyUp = (cm, event) => {
         if (AUTO_COMPLETE_AFTER_KEY.test(event.key) && this.editor) {
             this.editor.execCommand('autocomplete');
         }
-    }
+    };
+
     _onEdit = () => {
         if (!this.ignoreChangeEvent && this.editor) {
             this.cachedValue = this.editor.getValue();
@@ -64,22 +66,22 @@ export default class HeaderEditor extends Component {
                         return this.props.onEdit({ headers: headersObject });
                     }
                 } catch (e) {
-                    console.error('error parsing headers:', e);
                 }
             }
         }
     };
 
+
     getEditor = () => this.editor;
 
     calculateWrapperHeight = () => {
-        const editorWrapper = this._node.parentNode
-        this.wrapperHeight = editorWrapper && height_of(editorWrapper)
-        const editorHeight = this.editor.getWrapperElement().offsetHeight
-        if ( editorHeight > this.wrapperHeight ) {
-            this.editor.setSize(null, `${this.wrapperHeight-45}px`)
+        const editorWrapper = this.wrapper;
+        this.wrapperHeight = editorWrapper && height_of(editorWrapper);
+        const editorHeight = this.editor.getWrapperElement().offsetHeight;
+        if (editorHeight > this.wrapperHeight) {
+            this.editor.setSize(null, `${this.wrapperHeight - 45}px`);
         }
-    }
+    };
 
     componentDidMount() {
         const CodeMirror = require('codemirror');
@@ -111,36 +113,41 @@ export default class HeaderEditor extends Component {
         }));
 
         if (editor) {
-            this.calculateWrapperHeight()
+            this.calculateWrapperHeight();
             window.addEventListener("mousemove", this.onDrag);
             document.body.addEventListener("mouseup", this.onRelease);
             editor.on('change', this._onEdit);
-            editor.on('keyup', this.onKeyUp)
+            editor.on('keyup', this.onKeyUp);
 
             editor.setSize(null, height_of(this._node));
-            window.addEventListener('resize', this.calculateWrapperHeight)
-            window.addEventListener('widgetresize', this.calculateWrapperHeight)
+            window.addEventListener('resize', this.calculateWrapperHeight);
+            window.addEventListener('widgetresize', this.calculateWrapperHeight);
         }
     }
 
     componentWillUnmount() {
         if (this.editor) {
             this.editor.off('change', this._onEdit);
-            window.removeEventListener('resize', this.calculateWrapperHeight)
-            window.removeEventListener('widgetresize', this.calculateWrapperHeight)
-            window.removeEventListener("mousemove", this.onDrag)
-            document.body.removeEventListener("mouseup", this.onRelease)
+            window.removeEventListener('resize', this.calculateWrapperHeight);
+            window.removeEventListener('widgetresize', this.calculateWrapperHeight);
+            window.removeEventListener("mousemove", this.onDrag);
+            document.body.removeEventListener("mouseup", this.onRelease);
             this.editor = null;
         }
     }
 
     render() {
         return (
-            <>
-                <div className="handle"
-                     onMouseDown={this.onMouseDown}
+            <div
+                className="editor-wrapper"
+                ref={(node) => { this.wrapper = node; }}
+                style={{ position: 'relative', height: '200px' }}
+            >
+                <div
+                    className="handle"
+                    onMouseDown={this.onMouseDown}
                 />
-                <p className="headers-label">
+                <p className="headers-label" >
                     <span role="img" aria-label="headers">📝</span> Headers
                     <span className="hint">(click to add headers)</span>
                 </p>
@@ -150,8 +157,9 @@ export default class HeaderEditor extends Component {
                     ref={(node) => {
                         this._node = node;
                     }}
+                    style={{ height: 'calc(100% - 40px)' }}
                 />
-            </>
+            </div>
         );
     }
 }
