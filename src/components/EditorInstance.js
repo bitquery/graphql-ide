@@ -647,6 +647,7 @@ const EditorInstance = observer(function EditorInstance({number}) {
                 number={number}
                 queryEditor={queryEditor}
                 variablesEditor={variablesEditor}
+                headersEditor={headersEditor}
                 docExplorerOpen={docExplorerOpen}
                 toggleDocExplorer={toggleDocs}
                 toggleCodeSnippet={toggleCodeSnippet}

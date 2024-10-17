@@ -16,6 +16,7 @@ import DocsIcon from '../../icons/DocsIcon'
 const ToolbarComponent = observer(({
                                        queryEditor,
                                        variablesEditor,
+                                       headersEditor,
                                        docExplorerOpen,
                                        toggleDocExplorer,
                                        toggleCodeSnippet,
@@ -35,6 +36,8 @@ const ToolbarComponent = observer(({
     const [selectedUrl, setSelectedUrl] = useState('')
 
     useEffect(() => {
+        console.log('headersEditor',headersEditor)
+        console.log('variablesEditor',variablesEditor)
         if (((currentQuery.layout && (currentQuery.account_id === user?.id)) || !currentQuery.id) || !currentQuery.layout) {
             setOwner(true)
         } else {
@@ -86,17 +89,31 @@ const ToolbarComponent = observer(({
         }
         const variableEditor = variablesEditor.current.getEditor()
         const variableEditorContent = variableEditor?.getValue() ?? ''
+
+        const headerEditor = headersEditor.current.getEditor()
+        const headerEditorContent = headerEditor?.getValue() ?? ''
         try {
             const prettifiedVariableEditorContent = JSON.stringify(
                 JSON.parse(variableEditorContent),
                 null,
                 2,
             )
+            const prettifiedHeaderEditorContent = JSON.stringify(
+                JSON.parse(headerEditorContent),
+                null,
+                2,
+            )
+
+            if (prettifiedHeaderEditorContent !== headerEditorContent) {
+                headerEditor.setValue(prettifiedHeaderEditorContent)
+            }
+
             if (prettifiedVariableEditorContent !== variableEditorContent) {
                 variableEditor.setValue(prettifiedVariableEditorContent)
             }
         } catch {
         }
+
     }
     useEffect(() => {
         if (queryIsTransfered) {
