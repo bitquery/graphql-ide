@@ -16,6 +16,7 @@ const ControlPanel = observer(function ControlPanel() {
     const {currentTag} = GalleryStore
     const [search, setSearch] = useState('')
     const [active, setActive] = useState(1)
+
     const searchValue = useDebounce(search, 500)
     const history = useHistory()
     const location = useLocation()
@@ -52,6 +53,10 @@ const ControlPanel = observer(function ControlPanel() {
         }
     }, [location.pathname])
 
+    const handleNavClick = (path, title) => {
+        history.push(path)
+        onClickWithTitle(title)
+    }
     const searchHandler = (e) => {
         e.preventDefault()
         if (e.which = 13) {
@@ -121,28 +126,37 @@ const ControlPanel = observer(function ControlPanel() {
                     </li>
                     <span className="bitquery-divider_little"></span>
 
-                    <NavDropdown id="navbarDropdownMenuQueries" tabIndex='-1'
-                                 className={`bitquery-links ${(active === 2 || active === 3 || active === 4 || active === 5) ? 'bitquery-link_active' : 'bitquery-nav_item'}`}
-                                 title={<>{queriesMenuTitle.icon} {queriesMenuTitle.name}</>}>
-                        <NavDropdown.Item className='bitquery-links'><Link
+                    <NavDropdown
+                        id="navbarDropdownMenuQueries"
+                        tabIndex='-1'
+                        className={`bitquery-links ${(active === 2 || active === 3 || active === 4 || active === 5) ? 'bitquery-link_active' : 'bitquery-nav_item'}`}
+                        title={<>{queriesMenuTitle.icon} {queriesMenuTitle.name}</>}
+                    >
+                        <NavDropdown.Item
                             className={`bitquery-links ${active === 3 ? 'bitquery-link_active' : 'bitquery-nav_item'}`}
-                            to={`/explore/All%20queries`}
-                            onClick={() => onClickWithTitle('explore')}>{menuItems.explore.icon}Explore</Link></NavDropdown.Item>
-                        <NavDropdown.Item className='bitquery-links'>{user?.id &&
-                            <Link
+                            onClick={() => handleNavClick('/explore/All%20queries', 'explore')}
+                        >
+                            {menuItems.explore.icon}Explore
+                        </NavDropdown.Item>
+
+                        {user?.id && (
+                            <NavDropdown.Item
                                 className={`bitquery-links ${active === 4 ? 'bitquery-link_active' : 'bitquery-nav_item'}`}
-                                to={`/myqueries/All%20queries`}
-                                onClick={() => onClickWithTitle('myqueries')}>{menuItems.myqueries.icon}My
-                                Queries</Link>}</NavDropdown.Item>
-                        <NavDropdown.Item className='bitquery-links'>{(user?.children_count || user?.ancestry) &&
-                            <Link
+                                onClick={() => handleNavClick('/myqueries/All%20queries', 'myqueries')}
+                            >
+                                {menuItems.myqueries.icon}My Queries
+                            </NavDropdown.Item>
+                        )}
+
+                        {(user?.children_count || user?.ancestry) && (
+                            <NavDropdown.Item
                                 className={`bitquery-links ${active === 5 ? 'bitquery-link_active' : 'bitquery-nav_item'}`}
-                                to={`/team/All%20queries`}
-                                onClick={() => onClickWithTitle('teamqueries')}>{menuItems.teamqueries.icon}Team
-                                Queries</Link>}</NavDropdown.Item>
+                                onClick={() => handleNavClick('/team/All%20queries', 'teamqueries')}
+                            >
+                                {menuItems.teamqueries.icon}Team Queries
+                            </NavDropdown.Item>
+                        )}
                     </NavDropdown>
-
-
                     <span className="bitquery-divider_little"></span>
 
 

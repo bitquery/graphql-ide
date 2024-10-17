@@ -68,6 +68,7 @@ class Queries {
     defaultWidget = 'json.widget'
     queryIsTransfered = false	//flag to prettify query when it is transfered from explorer
     currentVariables = ''
+    currentHeaders = ''
     showGallery = true
     showSideBar = true
     queryJustSaved = false
@@ -96,6 +97,7 @@ class Queries {
             sharedQueries: observable,
             dashboardView: observable,
             currentVariables: observable,
+            currentHeaders: observable,
             queryJustSaved: observable,
             dashboardQuery: observable,
             gettingResult: observable,
@@ -111,6 +113,7 @@ class Queries {
             setQueryIsTransfered: action,
             toggleDashboardView: action,
             setCurrentVariables: action,
+            setCurrentHeaders: action,
             setDashboardQuery: action,
             setSharedQueires: action,
             setGettingResult: action,
@@ -139,6 +142,7 @@ class Queries {
             isOwner: this.currentQuery.isOwner,
             query: this.currentQuery.query,
             variables: this.currentQuery.variables,
+            headers: this.currentQuery.headers,
             config: this.currentQuery.config,
             widget_id: this.currentQuery.widget_id,
             displayed_data: this.currentQuery.displayed_data,
@@ -250,6 +254,9 @@ class Queries {
     }
     setCurrentVariables = variables => {
         this.currentVariables = variables
+    }
+    setCurrentHeaders = headers => {
+        this.currentHeaders = headers
     }
     saveToggle = () => {
         this.queryJustSaved = !this.queryJustSaved

@@ -51,7 +51,7 @@ const [toastLink, setToastLink] = useState(window.location.href)
                   href={`https://account.bitquery.io/user/payments/form/${uuid()}`}>Contact Sales</a>
 
             <NavDropdown id='profileButton' title={<i className="bi bi-person bitquery-nav_item"></i>}
-                         className="cursor-pointer dropdown-toggler border-none navigation-link-color p-0" as={'a'}
+                         className="cursor-pointer dropdown-toggler border-none navigation-link-color p-0" as={'div'}
                          role="button"
                          tabIndex="0" aria-label="account menu">
 
