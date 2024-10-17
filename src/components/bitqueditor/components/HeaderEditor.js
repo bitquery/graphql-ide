@@ -113,10 +113,10 @@ export default class HeaderEditor extends Component {
                 minFoldSize: 4,
             },
             lint: {
-                variableToType: this.props.variableToType,
+                headersToType: this.props.headersToType,
             },
             hintOptions: {
-                variableToType: this.props.variableToType,
+                headersToType: this.props.headersToType,
                 closeOnUnfocus: false,
                 completeSingle: false,
                 container: this._node,
@@ -125,17 +125,45 @@ export default class HeaderEditor extends Component {
         }));
 
         if (editor) {
+            editor.on('change', this._onEdit);
+            editor.on('keyup', this.onKeyUp);
             this.calculateWrapperHeight();
             window.addEventListener("mousemove", this.onDrag);
             document.body.addEventListener("mouseup", this.onRelease);
-            editor.on('change', this._onEdit);
-            editor.on('keyup', this.onKeyUp);
 
             // editor.setSize(null, height_of(this._node));
             window.addEventListener('resize', this.calculateWrapperHeight);
             window.addEventListener('widgetresize', this.calculateWrapperHeight);
         }
     }
+    // componentDidUpdate(prevProps) {
+    //     this.CodeMirror = require('codemirror');
+    //
+    //     if (!this.editor) {
+    //         return;
+    //     }
+    //     this.ignoreChangeEvent = true;
+    //
+    //     if (this.props.headersToType !== prevProps.headersToType) {
+    //         this.editor.options.lint.headersToType = this.props.headersToType;
+    //         this.editor.options.hintOptions.headersToType = this.props.headersToType;
+    //         this.CodeMirror.signal(this.editor, 'change', this.editor);
+    //     }
+    //
+    //     if (
+    //         this.props.value !== prevProps.value &&
+    //         this.props.value !== this.cachedValue
+    //     ) {
+    //         this.cachedValue = this.props.value;
+    //         this.editor.operation(() => {
+    //             const cursor = this.editor.getCursor();
+    //             this.editor.setValue(this.props.value);
+    //             this.editor.setCursor(cursor);
+    //         });
+    //     }
+    //     this.ignoreChangeEvent = false;
+    // }
+
 
     componentWillUnmount() {
         if (this.editor) {

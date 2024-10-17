@@ -20,6 +20,7 @@
     "graphql-ws": "^5.14.2",
     "highlight.js": "^11.9.0",
     "http-proxy-middleware": "^0.19.1",
+    "jsonlint": "^1.6.3",
     "markdown-it": "^12.3.2",
     "mobx": "^6.3.2",
     "mobx-react": "^7.2.0",
