@@ -11,7 +11,6 @@ export default class HeaderEditor extends Component {
     cachedValue = '';
     ignoreChangeEvent = false;
     wrapperHeight = null;
-    number = 0;
 
     constructor(props) {
         super(props);
@@ -22,7 +21,6 @@ export default class HeaderEditor extends Component {
         };
         this.onRelease = this.onRelease.bind(this);
         this.cachedValue = props.value || '';
-        this.number = props.number;
     }
 
     onDrag = (e) => {
@@ -57,16 +55,22 @@ export default class HeaderEditor extends Component {
     };
 
     _onEdit = () => {
+        // if (!this.ignoreChangeEvent && this.editor) {
+        //     this.cachedValue = this.editor.getValue();
+        //     if (this.props.onEdit) {
+        //         try {
+        //             const headersObject = JSON.parse(this.cachedValue);
+        //             if (typeof headersObject === 'object' && headersObject !== null) {
+        //                 return this.props.onEdit({ headers: headersObject });
+        //             }
+        //         } catch (e) {
+        //         }
+        //     }
+        // }
         if (!this.ignoreChangeEvent && this.editor) {
-            this.cachedValue = this.editor.getValue();
+            this.cachedValue = this.editor.getValue()
             if (this.props.onEdit) {
-                try {
-                    const headersObject = JSON.parse(this.cachedValue);
-                    if (typeof headersObject === 'object' && headersObject !== null) {
-                        return this.props.onEdit({ headers: headersObject });
-                    }
-                } catch (e) {
-                }
+                return this.props.onEdit({variables: this.cachedValue})
             }
         }
     };
@@ -113,10 +117,10 @@ export default class HeaderEditor extends Component {
                 minFoldSize: 4,
             },
             lint: {
-                headersToType: this.props.headersToType,
+                headerToType: this.props.headerToType,
             },
             hintOptions: {
-                headersToType: this.props.headersToType,
+                headerToType: this.props.headerToType,
                 closeOnUnfocus: false,
                 completeSingle: false,
                 container: this._node,
@@ -136,38 +140,39 @@ export default class HeaderEditor extends Component {
             window.addEventListener('widgetresize', this.calculateWrapperHeight);
         }
     }
-    // componentDidUpdate(prevProps) {
-    //     this.CodeMirror = require('codemirror');
-    //
-    //     if (!this.editor) {
-    //         return;
-    //     }
-    //     this.ignoreChangeEvent = true;
-    //
-    //     if (this.props.headersToType !== prevProps.headersToType) {
-    //         this.editor.options.lint.headersToType = this.props.headersToType;
-    //         this.editor.options.hintOptions.headersToType = this.props.headersToType;
-    //         this.CodeMirror.signal(this.editor, 'change', this.editor);
-    //     }
-    //
-    //     if (
-    //         this.props.value !== prevProps.value &&
-    //         this.props.value !== this.cachedValue
-    //     ) {
-    //         this.cachedValue = this.props.value;
-    //         this.editor.operation(() => {
-    //             const cursor = this.editor.getCursor();
-    //             this.editor.setValue(this.props.value);
-    //             this.editor.setCursor(cursor);
-    //         });
-    //     }
-    //     this.ignoreChangeEvent = false;
-    // }
+    componentDidUpdate(prevProps) {
+        this.CodeMirror = require('codemirror');
+
+        if (!this.editor) {
+            return;
+        }
+        this.ignoreChangeEvent = true;
+console.log('prevProps:', typeof prevProps, prevProps)
+        if (this.props.headerToType !== prevProps.headerToType) {
+            this.editor.options.lint.headerToType = this.props.headerToType;
+            this.editor.options.hintOptions.headerToType = this.props.headerToType;
+            this.CodeMirror.signal(this.editor, 'change', this.editor);
+        }
+
+        if(
+            this.props.value !== prevProps.value &&
+            this.props.value !== this.cachedValue
+        ) {
+            this.cachedValue = this.props.value
+            this.editor.operation(() => {
+                const cursor = this.editor.getCursor()
+                this.editor.setCursor(cursor)
+                this.editor.setValue(this.props.value)
+            })
+        }
+        this.ignoreChangeEvent = false;
+    }
 
 
     componentWillUnmount() {
         if (this.editor) {
             this.editor.off('change', this._onEdit);
+            this.editor.off('keyup', this.onKeyUp);
             window.removeEventListener('resize', this.calculateWrapperHeight);
             window.removeEventListener('widgetresize', this.calculateWrapperHeight);
             window.removeEventListener("mousemove", this.onDrag);

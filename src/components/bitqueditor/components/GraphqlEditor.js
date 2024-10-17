@@ -11,6 +11,7 @@ const GraphqlEditor = observer(function GraphqlEditor({
 	  variables,
 	  headers,
 	  variableToType,
+	  headerToType,
 	  onRunQuery,
 	  onEditQuery,
 	  onEditVariables,
@@ -24,6 +25,8 @@ const GraphqlEditor = observer(function GraphqlEditor({
 		ref2.current.getEditor().refresh()
 		ref3.current.getEditor().refresh()
 		// eslint-disable-next-line
+
+
 	}, [currentTab])
 	return (
 		<div className="editor__wrapper" >
@@ -49,6 +52,7 @@ const GraphqlEditor = observer(function GraphqlEditor({
 				number={number}
 				ref={ref3}
 				onEdit={onEditHeaders}
+				headerToType={headerToType}
 				value={headers}
 			/>
 		</div>

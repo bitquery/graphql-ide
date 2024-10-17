@@ -425,8 +425,6 @@ module.exports = function (app, db, redisClient) {
             isDraggable, isResizable, data_type, tags, isOwner,
             ...params
         } = req.body.params
-        console.log('req.body.params', req.body.params)
-        console.log('params', params)
         params.id = null
         params.published = params.url ? true : null
         params.account_id = req.account_id
@@ -439,6 +437,7 @@ module.exports = function (app, db, redisClient) {
             params.name?.match(matchURL) ||
             params.description?.match(matchURL) ||
             params.query?.match(matchURL) ||
+            params.headers?.match(matchURL) ||
             params.variables?.match(matchURL) ||
             tags?.some(tag => tag.match(matchURL))
         ) {
@@ -475,7 +474,7 @@ module.exports = function (app, db, redisClient) {
                 name: req.body.params.name && req.body.params.name,
                 description: req.body.params.description && req.body.params.description,
                 variables: req.body.params.variables,
-                headers: req.body.params.headers,
+                // headers: req.body.params.headers,
                 query: req.body.params.query && req.body.params.query,
                 url: req.body.params.url ? req.body.params.url : null,
                 endpoint_url: req.body.params.endpoint_url,

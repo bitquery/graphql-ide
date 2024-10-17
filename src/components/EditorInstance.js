@@ -54,6 +54,7 @@ const EditorInstance = observer(function EditorInstance({number}) {
     const [docExplorerOpen, setDocExplorerOpen] = useState(false)
     const [codeSnippetOpen, setCodeSnippetOpen] = useState(false)
     const [_variableToType, _setVariableToType] = useState(null)
+    const [_headerToType, _setHeaderToType] = useState(null)
     const [error, setError] = useState(null)
     const [queryTypes, setQueryTypes] = useState('')
     const [dataSource, setDataSource] = useState(null)
@@ -451,11 +452,17 @@ const EditorInstance = observer(function EditorInstance({number}) {
     const editQueryHandler = useCallback(handleSubject => {
         if ('query' in handleSubject) {
             const facts = getQueryFacts(schema[debouncedURL], handleSubject.query)
+            console.log('facts',facts)
             if (facts) {
                 const {variableToType} = facts
+                const {headerToType} = facts
                 if ((JSON.stringify(variableToType) !== JSON.stringify(_variableToType))
                     && _variableToType !== null) {
                     _setVariableToType(variableToType)
+                }
+                if ((JSON.stringify(headerToType) !== JSON.stringify(_headerToType))
+                    && _headerToType !== null) {
+                    _setHeaderToType(headerToType)
                 }
             }
             let queryType = getQueryTypes(handleSubject.query)
@@ -686,6 +693,7 @@ const EditorInstance = observer(function EditorInstance({number}) {
                         variables={query[number].variables}
                         headers={query[number].headers}
                         variableToType={_variableToType}
+                        headerToType={_headerToType}
                         onRunQuery={getResult}
                         onEditQuery={editQueryHandler}
                         onEditVariables={editQueryHandler}

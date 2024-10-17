@@ -36,8 +36,6 @@ const ToolbarComponent = observer(({
     const [selectedUrl, setSelectedUrl] = useState('')
 
     useEffect(() => {
-        console.log('headersEditor',headersEditor)
-        console.log('variablesEditor',variablesEditor)
         if (((currentQuery.layout && (currentQuery.account_id === user?.id)) || !currentQuery.id) || !currentQuery.layout) {
             setOwner(true)
         } else {
@@ -138,6 +136,7 @@ const ToolbarComponent = observer(({
             ...currentQuery,
             id: null,
             account_id: null,
+            headers:currentQuery.headers,
             name: `Copy of ${currentQuery.name || 'New Query'}`,
             saved: false,
             url: null
@@ -151,7 +150,8 @@ const ToolbarComponent = observer(({
                 query: {
                     query: currentQuery.query,
                     variables: currentQuery.variables
-                }
+                },
+                headers:currentQuery.headers,
             })
             link = data
         } else {
