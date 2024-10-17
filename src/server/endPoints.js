@@ -475,6 +475,7 @@ module.exports = function (app, db, redisClient) {
                 name: req.body.params.name && req.body.params.name,
                 description: req.body.params.description && req.body.params.description,
                 variables: req.body.params.variables,
+                headers: req.body.params.headers,
                 query: req.body.params.query && req.body.params.query,
                 url: req.body.params.url ? req.body.params.url : null,
                 endpoint_url: req.body.params.endpoint_url,

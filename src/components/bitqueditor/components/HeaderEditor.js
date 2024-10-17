@@ -95,12 +95,15 @@ export default class HeaderEditor extends Component {
         require('codemirror/addon/search/jump-to-line');
         require('codemirror/addon/dialog/dialog');
         require('codemirror/keymap/sublime');
+        require('codemirror-graphql/variables/hint');
+        require('codemirror-graphql/variables/lint');
+        require('codemirror-graphql/variables/mode');
 
         const editor = (this.editor = CodeMirror(this._node, {
             value: this.props.value || '',
             lineNumbers: true,
             tabSize: 2,
-            mode: 'application/json',
+            mode: 'graphql-variables',
             theme: 'graphiql',
             keyMap: 'sublime',
             autoCloseBrackets: true,
@@ -108,6 +111,15 @@ export default class HeaderEditor extends Component {
             showCursorWhenSelecting: true,
             foldGutter: {
                 minFoldSize: 4,
+            },
+            lint: {
+                variableToType: this.props.variableToType,
+            },
+            hintOptions: {
+                variableToType: this.props.variableToType,
+                closeOnUnfocus: false,
+                completeSingle: false,
+                container: this._node,
             },
             gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter'],
         }));
@@ -119,7 +131,7 @@ export default class HeaderEditor extends Component {
             editor.on('change', this._onEdit);
             editor.on('keyup', this.onKeyUp);
 
-            editor.setSize(null, height_of(this._node));
+            // editor.setSize(null, height_of(this._node));
             window.addEventListener('resize', this.calculateWrapperHeight);
             window.addEventListener('widgetresize', this.calculateWrapperHeight);
         }
@@ -141,7 +153,7 @@ export default class HeaderEditor extends Component {
             <div
                 className="editor-wrapper"
                 ref={(node) => { this.wrapper = node; }}
-                style={{ position: 'relative', height: '200px' }}
+                style={{ position: 'relative', height: '50px' }}
             >
                 <div
                     className="handle"
@@ -149,7 +161,7 @@ export default class HeaderEditor extends Component {
                 />
                 <p className="headers-label" >
                     <span role="img" aria-label="headers">📝</span> Headers
-                    <span className="hint">(click to add headers)</span>
+                    <span className="hint">(add headers)</span>
                 </p>
                 <section
                     className="header-editor"

@@ -129,7 +129,10 @@ export default class QueryEditor extends Component {
 			}
 		}))
 		if (editor) {
+			const editorHeight = window.innerHeight * 0.6;
+			editor.setSize(null, editorHeight);
 			this.calculateWrapperHeight()
+
 			window.addEventListener("mousemove", this.onDrag);
 			document.body.addEventListener("mouseup", this.onRelease);
 			editor.on('change', this._onEdit)

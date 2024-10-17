@@ -74,7 +74,6 @@ export default class VariableEditor extends Component {
 			gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter']
 		}))
 		if (editor) {
-
 			editor.on('change', this._onEdit)
 			editor.on('keyup', this.onKeyUp)
 			editor.setSize(null, height_of(this._node))
