@@ -67,10 +67,11 @@ export default class HeaderEditor extends Component {
         //         }
         //     }
         // }
+
         if (!this.ignoreChangeEvent && this.editor) {
             this.cachedValue = this.editor.getValue()
             if (this.props.onEdit) {
-                return this.props.onEdit({variables: this.cachedValue})
+                return this.props.onEdit({headers: this.cachedValue})
             }
         }
     };
@@ -147,7 +148,6 @@ export default class HeaderEditor extends Component {
             return;
         }
         this.ignoreChangeEvent = true;
-console.log('prevProps:', typeof prevProps, prevProps)
         if (this.props.headerToType !== prevProps.headerToType) {
             this.editor.options.lint.headerToType = this.props.headerToType;
             this.editor.options.hintOptions.headerToType = this.props.headerToType;

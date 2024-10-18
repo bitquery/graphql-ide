@@ -85,7 +85,6 @@ export default class VariableEditor extends Component {
 		if (!this.editor) {
 		  return;
 		}
-		console.log('Variables prevProps:', typeof prevProps, prevProps)
 
 		this.ignoreChangeEvent = true;
 		if (this.props.variableToType !== prevProps.variableToType) {
