@@ -697,7 +697,7 @@ const EditorInstance = observer(function EditorInstance({number}) {
                         onRunQuery={getResult}
                         onEditQuery={editQueryHandler}
                         onEditVariables={editQueryHandler}
-                        onEditHeaders={editHeadersHandler}
+                        onEditHeaders={editQueryHandler}
                         ref={{
                             ref1: queryEditor,
                             ref2: variablesEditor,

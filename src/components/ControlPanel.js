@@ -114,7 +114,6 @@ const ControlPanel = observer(function ControlPanel() {
                     />
                 </form>
 
-
                 <ul className="navbar-nav mt-2 mt-lg-0 bitquery-nav_container">
 
                     <li className='nav-item' tabIndex='-1'>

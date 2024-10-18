@@ -15,8 +15,8 @@ const EditDialog = observer(function EditDialog({active}) {
 	const { saveQuery, queryParams, currentQuery,
 		saveToggle, query, removeQuery, updateQuery } = QueriesStore
 	const { index } = TabsStore
-	const [name, setName] = useState(currentQuery.name||'')
-	const [description, setDescription] = useState(currentQuery.description)
+	const [name, setName] = useState(currentQuery.name || '')
+	const [description, setDescription] = useState(currentQuery.description || '')
 	const [shared, setShared] = useState(!!currentQuery.url || true)
 	const [queryUrl, setQueryUrl] = useState(currentQuery.url)
 	const [tags, setTags] = useState([])
@@ -118,8 +118,7 @@ const EditDialog = observer(function EditDialog({active}) {
 				<Form.Group>
 					<Form.Label htmlFor="queryName">Query name (required)</Form.Label>
 					<Form.Control ref={nameInput} type="email"
-						id="queryName"
-						value={name==='New Query' ? '' : name}
+						id="queryName" value={name === 'New Query' ? '' : name}
 						onChange={queryNameHandler} 
 					/>
 				</Form.Group>
@@ -145,7 +144,7 @@ const EditDialog = observer(function EditDialog({active}) {
 							type="text"
 							placeholder='Add tags here'
 							className="tags__input"
-							value={inputTagValue}
+							value={inputTagValue || ''}
 							onChange={e => setInputTagValue(e.target.value)}
 						/>
 				</div>

@@ -36,7 +36,7 @@ const ApiKeyModal = observer(function ApiKeyModal({ active }) {
 						<div className="input-group-prepend">
 							<span className="input-group-text">API key</span>
 						</div>
-						<input readOnly type="text" className="form-control" value={user ? user.key: ''} aria-describedby="basic-addon2"/>
+						<input readOnly type="text" className="form-control" value={user ? user.key : ''} aria-describedby="basic-addon2"/>
 						<div className="input-group-append">
 							<button className="btn btn-outline-secondary" type="button" onClick={handleCopy}>
 								<i className="fas fa-copy" />

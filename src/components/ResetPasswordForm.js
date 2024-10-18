@@ -32,7 +32,8 @@ function ResetPasswordForm() {
 			<p className="p-modal">New password</p>
 			<input type="password" className="query__save" 
 				value={password} onChange={e => setPassword(e.target.value)} 
-			/> 
+			/>
+
 			<button className="button button_filled" type="submit">Change password</button>
 		</form>
 	)
