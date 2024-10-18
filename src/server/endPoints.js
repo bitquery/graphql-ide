@@ -474,7 +474,7 @@ module.exports = function (app, db, redisClient) {
                 name: req.body.params.name && req.body.params.name,
                 description: req.body.params.description && req.body.params.description,
                 variables: req.body.params.variables,
-                // headers: req.body.params.headers,
+                headers: req.body.params.headers,
                 query: req.body.params.query && req.body.params.query,
                 url: req.body.params.url ? req.body.params.url : null,
                 endpoint_url: req.body.params.endpoint_url,
@@ -677,6 +677,7 @@ module.exports = function (app, db, redisClient) {
 
     app.post('/api/addquery', (req, res) => {
         let query = req.body.params
+        console.log('body params',query)
         if (!query.id || query.account_id !== req.account_id) {
             handleAddQuery(req, res, db)
         } else {

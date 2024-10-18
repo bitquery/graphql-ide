@@ -12,6 +12,7 @@ connection.query(`
 		account_id INT(10) not null,
 		query LONGTEXT not null,
 		variables LONGTEXT not null,
+		headers LONGTEXT not null,
 		url VARCHAR(200),
 		name VARCHAR(200),
 		endpoint_url VARCHAR(200) not null,
