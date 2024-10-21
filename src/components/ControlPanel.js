@@ -264,7 +264,7 @@ const ControlPanel = observer(function ControlPanel() {
                     </li>}
                     {user?.id && <li className="nav-item d-lg-none">
                         <a className="nav-link bitquery-links"
-                           href={`${user?.graphql_admin_url}/auth/logout`}>Logout</a>
+                           href={`${user?.graphql_admin_url}/auth/logout?redirect_to=${window.location.href}`}>Logout</a>
                     </li>}
                 </ul>
                 <ProfileComponent/>

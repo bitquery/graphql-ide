@@ -27,6 +27,7 @@ const WidgetView = observer(function WidgetView({ children, widget, dataSource, 
 						if (explicitHeight) {
 							widget = widget.replace(explicitHeight[0], '')
 						}
+						console.log('widget',widget)
 						const ChartWidget = eval(`(${widget})`)
 						const chartWidgetInstance = new ChartWidget(refChart.current, dataSource.historyDataSource, dataSource.subscriptionDataSource)
 						await chartWidgetInstance.init()

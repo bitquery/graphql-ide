@@ -26,10 +26,10 @@ const [toastLink, setToastLink] = useState(window.location.href)
                         <a className='bitquery-ico'
                            href={`https://account.bitquery.io/auth/login?redirect_to=${toastLink}`}> log
                             in </a> or
-                        <a className='bitquery-ico' href="https://account.bitquery.io/auth/signup"> register </a>
+                        <a className='bitquery-ico' href={`https://account.bitquery.io/auth/signup?redirect_to=${toastLink}`}> register </a>
                         Logging in will allow you to access all the features and keep track of your activities.
                     </div>
-                ), {autoClose: 2000});
+                ), {autoClose: 3000});
                 setToastShown(true)
             }
         }, 2000);
@@ -70,7 +70,7 @@ const [toastLink, setToastLink] = useState(window.location.href)
                 <NavDropdown.Item className="bitquery-links" href={`${user?.graphql_admin_url}/user/api_key`}>API
                     key</NavDropdown.Item>
                 <NavDropdown.Item className="bitquery-links"
-                                  href={`${user?.graphql_admin_url}/auth/logout`}>Logout</NavDropdown.Item>
+                                  href={`${user?.graphql_admin_url}/auth/logout?redirect_to=${window.location.href}`}>Logout</NavDropdown.Item>
             </NavDropdown>
         </div>
     );

@@ -877,6 +877,7 @@ module.exports = function (app, db, redisClient) {
     })
     app.get('/api/getwidgetconfig/:id', async (req, res) => {
         const widgetConfig = await redisClient.get(req.params.id)
+        console.log('widgetConfig',widgetConfig)
         if (widgetConfig !== null) {
             console.log('there is some widgetconfig')
             res.status(200).send(JSON.parse(widgetConfig))
