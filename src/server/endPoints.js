@@ -110,15 +110,16 @@ module.exports = function (app, db, redisClient) {
                         return res.status(500).send('Internal Server Error');
                     }
 
-                    let result = data.replace(/<\/urlset>\s*$/, '') + newUrl + newTagsXML + '\n</urlset>\n';
+                    let cleanedData = data.replace(/<\/urlset>\s*/g, '');
+                    cleanedData += newUrl + newTagsXML + '\n</urlset>\n';
 
-                    fs.writeFile(sitemappath, result, err => {
+                    fs.writeFile(sitemappath, cleanedData, err => {
                         if (err) {
                             console.error('Error writing sitemap:', err);
                             return res.status(500).send('Internal Server Error');
                         }
                         msg ? res.status(201).send(msg) : res.sendStatus(201);
-                    })
+                    });
                 });
             } else {
                 msg ? res.status(201).send(msg) : res.sendStatus(201);
