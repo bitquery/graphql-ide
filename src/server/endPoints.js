@@ -110,14 +110,28 @@ module.exports = function (app, db, redisClient) {
             if (newTagsXML || newUrl) {
                 const sitemappath = path.resolve('./static', 'sitemap.xml')
                 fs.readFile(sitemappath, 'utf8', (err, data) => {
-                    const splitArray = data.split('\n')
-                    splitArray.splice(-2, 2)
-                    let result = splitArray.join('\n')
-                    result = result + newUrl + newTagsXML
-                    fs.writeFile(sitemappath, `${result}\n</urlset>\n`, err => {
-                        console.log(err)
+                    // const splitArray = data.split('\n')
+                    // splitArray.splice(-2, 2)
+                    // let result = splitArray.join('\n')
+                    // result = result + newUrl + newTagsXML
+                    // fs.writeFile(sitemappath, `${result}\n</urlset>\n`, err => {
+                    //     console.log(err)
+                    //     msg ? res.status(201).send(msg) : res.sendStatus(201)
+                    // })
+                    if (err) {
+                        console.error('Error reading sitemap:', err)
+                        return res.status(500).send('Internal Server Error')
+                    }
+
+                    let result = data.replace(/<\/urlset>\s*$/, '') + newUrl + newTagsXML + '\n</urlset>\n';
+
+                    fs.writeFile(sitemappath, result, err => {
+                        if (err) {
+                            console.error('Error writing sitemap:', err);
+                            return res.status(500).send('Internal Server Error');
+                        }
                         msg ? res.status(201).send(msg) : res.sendStatus(201)
-                    })
+                    });
                 })
             } else {
                 msg ? res.status(201).send(msg) : res.sendStatus(201)
