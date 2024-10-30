@@ -82,45 +82,32 @@ module.exports = function (app, db, redisClient) {
 
     const handleTags = async (query_id, tags, res, msg, update = false, url) => {
         if (tags) {
-            const date = new Date(new Date()).toISOString().split('T')[0]
-            let newTagsXML = ''
-            let newUrl = url ? `\n<url>
-	<loc>https://ide.bitquery.io/${encodeURIComponent(url)}</loc>
-	<lastmod>${date}</lastmod>
-</url>` : ''
+            const date = new Date().toISOString().split('T')[0];
+            let newTagsXML = '';
+            let newUrl = url ? `\n<url>\n\t<loc>https://ide.bitquery.io/${encodeURIComponent(url)}</loc>\n\t<lastmod>${date}</lastmod>\n</url>` : '';
+
             for (const tag of tags) {
-                if (update) await query('DELETE FROM tags_to_queries WHERE query_id = ?', [query_id])
-                const results = await query('SELECT id FROM tags WHERE tag = ?', [tag])
+                if (update) await query('DELETE FROM tags_to_queries WHERE query_id = ?', [query_id]);
+                const results = await query('SELECT id FROM tags WHERE tag = ?', [tag]);
                 if (!results.length) {
-                    const {insertId: tag_id} = await query('INSERT INTO tags SET ?', {tag})
-                    await query('INSERT INTO tags_to_queries SET ?', {query_id, tag_id})
-                    const date = new Date(new Date()).toISOString().split('T')[0]
-                    newTagsXML += `\n<url>
-	<loc>https://ide.bitquery.io/explore/${encodeURIComponent(tag)}</loc>
-	<lastmod>${date}</lastmod>
-</url>`
+                    const { insertId: tag_id } = await query('INSERT INTO tags SET ?', { tag });
+                    await query('INSERT INTO tags_to_queries SET ?', { query_id, tag_id });
+                    newTagsXML += `\n<url>\n\t<loc>https://ide.bitquery.io/explore/${encodeURIComponent(tag)}</loc>\n\t<lastmod>${date}</lastmod>\n</url>`;
                 } else {
-                    const tag_id = results[0].id
-                    const queryInstance = await query('SELECT * from tags_to_queries WHERE tag_id = ? AND query_id = ?', [tag_id, query_id])
+                    const tag_id = results[0].id;
+                    const queryInstance = await query('SELECT * FROM tags_to_queries WHERE tag_id = ? AND query_id = ?', [tag_id, query_id]);
                     if (!queryInstance.length) {
-                        await query('INSERT INTO tags_to_queries SET ?', {query_id, tag_id})
+                        await query('INSERT INTO tags_to_queries SET ?', { query_id, tag_id });
                     }
                 }
             }
+
             if (newTagsXML || newUrl) {
-                const sitemappath = path.resolve('./static', 'sitemap.xml')
+                const sitemappath = path.resolve('./static', 'sitemap.xml');
                 fs.readFile(sitemappath, 'utf8', (err, data) => {
-                    // const splitArray = data.split('\n')
-                    // splitArray.splice(-2, 2)
-                    // let result = splitArray.join('\n')
-                    // result = result + newUrl + newTagsXML
-                    // fs.writeFile(sitemappath, `${result}\n</urlset>\n`, err => {
-                    //     console.log(err)
-                    //     msg ? res.status(201).send(msg) : res.sendStatus(201)
-                    // })
                     if (err) {
-                        console.error('Error reading sitemap:', err)
-                        return res.status(500).send('Internal Server Error')
+                        console.error('Error reading sitemap:', err);
+                        return res.status(500).send('Internal Server Error');
                     }
 
                     let result = data.replace(/<\/urlset>\s*$/, '') + newUrl + newTagsXML + '\n</urlset>\n';
@@ -130,16 +117,17 @@ module.exports = function (app, db, redisClient) {
                             console.error('Error writing sitemap:', err);
                             return res.status(500).send('Internal Server Error');
                         }
-                        msg ? res.status(201).send(msg) : res.sendStatus(201)
-                    });
-                })
+                        msg ? res.status(201).send(msg) : res.sendStatus(201);
+                    })
+                });
             } else {
-                msg ? res.status(201).send(msg) : res.sendStatus(201)
+                msg ? res.status(201).send(msg) : res.sendStatus(201);
             }
         } else {
-            res.status(400).send({msg: 'Add some tags to your query!'})
+            res.status(400).send({ msg: 'Add some tags to your query!' });
         }
-    }
+    };
+
 
     app.get('/api/querytss/:address/:symbol', async (req, res) => {
         let status = 200
