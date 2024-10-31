@@ -131,13 +131,10 @@ module.exports = function (app, db, redisClient) {
     app.get('/api/sitemap', async (req, res) => {
         try {
             const countQuery = await query('SELECT count(id) as count FROM queries WHERE url is not null');
-            console.log('countQuery', countQuery);
             let offsetArray = [];
             for (let offset = 0; offset < countQuery[0].count; offset += 5000) {
                 offsetArray.push(offset);
             }
-
-            console.log('offsetArray:', offsetArray);
 
             const date = new Date().toISOString().split('T')[0];
             let sitemapXML = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
@@ -153,6 +150,12 @@ module.exports = function (app, db, redisClient) {
             });
 
             sitemapXML += `
+<url>
+    <loc>https://ide.bitquery.io/api/sitemap/tags</loc>
+    <lastmod>${date}</lastmod>
+    <changefreq>always</changefreq>
+    <priority>1.0</priority>
+</url>\n
 </urlset>`;
             res.setHeader('Content-Type', 'application/xml');
             res.status(200).send(sitemapXML);
@@ -161,10 +164,38 @@ module.exports = function (app, db, redisClient) {
             res.status(500).send({msg: 'Error generating sitemap'});
         }
     });
+    app.get('/api/sitemap/tags', async (req, res) => {
+        try {
+            const urlTags = await query('SELECT tag FROM tags WHERE tag is not null')
+            const date = new Date().toISOString().split('T')[0]
+            let sitemapXML = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
 
+            urlTags.forEach(({tag}) => {
+                sitemapXML += `
+<url>
+    <loc>https://ide.bitquery.io/explore/${encodeURIComponent(tag)}</loc>
+    <lastmod>${date}</lastmod>
+        <changefreq>always</changefreq>
+      <priority>1.0</priority>
+</url>\n`;
+
+            });
+            sitemapXML += `\n</urlset>`;
+
+            res.setHeader('Content-Type', 'application/xml')
+            res.status(200).send(sitemapXML)
+        } catch (error) {
+            console.error(error);
+            res.status(500).send({msg: 'Error generating sitemap'});
+        }
+    })
     app.get('/api/sitemap/:offset', async (req, res) => {
         try {
             const offset = parseInt(req.params.offset, 10);
+            if (isNaN(offset)) {
+                res.status(400).send({msg: 'Invalid offset'});
+                return;
+            }
             const urlQuery = await query(`SELECT url
                                           FROM queries
                                           WHERE url is not null limit 5000
@@ -192,32 +223,7 @@ module.exports = function (app, db, redisClient) {
         }
     })
 
-    app.get('/api/sitemap/tags', async (req, res) => {
-        try {
-            const urlTags = await query('SELECT tag FROM tags WHERE tag is not null')
-            console.log('urlTags',urlTags)
-            const date = new Date().toISOString().split('T')[0]
-            let sitemapXML = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
 
-            urlTags.forEach(({tag}) => {
-                sitemapXML += `
-<url>
-    <loc>https://ide.bitquery.io/explore/${encodeURIComponent(tag)}</loc>
-    <lastmod>${date}</lastmod>
-        <changefreq>always</changefreq>
-      <priority>1.0</priority>
-</url>\n`;
-
-            });
-            sitemapXML += `\n</urlset>`;
-
-            res.setHeader('Content-Type', 'application/xml')
-            res.status(200).send(sitemapXML)
-        } catch (error) {
-            console.error(error);
-            res.status(500).send({msg: 'Error generating sitemap'});
-        }
-    })
 
     app.get('/api/querytss/:address/:symbol', async (req, res) => {
         let status = 200
