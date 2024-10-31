@@ -127,6 +127,7 @@ module.exports = function (app, db, redisClient) {
         }
     }
 
+
     app.get('/api/sitemap', async (req, res) => {
         try {
             const countQuery = await query('SELECT count(id) as count FROM queries WHERE url is not null');
