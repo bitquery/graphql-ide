@@ -57,6 +57,9 @@ redisClient.connect().then(async () => {
 
 	require('./endPoints')(app, db, redisClient)
 
+	app.get('/sitemap.xml', (req, res) => {
+		res.redirect(301, '/api/sitemap');
+	});
 	if (isProduction) {
 		app.get('*',  (req, res) => {
 			const url = req.url.split('?')[0].substring(1) //req.params.url
