@@ -133,7 +133,7 @@ module.exports = function (app, db, redisClient) {
             const countQuery = await query('SELECT count(id) as count FROM queries WHERE url is not null');
             console.log('countQuery', countQuery);
             let offsetArray = [];
-            for (let offset = 0; offset < countQuery[0].count; offset += 1000) {
+            for (let offset = 0; offset < countQuery[0].count; offset += 5000) {
                 offsetArray.push(offset);
             }
 
@@ -153,12 +153,6 @@ module.exports = function (app, db, redisClient) {
             });
 
             sitemapXML += `
-<url>
-    <loc>https://ide.bitquery.io/api/sitemap/tags</loc>
-    <lastmod>${date}</lastmod>
-    <changefreq>always</changefreq>
-    <priority>1.0</priority>
-</url>\n
 </urlset>`;
             res.setHeader('Content-Type', 'application/xml');
             res.status(200).send(sitemapXML);
@@ -173,7 +167,7 @@ module.exports = function (app, db, redisClient) {
             const offset = parseInt(req.params.offset, 10);
             const urlQuery = await query(`SELECT url
                                           FROM queries
-                                          WHERE url is not null limit 1000
+                                          WHERE url is not null limit 5000
                                           offset ${offset}`)
 
             const date = new Date().toISOString().split('T')[0]
@@ -200,7 +194,8 @@ module.exports = function (app, db, redisClient) {
 
     app.get('/api/sitemap/tags', async (req, res) => {
         try {
-            const urlTags = await query('SELECT tag FROM tags')
+            const urlTags = await query('SELECT tag FROM tags WHERE tag is not null')
+            console.log('urlTags',urlTags)
             const date = new Date().toISOString().split('T')[0]
             let sitemapXML = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
 
