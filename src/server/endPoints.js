@@ -148,7 +148,7 @@ module.exports = function (app, db, redisClient) {
     <loc>https://ide.bitquery.io/api/sitemap/${offset}</loc>
     <lastmod>${date}</lastmod>
     <changefreq>always</changefreq>
-    <priority>0.8</priority>
+    <priority>1.0</priority>
 </url>\n`;
             });
 
