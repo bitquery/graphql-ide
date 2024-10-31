@@ -12,13 +12,13 @@ const React = require("react");
 
 const getCodeSnippet = (lang, query, variables, headers, key, endpoint_url, token) =>
     new Promise((resolve, reject) => {
-        const customHeaders = typeof headers === 'object' && !Array.isArray(headers) ? headers : {};
-        const allHeaders = {
-            'Content-Type': 'application/json',
-            'X-API-KEY': key,
-            'Authorization': `Bearer ${token}`,
-            ...customHeaders
-        };
+            const customHeaders = typeof headers === 'object' && !Array.isArray(headers) ? headers : {};
+            const allHeaders = {
+                'Content-Type': 'application/json',
+                'X-API-KEY': key,
+                'Authorization': `Bearer ${token}`,
+                ...customHeaders
+            };
             const request = new sdk.Request({
                 url: endpoint_url,
                 method: 'POST',
@@ -82,53 +82,146 @@ module.exports = function (app, db, redisClient) {
 
     const handleTags = async (query_id, tags, res, msg, update = false, url) => {
         if (tags) {
-            const date = new Date().toISOString().split('T')[0];
-            let newTagsXML = '';
-            let newUrl = url ? `\n<url>\n\t<loc>https://ide.bitquery.io/${encodeURIComponent(url)}</loc>\n\t<lastmod>${date}</lastmod>\n</url>` : '';
-
+            const date = new Date(new Date()).toISOString().split('T')[0]
+            let newTagsXML = ''
+            let newUrl = url ? `\n<url>
+	<loc>https://ide.bitquery.io/${encodeURIComponent(url)}</loc>
+	<lastmod>${date}</lastmod>
+</url>` : ''
             for (const tag of tags) {
-                if (update) await query('DELETE FROM tags_to_queries WHERE query_id = ?', [query_id]);
-                const results = await query('SELECT id FROM tags WHERE tag = ?', [tag]);
+                if (update) await query('DELETE FROM tags_to_queries WHERE query_id = ?', [query_id])
+                const results = await query('SELECT id FROM tags WHERE tag = ?', [tag])
                 if (!results.length) {
-                    const { insertId: tag_id } = await query('INSERT INTO tags SET ?', { tag });
-                    await query('INSERT INTO tags_to_queries SET ?', { query_id, tag_id });
-                    newTagsXML += `\n<url>\n\t<loc>https://ide.bitquery.io/explore/${encodeURIComponent(tag)}</loc>\n\t<lastmod>${date}</lastmod>\n</url>`;
+                    const {insertId: tag_id} = await query('INSERT INTO tags SET ?', {tag})
+                    await query('INSERT INTO tags_to_queries SET ?', {query_id, tag_id})
+                    const date = new Date(new Date()).toISOString().split('T')[0]
+                    newTagsXML += `\n<url>
+	<loc>https://ide.bitquery.io/explore/${encodeURIComponent(tag)}</loc>
+	<lastmod>${date}</lastmod>
+</url>`
                 } else {
-                    const tag_id = results[0].id;
-                    const queryInstance = await query('SELECT * FROM tags_to_queries WHERE tag_id = ? AND query_id = ?', [tag_id, query_id]);
+                    const tag_id = results[0].id
+                    const queryInstance = await query('SELECT * from tags_to_queries WHERE tag_id = ? AND query_id = ?', [tag_id, query_id])
                     if (!queryInstance.length) {
-                        await query('INSERT INTO tags_to_queries SET ?', { query_id, tag_id });
+                        await query('INSERT INTO tags_to_queries SET ?', {query_id, tag_id})
                     }
                 }
             }
-
             if (newTagsXML || newUrl) {
-                const sitemappath = path.resolve('./static', 'sitemap.xml');
+                const sitemappath = path.resolve('./static', 'sitemap.xml')
                 fs.readFile(sitemappath, 'utf8', (err, data) => {
-                    if (err) {
-                        console.error('Error reading sitemap:', err);
-                        return res.status(500).send('Internal Server Error');
-                    }
-
-                    let cleanedData = data.replace(/<\/urlset>\s*/g, '');
-                    cleanedData += newUrl + newTagsXML + '\n</urlset>\n';
-
-                    fs.writeFile(sitemappath, cleanedData, err => {
-                        if (err) {
-                            console.error('Error writing sitemap:', err);
-                            return res.status(500).send('Internal Server Error');
-                        }
-                        msg ? res.status(201).send(msg) : res.sendStatus(201);
-                    });
-                });
+                    const splitArray = data.split('\n')
+                    splitArray.splice(-2, 2)
+                    let result = splitArray.join('\n')
+                    result = result + newUrl + newTagsXML
+                    fs.writeFile(sitemappath, `${result}\n</urlset>\n`, err => {
+                        console.log(err)
+                        msg ? res.status(201).send(msg) : res.sendStatus(201)
+                    })
+                })
             } else {
-                msg ? res.status(201).send(msg) : res.sendStatus(201);
+                msg ? res.status(201).send(msg) : res.sendStatus(201)
             }
         } else {
-            res.status(400).send({ msg: 'Add some tags to your query!' });
+            res.status(400).send({msg: 'Add some tags to your query!'})
         }
-    };
+    }
 
+    app.get('/api/sitemap', async (req, res) => {
+        try {
+            const countQuery = await query('SELECT count(id) as count FROM queries WHERE url is not null');
+            console.log('countQuery', countQuery);
+            let offsetArray = [];
+            for (let offset = 0; offset < countQuery[0].count; offset += 1000) {
+                offsetArray.push(offset);
+            }
+
+            console.log('offsetArray:', offsetArray);
+
+            const date = new Date().toISOString().split('T')[0];
+            let sitemapXML = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
+
+            offsetArray.forEach(offset => {
+                sitemapXML += `
+<url>
+    <loc>https://ide.bitquery.io/api/sitemap/${offset}</loc>
+    <lastmod>${date}</lastmod>
+    <changefreq>always</changefreq>
+    <priority>0.8</priority>
+</url>\n`;
+            });
+
+            sitemapXML += `
+<url>
+    <loc>https://ide.bitquery.io/api/sitemap/tags</loc>
+    <lastmod>${date}</lastmod>
+    <changefreq>always</changefreq>
+    <priority>1.0</priority>
+</url>\n
+</urlset>`;
+            res.setHeader('Content-Type', 'application/xml');
+            res.status(200).send(sitemapXML);
+        } catch (error) {
+            console.error(error);
+            res.status(500).send({msg: 'Error generating sitemap'});
+        }
+    });
+
+    app.get('/api/sitemap/:offset', async (req, res) => {
+        try {
+            const offset = parseInt(req.params.offset, 10);
+            const urlQuery = await query(`SELECT url
+                                          FROM queries
+                                          WHERE url is not null limit 1000
+                                          offset ${offset}`)
+
+            const date = new Date().toISOString().split('T')[0]
+            let sitemapXML = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
+            urlQuery.forEach(({url}) => {
+                sitemapXML += `
+<url>
+    <loc>https://ide.bitquery.io/${encodeURIComponent(url)}</loc>
+    <lastmod>${date}</lastmod>
+    <changefreq>always</changefreq>
+    <priority>1.0</priority>
+</url>\n`;
+            });
+
+            sitemapXML += `\n</urlset>`;
+
+            res.setHeader('Content-Type', 'application/xml')
+            res.status(200).send(sitemapXML)
+        } catch (error) {
+            console.error(error);
+            res.status(500).send({msg: 'Error generating sitemap'});
+        }
+    })
+
+    app.get('/api/sitemap/tags', async (req, res) => {
+        try {
+            const urlTags = await query('SELECT tag FROM tags')
+            const date = new Date().toISOString().split('T')[0]
+            let sitemapXML = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
+
+            urlTags.forEach(({tag}) => {
+                sitemapXML += `
+<url>
+    <loc>https://ide.bitquery.io/explore/${encodeURIComponent(tag)}</loc>
+    <lastmod>${date}</lastmod>
+        <changefreq>always</changefreq>
+      <priority>1.0</priority>
+</url>\n`;
+
+            });
+            sitemapXML += `\n</urlset>`;
+
+            res.setHeader('Content-Type', 'application/xml')
+            res.status(200).send(sitemapXML)
+        } catch (error) {
+            console.error(error);
+            res.status(500).send({msg: 'Error generating sitemap'});
+        }
+    })
 
     app.get('/api/querytss/:address/:symbol', async (req, res) => {
         let status = 200
@@ -162,8 +255,8 @@ module.exports = function (app, db, redisClient) {
     })
 
     app.post('/api/codesnippet', async (req, res) => {
-        const {language, query, variables,headers, endpoint_url, key, token} = req.body
-        const snippet = await getCodeSnippet(language, query, variables,headers, key, endpoint_url, token)
+        const {language, query, variables, headers, endpoint_url, key, token} = req.body
+        const snippet = await getCodeSnippet(language, query, variables, headers, key, endpoint_url, token)
         res.status(200).send({snippet})
     })
 
@@ -680,7 +773,7 @@ module.exports = function (app, db, redisClient) {
 
     app.post('/api/addquery', (req, res) => {
         let query = req.body.params
-        console.log('body params',query)
+        console.log('body params', query)
         if (!query.id || query.account_id !== req.account_id) {
             handleAddQuery(req, res, db)
         } else {
@@ -793,32 +886,32 @@ module.exports = function (app, db, redisClient) {
     })
 
     app.get('/api/getquery/:url', (req, res) => {
-       try {
-           let sql = `
-            SELECT queries.*,
-                   widgets.id as widget_number,
-                   widgets.widget_id,
-                   widgets.config,
-                   widgets.displayed_data,
-                   widgets.data_type
-            FROM queries
-                     LEFT JOIN widgets
-                               ON widgets.query_id = queries.id
-            WHERE queries.url = ?
-            ORDER BY widgets.id DESC LIMIT 1`
-           db.query(sql, [req.params.url], (err, result) => {
-               if (err) console.log(err)
-               if (!result.length) {
-                   res.send('There is no such queries with the same url...')
-               } else {
-                   const {account_id, ...query} = result[0]
-                   query.isOwner = account_id === req.account_id
-                   res.send(query)
-               }
-           })
-       }catch (e){
-           console.log('/api/getquery/:url error: ',e)
-       }
+        try {
+            let sql = `
+                SELECT queries.*,
+                       widgets.id as widget_number,
+                       widgets.widget_id,
+                       widgets.config,
+                       widgets.displayed_data,
+                       widgets.data_type
+                FROM queries
+                         LEFT JOIN widgets
+                                   ON widgets.query_id = queries.id
+                WHERE queries.url = ?
+                ORDER BY widgets.id DESC LIMIT 1`
+            db.query(sql, [req.params.url], (err, result) => {
+                if (err) console.log(err)
+                if (!result.length) {
+                    res.send('There is no such queries with the same url...')
+                } else {
+                    const {account_id, ...query} = result[0]
+                    query.isOwner = account_id === req.account_id
+                    res.send(query)
+                }
+            })
+        } catch (e) {
+            console.log('/api/getquery/:url error: ', e)
+        }
 
     })
     app.get('/api/getqueries', (req, res) => {
@@ -880,7 +973,7 @@ module.exports = function (app, db, redisClient) {
     })
     app.get('/api/getwidgetconfig/:id', async (req, res) => {
         const widgetConfig = await redisClient.get(req.params.id)
-        console.log('widgetConfig',widgetConfig)
+        console.log('widgetConfig', widgetConfig)
         if (widgetConfig !== null) {
             console.log('there is some widgetconfig')
             res.status(200).send(JSON.parse(widgetConfig))
@@ -1027,23 +1120,23 @@ module.exports = function (app, db, redisClient) {
         return canvas.createPNGStream()
     }
 
-        app.get('/api/generateimage/:url.png', async (req, res) => {
-            try {
-                res.setHeader('Content-Type', 'image/png')
-                const queries = await query(`SELECT query
-                                             FROM queries
-                                             WHERE url = ?`, [req.params.url])
-                if (queries.length === 0) {
-                    return res.status(404).send('Query not found')
-                }
-                const imageBuffer = await generateCodeImage(queries[0].query)
-                imageBuffer.pipe(res)
-            } catch (error) {
-                console.error('Error generating or retrieving image:', error)
-                res.status(500).send('Server error')
+    app.get('/api/generateimage/:url.png', async (req, res) => {
+        try {
+            res.setHeader('Content-Type', 'image/png')
+            const queries = await query(`SELECT query
+                                         FROM queries
+                                         WHERE url = ?`, [req.params.url])
+            if (queries.length === 0) {
+                return res.status(404).send('Query not found')
             }
+            const imageBuffer = await generateCodeImage(queries[0].query)
+            imageBuffer.pipe(res)
+        } catch (error) {
+            console.error('Error generating or retrieving image:', error)
+            res.status(500).send('Server error')
+        }
 
-        })
+    })
 
 
 }
