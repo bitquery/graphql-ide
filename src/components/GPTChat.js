@@ -53,10 +53,10 @@ const GPTChat = () => {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer dc67ecc8-ff82-4bc4-833b-45006da0b135`
+                    'Authorization': `Bearer ${process.env.CHAT_BASE_API_KEY}`
                 },
                 body: JSON.stringify({
-                    chatbotId: "Vz0cwoEYRJW6n5B2JeSeu",
+                    chatbotId: process.env.CHAT_BOT_ID,
                     model: "gpt-4o",
                     messages: newMessages,
                 })
