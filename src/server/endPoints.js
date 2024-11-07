@@ -775,7 +775,6 @@ module.exports = function (app, db, redisClient) {
 
     app.post('/api/addquery', (req, res) => {
         let query = req.body.params
-        console.log('body params', query)
         if (!query.id || query.account_id !== req.account_id) {
             handleAddQuery(req, res, db)
         } else {

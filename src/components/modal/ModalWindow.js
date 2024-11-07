@@ -8,13 +8,13 @@ import DashbaordSettings from './DashbaordSettings'
 import { Modal } from 'react-bootstrap'
 
 const ModalWindow = observer(() => {
-	const { 
+	const {
 		fade, modalIsOpen, editDialogIsOpen, apiKeyIsOpen,
 		statisticsModalIsOpen, dashboardSettingsIsOpen,
 		toggleModal, toggleStatisticsModal, toggleEditDialog,
 		toggleApiKey, toggleDashboardSettings
 	} = modalStore
-	
+
 	const onRequestClose = () => {
 		toggleModal()
 		apiKeyIsOpen && toggleApiKey()
@@ -22,8 +22,8 @@ const ModalWindow = observer(() => {
 		statisticsModalIsOpen && toggleStatisticsModal()
 		dashboardSettingsIsOpen && toggleDashboardSettings()
 	}
-	
-    return (
+
+	return (
 		<Modal
 			centered
 			fade={fade.toString()}

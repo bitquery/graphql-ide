@@ -1,7 +1,7 @@
 .bitquery-inputUrl {
   //background-image: linear-gradient( #CA356814, #FFFFFF);
-//background-color:#CA356814;
-//  background: linear-gradient(180deg, #CA356814 0%, #FFF6F9 100%);
+  //background-color:#CA356814;
+  //  background: linear-gradient(180deg, #CA356814 0%, #FFF6F9 100%);
   background: #ffffff;
   border-radius: 8px;
   font-weight: 400;
@@ -14,29 +14,76 @@
   }
 
   &:active, &:target, &:focus {
-outline: transparent !important;
+    outline: transparent !important;
     box-shadow: none;
   }
 }
-.bitquery-little-btn{
-  height: 32px;
-  width: 32px;
-  padding: 10px 5px;
-  cursor: pointer;
-  border-radius: 5px;
-  border: 1px solid $color-primary-active;
-  color:$color-primary-active;
 
-  &.active {
-    color:$color-primary-hover;
-    border: 1px solid $color-primary-hover;
-  }
-
-  &:hover {
-    color:$color-primary-hover;
-    border: 1px solid $color-primary-hover;
-  }
-}
 .bi-code-slash:hover {
   background-color: inherit;
+}
+
+.input-group-fix {
+  display: flex;
+  align-items: center;
+  height: 31.5px;
+  border: 1px solid $color-primary-active;
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: #FFFFFF;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+
+  &:hover, &:focus-within {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    border-color: darken($color-primary-active, 10%);
+  }
+
+  .drop-down-fix {
+    border: none;
+    height: auto;
+    padding: 5px;
+    border-right: 1px solid $color-primary-active;
+    border-radius: 7px 0 0 7px;
+    background-color: transparent;
+    color: $color-primary-active;
+    font-size: 0.9rem;
+    outline: none;
+    cursor: pointer;
+    transition: color 0.3s ease;
+
+    &:hover, &:focus {
+      background-color: $color-primary-active;
+      color: #f9f9f9;
+    }
+
+    option {
+      color: #f9f9f9;
+    }
+  }
+
+  //.input-group-fix {
+  //  background: linear-gradient(180deg, #CA356814 0%, #FFF6F9 100%);
+  //  height: 34.6px;
+  //  border: 1px solid $color-primary-active;
+  //  overflow: hidden;
+  //}
+
+  .input-url-fix {
+    flex-grow: 1;
+    border: none;
+    height: auto;
+    padding: 0;
+    padding-left: 10px;
+    font-size: 0.9rem;
+    color: #333;
+    border-radius: 0 8px 8px 0;
+    outline: none;
+    transition: color 0.3s ease, background-color 0.3s ease;
+
+    &:hover, &:focus {
+      color: darken($color-primary-active, 10%);
+border: none;
+    }
+  }
 }

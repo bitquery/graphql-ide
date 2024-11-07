@@ -10,6 +10,7 @@
 		flex-basis: 15%;
 		min-width: 300px;
 		max-width: 300px;
+
 	}
 	&__topbar {
 		min-height: 44px;
@@ -56,4 +57,32 @@
 		}
 		transition: all .15s ease;
 	}
+}
+.newGallery__topbar {
+	display: flex;
+	justify-content: start;
+	align-items: center;
+	gap: 5px;
+	padding: 6px;
+	background-color: #f7f7f7;
+	border-bottom: 1px solid #ddd;
+}
+
+.tab {
+	padding: 8px 16px;
+	cursor: pointer;
+	border-radius: 5px;
+	font-weight: bold;
+	color: #333;
+	transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.tab.active {
+	background-color: #ff69b4;
+	color: #fff;
+}
+
+.tab:hover {
+	background-color: #ffb6c1;
+	color: #333;
 }

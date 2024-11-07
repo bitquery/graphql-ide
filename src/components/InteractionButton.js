@@ -23,7 +23,7 @@ export const InteractionButton = ({queryStatus, accordance}) => {
     if (queryStatus.readyToExecute) {
 
         return <div className='d-flex align-items-center justify-content-center flex-column'>
-            <PlayIcon fill='#14ff41'/>
+            <PlayIcon />
             <span className="execute-button__text">Run query</span>
         </div>
     }

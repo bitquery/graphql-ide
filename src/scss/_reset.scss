@@ -51,7 +51,7 @@ input{
   }
 
   &:active, &:target, &:focus {
-    @include focus-style;
+    //@include focus-style;
 
   }
 }

@@ -369,9 +369,12 @@ button.columns_number {
   top: 45%;
   right: 0;
   left: calc(50% - 36px);
+  color: $color-primary-active;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   border: 1px solid $color-primary-active;
   background: #ffffff;
-  @include transition-btn;
+  transition: all 0.2s ease;
+  //@include transition-btn;
 
   //background:linear-gradient(180deg, rgba(202, 53, 104, 0.0784313725) 0%, #FFF6F9 100%);
   background-size: 25px 25px;
@@ -388,17 +391,45 @@ button.columns_number {
   &__text {
     display: flex;
     font-size: 11px;
-    color: $color-primary-active
   }
-&:focus{
-  border: 1px solid $color-primary-active;
-  box-shadow: transparent;
-  outline: transparent;
+//&:focus{
+//  border: 1px solid $color-primary-active;
+//  box-shadow: transparent;
+//  outline: transparent;
+//
+//}
+//  &:hover, &:active, &:target {
+//    @include hover-btn
+//
+//  }
+  &:hover, &:focus {
+    background-color: $color-primary-active;
+    color: #FFFFFF;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+    transform: translateY(-0.3px);
+    .docs_icon, .bi {
+      color: #FFFFFF;
+    }
 
-}
-  &:hover, &:active, &:target {
-    @include hover-btn
+  }
+  &:active {
+    background-color: darken($color-primary-active, 10%);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    transform: translateY(0);
+  }
+  &.active {
+    background-color: $color-primary-active;
+    color: #FFFFFF;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+    transform: translateY(-0.3px);
+  }
 
+  &:disabled {
+    background-color: #F0F0F0;
+    color: #A0A0A0;
+    border: 1px solid #F0F0F0;
+    cursor: not-allowed;
+    box-shadow: none;
   }
 }
 

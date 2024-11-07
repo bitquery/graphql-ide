@@ -44,27 +44,95 @@
   border: 1px solid $color-primary-active;
   border-radius: 8px;
   background-color: #FFFFFF;
-  padding: 4px 10px;
+  padding: 4px 6px;
   color: $color-primary-active;
-  @include transition-btn;
-  &:hover, &:active, &:focus, &:target {
-    @include hover-btn
+  //font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
 
+  &:hover, &:focus {
+    background-color: $color-primary-active;
+    color: #FFFFFF;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    transform: translateY(-0.5px);
+  }
+
+  &:active {
+    background-color: darken($color-primary-active, 10%);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transform: translateY(0);
+  }
+
+  &:disabled {
+    background-color: #E0E0E0;
+    color: #A0A0A0;
+    border: 1px solid #E0E0E0;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+  &.active {
+    background-color: $color-primary-active;
+    color: #FFFFFF;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    transform: translateY(-0.5px);
   }
 }
 
 .bitquery-little-btn {
-  @include transition-btn;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
   border: 1px solid $color-primary-active;
   border-radius: 8px;
   background-color: #FFFFFF;
-  padding: 4px 10px;
   color: $color-primary-active;
-  &:hover, &:active, &:focus, &:target {
-    @include hover-btn
+  font-size: 16px;
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+
+  &:hover, &:focus {
+    background-color: $color-primary-active;
+    color: #FFFFFF;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+    transform: translateY(-0.3px);
+    .docs_icon, .bi {
+      color: #FFFFFF;
+    }
 
   }
+
+  &:active {
+    background-color: darken($color-primary-active, 10%);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    transform: translateY(0);
+  }
+  &.active {
+    background-color: $color-primary-active;
+    color: #FFFFFF;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+    transform: translateY(-0.3px);
+  }
+
+  &:disabled {
+    background-color: #F0F0F0;
+    color: #A0A0A0;
+    border: 1px solid #F0F0F0;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+
+  .docs_icon, .bi {
+    font-size: 14.5px;
+  }
 }
+
+
+
 .pressed-btn{
   @include hover-btn
 

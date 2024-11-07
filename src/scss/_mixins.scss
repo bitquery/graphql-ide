@@ -7,6 +7,7 @@
   align-items: center;
   text-decoration: none !important;
   color:inherit;
+  transition: color 0.3s ease, background-color 0.3s ease;
 
   &:hover, &:target {
     cursor: pointer;
@@ -35,5 +36,7 @@
   box-shadow:$color-primary-active 1px 1px 4px -1px inset, 5px 5px 11px 5px rgba(0, 0, 0, 0) !important;
 }
 @mixin transition-btn{
-  transition: color 0.15s, border 0.15s, box-shadow 0.15s;
+  //transition: color 0.15s, border 0.15s, box-shadow 0.15s;
+  transition: all 0.3s ease;
+
 }

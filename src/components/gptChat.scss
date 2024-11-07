@@ -1,0 +1,76 @@
+@import "src/scss/variables.scss";
+.gpt-chat-container {
+  width: 100%;
+  padding: 10px;
+}
+
+.chat-history {
+  background-color: #f9f9f9;
+  max-height: 60vh; // 60% от высоты видимой части экрана
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
+
+.user-message {
+  background-color: #e8f0fe;
+  padding: 8px;
+  border-radius: 5px;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+.assistant-message {
+  background-color: #f1f1f1;
+  padding: 8px;
+  border-radius: 5px;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+.code-block {
+  background-color: #f5f5f5;
+  padding: 8px;
+  border-radius: 5px;
+  font-family: monospace;
+  white-space: pre-wrap;
+  margin-top: 5px;
+}
+
+h5 {
+  font-weight: bold;
+  color: #333;
+}
+
+.input-textarea {
+  resize: none;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.send-button {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  background: $color-primary-active;
+}
+
+.saved-query {
+  background-color: #f1f1f1;
+  padding: 10px;
+  border-radius: 5px;
+  margin-top: 10px;
+}
+
+.saved-query pre {
+  margin: 0;
+  font-family: monospace;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.copy-button {
+  margin-top: 10px;
+}
+

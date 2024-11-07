@@ -211,7 +211,6 @@ const ToolbarComponent = observer(({
                 <Form.Group>
                     <Form.Control
                         as="select"
-                        // custom
                         onChange={e => handleDropdownSelect(e.target.value)}
                         value={selectedUrl}
                         className="drop-down-fix"
@@ -222,22 +221,31 @@ const ToolbarComponent = observer(({
                         <option value="">Other...</option>
                     </Form.Control>
                 </Form.Group>
-                <Form.Control id="basic-url"
-                              aria-label="endpoint-url"
-                              value={currentQuery.endpoint_url}
-                              onChange={handleInputURLChange}
-                              className="input-url-fix  bitquery-inputUrl"
+                <Form.Control
+                    id="basic-url"
+                    aria-label="endpoint-url"
+                    value={currentQuery.endpoint_url}
+                    onChange={handleInputURLChange}
+                    className="input-url-fix"
                 />
             </InputGroup>
+
             {user?.id && query[number].graphqlQueryID && <StatisticsButton number={number}/>}
-            <span className="cursor-pointer" aria-label="Documentation Explorer" onClick={toggleDocExplorer}>
-                <DocsIcon className={"docs_icon" + (docExplorerOpen ? " active" : '')} data-toggle="tooltip"
-                          data-placement="top" title="Tooltip on top"/>
-            </span>
-            <span className="d-flex align-items-center justify-content-center bitquery-little-btn"
-                  aria-label="Code Snippet" onClick={toggleCodeSnippet}>
-                <i className={"bi bi-code-slash" + (codeSnippetOpen ? " active" : '')}/>
-            </span>
+            <span
+                className={`bitquery-little-btn ${docExplorerOpen ? 'active' : ''}`}
+                aria-label="Documentation Explorer"
+                onClick={toggleDocExplorer}
+            >
+                    <DocsIcon className="docs_icon" data-toggle="tooltip" data-placement="top" title="Tooltip on top"/>
+                </span>
+
+            <span
+                className={`bitquery-little-btn ${codeSnippetOpen ? 'active' : ''}`}
+                aria-label="Code Snippet"
+                onClick={toggleCodeSnippet}
+            >
+                    <i className="bi bi-code-slash"/>
+                </span>
         </div>
     </div>
     return toolbar
