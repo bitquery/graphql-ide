@@ -75,7 +75,6 @@ const GPTChat = () => {
     };
 
     const saveQuery = () => {
-        // Находим последнее сообщение от ассистента
         const lastAssistantMessage = messages.slice().reverse().find(message => message.role === 'assistant');
 
         if (!lastAssistantMessage || !lastAssistantMessage.content.includes('```')) {
@@ -83,18 +82,26 @@ const GPTChat = () => {
             return;
         }
 
-        // Извлекаем содержимое кода из текста с использованием регулярного выражения
         const codeMatches = lastAssistantMessage.content.match(/```([\s\S]*?)```/);
         const codeContent = codeMatches ? codeMatches[1].trim() : null;
 
         if (codeContent) {
-            setSavedQuery(codeContent); // Сохраняем последний код
-            localStorage.setItem('savedQuery', codeContent); // Сохраняем в localStorage
-            toast('Code saved successfully', { type: 'success' });
+            setSavedQuery(codeContent);
+            localStorage.setItem('savedQuery', codeContent);
+
+            navigator.clipboard.writeText(codeContent)
+                .then(() => {
+                    toast('Code saved and copied to clipboard', { type: 'success' });
+                })
+                .catch(err => {
+                    console.error('Failed to copy code to clipboard: ', err);
+                    toast('Failed to copy code to clipboard', { type: 'error' });
+                });
         } else {
             toast('No code to save', { type: 'warning' });
         }
     };
+
 
     const copyToClipboard = (text) => {
         navigator.clipboard.writeText(text);
@@ -121,7 +128,7 @@ const GPTChat = () => {
                 {messages.slice(1).map((message, index) => (
                     <div key={index} className={`gpt-response ${message.role === 'user' ? 'user-message' : 'assistant-message'}`}>
                         <strong>{message.role === 'user' ? 'You:' : 'GPT:'}</strong>
-                        <p>{renderMessageContent(message.content)}</p>
+                        <div>{renderMessageContent(message.content)}</div>
                     </div>
                 ))}
                 <div ref={chatEndRef} />
@@ -155,20 +162,7 @@ const GPTChat = () => {
                         <FiTrash2 /> Clear Chat
                     </Button>
                 </div>
-                {savedQuery && (
-                    <div className="saved-query mt-3">
-                        <h6>Saved Code</h6>
-                        <pre>{savedQuery}</pre>
-                        <Button
-                            variant="outline-secondary"
-                            size="sm"
-                            onClick={() => copyToClipboard(savedQuery)}
-                            className="copy-button"
-                        >
-                            Copy
-                        </Button>
-                    </div>
-                )}
+
             </Form>
         </div>
     );
