@@ -23,23 +23,15 @@ import 'codemirror-graphql/info';
 import 'codemirror-graphql/jump';
 import 'codemirror-graphql/mode';
 import './gptChat.scss';
+import { getGPTResponse } from "../api/api";
 
 const GPTChat = ({ onSaveCode, initialQuery }) => {
     const [inputText, setInputText] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [messages, setMessages] = useState([
-        { role: 'system', content: 'You are a helpful assistant. use schemes from https://ide.bitquery.io/' }
+        { role: 'system', content: 'You are a helpful assistant. Use the following query as context: ' + initialQuery }
     ]);
     const chatEndRef = useRef(null);
-
-    useEffect(() => {
-        if (initialQuery) {
-            setMessages(prevMessages => [
-                ...prevMessages,
-                { role: 'user', content: `\`\`\`\n${initialQuery}\n\`\`\`` }
-            ]);
-        }
-    }, [initialQuery]);
 
     useEffect(() => {
         chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -66,29 +58,17 @@ const GPTChat = ({ onSaveCode, initialQuery }) => {
         setIsLoading(true);
 
         try {
-            const response = await fetch('https://www.chatbase.co/api/v1/chat', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${process.env.CHAT_BOT_API_KEY}`,
-                },
-                body: JSON.stringify({
-                    chatbotId: process.env.CHAT_BOT_ID,
-                    model: "gpt-4o",
-                    messages: newMessages,
-                })
-            });
-
-            const data = await response.json();
-            const assistantMessage = { role: 'assistant', content: data.text || data.message || data.error.message };
+            const response = await getGPTResponse(newMessages);
+            const assistantMessage = { role: 'assistant', content: response.data.content };
             setMessages([...newMessages, assistantMessage]);
+
             const codeMatches = assistantMessage.content.match(/```([\s\S]*?)```/);
             const codeContent = codeMatches ? codeMatches[1].trim() : null;
 
             if (codeContent) {
                 onSaveCode(codeContent);
-            } else {
             }
+
             setInputText('');
         } catch (error) {
             console.error('Error fetching GPT response:', error);

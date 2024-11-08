@@ -224,7 +224,6 @@ module.exports = function (app, db, redisClient) {
     })
 
 
-
     app.get('/api/querytss/:address/:symbol', async (req, res) => {
         let status = 200
         let [queryTemplates, templateSubject] = await Promise.all([
@@ -1139,5 +1138,27 @@ module.exports = function (app, db, redisClient) {
 
     })
 
+    app.post('/api/getgptresponse', async (req, res) => {
+        const { messages } = req.body;
+
+        try {
+            const response = await axios.post('https://www.chatbase.co/api/v1/chat', {
+                chatbotId: process.env.CHAT_BOT_ID,
+                model: "gpt-4o",
+                messages: messages,
+            }, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${process.env.CHAT_BOT_API_KEY}`,
+                }
+            });
+
+            const assistantMessage = response.data.text || response.data.message || response.data.error.message;
+            res.json({ content: assistantMessage });
+        } catch (e) {
+            console.error('Error fetching GPT response:', e);
+            res.status(500).json({ error: 'Failed to fetch GPT response' });
+        }
+    });
 
 }
