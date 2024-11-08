@@ -1,23 +1,45 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Button, Form, Spinner, InputGroup } from 'react-bootstrap';
+import { Form, Spinner, InputGroup } from 'react-bootstrap';
 import { toast } from 'react-toastify';
 import { FiSend, FiSave, FiTrash2 } from 'react-icons/fi';
+import { RiFileTransferFill } from "react-icons/ri";
+import 'codemirror/lib/codemirror.css';
+import { Controlled as CodeMirror } from 'react-codemirror2';
+import 'codemirror/addon/hint/show-hint';
+import 'codemirror/addon/comment/comment';
+import 'codemirror/addon/edit/matchbrackets';
+import 'codemirror/addon/edit/closebrackets';
+import 'codemirror/addon/fold/foldgutter';
+import 'codemirror/addon/fold/brace-fold';
+import 'codemirror/addon/search/search';
+import 'codemirror/addon/search/searchcursor';
+import 'codemirror/addon/search/jump-to-line';
+import 'codemirror/addon/dialog/dialog';
+import 'codemirror/addon/lint/lint';
+import 'codemirror/keymap/sublime';
+import 'codemirror-graphql/hint';
+import 'codemirror-graphql/lint';
+import 'codemirror-graphql/info';
+import 'codemirror-graphql/jump';
+import 'codemirror-graphql/mode';
 import './gptChat.scss';
 
-const GPTChat = () => {
+const GPTChat = ({ onSaveCode, initialQuery }) => {
     const [inputText, setInputText] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [messages, setMessages] = useState([
         { role: 'system', content: 'You are a helpful assistant. use schemes from https://ide.bitquery.io/' }
     ]);
-    const [savedQuery, setSavedQuery] = useState(null);
-
     const chatEndRef = useRef(null);
 
     useEffect(() => {
-        const storedQuery = localStorage.getItem('savedQuery');
-        if (storedQuery) setSavedQuery(storedQuery);
-    }, []);
+        if (initialQuery) {
+            setMessages(prevMessages => [
+                ...prevMessages,
+                { role: 'user', content: `\`\`\`\n${initialQuery}\n\`\`\`` }
+            ]);
+        }
+    }, [initialQuery]);
 
     useEffect(() => {
         chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -34,11 +56,6 @@ const GPTChat = () => {
         }
     };
 
-    const handleClearChat = () => {
-        setMessages([{ role: 'system', content: 'You are a helpful assistant.' }]);
-        setInputText('');
-    };
-
     const handleSubmit = async () => {
         if (!inputText) {
             toast('Please enter a query for GPT', { type: 'error' });
@@ -53,7 +70,7 @@ const GPTChat = () => {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${process.env.CHAT_BASE_API_KEY}`
+                    'Authorization': `Bearer ${process.env.CHAT_BOT_API_KEY}`,
                 },
                 body: JSON.stringify({
                     chatbotId: process.env.CHAT_BOT_ID,
@@ -63,8 +80,15 @@ const GPTChat = () => {
             });
 
             const data = await response.json();
-            const assistantMessage = { role: 'assistant', content: data.text };
+            const assistantMessage = { role: 'assistant', content: data.text || data.message || data.error.message };
             setMessages([...newMessages, assistantMessage]);
+            const codeMatches = assistantMessage.content.match(/```([\s\S]*?)```/);
+            const codeContent = codeMatches ? codeMatches[1].trim() : null;
+
+            if (codeContent) {
+                onSaveCode(codeContent);
+            } else {
+            }
             setInputText('');
         } catch (error) {
             console.error('Error fetching GPT response:', error);
@@ -86,35 +110,34 @@ const GPTChat = () => {
         const codeContent = codeMatches ? codeMatches[1].trim() : null;
 
         if (codeContent) {
-            setSavedQuery(codeContent);
-            localStorage.setItem('savedQuery', codeContent);
-
-            navigator.clipboard.writeText(codeContent)
-                .then(() => {
-                    toast('Code saved and copied to clipboard', { type: 'success' });
-                })
-                .catch(err => {
-                    console.error('Failed to copy code to clipboard: ', err);
-                    toast('Failed to copy code to clipboard', { type: 'error' });
-                });
+            onSaveCode(codeContent);
+            toast('Query saved', { type: 'success' });
         } else {
             toast('No code to save', { type: 'warning' });
         }
     };
 
-
-    const copyToClipboard = (text) => {
-        navigator.clipboard.writeText(text);
-        toast('Copied to clipboard', { type: 'success' });
-    };
-
     const renderMessageContent = (content) => {
-        return content.split('```').map((part, index) => {
+        return content?.split('```').map((part, index) => {
             if (index % 2 === 1) {
                 return (
-                    <pre key={index} className="code-block">
-                        <code>{part}</code>
-                    </pre>
+                    <CodeMirror
+                        key={index}
+                        value={part}
+                        options={{
+                            mode: 'graphql',
+                            theme: 'graphiql',
+                            lineNumbers: true,
+                            readOnly: true,
+                            tabSize: 2,
+                            autoCloseBrackets: true,
+                            matchBrackets: true,
+                            foldGutter: true,
+                            keyMap: 'sublime',
+                            gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter'],
+                        }}
+                        onBeforeChange={() => {}}
+                    />
                 );
             } else {
                 return <div key={index}>{part}</div>;
@@ -145,24 +168,27 @@ const GPTChat = () => {
                             onKeyDown={handleKeyDown}
                             className="input-textarea"
                         />
-                        <Button variant="primary" onClick={handleSubmit} disabled={isLoading} size="sm" className="send-button">
-                            {isLoading ? (
-                                <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" />
-                            ) : (
-                                <FiSend />
-                            )}
-                        </Button>
+                        <div className="button-group">
+                            <div
+                                onClick={handleSubmit}
+                                className={`bitquery-little-gptBtn send-button ${isLoading ? 'disabled' : ''}`}
+                                disabled={isLoading}
+                            >
+                                {isLoading ? (
+                                    <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true"/>
+                                ) : (
+                                    <FiSend/>
+                                )}
+                            </div>
+                            <div className='bitquery-little-gptBtn' onClick={saveQuery}>
+                                <RiFileTransferFill/>
+                            </div>
+                            <div className='bitquery-little-gptBtn' onClick={() => setMessages([])}>
+                                <FiTrash2/>
+                            </div>
+                        </div>
                     </InputGroup>
                 </Form.Group>
-                <div className="d-flex justify-content-between mt-2">
-                    <Button variant="secondary" onClick={saveQuery} size="sm">
-                        <FiSave /> Save Query
-                    </Button>
-                    <Button variant="danger" onClick={handleClearChat} size="sm">
-                        <FiTrash2 /> Clear Chat
-                    </Button>
-                </div>
-
             </Form>
         </div>
     );

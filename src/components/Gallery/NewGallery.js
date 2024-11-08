@@ -19,7 +19,7 @@ const NewGallery = observer(function NewGallery() {
     const [tagsList, setTagsList] = useState([])
     const [showBuilder, toggleBuilder] = useState(false)
     const [activeTab, setActiveTab] = useState('Builder')
-
+    const [savedCode, setSavedCode] = useState('')
     useEffect(() => {
         const onload = async () => {
             try {
@@ -38,7 +38,10 @@ const NewGallery = observer(function NewGallery() {
             toggleQueriesList()
         }
     }
-
+    const handleSaveCode = (code) => {
+        setSavedCode(code);
+        updateQuery({ query: code }, index)
+    };
     return (
         <div className="newGallery__root">
             <div className="newGallery__topbar">
@@ -69,7 +72,7 @@ const NewGallery = observer(function NewGallery() {
                     makeDefaultArg={makeDefaultArg}
                 />
             )}
-            {activeTab === 'GPT' && <GPTChat/>}
+            {activeTab === 'GPT' && <GPTChat onSaveCode={handleSaveCode} initialQuery={currentQuery.query}/>}
         </div>
     )
 })
