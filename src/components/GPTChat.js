@@ -10,7 +10,7 @@ const GPTChat = () => {
     const [messages, setMessages] = useState([
         { role: 'system', content: 'You are a helpful assistant. use schemes from https://ide.bitquery.io/' }
     ]);
-    const [savedQuery, setSavedQuery] = useState(null); // Для хранения последнего сохраненного кода
+    const [savedQuery, setSavedQuery] = useState(null);
 
     const chatEndRef = useRef(null);
 
