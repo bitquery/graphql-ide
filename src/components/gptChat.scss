@@ -11,6 +11,7 @@
 
   font-family: $base-font-family;
   color: $base-font-color;
+  font-size: 0.9rem;
 }
 
 .chat-history {
@@ -25,19 +26,17 @@
 
 .gpt-response {
   margin-bottom: 10px;
+  font-size: 0.9rem;
 }
 
-.user-message {
+.user-message,.assistant-message {
   background-color: $background-gray-m;
   padding: 10px;
   border-radius: 8px;
+  font-size: 0.9rem;
 }
 
-.assistant-message {
-  background-color: $background-gray-l;
-  padding: 10px;
-  border-radius: 8px;
-}
+
 
 .input-textarea {
   resize: none;
@@ -46,13 +45,23 @@
   padding: 10px;
   flex-grow: 1;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  font-size: 1rem;
+  font-size: 0.9rem;
 }
+
+.highlighted-text {
+  background-color: $background-gray-m;
+  padding: 2px 4px;
+  border-radius: 4px;
+  font-family: monospace;
+  color: #333;
+  font-size: 0.85rem;
+}
+
 
 .button-group {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
   margin-left: 8px;
 }
 
@@ -66,7 +75,7 @@
   border-radius: 8px;
   background-color: #FFFFFF;
   color: $color-primary-active;
-  font-size: 16px;
+  font-size: 14px;
   cursor: pointer;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   transition: all 0.2s ease;

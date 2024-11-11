@@ -51,12 +51,14 @@ const NewGallery = observer(function NewGallery() {
                   >
                     Builder
                   </span>
+                { user?.role === 'admin' &&
                   <span
                     className={`bitquery-btn ${activeTab === 'GPT' ? 'active' : ''}`}
                     onClick={() => setActiveTab('GPT')}
                   >
                     GPT chat
                   </span>
+                }
             </div>
             {activeTab === 'Builder' && (
                 <QueryBuilder
