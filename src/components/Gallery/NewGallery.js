@@ -11,8 +11,7 @@ import GPTChat from "../GPTChat";
 const NewGallery = observer(function NewGallery() {
     const {user} = UserStore
     const {
-        queriesListIsOpen, currentTag, tagListIsOpen,
-        toggleQueriesList, toggleTagsList, setCurrentTag
+        queriesListIsOpen, currentTag, toggleQueriesList, setCurrentTag
     } = GalleryStore
     const {currentQuery, updateQuery, schema, queryJustSaved} = QueriesStore
     const {index} = TabsStore
@@ -20,6 +19,26 @@ const NewGallery = observer(function NewGallery() {
     const [showBuilder, toggleBuilder] = useState(false)
     const [activeTab, setActiveTab] = useState('Builder')
     const [savedCode, setSavedCode] = useState('')
+    const [width, setWidth] = useState(300);
+    const handleMouseMove = (e) => {
+        const newWidth = e.clientX;
+        if (newWidth > 100 && newWidth < window.innerWidth - 100) {
+            setWidth(newWidth);
+        }
+    };
+
+    const handleMouseUp = () => {
+        document.removeEventListener('mousemove', handleMouseMove);
+        document.removeEventListener('mouseup', handleMouseUp);
+    };
+
+    const handleMouseDown = (e) => {
+        if (e.target.classList.contains('newGallery__resizer')) {
+            document.addEventListener('mousemove', handleMouseMove);
+            document.addEventListener('mouseup', handleMouseUp);
+        }
+    };
+
     useEffect(() => {
         const onload = async () => {
             try {
@@ -43,7 +62,8 @@ const NewGallery = observer(function NewGallery() {
         updateQuery({ query: code }, index)
     };
     return (
-        <div className="newGallery__root">
+        <div className="newGallery__root" style={{width}}>
+            <div className="newGallery__resizer" onMouseDown={handleMouseDown}></div>
             <div className="newGallery__topbar">
                   <span
                       className={`bitquery-btn ${activeTab === 'Builder' ? 'active' : ''}`}
@@ -51,11 +71,11 @@ const NewGallery = observer(function NewGallery() {
                   >
                     Builder
                   </span>
-                { user?.role === 'admin' &&
-                  <span
-                    className={`bitquery-btn ${activeTab === 'GPT' ? 'active' : ''}`}
-                    onClick={() => setActiveTab('GPT')}
-                  >
+                {user?.role === 'admin' &&
+                    <span
+                        className={`bitquery-btn ${activeTab === 'GPT' ? 'active' : ''}`}
+                        onClick={() => setActiveTab('GPT')}
+                    >
                     GPT chat
                   </span>
                 }
@@ -76,6 +96,7 @@ const NewGallery = observer(function NewGallery() {
             )}
             {activeTab === 'GPT' && <GPTChat onSaveCode={handleSaveCode} initialQuery={currentQuery.query}/>}
         </div>
+
     )
 })
 

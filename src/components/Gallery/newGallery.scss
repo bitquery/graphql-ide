@@ -7,9 +7,23 @@
 	&__root {
 		display: flex;
 		flex-direction: column;
-		flex-basis: 15%;
-		min-width: 300px;
-		max-width: 300px;
+		width: 300px;
+		min-width: 200px;
+		max-width: 600px;
+		resize: horizontal;
+		overflow: hidden;
+		position: relative;
+
+	}
+	&__resizer {
+		width: 10px;
+		cursor: ew-resize;
+		background-color: transparent;
+		position: absolute;
+		right: 0;
+		top: 0;
+		bottom: 0;
+		z-index: 20;
 
 	}
 	&__topbar {

@@ -129,7 +129,7 @@ const GPTChat = ({ onSaveCode, initialQuery }) => {
                 return (
                     <CodeMirror
                         key={index}
-                        value={part.slice(7, -3)} // Убираем ```json и ```
+                        value={part.slice(7, -3)}
                         options={{
                             mode: 'application/json',
                             theme: 'graphiql',
