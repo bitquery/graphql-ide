@@ -76,7 +76,7 @@ const NewGallery = observer(function NewGallery() {
                         className={`bitquery-btn ${activeTab === 'GPT' ? 'active' : ''}`}
                         onClick={() => setActiveTab('GPT')}
                     >
-                    GPT chat
+                    GPT chat only for admin
                   </span>
                 }
             </div>
