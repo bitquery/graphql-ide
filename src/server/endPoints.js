@@ -107,21 +107,25 @@ module.exports = function (app, db, redisClient) {
                     }
                 }
             }
-            if (newTagsXML || newUrl) {
-                const sitemappath = path.resolve('./static', 'sitemap.xml')
-                fs.readFile(sitemappath, 'utf8', (err, data) => {
-                    const splitArray = data?.split('\n')
-                    splitArray.splice(-2, 2)
-                    let result = splitArray.join('\n')
-                    result = result + newUrl + newTagsXML
-                    fs.writeFile(sitemappath, `${result}\n</urlset>\n`, err => {
-                        console.log(err)
-                        msg ? res.status(201).send(msg) : res.sendStatus(201)
-                    })
-                })
-            } else {
-                msg ? res.status(201).send(msg) : res.sendStatus(201)
-            }
+            // if (newTagsXML || newUrl) {
+            //     // const sitemappath = path.resolve('./static', 'sitemap.xml')
+            //     // fs.readFile(sitemappath, 'utf8', (err, data) => {
+            //     //     if (err) {
+            //     //         console.log('Error reading sitemap:', err);
+            //     //         return res.status(500).send('Error reading sitemap');
+            //     //     }
+            //     //     const splitArray = data?.split('\n')
+            //     //     splitArray?.splice(-2, 2)
+            //     //     let result = splitArray?.join('\n')
+            //     //     // result = result + newUrl + newTagsXML
+            //     //     // fs.writeFile(sitemappath, `${result}\n</urlset>\n`, err => {
+            //     //     //     console.log(err)
+            //     //     //     msg ? res.status(201).send(msg) : res.sendStatus(201)
+            //     //     // })
+            //     // })
+            // } else {
+            //     msg ? res.status(201).send(msg) : res.sendStatus(201)
+            // }
         } else {
             res.status(400).send({msg: 'Add some tags to your query!'})
         }
