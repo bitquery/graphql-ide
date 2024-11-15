@@ -110,7 +110,7 @@ module.exports = function (app, db, redisClient) {
             if (newTagsXML || newUrl) {
                 const sitemappath = path.resolve('./static', 'sitemap.xml')
                 fs.readFile(sitemappath, 'utf8', (err, data) => {
-                    const splitArray = data.split('\n')
+                    const splitArray = data?.split('\n')
                     splitArray.splice(-2, 2)
                     let result = splitArray.join('\n')
                     result = result + newUrl + newTagsXML

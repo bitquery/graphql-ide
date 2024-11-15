@@ -263,6 +263,7 @@ class Queries {
     }
     saveQuery = async params => {
         try {
+
             const {data} = !this.currentQuery.layout
                 ? await axios.post('/api/addquery', {
                     params
