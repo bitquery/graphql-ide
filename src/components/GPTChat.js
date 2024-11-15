@@ -25,7 +25,7 @@ import 'codemirror-graphql/mode';
 import './gptChat.scss';
 import { getGPTResponse } from "../api/api";
 
-const GPTChat = ({ onSaveCode, initialQuery }) => {
+const GPTChat = ({ onSaveCode, initialQuery, endpoint }) => {
     const [inputText, setInputText] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [initialExplanationSent, setInitialExplanationSent] = useState(false);
@@ -116,8 +116,11 @@ const GPTChat = ({ onSaveCode, initialQuery }) => {
         const codeContent = codeMatches ? codeMatches[1].trim() : null;
 
         if (codeContent) {
-            onSaveCode(codeContent);
-            toast('Query saved', { type: 'success' });
+            navigator.clipboard.writeText(codeContent).then(() => {
+                toast('Query saved to clipboard', { type: 'success' });
+            }).catch(() => {
+                toast('Failed to save query to clipboard', { type: 'error' });
+            });
         } else {
             toast('No code to save', { type: 'warning' });
         }

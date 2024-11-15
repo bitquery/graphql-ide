@@ -22,7 +22,7 @@ const NewGallery = observer(function NewGallery() {
     const [width, setWidth] = useState(300);
     const handleMouseMove = (e) => {
         const newWidth = e.clientX;
-        if (newWidth > 100 && newWidth < window.innerWidth - 100) {
+        if (newWidth > 100 && newWidth < window.innerWidth - 10) {
             setWidth(newWidth);
         }
     };
@@ -94,7 +94,7 @@ const NewGallery = observer(function NewGallery() {
                     makeDefaultArg={makeDefaultArg}
                 />
             )}
-            {activeTab === 'GPT' && <GPTChat onSaveCode={handleSaveCode} initialQuery={currentQuery.query}/>}
+            {activeTab === 'GPT' && <GPTChat onSaveCode={handleSaveCode} endpoint={currentQuery.endpoint_url} initialQuery={currentQuery.query}/>}
         </div>
 
     )

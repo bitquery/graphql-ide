@@ -9,7 +9,7 @@
 		flex-direction: column;
 		width: 300px;
 		min-width: 200px;
-		max-width: 600px;
+		max-width: 1000px;
 		resize: horizontal;
 		overflow: hidden;
 		position: relative;
@@ -24,6 +24,7 @@
 		top: 0;
 		bottom: 0;
 		z-index: 20;
+		user-select: none;
 
 	}
 	&__topbar {
