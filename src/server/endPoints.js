@@ -530,7 +530,8 @@ module.exports = function (app, db, redisClient) {
             res.status(400).send({msg: 'You can not save query with non-bitquery.io URL'})
             return
         }
-        const matchURL = new RegExp(/(http(|s):\/\/.)[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&\/\/=]*)/, 'gm')
+        // const matchURL = new RegExp(/(http(|s):\/\/.)[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&\/\/=]*)/, 'gm')
+        const matchURL = new RegExp(/(http(|s):\/\/)[-a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_+.~#?&\/=]*)/, 'gm')
         if (
             params.name?.match(matchURL) ||
             params.description?.match(matchURL) ||
