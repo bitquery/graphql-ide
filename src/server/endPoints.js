@@ -1116,7 +1116,7 @@ module.exports = function (app, db, redisClient) {
 
     app.post('/api/getgptresponse', async (req, res) => {
         const { messages } = req.body;
-
+console.log('messages', messages)
         try {
             const response = await axios.post('https://www.chatbase.co/api/v1/chat', {
                 chatbotId: process.env.CHAT_BOT_ID,
@@ -1128,7 +1128,7 @@ module.exports = function (app, db, redisClient) {
                     'Authorization': `Bearer ${process.env.CHAT_BOT_API_KEY}`,
                 }
             });
-
+console.log('data', response.data)
             const assistantMessage = response.data.text || response.data.message || response.data.error.message;
             res.json({ content: assistantMessage });
         } catch (e) {

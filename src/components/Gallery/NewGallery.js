@@ -15,6 +15,7 @@ const NewGallery = observer(function NewGallery() {
     } = GalleryStore
     const {currentQuery, updateQuery, schema, queryJustSaved} = QueriesStore
     const {index} = TabsStore
+
     const [tagsList, setTagsList] = useState([])
     const [showBuilder, toggleBuilder] = useState(false)
     const [activeTab, setActiveTab] = useState('Builder')
