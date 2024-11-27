@@ -15,18 +15,16 @@ const PromoBanner = () => {
                 alt="DEXrabbit logo"
                 className="promo-banner-logo"
             />
-            <p className="promo-banner-text">
-                Visit{" "}
-                <a
-                    href="https://dexrabbit.com/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-
-                >
-                    <span className='promo-banner-dex'>DEX</span>
-                    <span  className="promo-banner-link" >Rabbit</span>
-                </a>
-            </p>
+            <div
+                className="promo-banner-content"
+                onClick={() => window.open("https://dexrabbit.com/", "_blank")}
+            >
+                <p className="promo-banner-text">
+                    Smarter trading on all blockchains with{" "}
+                    <span className="promo-banner-dex">DEX</span>
+                    <span className="promo-banner-link">Rabbit</span>.
+                </p>
+            </div>
             <button
                 onClick={handleClose}
                 className="promo-banner-close"
