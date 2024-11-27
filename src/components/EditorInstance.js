@@ -34,6 +34,7 @@ import {toast} from 'react-toastify'
 import {createClient} from "graphql-ws"
 import {InteractionButton} from './InteractionButton.js';
 import JsonPlugin from "./bitqueditor/components/JsonComponent";
+import SqlQueryComponent from "./SqlQueryComponent";
 
 const queryStatusReducer = (state, action) => {
     let newState = {...state}
@@ -53,6 +54,7 @@ const EditorInstance = observer(function EditorInstance({number}) {
     } = QueriesStore
     const [docExplorerOpen, setDocExplorerOpen] = useState(false)
     const [codeSnippetOpen, setCodeSnippetOpen] = useState(false)
+    const [sqlQueryOpen, setSqlQueryOpen] = useState(false)
     const [_variableToType, _setVariableToType] = useState(null)
     const [_headerToType, _setHeaderToType] = useState(null)
     const [error, setError] = useState(null)
@@ -60,6 +62,7 @@ const EditorInstance = observer(function EditorInstance({number}) {
     const [dataSource, setDataSource] = useState(null)
     const [accordance, setAccordance] = useState(true)
     const [widget, setWidget] = useState(null)
+    const [sqlQuery, setSqlQuery] = useState(null)
     const [isFullscreen, setIsFullscreen] = useState(false)
     const debouncedURL = useDebounce(currentQuery.endpoint_url, 500)
     const workspace = useRef(null)
@@ -111,12 +114,13 @@ const EditorInstance = observer(function EditorInstance({number}) {
             queryDispatcher.onquerystarted()
             try {
                 cachedData = cachedData ? cachedData : await fetcher({...payload, variables})
+                setSqlQuery(cachedData.sqlQuery)
                 if (queryNotLogged) {
                     logQuery(error)
                     queryNotLogged = false
                 }
                 queryDispatcher.onqueryend()
-                cachedData && callbacks.forEach(cb => cb(cachedData, variables))
+                cachedData && callbacks.forEach(cb => cb(cachedData.data, variables, cachedData.sqlQuery))
             } catch (error) {
                 queryDispatcher.onerror(error.message)
             }
@@ -289,7 +293,7 @@ const EditorInstance = observer(function EditorInstance({number}) {
     }
     useEffect(() => {
         setupExecButtonPosition()
-    }, [docExplorerOpen, codeSnippetOpen])
+    }, [docExplorerOpen, codeSnippetOpen, sqlQueryOpen])
     const workspaceResizer = e => {
         if (e.target && e.target.className && typeof e.target.className.indexOf === 'function') {
             if (e.target.className.indexOf('workspace__sizechanger') !== 0) return
@@ -547,6 +551,7 @@ const EditorInstance = observer(function EditorInstance({number}) {
                 }
             }
             const responseTime = new Date().getTime() - start
+            const sqlQuery = response.headers.get('x-sql-used');
             if (!('operationName' in graphQLParams)) {
                 const graphqlRequested = response.headers.get('X-GraphQL-Requested') === 'true' || response.headers.get('X-Bitquery-Graphql-Requested') === 'true'
                 updateQuery({
@@ -565,7 +570,7 @@ const EditorInstance = observer(function EditorInstance({number}) {
             } else {
                 setError(null)
             }
-            return data
+            return {data, sqlQuery}
         } catch (error) {
             // setError(error.message);
             console.log('fetch error:', error.message)
@@ -584,7 +589,7 @@ const EditorInstance = observer(function EditorInstance({number}) {
                 }
                 try {
                     const data = await fetcher(graphQLParams)
-                    let newSchema = buildClientSchema(data)
+                    let newSchema = buildClientSchema(data.data)
                     setSchema({...schema, [debouncedURL]: newSchema})
                     dispatchQueryStatus('readyToExecute')
                 } catch (error) {
@@ -608,11 +613,18 @@ const EditorInstance = observer(function EditorInstance({number}) {
 
     const toggleDocs = () => {
         codeSnippetOpen && setCodeSnippetOpen(false)
+        sqlQueryOpen && setSqlQueryOpen(false)
         setDocExplorerOpen(prev => !prev)
     }
     const toggleCodeSnippet = () => {
         docExplorerOpen && setDocExplorerOpen(false)
+        sqlQueryOpen && setSqlQueryOpen(false)
         setCodeSnippetOpen(prev => !prev)
+    }
+    const toggleSqlQuery = () => {
+        codeSnippetOpen && setCodeSnippetOpen(false)
+        docExplorerOpen && setDocExplorerOpen(false)
+        setSqlQueryOpen(prev => !prev)
     }
 
     const abortRequest = () => {
@@ -658,7 +670,7 @@ const EditorInstance = observer(function EditorInstance({number}) {
                 docExplorerOpen={docExplorerOpen}
                 toggleDocExplorer={toggleDocs}
                 toggleCodeSnippet={toggleCodeSnippet}
-                codeSnippetOpen={codeSnippetOpen}
+                toggleSqlQuery={toggleSqlQuery}
             />
             <div className={'over-wrapper ' + (!currentQuery.layout ? 'active' : '')} ref={overwrap}>
                 <ReactTooltip
@@ -761,6 +773,7 @@ const EditorInstance = observer(function EditorInstance({number}) {
                 </div>
                 {docExplorerOpen && <DocExplorer schema={schema[debouncedURL]}/>}
                 {codeSnippetOpen && <CodeSnippetComponent/>}
+                {user?.role === 'admin' && sqlQueryOpen && <SqlQueryComponent sqlQuery={sqlQuery}/>}
             </div>
         </div>
     )

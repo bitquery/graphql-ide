@@ -12,6 +12,7 @@ import ToolbarButton from './ToolbarButton'
 import copy from 'copy-to-clipboard'
 import {Form, InputGroup} from 'react-bootstrap'
 import DocsIcon from '../../icons/DocsIcon'
+import SqlIcon from '../../icons/SqlIcon'
 
 const ToolbarComponent = observer(({
                                        queryEditor,
@@ -20,6 +21,8 @@ const ToolbarComponent = observer(({
                                        docExplorerOpen,
                                        toggleDocExplorer,
                                        toggleCodeSnippet,
+                                       toggleSqlQuery,
+                                       sqlQueryOpen,
                                        codeSnippetOpen,
                                        number
                                    }) => {
@@ -34,7 +37,6 @@ const ToolbarComponent = observer(({
     const [mode, setMode] = useState(false)
     const [dashboardOwner, setOwner] = useState(false)
     const [selectedUrl, setSelectedUrl] = useState('')
-
     useEffect(() => {
         if (((currentQuery.layout && (currentQuery.account_id === user?.id)) || !currentQuery.id) || !currentQuery.layout) {
             setOwner(true)
@@ -230,6 +232,11 @@ const ToolbarComponent = observer(({
                 />
             </InputGroup>
             {user?.id && query[number].graphqlQueryID && <StatisticsButton number={number}/>}
+            {user?.role === 'admin' &&
+                <span className="cursor-pointer" aria-label="SQL Query" onClick={toggleSqlQuery}>
+                <SqlIcon className={"docs_icon" + (sqlQueryOpen ? " active" : '')} data-toggle="tooltip"
+                          data-placement="top" title="SQL Query"/>
+            </span>}
             <span className="cursor-pointer" aria-label="Documentation Explorer" onClick={toggleDocExplorer}>
                 <DocsIcon className={"docs_icon" + (docExplorerOpen ? " active" : '')} data-toggle="tooltip"
                           data-placement="top" title="Tooltip on top"/>
