@@ -191,10 +191,11 @@ const ControlPanel = observer(function ControlPanel() {
 
 
                     <NavDropdown title="Contact" id="nav-dropdown" className="bitquery-nav_link">
-                        <NavDropdown.Item className="bitquery-links" href={`https://account.bitquery.io/user/payments/form/${uuid()}}`}
+                        <NavDropdown.Item className="bitquery-links"
+                                          href={`https://account.bitquery.io/user/payments/form/${uuid()}}`}
                                           target='_blank'>Contact Sales</NavDropdown.Item>
                         <Dropdown.Divider/>
-                         <NavDropdown.Item className="bitquery-links" href='https://community.bitquery.io/'
+                        <NavDropdown.Item className="bitquery-links" href='https://community.bitquery.io/'
                                           target='_blank'>Forum</NavDropdown.Item>
                         <Dropdown.Divider/>
 
@@ -215,7 +216,6 @@ const ControlPanel = observer(function ControlPanel() {
                             We are hiring!
                         </NavDropdown.Item>
                     </NavDropdown>
-
                     <li className="nav-item d-lg-none" tabIndex='-1'>
                         <a className="nav-link bitquery-links" href="https://discord.gg/EEBVTQnb2E">Discord</a>
                     </li>
@@ -242,10 +242,7 @@ const ControlPanel = observer(function ControlPanel() {
                         <a className="nav-link bitquery-links"
                            href={`https://account.bitquery.io/user/payments/form/${uuid()}`}>Contact Sales</a>
                     </li>
-                    {/*<li className="nav-item d-lg-none bitquery-links" tabIndex='-1'>*/}
-                    {/*    <a className="nav-link bitquery-links"*/}
-                    {/*       href={`${user?.graphql_admin_url}/user/account`}>Account</a>*/}
-                    {/*</li>*/}
+
                     {!user?.id && <li className="nav-item d-lg-none">
                         <a className="nav-link bitquery-links"
                            href={`${user?.graphql_admin_url}/auth/login?redirect_to=${window.location.href}`}>Login</a>
@@ -273,7 +270,9 @@ const ControlPanel = observer(function ControlPanel() {
                 </ul>
                 <ProfileComponent/>
             </div>
+
         </div>
+
     )
 })
 

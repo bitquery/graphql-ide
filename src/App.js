@@ -15,6 +15,7 @@ import ExploreComponent from './components/ExploreComponent'
 import {TokenPagesAPI} from './components/TokenPagesAPI'
 import {ToastContainer, toast} from 'react-toastify'
 import "react-toastify/dist/ReactToastify.css";
+import PromoBanner from "./components/bitqueditor/components/PromoBanner";
 
 if (process.env.NODE_ENV === 'development') {
     /* require('@welldone-software/why-did-you-render')(React, {
@@ -74,6 +75,8 @@ const App = observer(function App() {
                     </div>
                 </Route>
             </Switch>
+            <PromoBanner/>
+
         </div>
     )
 })
