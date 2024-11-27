@@ -90,10 +90,10 @@ const ControlPanel = observer(function ControlPanel() {
                     <img src={bitqueryLogo} alt="logo"/>
                     <span className="bitquery-logo_text">Bitquery</span>
                 </a>
-                <span className="bitquery-divider"></span>
-                <span className="bitquery-graph">Graph
+                <div className="bitquery-divider"></div>
+                <div className="bitquery-graph">Graph
                     <span className="bitquery-graphQL">QL</span>
-                </span>
+                </div>
             </div>
             <button className="navbar-toggler m-2" type="button" data-toggle="collapse"
                     data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
@@ -242,6 +242,10 @@ const ControlPanel = observer(function ControlPanel() {
                         <a className="nav-link bitquery-links"
                            href={`https://account.bitquery.io/user/payments/form/${uuid()}`}>Contact Sales</a>
                     </li>
+                    {/*<li className="nav-item d-lg-none bitquery-links" tabIndex='-1'>*/}
+                    {/*    <a className="nav-link bitquery-links"*/}
+                    {/*       href={`${user?.graphql_admin_url}/user/account`}>Account</a>*/}
+                    {/*</li>*/}
                     {!user?.id && <li className="nav-item d-lg-none">
                         <a className="nav-link bitquery-links"
                            href={`${user?.graphql_admin_url}/auth/login?redirect_to=${window.location.href}`}>Login</a>
