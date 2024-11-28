@@ -508,13 +508,14 @@ const EditorInstance = observer(function EditorInstance({number}) {
             return
         }
 
+
         abortController.current = new AbortController()
         const key = user ? user.key : null
         const keyHeader = {'X-API-KEY': key}
         const accessToken = user ? UserStore.user?.accessToken?.access_token : null
         const authorizationHeader = {'Authorization': `Bearer ${accessToken}`}
         const start = new Date().getTime()
-        const customHeaders = currentQuery.headers || {}
+        const customHeaders = JSON.parse(currentQuery.headers) || {}
         const headers = {
             'Accept': 'application/json',
             'Content-Type': 'application/json',
@@ -522,6 +523,7 @@ const EditorInstance = observer(function EditorInstance({number}) {
             ...authorizationHeader,
             ...customHeaders,
         }
+
         if (user.role === 'admin') {
             headers['X-Sql-Debug'] = 'true';
         }
