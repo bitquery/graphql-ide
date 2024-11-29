@@ -435,7 +435,7 @@ const EditorInstance = observer(function EditorInstance({number}) {
         }
         let variables;
         try {
-            variables = JSON.parse(currentQuery.variables);
+            variables = currentQuery.variables ? JSON.parse(currentQuery.variables) : {} ;
         } catch (error) {
            setError(error.message)
             return;
@@ -528,6 +528,7 @@ const EditorInstance = observer(function EditorInstance({number}) {
             headers['X-Sql-Debug'] = 'true';
         }
         try {
+            console.log('graphQLParams',graphQLParams)
             const response = await fetch(
                 currentQuery.endpoint_url,
                 {
