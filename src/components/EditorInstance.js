@@ -456,7 +456,6 @@ const EditorInstance = observer(function EditorInstance({number}) {
     const editQueryHandler = useCallback(handleSubject => {
         if ('query' in handleSubject) {
             const facts = getQueryFacts(schema[debouncedURL], handleSubject.query)
-            console.log('facts',facts)
             if (facts) {
                 const {variableToType} = facts
                 const {headerToType} = facts
