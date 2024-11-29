@@ -511,11 +511,11 @@ const EditorInstance = observer(function EditorInstance({number}) {
 
         abortController.current = new AbortController()
         const key = user ? user.key : null
-        const keyHeader = {'X-API-KEY': key}
         const accessToken = user ? UserStore.user?.accessToken?.access_token : null
+        const keyHeader = currentQuery.endpoint_url === 'https://graphql.bitquery.io' ? {'X-API-KEY': key} : {}
         const authorizationHeader = {'Authorization': `Bearer ${accessToken}`}
         const start = new Date().getTime()
-        const customHeaders = JSON.parse(currentQuery.headers) || {}
+        const customHeaders = currentQuery.headers ? JSON.parse(currentQuery?.headers) : {}
         const headers = {
             'Accept': 'application/json',
             'Content-Type': 'application/json',
