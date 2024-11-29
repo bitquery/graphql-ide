@@ -527,7 +527,6 @@ const EditorInstance = observer(function EditorInstance({number}) {
             headers['X-Sql-Debug'] = 'true';
         }
         try {
-            console.log('graphQLParams',graphQLParams)
             const response = await fetch(
                 currentQuery.endpoint_url,
                 {
