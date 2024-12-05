@@ -777,7 +777,6 @@ module.exports = function (app, db, redisClient) {
 
     app.post('/api/addquery', (req, res) => {
         let query = req.body.params
-        console.log('body params', query)
         if (!query.id || query.account_id !== req.account_id) {
             handleAddQuery(req, res, db)
         } else {
@@ -977,9 +976,7 @@ module.exports = function (app, db, redisClient) {
     })
     app.get('/api/getwidgetconfig/:id', async (req, res) => {
         const widgetConfig = await redisClient.get(req.params.id)
-        console.log('widgetConfig', widgetConfig)
         if (widgetConfig !== null) {
-            console.log('there is some widgetconfig')
             res.status(200).send(JSON.parse(widgetConfig))
         } else {
             res.sendStatus(400)
@@ -999,7 +996,6 @@ module.exports = function (app, db, redisClient) {
     app.get('/api/bygraphqlqueryid/:queryid', async (req, res) => {
         const query = await redisClient.get(req.params.queryid)
         if (query !== null) {
-            console.log('there is some query')
             res.status(200).send(JSON.parse(query))
         } else {
             res.sendStatus(400)
