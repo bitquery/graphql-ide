@@ -5,7 +5,7 @@ import 'codemirror/theme/dracula.css';
 import 'codemirror/mode/sql/sql';
 import 'codemirror-graphql/mode';
 
-const SqlQueryComponent = observer(function SqlQueryComponent({ sqlQuery }) {
+const SqlQueryComponent = observer(function SqlQueryComponent({ sqlQuery ='-- No SQL Query provided --' }) {
 
     return (
         <section className="codesnippet__root">
@@ -16,7 +16,7 @@ const SqlQueryComponent = observer(function SqlQueryComponent({ sqlQuery }) {
             <div className="card">
                 <div className="query-container" style={{ position: 'relative' }}>
                     <CodeMirror
-                        value={sqlQuery || '-- No SQL Query provided --'}
+                        value={sqlQuery }
                         options={{
                             mode: 'sql',
                             lineWrapping: true,

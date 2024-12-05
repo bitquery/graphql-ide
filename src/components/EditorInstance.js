@@ -114,13 +114,13 @@ const EditorInstance = observer(function EditorInstance({number}) {
             queryDispatcher.onquerystarted()
             try {
                 cachedData = cachedData ? cachedData : await fetcher({...payload, variables})
-                setSqlQuery(cachedData.sqlQuery)
+                setSqlQuery(cachedData?.sqlQuery || 'no sql query')
                 if (queryNotLogged) {
                     logQuery(error)
                     queryNotLogged = false
                 }
                 queryDispatcher.onqueryend()
-                cachedData && callbacks.forEach(cb => cb(cachedData.data, variables, cachedData.sqlQuery))
+                cachedData && callbacks.forEach(cb => cb(cachedData.data, variables, cachedData?.sqlQuery ))
             } catch (error) {
                 queryDispatcher.onerror(error.message)
             }
@@ -552,7 +552,8 @@ const EditorInstance = observer(function EditorInstance({number}) {
                 }
             }
             const responseTime = new Date().getTime() - start
-            const sqlQuery = response.headers.get('x-sql-used');
+            const sqlQuery = response.headers.get('x-sql-used') || 'no sql query';
+
             if (!('operationName' in graphQLParams)) {
                 const graphqlRequested = response.headers.get('X-GraphQL-Requested') === 'true' || response.headers.get('X-Bitquery-Graphql-Requested') === 'true'
                 updateQuery({
@@ -564,7 +565,6 @@ const EditorInstance = observer(function EditorInstance({number}) {
                     gettingPointsCount: 0
                 }, index)
             }
-
             const {data, errors} = await response.json()
             if (errors) {
                 setError(errors[0].message)
@@ -573,7 +573,7 @@ const EditorInstance = observer(function EditorInstance({number}) {
             }
             return {data, sqlQuery}
         } catch (error) {
-            // setError(error.message);
+            setError(error.message);
             console.log('fetch error:', error.message)
         }
     }
