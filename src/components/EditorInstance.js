@@ -148,7 +148,7 @@ const EditorInstance = observer(function EditorInstance({number}) {
         let callbacks = []
         let queryNotLogged = true
         let variables = payload.variables
-
+        const customHeaders = currentQuery.headers ? JSON.parse(currentQuery?.headers) : {}
         const subscribe = async () => {
             if (user?.accessToken && user?.accessToken?.streaming_expires_on <= Date.now()) {
                 try {
@@ -168,7 +168,8 @@ const EditorInstance = observer(function EditorInstance({number}) {
                     if (token) {
                         return {
                             headers: {
-                                'Authorization': `Bearer ${token}`
+                                'Authorization': `Bearer ${token}`,
+                                ...customHeaders,
                             }
                         }
                     }
