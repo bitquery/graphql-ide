@@ -539,6 +539,8 @@ const EditorInstance = observer(function EditorInstance({number}) {
                 },
             )
             if (!response.ok) {
+                console.log('response:', response)
+                if(response.status === 402) { setError('No active billing period')}
                 const errorText = await response.text()
                 try {
                     const json = JSON.parse(errorText);
