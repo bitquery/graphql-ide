@@ -1138,5 +1138,4 @@ module.exports = function (app, db, redisClient) {
 
     })
 
-
 }
