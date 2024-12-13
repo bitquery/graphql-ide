@@ -800,7 +800,7 @@ const EditorInstance = observer(function EditorInstance({number}) {
                             width={100}
                         />}
                         <QueryErrorIndicator
-                            error={error}
+                            error={fetchError || error}
                             removeError={setError}
                         />
                         <FullScreen className="widget-display" handle={fullscreenHandle}>
