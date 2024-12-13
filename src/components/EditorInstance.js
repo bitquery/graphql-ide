@@ -50,7 +50,7 @@ const EditorInstance = observer(function EditorInstance({number}) {
     const {user, getUser} = UserStore
     const {
         query, updateQuery, currentQuery, isMobile,
-        setMobile, showSideBar, schema, setSchema, logQuery
+        setMobile, showSideBar, schema, setSchema, fetchError, setFetchError, logQuery
     } = QueriesStore
     const [docExplorerOpen, setDocExplorerOpen] = useState(false)
     const [codeSnippetOpen, setCodeSnippetOpen] = useState(false)
@@ -120,7 +120,7 @@ const EditorInstance = observer(function EditorInstance({number}) {
                     queryNotLogged = false
                 }
                 queryDispatcher.onqueryend()
-                cachedData && callbacks.forEach(cb => cb(cachedData.data, variables, cachedData?.sqlQuery ))
+                cachedData && callbacks.forEach(cb => cb(cachedData.data, variables, cachedData?.sqlQuery))
             } catch (error) {
                 queryDispatcher.onerror(error.message)
             }
@@ -436,9 +436,9 @@ const EditorInstance = observer(function EditorInstance({number}) {
         }
         let variables;
         try {
-            variables = currentQuery.variables ? JSON.parse(currentQuery.variables) : {} ;
+            variables = currentQuery.variables ? JSON.parse(currentQuery.variables) : {};
         } catch (error) {
-           setError(error.message)
+            setError(error.message)
             return;
         }
         const payload = {query: currentQuery.query, variables}
@@ -485,6 +485,7 @@ const EditorInstance = observer(function EditorInstance({number}) {
         // eslint-disable-next-line
     }, [user, schema[debouncedURL], queryTypes, index])
 
+
     const fetcher = async (graphQLParams) => {
         if (user?.accessToken && user?.accessToken?.streaming_expires_on <= Date.now()) {
             try {
@@ -495,19 +496,8 @@ const EditorInstance = observer(function EditorInstance({number}) {
         }
 
         if (!user.id) {
-            // toast.error((
-            //     <div>
-            //         Hello! To continue using our services, please
-            //         <a className='bitquery-ico'
-            //            href={`https://account.bitquery.io/auth/login?redirect_to=${window.location.href}`}> log
-            //             in </a> or
-            //         <a className='bitquery-ico' href="https://account.bitquery.io/auth/signup"> register </a>
-            //         Logging in will allow you to access all the features and keep track of your activities.
-            //     </div>
-            // ), {autoClose: 3000});
             return
         }
-
 
         abortController.current = new AbortController()
         const key = user ? user.key : null
@@ -539,28 +529,57 @@ const EditorInstance = observer(function EditorInstance({number}) {
                 },
             )
             if (!response.ok) {
-                console.log('response:', response)
-                if(response.status === 402) { setError('No active billing period')}
                 const errorText = await response.text()
                 try {
-                    const json = JSON.parse(errorText);
-                    const { errors } = json;
-                    if (errors) {
+                    if (response.status === 402) {
+                        setFetchError('No active billing period')
+                        return setError('No active billing period')
+                    }
+                    if (response.status === 401) {
+                        const authErrorMsg = 'You have to use Authorization token as described in the documentation https://docs.bitquery.io/docs/category/authorization';
+                        setFetchError(authErrorMsg)
+                        return setError(authErrorMsg)
+                    }
+
+                    let json;
+                    try {
+                        json = JSON.parse(errorText);
+                    } catch (jsonParseError) {
+                        console.error("Failed to parse error response as JSON:", jsonParseError);
+                        console.error("Original error text:", errorText);
+                        setFetchError(`HTTP Error ${response.status}: ${errorText}`);
+                        setError(`HTTP Error ${response.status}: ${errorText}`);
+                        return;
+                    }
+
+                    const {errors} = json;
+                    if (errors && errors.length > 0) {
+                        setFetchError(errors[0].message);
                         setError(errors[0].message);
                     } else {
-                        setError(null);
+                        const genericErrorMsg = `HTTP Error ${response.status}: ${errorText}`;
+                        setFetchError(genericErrorMsg);
+                        setError(genericErrorMsg);
                     }
+                    return;
                 } catch (e) {
-                    setError(errorText);
+                    console.error("Error handling response:", e);
+                    setFetchError(e.message || 'Unknown error');
+                    setError(e.message || 'Unknown error');
+                    return;
                 }
             }
+
             const responseTime = new Date().getTime() - start
             const sqlQuery = response.headers.get('x-sql-used') || 'no sql query';
 
             if (!('operationName' in graphQLParams)) {
-                const graphqlRequested = response.headers.get('X-GraphQL-Requested') === 'true' || response.headers.get('X-Bitquery-Graphql-Requested') === 'true'
+                const graphqlRequested = response.headers.get('X-GraphQL-Requested') === 'true'
+                    || response.headers.get('X-Bitquery-Graphql-Requested') === 'true'
+
                 updateQuery({
-                    graphqlQueryID: response.headers.get('X-GraphQL-Query-ID') || response.headers.get('X-Bitquery-Gql-Query-Id'),
+                    graphqlQueryID: response.headers.get('X-GraphQL-Query-ID')
+                        || response.headers.get('X-Bitquery-Gql-Query-Id'),
                     graphqlRequested,
                     responseTime,
                     points: graphqlRequested ? undefined : 0,
@@ -568,16 +587,37 @@ const EditorInstance = observer(function EditorInstance({number}) {
                     gettingPointsCount: 0
                 }, index)
             }
-            const {data, errors} = await response.json()
-            if (errors) {
-                setError(errors[0].message)
-            } else {
-                setError(null)
+
+            let jsonResponse;
+            try {
+                jsonResponse = await response.json();
+            } catch (jsonError) {
+                console.error("Failed to parse successful response as JSON:", jsonError);
+                setFetchError("Invalid JSON in success response");
+                setError("Invalid JSON in success response");
+                return;
             }
+
+            const {data, errors} = jsonResponse
+            if (errors && errors.length > 0) {
+                setFetchError(errors[0].message);
+                setError(errors[0].message);
+            } else {
+                setError(null);
+            }
+
             return {data, sqlQuery}
         } catch (error) {
-            setError(error.message);
-            console.log('fetch error:', error.message)
+            if (error.name === 'AbortError') {
+                setFetchError("Request was aborted");
+                setError("Request was aborted");
+            } else if (error.message.includes('Failed to fetch')) {
+                setFetchError("Network error: Failed to fetch. Possibly CORS, DNS or network issue.");
+                setError("Network error: Failed to fetch. Possibly CORS, DNS or network issue.");
+            } else {
+                setFetchError(error.message);
+                setError(error.message);
+            }
         }
     }
     useEffect(() => {
@@ -608,6 +648,7 @@ const EditorInstance = observer(function EditorInstance({number}) {
             fetchSchema()
         }
         if (debouncedURL in schema && queryStatus.schemaError) {
+
             dispatchQueryStatus('readyToExecute')
         }
         // eslint-disable-next-line
@@ -654,7 +695,7 @@ const EditorInstance = observer(function EditorInstance({number}) {
 
     const editHeadersHandler = useCallback((handleSubject) => {
         if ('headers' in handleSubject) {
-            updateQuery({ ...query[number], headers: handleSubject.headers, saved: false }, index);
+            updateQuery({...query[number], headers: handleSubject.headers, saved: false}, index);
         }
     }, [query, index]);
 
@@ -704,6 +745,7 @@ const EditorInstance = observer(function EditorInstance({number}) {
                     {!currentQuery.layout && <GraphqlEditor
                         readOnly={!!currentQuery?.url && !!currentQuery.id}
                         schema={schema[debouncedURL]}
+                        fetchError={fetchError}
                         query={query[number].query}
                         number={number}
                         variables={query[number].variables}

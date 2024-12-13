@@ -12,7 +12,7 @@ const NewGallery = observer(function NewGallery() {
 	const { user } = UserStore
 	const { queriesListIsOpen, currentTag, tagListIsOpen,
 		toggleQueriesList, toggleTagsList, setCurrentTag } = GalleryStore
-	const { currentQuery, updateQuery, schema, queryJustSaved } = QueriesStore
+	const { currentQuery, updateQuery, schema, queryJustSaved, fetchError } = QueriesStore
 	const { index } = TabsStore
 	const [tagsList, setTagsList] = useState([])
 	const [showBuilder, toggleBuilder] = useState(false)
@@ -46,6 +46,7 @@ const NewGallery = observer(function NewGallery() {
 				width={'300px'}
 				minWidth={'300px'}
 				title={'Builder'}
+				fetchError={fetchError}
 				schema={schema[currentQuery.endpoint_url]}
 				query={currentQuery.query}
 				user={user}

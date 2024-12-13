@@ -6,7 +6,7 @@ import { TabsStore } from '../../../store/queriesStore';
 import HeaderEditor from "./HeaderEditor";
 
 const GraphqlEditor = observer(function GraphqlEditor({
-	  schema,
+	  schema, fetchError,
 	  query,
 	  variables,
 	  headers,
@@ -37,6 +37,7 @@ const GraphqlEditor = observer(function GraphqlEditor({
 				ref={ref1}
 				onEdit={onEditQuery}
 				schema={schema}
+                fetchError={fetchError}
 				value={query}
 			/>
 			<VariableEditor

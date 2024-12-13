@@ -2,8 +2,7 @@ import {makeObservable, observable, action, computed} from "mobx"
 import axios from 'axios'
 import {getUser, regenerateKey, setDashboard} from "../api/api"
 import {GalleryStore} from './galleryStore'
-import {toast} from "react-toastify";
-import React from "react";
+
 
 class User {
     user = null
@@ -36,18 +35,6 @@ class User {
             }
         } catch (error) {
             this.setUser(undefined)
-
-                        // toast.error((
-                        //     <div>
-                        //         Hello! To continue using our services, please
-                        //         <a className='bitquery-ico'
-                        //            href={`https://account.bitquery.io/auth/login?redirect_to=${window.location.href}`}> log
-                        //             in </a> or
-                        //         <a className='bitquery-ico' href={`https://account.bitquery.io/auth/signup?redirect_to=${window.location.href}`}> register </a>
-                        //         Logging in will allow you to access all the features and keep track of your activities.
-                        //     </div>
-                        // ), {autoClose: 2000})
-
             console.log(error.response?.data)
         }
     }
@@ -73,6 +60,7 @@ class Queries {
     showSideBar = true
     queryJustSaved = false
     schema = {}
+    fetchError=''
     isMobile = window.innerWidth <= 768
     gettingResult = false
     isLoaded = false
@@ -107,6 +95,7 @@ class Queries {
             isMobile: observable,
             isLoaded: observable,
             schema: observable,
+            fetchError: observable,
             query: observable,
             queryParams: computed,
             queryNumber: computed,
@@ -127,6 +116,7 @@ class Queries {
             saveToggle: action,
             saveQuery: action,
             setSchema: action,
+            setFetchError: action,
             setMobile: action,
             setQuery: action
         })
@@ -166,6 +156,7 @@ class Queries {
     setIsLoaded = () => this.isLoaded = true
     toggleDashboardView = () => this.dashboardView = !this.dashboardView
     setSchema = schema => this.schema = schema
+    setFetchError = fetchError => this.fetchError = fetchError
     setMobile = (mobile) => this.isMobile = mobile
     setQuery = (params, id) => {
         this.query.push({id: id ? id : null})
