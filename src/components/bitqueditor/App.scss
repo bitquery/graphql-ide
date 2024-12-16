@@ -288,7 +288,7 @@ button.columns_number {
   flex: 1 1;
   flex-direction: column;
   overflow: hidden;
-  cursor:text;
+  cursor: text;
 
 }
 
@@ -390,12 +390,14 @@ button.columns_number {
     font-size: 11px;
     color: $color-primary-active
   }
-&:focus{
-  border: 1px solid $color-primary-active;
-  box-shadow: transparent;
-  outline: transparent;
 
-}
+  &:focus {
+    border: 1px solid $color-primary-active;
+    box-shadow: transparent;
+    outline: transparent;
+
+  }
+
   &:hover, &:active, &:target {
     @include hover-btn
 
@@ -483,7 +485,7 @@ div.CodeMirror span.CodeMirror-matchingbracket {
     color: $color-primary-active;
     @include transition-btn;
 
-    &:hover, &:active, &:focus,&:target {
+    &:hover, &:active, &:focus, &:target {
       @include hover-btn;
     }
 
@@ -515,6 +517,11 @@ div.CodeMirror span.CodeMirror-matchingbracket {
   cursor: pointer;
 }
 
+.icon_fullscreen {
+  bottom: 10px;
+
+}
+
 .icon_csv {
   left: 65px;
   width: 30px;
@@ -524,6 +531,7 @@ div.CodeMirror span.CodeMirror-matchingbracket {
 .docExplorerWrap {
   position: relative;
   background-color: #ffffff;
+
   .doc-explorer-contents {
     display: contents;
 
