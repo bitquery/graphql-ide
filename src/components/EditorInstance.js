@@ -117,7 +117,6 @@ const EditorInstance = observer(function EditorInstance({number}) {
                 setSqlQuery(cachedData?.sqlQuery || 'no sql query')
                 if (queryNotLogged) {
                     logQuery(error)
-                    queryNotLogged = false
                 }
                 queryDispatcher.onqueryend()
                 cachedData && callbacks.forEach(cb => cb(cachedData.data, variables, cachedData?.sqlQuery))
@@ -800,8 +799,8 @@ const EditorInstance = observer(function EditorInstance({number}) {
                             width={100}
                         />}
                         <QueryErrorIndicator
-                            error={fetchError || error}
-                            removeError={setError}
+                            error={fetchError}
+                            removeError={setFetchError}
                         />
                         <FullScreen className="widget-display" handle={fullscreenHandle}>
                             <WidgetView
