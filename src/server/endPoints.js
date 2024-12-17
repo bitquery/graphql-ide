@@ -109,21 +109,21 @@ module.exports = function (app, db, redisClient) {
                     }
                 }
             }
-            if (newTagsXML || newUrl) {
-                const sitemappath = path.resolve('./static', 'sitemap.xml')
-                fs.readFile(sitemappath, 'utf8', (err, data) => {
-                    const splitArray = data.split('\n')
-                    splitArray.splice(-2, 2)
-                    let result = splitArray.join('\n')
-                    result = result + newUrl + newTagsXML
-                    fs.writeFile(sitemappath, `${result}\n</urlset>\n`, err => {
-                        console.log(err)
-                        msg ? res.status(201).send(msg) : res.sendStatus(201)
-                    })
-                })
-            } else {
-                msg ? res.status(201).send(msg) : res.sendStatus(201)
-            }
+            // if (newTagsXML || newUrl) {
+            //     const sitemappath = path.resolve('./static', 'sitemap.xml')
+            //     fs.readFile(sitemappath, 'utf8', (err, data) => {
+            //         const splitArray = data?.split('\n')
+            //         splitArray.splice(-2, 2)
+            //         let result = splitArray.join('\n')
+            //         result = result + newUrl + newTagsXML
+            //         fs.writeFile(sitemappath, `${result}\n</urlset>\n`, err => {
+            //             console.log(err)
+            //             msg ? res.status(201).send(msg) : res.sendStatus(201)
+            //         })
+            //     })
+            // } else {
+            //     msg ? res.status(201).send(msg) : res.sendStatus(201)
+            // }
         } else {
             res.status(400).send({msg: 'Add some tags to your query!'})
         }
@@ -322,7 +322,6 @@ module.exports = function (app, db, redisClient) {
     app.get('/api/transferedquery/:query', async (req, res) => {
         const query = await redisClient.get(req.params.query)
         if (query !== null) {
-            console.log('there is some query')
             res.status(200).send({transferedQuery: JSON.parse(query)})
         } else {
             res.status(200).send({
@@ -444,14 +443,14 @@ module.exports = function (app, db, redisClient) {
 
     app.post('/api/tagspr', (req, res) => {
         const {query_id, tags} = req.body.params
-        handleTags(db, query_id, tags, res)
+        // handleTags(db, query_id, tags, res)
     })
 
     app.put('/api/tagspr', (req, res) => {
         const {query_id, tags} = req.body.params
         db.query('DELETE FROM tags_to_queries WHERE query_id = ?', [query_id], (err, _) => {
             if (err) console.log(err)
-            handleTags(db, query_id, tags, res)
+            // handleTags(db, query_id, tags, res)
         })
     })
 
@@ -566,7 +565,7 @@ module.exports = function (app, db, redisClient) {
             config: JSON.stringify(config)
         }
         const msg = await addWidgetConfig(res, newParam, params.url)
-        handleTags(query_id, tags, res, msg, false, params.url)
+        // handleTags(query_id, tags, res, msg, false, params.url)
     }
     const handleUpdateQuery = async (req, res, db) => {
         if (!req.body.params.executed) {
@@ -597,7 +596,7 @@ module.exports = function (app, db, redisClient) {
                     config: JSON.stringify(req.body.params.config)
                 }
                 const msg = await addWidgetConfig(res, newParam)
-                handleTags(req.body.params.id, tags, res, msg, true)
+                // handleTags(req.body.params.id, tags, res, msg, true)
             } else {
                 res.status(400).send({msg: 'Error updating query'})
             }
@@ -777,9 +776,15 @@ module.exports = function (app, db, redisClient) {
 
     app.post('/api/addquery', (req, res) => {
         let query = req.body.params
+        console.log('req.body.params',req.body.params)
         if (!query.id || query.account_id !== req.account_id) {
+            console.log('handleAddQuery')
+            console.log('handleAddQuery req, res, db',req, res, db)
             handleAddQuery(req, res, db)
         } else {
+            console.log('handleUpdateQuery')
+            console.log('handleUpdateQuery req, res, db',req, res, db)
+
             handleUpdateQuery(req, res, db)
         }
     })
