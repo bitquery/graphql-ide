@@ -2,6 +2,7 @@ import {makeObservable, observable, action, computed} from "mobx"
 import axios from 'axios'
 import {getUser, regenerateKey, setDashboard} from "../api/api"
 import {GalleryStore} from './galleryStore'
+import {toast} from "react-toastify";
 
 
 class User {
@@ -266,6 +267,13 @@ class Queries {
             this.currentQuery.layout && window.dispatchEvent(new Event('updateInitialDashboard'))
             return data
         } catch (e) {
+            const status = e.response?.status
+            const errorData = e.response?.data
+            const errorMsg = status === 413
+                ? 'Payload Too Large: please try reducing the request size.'
+                : errorData?.msg || `Error: ${status} - ${errorData || 'Unknown error'}`
+
+            toast.error(errorMsg)
             console.log(e.response)
             return e.response
         }
