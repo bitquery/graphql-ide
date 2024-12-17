@@ -82,52 +82,85 @@ module.exports = function (app, db, redisClient) {
             : db.query(sql, callback)
     })
 
-    const handleTags = async (query_id, tags, res, msg, update = false, url) => {
-        if (tags) {
-            const date = new Date(new Date()).toISOString().split('T')[0]
-            let newTagsXML = ''
-            let newUrl = url ? `\n<url>
-	<loc>https://ide.bitquery.io/${encodeURIComponent(url)}</loc>
-	<lastmod>${date}</lastmod>
-</url>` : ''
-            for (const tag of tags) {
-                if (update) await query('DELETE FROM tags_to_queries WHERE query_id = ?', [query_id])
-                const results = await query('SELECT id FROM tags WHERE tag = ?', [tag])
-                if (!results.length) {
-                    const {insertId: tag_id} = await query('INSERT INTO tags SET ?', {tag})
-                    await query('INSERT INTO tags_to_queries SET ?', {query_id, tag_id})
-                    const date = new Date(new Date()).toISOString().split('T')[0]
-                    newTagsXML += `\n<url>
-	<loc>https://ide.bitquery.io/explore/${encodeURIComponent(tag)}</loc>
-	<lastmod>${date}</lastmod>
-</url>`
-                } else {
-                    const tag_id = results[0].id
-                    const queryInstance = await query('SELECT * from tags_to_queries WHERE tag_id = ? AND query_id = ?', [tag_id, query_id])
-                    if (!queryInstance.length) {
-                        await query('INSERT INTO tags_to_queries SET ?', {query_id, tag_id})
-                    }
+//     const handleTags = async (query_id, tags, res, msg, update = false, url) => {
+//         if (tags) {
+//             const date = new Date(new Date()).toISOString().split('T')[0]
+//             let newTagsXML = ''
+//             let newUrl = url ? `\n<url>
+// 	<loc>https://ide.bitquery.io/${encodeURIComponent(url)}</loc>
+// 	<lastmod>${date}</lastmod>
+// </url>` : ''
+//             for (const tag of tags) {
+//                 if (update) await query('DELETE FROM tags_to_queries WHERE query_id = ?', [query_id])
+//                 const results = await query('SELECT id FROM tags WHERE tag = ?', [tag])
+//                 if (!results.length) {
+//                     const {insertId: tag_id} = await query('INSERT INTO tags SET ?', {tag})
+//                     await query('INSERT INTO tags_to_queries SET ?', {query_id, tag_id})
+//                     const date = new Date(new Date()).toISOString().split('T')[0]
+//                     newTagsXML += `\n<url>
+// 	<loc>https://ide.bitquery.io/explore/${encodeURIComponent(tag)}</loc>
+// 	<lastmod>${date}</lastmod>
+// </url>`
+//                 } else {
+//                     const tag_id = results[0].id
+//                     const queryInstance = await query('SELECT * from tags_to_queries WHERE tag_id = ? AND query_id = ?', [tag_id, query_id])
+//                     if (!queryInstance.length) {
+//                         await query('INSERT INTO tags_to_queries SET ?', {query_id, tag_id})
+//                     }
+//                 }
+//             }
+//             if (newTagsXML || newUrl) {
+//                 const sitemappath = path.resolve('./static', 'sitemap.xml')
+//                 fs.readFile(sitemappath, 'utf8', (err, data) => {
+//                     const splitArray = data?.split('\n')
+//                     splitArray.splice(-2, 2)
+//                     let result = splitArray.join('\n')
+//                     result = result + newUrl + newTagsXML
+//                     fs.writeFile(sitemappath, `${result}\n</urlset>\n`, err => {
+//                         console.log(err)
+//                         msg ? res.status(201).send(msg) : res.sendStatus(201)
+//                     })
+//                 })
+//             } else {
+//                 msg ? res.status(201).send(msg) : res.sendStatus(201)
+//             }
+//         } else {
+//             res.status(400).send({msg: 'Add some tags to your query!'})
+//         }
+//     }
+    const handleTags = async (query_id, tags, res, msg, update = false) => {
+        if (!tags) {
+            return res.status(400).send({ msg: 'Add some tags to your query!' });
+        }
+
+        for (const tag of tags) {
+            if (update) {
+                await query('DELETE FROM tags_to_queries WHERE query_id = ?', [query_id]);
+            }
+
+            const results = await query('SELECT id FROM tags WHERE tag = ?', [tag]);
+
+            if (!results.length) {
+                const { insertId: tag_id } = await query('INSERT INTO tags SET ?', { tag });
+                await query('INSERT INTO tags_to_queries SET ?', { query_id, tag_id });
+            } else {
+                const tag_id = results[0].id;
+                const queryInstance = await query(
+                    'SELECT * FROM tags_to_queries WHERE tag_id = ? AND query_id = ?',
+                    [tag_id, query_id]
+                );
+                if (!queryInstance.length) {
+                    await query('INSERT INTO tags_to_queries SET ?', { query_id, tag_id });
                 }
             }
-            // if (newTagsXML || newUrl) {
-            //     const sitemappath = path.resolve('./static', 'sitemap.xml')
-            //     fs.readFile(sitemappath, 'utf8', (err, data) => {
-            //         const splitArray = data?.split('\n')
-            //         splitArray.splice(-2, 2)
-            //         let result = splitArray.join('\n')
-            //         result = result + newUrl + newTagsXML
-            //         fs.writeFile(sitemappath, `${result}\n</urlset>\n`, err => {
-            //             console.log(err)
-            //             msg ? res.status(201).send(msg) : res.sendStatus(201)
-            //         })
-            //     })
-            // } else {
-            //     msg ? res.status(201).send(msg) : res.sendStatus(201)
-            // }
-        } else {
-            res.status(400).send({msg: 'Add some tags to your query!'})
         }
-    }
+
+        if (msg) {
+            return res.status(201).send(msg);
+        } else {
+            return res.sendStatus(201);
+        }
+    };
 
 
     app.get('/api/sitemap', async (req, res) => {
@@ -443,14 +476,14 @@ module.exports = function (app, db, redisClient) {
 
     app.post('/api/tagspr', (req, res) => {
         const {query_id, tags} = req.body.params
-        // handleTags(db, query_id, tags, res)
+        handleTags(db, query_id, tags, res)
     })
 
     app.put('/api/tagspr', (req, res) => {
         const {query_id, tags} = req.body.params
         db.query('DELETE FROM tags_to_queries WHERE query_id = ?', [query_id], (err, _) => {
             if (err) console.log(err)
-            // handleTags(db, query_id, tags, res)
+            handleTags(db, query_id, tags, res)
         })
     })
 
@@ -565,7 +598,7 @@ module.exports = function (app, db, redisClient) {
             config: JSON.stringify(config)
         }
         const msg = await addWidgetConfig(res, newParam, params.url)
-        // handleTags(query_id, tags, res, msg, false, params.url)
+        handleTags(query_id, tags, res, msg, false, params.url)
     }
     const handleUpdateQuery = async (req, res, db) => {
         if (!req.body.params.executed) {
@@ -596,7 +629,7 @@ module.exports = function (app, db, redisClient) {
                     config: JSON.stringify(req.body.params.config)
                 }
                 const msg = await addWidgetConfig(res, newParam)
-                // handleTags(req.body.params.id, tags, res, msg, true)
+                handleTags(req.body.params.id, tags, res, msg, true)
             } else {
                 res.status(400).send({msg: 'Error updating query'})
             }
@@ -776,15 +809,11 @@ module.exports = function (app, db, redisClient) {
 
     app.post('/api/addquery', (req, res) => {
         let query = req.body.params
-        console.log('req.body.params',req.body.params)
         if (!query.id || query.account_id !== req.account_id) {
             console.log('handleAddQuery')
-            console.log('handleAddQuery req, res, db',req, res, db)
             handleAddQuery(req, res, db)
         } else {
             console.log('handleUpdateQuery')
-            console.log('handleUpdateQuery req, res, db',req, res, db)
-
             handleUpdateQuery(req, res, db)
         }
     })
