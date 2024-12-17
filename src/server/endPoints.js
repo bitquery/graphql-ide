@@ -12,8 +12,8 @@ const React = require("react");
 
 const getCodeSnippet = (lang, query, variables, headers, key, endpoint_url, token) =>
     new Promise((resolve, reject) => {
-        const keyHeader = endpoint_url === 'https://graphql.bitquery.io' ? {'X-API-KEY': key} : {}
-        const customHeaders = headers ? JSON.parse(headers) : {}
+            const keyHeader = endpoint_url === 'https://graphql.bitquery.io' ? {'X-API-KEY': key} : {}
+            const customHeaders = headers ? JSON.parse(headers) : {}
 
             const allHeaders = {
                 'Content-Type': 'application/json',
@@ -82,55 +82,9 @@ module.exports = function (app, db, redisClient) {
             : db.query(sql, callback)
     })
 
-//     const handleTags = async (query_id, tags, res, msg, update = false, url) => {
-//         if (tags) {
-//             const date = new Date(new Date()).toISOString().split('T')[0]
-//             let newTagsXML = ''
-//             let newUrl = url ? `\n<url>
-// 	<loc>https://ide.bitquery.io/${encodeURIComponent(url)}</loc>
-// 	<lastmod>${date}</lastmod>
-// </url>` : ''
-//             for (const tag of tags) {
-//                 if (update) await query('DELETE FROM tags_to_queries WHERE query_id = ?', [query_id])
-//                 const results = await query('SELECT id FROM tags WHERE tag = ?', [tag])
-//                 if (!results.length) {
-//                     const {insertId: tag_id} = await query('INSERT INTO tags SET ?', {tag})
-//                     await query('INSERT INTO tags_to_queries SET ?', {query_id, tag_id})
-//                     const date = new Date(new Date()).toISOString().split('T')[0]
-//                     newTagsXML += `\n<url>
-// 	<loc>https://ide.bitquery.io/explore/${encodeURIComponent(tag)}</loc>
-// 	<lastmod>${date}</lastmod>
-// </url>`
-//                 } else {
-//                     const tag_id = results[0].id
-//                     const queryInstance = await query('SELECT * from tags_to_queries WHERE tag_id = ? AND query_id = ?', [tag_id, query_id])
-//                     if (!queryInstance.length) {
-//                         await query('INSERT INTO tags_to_queries SET ?', {query_id, tag_id})
-//                     }
-//                 }
-//             }
-//             if (newTagsXML || newUrl) {
-//                 const sitemappath = path.resolve('./static', 'sitemap.xml')
-//                 fs.readFile(sitemappath, 'utf8', (err, data) => {
-//                     const splitArray = data?.split('\n')
-//                     splitArray.splice(-2, 2)
-//                     let result = splitArray.join('\n')
-//                     result = result + newUrl + newTagsXML
-//                     fs.writeFile(sitemappath, `${result}\n</urlset>\n`, err => {
-//                         console.log(err)
-//                         msg ? res.status(201).send(msg) : res.sendStatus(201)
-//                     })
-//                 })
-//             } else {
-//                 msg ? res.status(201).send(msg) : res.sendStatus(201)
-//             }
-//         } else {
-//             res.status(400).send({msg: 'Add some tags to your query!'})
-//         }
-//     }
     const handleTags = async (query_id, tags, res, msg, update = false) => {
         if (!tags) {
-            return res.status(400).send({ msg: 'Add some tags to your query!' });
+            return res.status(400).send({msg: 'Add some tags to your query!'});
         }
 
         for (const tag of tags) {
@@ -141,8 +95,8 @@ module.exports = function (app, db, redisClient) {
             const results = await query('SELECT id FROM tags WHERE tag = ?', [tag]);
 
             if (!results.length) {
-                const { insertId: tag_id } = await query('INSERT INTO tags SET ?', { tag });
-                await query('INSERT INTO tags_to_queries SET ?', { query_id, tag_id });
+                const {insertId: tag_id} = await query('INSERT INTO tags SET ?', {tag});
+                await query('INSERT INTO tags_to_queries SET ?', {query_id, tag_id});
             } else {
                 const tag_id = results[0].id;
                 const queryInstance = await query(
@@ -150,7 +104,7 @@ module.exports = function (app, db, redisClient) {
                     [tag_id, query_id]
                 );
                 if (!queryInstance.length) {
-                    await query('INSERT INTO tags_to_queries SET ?', { query_id, tag_id });
+                    await query('INSERT INTO tags_to_queries SET ?', {query_id, tag_id});
                 }
             }
         }
@@ -257,7 +211,6 @@ module.exports = function (app, db, redisClient) {
             res.status(500).send({msg: 'Error generating sitemap'});
         }
     })
-
 
 
     app.get('/api/querytss/:address/:symbol', async (req, res) => {
@@ -810,10 +763,8 @@ module.exports = function (app, db, redisClient) {
     app.post('/api/addquery', (req, res) => {
         let query = req.body.params
         if (!query.id || query.account_id !== req.account_id) {
-            console.log('handleAddQuery')
             handleAddQuery(req, res, db)
         } else {
-            console.log('handleUpdateQuery')
             handleUpdateQuery(req, res, db)
         }
     })
