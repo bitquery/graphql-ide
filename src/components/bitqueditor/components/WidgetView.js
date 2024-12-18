@@ -12,43 +12,93 @@ const WidgetView = observer(function WidgetView({ children, widget, dataSource, 
 	useEffect(() => {
 		const initWidget = async () => {
 			try {
-				if  ((dataSource && dataSource.historyDataSource) || (dataSource && dataSource.subscriptionDataSource)) {
+				console.log("initWidget запускается");
+				console.log("dataSource:", dataSource);
+
+				if ((dataSource && dataSource.historyDataSource) || (dataSource && dataSource.subscriptionDataSource)) {
+					console.log("dataSource найдено");
+
 					if (refJson.current.childNodes.length) {
-						refJson.current.removeChild(refJson.current.firstChild)
+						console.log("refJson очищается");
+						refJson.current.removeChild(refJson.current.firstChild);
 					}
 					if (refChart.current.childNodes.length) {
-						refChart.current.removeChild(refChart.current.firstChild)
+						console.log("refChart очищается");
+						refChart.current.removeChild(refChart.current.firstChild);
 					}
-					const jsonWidgetInstance = new JsonWidget(refJson.current, dataSource.historyDataSource, dataSource.subscriptionDataSource)
-					await jsonWidgetInstance.init(!!!widget)
+
+					const jsonWidgetInstance = new JsonWidget(refJson.current, dataSource.historyDataSource, dataSource.subscriptionDataSource);
+					console.log("jsonWidgetInstance создан:", jsonWidgetInstance);
+					await jsonWidgetInstance.init(!!!widget);
+
 					if (widget && (dataSource.historyDataSource || dataSource.subscriptionDataSource)) {
-						//temp for fit height in IDE
-						const explicitHeight = widget.match(/height:.*\d(px| +|)(,|)( +|)$/gm)
+						console.log("widget перед обработкой:", widget);
+
+						const explicitHeight = widget.match(/height:.*\d(px| +|)(,|)( +|)$/gm);
 						if (explicitHeight) {
-							widget = widget.replace(explicitHeight[0], '')
+							console.log("explicitHeight найден:", explicitHeight);
+							widget = widget.replace(explicitHeight[0], '');
+							console.log("widget после удаления explicitHeight:", widget);
 						}
-						console.log('widget',widget)
-						const ChartWidget = eval(`(${widget})`)
-						console.log('ChartWidget после eval:', ChartWidget);
-						const chartWidgetInstance = new ChartWidget(refChart.current, dataSource.historyDataSource, dataSource.subscriptionDataSource)
-						console.log('chartWidgetInstance:', chartWidgetInstance);
-						await chartWidgetInstance.init()
+
+						console.log("widget перед eval:", widget);
+
+						let ChartWidget;
+						try {
+							ChartWidget = eval(`(${widget})`);
+							console.log("ChartWidget после eval:", ChartWidget);
+						} catch (evalError) {
+							console.error("Ошибка при выполнении eval:", evalError);
+							throw evalError; // Пробрасываем ошибку дальше
+						}
+
+						if (typeof ChartWidget !== 'function') {
+							console.error("ChartWidget не является функцией/классом:", ChartWidget);
+							return;
+						}
+
+						let chartWidgetInstance;
+						try {
+							console.log("Создаём экземпляр ChartWidget...");
+							chartWidgetInstance = new ChartWidget(
+								refChart.current,
+								dataSource.historyDataSource,
+								dataSource.subscriptionDataSource
+							);
+							console.log("chartWidgetInstance создан:", chartWidgetInstance);
+						} catch (instanceError) {
+							console.error("Ошибка при создании экземпляра ChartWidget:", instanceError);
+							throw instanceError;
+						}
+
+						try {
+							console.log("Инициализация chartWidgetInstance...");
+							await chartWidgetInstance.init();
+							console.log("chartWidgetInstance успешно инициализирован");
+						} catch (initError) {
+							console.error("Ошибка при инициализации chartWidgetInstance:", initError);
+							throw initError;
+						}
+
 						if (dataSource.historyDataSource) {
-							dataSource.historyDataSource.changeVariables()
+							console.log("Вызов changeVariables для historyDataSource");
+							dataSource.historyDataSource.changeVariables();
 						}
 						if (dataSource.subscriptionDataSource) {
-							dataSource.subscriptionDataSource.changeVariables()
+							console.log("Вызов changeVariables для subscriptionDataSource");
+							dataSource.subscriptionDataSource.changeVariables();
 						}
 					}
 				}
-			} catch (error){
-				console.error("error init widget:", error);
+			} catch (error) {
+				console.error("Ошибка в initWidget:", error);
+				console.error("Стек вызовов:", error.stack);
 			}
+		};
 
-		}
-		initWidget()
+		initWidget();
 		// eslint-disable-next-line
-	}, [dataSource])
+	}, [dataSource]);
 
 	useEffect(() => {
 		window.dispatchEvent(new Event('resize'))
