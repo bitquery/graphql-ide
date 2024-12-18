@@ -29,7 +29,9 @@ const WidgetView = observer(function WidgetView({ children, widget, dataSource, 
 						}
 						console.log('widget',widget)
 						const ChartWidget = eval(`(${widget})`)
+						console.log('ChartWidget после eval:', ChartWidget);
 						const chartWidgetInstance = new ChartWidget(refChart.current, dataSource.historyDataSource, dataSource.subscriptionDataSource)
+						console.log('chartWidgetInstance:', chartWidgetInstance);
 						await chartWidgetInstance.init()
 						if (dataSource.historyDataSource) {
 							dataSource.historyDataSource.changeVariables()
