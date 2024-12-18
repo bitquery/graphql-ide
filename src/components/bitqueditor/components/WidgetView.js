@@ -9,39 +9,76 @@ const WidgetView = observer(function WidgetView({ children, widget, dataSource, 
 	const refJson = useRef(null)
 	const refChart = useRef(null)
 
+	// useEffect(() => {
+	// 	const initWidget = async () => {
+	// 		if (!dataSource || (!dataSource.historyDataSource && !dataSource.subscriptionDataSource)) {
+	// 			console.log("Data sources are not available");
+	// 			return;
+	// 		}
+	//
+	// 		try {
+	// 			if  ((dataSource && dataSource.historyDataSource) || (dataSource && dataSource.subscriptionDataSource)) {
+	// 				if (refJson.current.childNodes.length) {
+	// 					refJson.current.removeChild(refJson.current.firstChild)
+	// 				}
+	// 				if (refChart.current.childNodes.length) {
+	// 					refChart.current.removeChild(refChart.current.firstChild)
+	// 				}
+	// 				const jsonWidgetInstance = new JsonWidget(refJson.current, dataSource.historyDataSource, dataSource.subscriptionDataSource)
+	// 				await jsonWidgetInstance.init(!!!widget)
+	// 				if (widget && (dataSource.historyDataSource || dataSource.subscriptionDataSource)) {
+	// 					//temp for fit height in IDE
+	// 					const explicitHeight = widget.match(/height:.*\d(px| +|)(,|)( +|)$/gm)
+	// 					if (explicitHeight) {
+	// 						widget = widget.replace(explicitHeight[0], '')
+	// 					}
+	// 					const ChartWidget = eval(`(${widget})`)
+	// 					const chartWidgetInstance = new ChartWidget(refChart.current, dataSource.historyDataSource, dataSource.subscriptionDataSource)
+	// 					await chartWidgetInstance.init()
+	// 					if (dataSource.historyDataSource) {
+	// 						dataSource.historyDataSource.changeVariables()
+	// 					}
+	// 					if (dataSource.subscriptionDataSource) {
+	// 						dataSource.subscriptionDataSource.changeVariables()
+	// 					}
+	// 				}
+	// 			}
+	// 		} catch (error){
+	// 			console.error("error init widget:", error);
+	// 		}
+	//
+	// 	}
+	// 	initWidget()
+	// 	// eslint-disable-next-line
+	// }, [dataSource])
 	useEffect(() => {
 		const initWidget = async () => {
-			try {
-				if  ((dataSource && dataSource.historyDataSource) || (dataSource && dataSource.subscriptionDataSource)) {
-					if (refJson.current.childNodes.length) {
-						refJson.current.removeChild(refJson.current.firstChild)
+			if (dataSource) {
+				if (refJson.current.childNodes.length) {
+					refJson.current.removeChild(refJson.current.firstChild)
+				}
+				if (refChart.current.childNodes.length) {
+					refChart.current.removeChild(refChart.current.firstChild)
+				}
+				const jsonWidgetInstance = new JsonWidget(refJson.current, dataSource.historyDataSource, dataSource.subscriptionDataSource)
+				await jsonWidgetInstance.init(!!!widget)
+				if (widget) {
+					//temp for fit height in IDE
+					const explicitHeight = widget.match(/height:.*\d(px| +|)(,|)( +|)$/gm)
+					if (explicitHeight) {
+						widget = widget.replace(explicitHeight[0], '')
 					}
-					if (refChart.current.childNodes.length) {
-						refChart.current.removeChild(refChart.current.firstChild)
+					const ChartWidget = eval(`(${widget})`)
+					const chartWidgetInstance = new ChartWidget(refChart.current, dataSource.historyDataSource, dataSource.subscriptionDataSource)
+					await chartWidgetInstance.init()
+					if (dataSource.historyDataSource) {
+						dataSource.historyDataSource.changeVariables()
 					}
-					const jsonWidgetInstance = new JsonWidget(refJson.current, dataSource.historyDataSource, dataSource.subscriptionDataSource)
-					await jsonWidgetInstance.init(!!!widget)
-					if (widget && (dataSource.historyDataSource || dataSource.subscriptionDataSource)) {
-						//temp for fit height in IDE
-						const explicitHeight = widget.match(/height:.*\d(px| +|)(,|)( +|)$/gm)
-						if (explicitHeight) {
-							widget = widget.replace(explicitHeight[0], '')
-						}
-						const ChartWidget = eval(`(${widget})`)
-						const chartWidgetInstance = new ChartWidget(refChart.current, dataSource.historyDataSource, dataSource.subscriptionDataSource)
-						await chartWidgetInstance.init()
-						if (dataSource.historyDataSource) {
-							dataSource.historyDataSource.changeVariables()
-						}
-						if (dataSource.subscriptionDataSource) {
-							dataSource.subscriptionDataSource.changeVariables()
-						}
+					if (dataSource.subscriptionDataSource) {
+						dataSource.subscriptionDataSource.changeVariables()
 					}
 				}
-			} catch (error){
-				console.error("error init widget:", error);
 			}
-
 		}
 		initWidget()
 		// eslint-disable-next-line
