@@ -175,15 +175,16 @@ class Queries {
         this.sharedQueries = [...queries]
     }
     updateQuery = (params, index, id) => {
+        console.log('params: ', params)
         if (params.query || params.query === '') this.query[index].query = params.query
         if (params.variables || params.variables === '') this.query[index].variables = params.variables
         if (params.headers || params.headers === '') this.query[index].headers = params.headers
         if (params.config) this.query[index].config = params.config
         if (typeof params.widget_id === 'string') {
             this.query[index].widget_id = params.widget_id
-            // params.widget_id === this.defaultWidget
-            // 	? TabsStore.toggleMode('json')
-            // 	: TabsStore.toggleMode('view')
+            params.widget_id === this.defaultWidget
+            	? TabsStore.toggleMode('json')
+            	: TabsStore.toggleMode('view')
         }
         if (typeof params.displayed_data === 'string') this.query[index].displayed_data = params.displayed_data
         if (params.data_type) this.query[index].data_type = params.data_type
