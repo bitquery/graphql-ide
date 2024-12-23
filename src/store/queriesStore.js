@@ -175,7 +175,6 @@ class Queries {
         this.sharedQueries = [...queries]
     }
     updateQuery = (params, index, id) => {
-        console.log('params: ', params)
         if (params.query || params.query === '') this.query[index].query = params.query
         if (params.variables || params.variables === '') this.query[index].variables = params.variables
         if (params.headers || params.headers === '') this.query[index].headers = params.headers
