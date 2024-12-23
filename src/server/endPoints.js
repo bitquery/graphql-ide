@@ -946,7 +946,6 @@ module.exports = function (app, db, redisClient) {
         const storageTime = req.account_id ? 10000 : 60 * 60 * 24
         const queryLink = `/${req.body.url}`
         await redisClient.set(code, JSON.stringify(req.body), {EX: storageTime})
-        console.log('/api/widgetconfig JSON.stringify(req.body) : ',JSON.stringify(req.body))
         const utm_source = req.body.utm_source || ''
         const utm_medium = req.body.utm_medium || ''
         const utm_campaign = req.body.utm_campaign || ''

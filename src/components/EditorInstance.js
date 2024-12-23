@@ -730,7 +730,11 @@ const EditorInstance = observer(function EditorInstance({number}) {
                         data-tip={(queryStatus.activeFetch || queryStatus.activeSubscription) ? 'Interrupt' : 'Execute query (Ctrl-Enter)'}
                         ref={executeButton}
                         disabled={queryStatus.schemaLoading}
-                        onClick={(queryStatus.activeFetch || queryStatus.activeSubscription) ? abortRequest : getResult}
+                        onClick={() => {
+                            setFetchError('');
+                            (queryStatus.activeFetch || queryStatus.activeSubscription) ? abortRequest() : getResult();
+                        }}
+
                 >
                     <InteractionButton
                         queryStatus={queryStatus}
