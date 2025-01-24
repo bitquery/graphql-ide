@@ -17,6 +17,7 @@ import {ToastContainer, toast} from 'react-toastify'
 import "react-toastify/dist/ReactToastify.css";
 import PromoBanner from "./components/bitqueditor/components/PromoBanner";
 import '@fortawesome/fontawesome-free/css/all.min.css';
+import MigrationBanner from "./components/bitqueditor/components/MigrationBanner";
 
 
 if (process.env.NODE_ENV === 'development') {
@@ -50,6 +51,8 @@ const App = observer(function App() {
 
     return (
         <div className="App">
+            <MigrationBanner/>
+
             <ControlPanel/>
             <ToastContainer
                 position={toast.POSITION.TOP_RIGHT}
