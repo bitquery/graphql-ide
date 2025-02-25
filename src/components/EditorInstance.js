@@ -572,13 +572,16 @@ const EditorInstance = observer(function EditorInstance({number}) {
             const responseTime = new Date().getTime() - start
             const sqlQuery = response.headers.get('x-sql-used') || 'no sql query';
 
+                // console.log('All headers:', Array.from(response.headers.entries()));
             if (!('operationName' in graphQLParams)) {
-                const graphqlRequested = response.headers.get('X-GraphQL-Requested') === 'true'
-                    || response.headers.get('X-Bitquery-Graphql-Requested') === 'true'
+
+                const headerValue = response.headers.get('X-GraphQL-Requested') === 'true' ||response.headers.get('X-Bitquery-Graphql-Requested')
+                const graphqlRequested = headerValue
+                    ? headerValue.split(',').map(v => v.trim()).includes('true')
+                    : false;
 
                 updateQuery({
-                    graphqlQueryID: response.headers.get('X-GraphQL-Query-ID')
-                        || response.headers.get('X-Bitquery-Gql-Query-Id'),
+                    graphqlQueryID: response.headers.get('X-GraphQL-Query-ID') || response.headers.get('X-Bitquery-Gql-Query-Id'),
                     graphqlRequested,
                     responseTime,
                     points: graphqlRequested ? undefined : 0,
