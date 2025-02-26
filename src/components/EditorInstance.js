@@ -572,13 +572,14 @@ const EditorInstance = observer(function EditorInstance({number}) {
             const responseTime = new Date().getTime() - start
             const sqlQuery = response.headers.get('x-sql-used') || 'no sql query';
 
-            // console.log('All headers:', Array.from(response.headers.entries()));
+                // console.log('All headers:', Array.from(response.headers.entries()));
             if (!('operationName' in graphQLParams)) {
 
-                const headerValue = response.headers.get('X-GraphQL-Requested') === 'true' || response.headers.get('X-Bitquery-Graphql-Requested')
+                const headerValue = response.headers.get('X-GraphQL-Requested')  || response.headers.get('X-Bitquery-Graphql-Requested')
+               console.log('headerValue', headerValue)
                 const graphqlRequested = headerValue
-                    ? headerValue.trim() === 'true' || headerValue.split(',').map(v => v.trim()).includes('true')
-                    : false;
+                    ? headerValue.split(',').map(v => v.trim()).includes('true')
+                    : headerValue;
 
                 updateQuery({
                     graphqlQueryID: response.headers.get('X-GraphQL-Query-ID') || response.headers.get('X-Bitquery-Gql-Query-Id'),
