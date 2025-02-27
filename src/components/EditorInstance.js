@@ -576,7 +576,6 @@ const EditorInstance = observer(function EditorInstance({number}) {
             if (!('operationName' in graphQLParams)) {
 
                 const headerValue = response.headers.get('X-GraphQL-Requested')  || response.headers.get('X-Bitquery-Graphql-Requested')
-               console.log('headerValue', headerValue)
                 const graphqlRequested = headerValue
                     ? headerValue.split(',').map(v => v.trim()).includes('true')
                     : headerValue;
@@ -615,8 +614,8 @@ const EditorInstance = observer(function EditorInstance({number}) {
                 setFetchError("Request was aborted");
                 setError("Request was aborted");
             } else if (error.message.includes('Failed to fetch')) {
-                setFetchError("Network error: Failed to fetch. Possibly CORS, DNS or network issue.");
-                setError("Network error: Failed to fetch. Possibly CORS, DNS or network issue.");
+                setFetchError("Network error: Failed to fetch. Check your connection try again");
+                setError("Network error: Failed to fetch. Check your connection try again");
             } else {
                 setFetchError(error.message);
                 setError(error.message);
