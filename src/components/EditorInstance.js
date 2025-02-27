@@ -34,6 +34,7 @@ import {toast} from 'react-toastify'
 import {createClient} from "graphql-ws"
 import {InteractionButton} from './InteractionButton.js';
 import JsonPlugin from "./bitqueditor/components/JsonComponent";
+import SqlQueryComponent from "./SqlQueryComponent";
 
 const queryStatusReducer = (state, action) => {
     let newState = {...state}
@@ -49,10 +50,11 @@ const EditorInstance = observer(function EditorInstance({number}) {
     const {user, getUser} = UserStore
     const {
         query, updateQuery, currentQuery, isMobile,
-        setMobile, showSideBar, schema, setSchema, logQuery
+        setMobile, showSideBar, schema, setSchema, fetchError, setFetchError, logQuery
     } = QueriesStore
     const [docExplorerOpen, setDocExplorerOpen] = useState(false)
     const [codeSnippetOpen, setCodeSnippetOpen] = useState(false)
+    const [sqlQueryOpen, setSqlQueryOpen] = useState(false)
     const [_variableToType, _setVariableToType] = useState(null)
     const [_headerToType, _setHeaderToType] = useState(null)
     const [error, setError] = useState(null)
@@ -60,6 +62,7 @@ const EditorInstance = observer(function EditorInstance({number}) {
     const [dataSource, setDataSource] = useState(null)
     const [accordance, setAccordance] = useState(true)
     const [widget, setWidget] = useState(null)
+    const [sqlQuery, setSqlQuery] = useState(null)
     const [isFullscreen, setIsFullscreen] = useState(false)
     const debouncedURL = useDebounce(currentQuery.endpoint_url, 500)
     const workspace = useRef(null)
@@ -111,12 +114,12 @@ const EditorInstance = observer(function EditorInstance({number}) {
             queryDispatcher.onquerystarted()
             try {
                 cachedData = cachedData ? cachedData : await fetcher({...payload, variables})
+                setSqlQuery(cachedData?.sqlQuery || 'no sql query')
                 if (queryNotLogged) {
                     logQuery(error)
-                    queryNotLogged = false
                 }
                 queryDispatcher.onqueryend()
-                cachedData && callbacks.forEach(cb => cb(cachedData, variables))
+                cachedData && callbacks.forEach(cb => cb(cachedData.data, variables, cachedData?.sqlQuery))
             } catch (error) {
                 queryDispatcher.onerror(error.message)
             }
@@ -144,7 +147,7 @@ const EditorInstance = observer(function EditorInstance({number}) {
         let callbacks = []
         let queryNotLogged = true
         let variables = payload.variables
-
+        const customHeaders = currentQuery.headers ? JSON.parse(currentQuery?.headers) : {}
         const subscribe = async () => {
             if (user?.accessToken && user?.accessToken?.streaming_expires_on <= Date.now()) {
                 try {
@@ -164,7 +167,8 @@ const EditorInstance = observer(function EditorInstance({number}) {
                     if (token) {
                         return {
                             headers: {
-                                'Authorization': `Bearer ${token}`
+                                'Authorization': `Bearer ${token}`,
+                                ...customHeaders,
                             }
                         }
                     }
@@ -289,7 +293,7 @@ const EditorInstance = observer(function EditorInstance({number}) {
     }
     useEffect(() => {
         setupExecButtonPosition()
-    }, [docExplorerOpen, codeSnippetOpen])
+    }, [docExplorerOpen, codeSnippetOpen, sqlQueryOpen])
     const workspaceResizer = e => {
         if (e.target && e.target.className && typeof e.target.className.indexOf === 'function') {
             if (e.target.className.indexOf('workspace__sizechanger') !== 0) return
@@ -431,9 +435,9 @@ const EditorInstance = observer(function EditorInstance({number}) {
         }
         let variables;
         try {
-            variables = JSON.parse(currentQuery.variables);
+            variables = currentQuery.variables ? JSON.parse(currentQuery.variables) : {};
         } catch (error) {
-           setError(error.message)
+            setError(error.message)
             return;
         }
         const payload = {query: currentQuery.query, variables}
@@ -480,6 +484,7 @@ const EditorInstance = observer(function EditorInstance({number}) {
         // eslint-disable-next-line
     }, [user, schema[debouncedURL], queryTypes, index])
 
+
     const fetcher = async (graphQLParams) => {
         if (user?.accessToken && user?.accessToken?.streaming_expires_on <= Date.now()) {
             try {
@@ -490,26 +495,16 @@ const EditorInstance = observer(function EditorInstance({number}) {
         }
 
         if (!user.id) {
-            // toast.error((
-            //     <div>
-            //         Hello! To continue using our services, please
-            //         <a className='bitquery-ico'
-            //            href={`https://account.bitquery.io/auth/login?redirect_to=${window.location.href}`}> log
-            //             in </a> or
-            //         <a className='bitquery-ico' href="https://account.bitquery.io/auth/signup"> register </a>
-            //         Logging in will allow you to access all the features and keep track of your activities.
-            //     </div>
-            // ), {autoClose: 3000});
             return
         }
 
         abortController.current = new AbortController()
         const key = user ? user.key : null
-        const keyHeader = {'X-API-KEY': key}
         const accessToken = user ? UserStore.user?.accessToken?.access_token : null
+        const keyHeader = currentQuery.endpoint_url === 'https://graphql.bitquery.io' ? {'X-API-KEY': key} : {}
         const authorizationHeader = {'Authorization': `Bearer ${accessToken}`}
         const start = new Date().getTime()
-        const customHeaders = currentQuery.headers || {}
+        const customHeaders = currentQuery.headers ? JSON.parse(currentQuery?.headers) : {}
         const headers = {
             'Accept': 'application/json',
             'Content-Type': 'application/json',
@@ -517,6 +512,7 @@ const EditorInstance = observer(function EditorInstance({number}) {
             ...authorizationHeader,
             ...customHeaders,
         }
+
         if (user.role === 'admin') {
             headers['X-Sql-Debug'] = 'true';
         }
@@ -534,20 +530,56 @@ const EditorInstance = observer(function EditorInstance({number}) {
             if (!response.ok) {
                 const errorText = await response.text()
                 try {
-                    const json = JSON.parse(errorText);
-                    const { errors } = json;
-                    if (errors) {
+                    if (response.status === 402) {
+                        setFetchError('No active billing period')
+                        return setError('No active billing period')
+                    }
+                    if (response.status === 401) {
+                        const authErrorMsg = 'You have to use Authorization token as described in the documentation https://docs.bitquery.io/docs/category/authorization';
+                        setFetchError(authErrorMsg)
+                        return setError(authErrorMsg)
+                    }
+
+                    let json;
+                    try {
+                        json = JSON.parse(errorText);
+                    } catch (jsonParseError) {
+                        console.error("Failed to parse error response as JSON:", jsonParseError);
+                        console.error("Original error text:", errorText);
+                        setFetchError(`HTTP Error ${response.status}: ${errorText}`);
+                        setError(`HTTP Error ${response.status}: ${errorText}`);
+                        return;
+                    }
+
+                    const {errors} = json;
+                    if (errors && errors.length > 0) {
+                        setFetchError(errors[0].message);
                         setError(errors[0].message);
                     } else {
-                        setError(null);
+                        const genericErrorMsg = `HTTP Error ${response.status}: ${errorText}`;
+                        setFetchError(genericErrorMsg);
+                        setError(genericErrorMsg);
                     }
+                    return;
                 } catch (e) {
-                    setError(errorText);
+                    console.error("Error handling response:", e);
+                    setFetchError(e.message || 'Unknown error');
+                    setError(e.message || 'Unknown error');
+                    return;
                 }
             }
+
             const responseTime = new Date().getTime() - start
+            const sqlQuery = response.headers.get('x-sql-used') || 'no sql query';
+
+                // console.log('All headers:', Array.from(response.headers.entries()));
             if (!('operationName' in graphQLParams)) {
-                const graphqlRequested = response.headers.get('X-GraphQL-Requested') === 'true' || response.headers.get('X-Bitquery-Graphql-Requested') === 'true'
+
+                const headerValue = response.headers.get('X-GraphQL-Requested')  || response.headers.get('X-Bitquery-Graphql-Requested')
+                const graphqlRequested = headerValue
+                    ? headerValue.split(',').map(v => v.trim()).includes('true')
+                    : headerValue;
+
                 updateQuery({
                     graphqlQueryID: response.headers.get('X-GraphQL-Query-ID') || response.headers.get('X-Bitquery-Gql-Query-Id'),
                     graphqlRequested,
@@ -558,16 +590,36 @@ const EditorInstance = observer(function EditorInstance({number}) {
                 }, index)
             }
 
-            const {data, errors} = await response.json()
-            if (errors) {
-                setError(errors[0].message)
-            } else {
-                setError(null)
+            let jsonResponse;
+            try {
+                jsonResponse = await response.json();
+            } catch (jsonError) {
+                console.error("Failed to parse successful response as JSON:", jsonError);
+                setFetchError("Invalid JSON in success response");
+                setError("Invalid JSON in success response");
+                return;
             }
-            return data
+
+            const {data, errors} = jsonResponse
+            if (errors && errors.length > 0) {
+                setFetchError(errors[0].message);
+                setError(errors[0].message);
+            } else {
+                setError(null);
+            }
+
+            return {data, sqlQuery}
         } catch (error) {
-            // setError(error.message);
-            console.log('fetch error:', error.message)
+            if (error.name === 'AbortError') {
+                setFetchError("Request was aborted");
+                setError("Request was aborted");
+            } else if (error.message.includes('Failed to fetch')) {
+                setFetchError("Network error: Failed to fetch. Check your connection try again");
+                setError("Network error: Failed to fetch. Check your connection try again");
+            } else {
+                setFetchError(error.message);
+                setError(error.message);
+            }
         }
     }
     useEffect(() => {
@@ -583,7 +635,7 @@ const EditorInstance = observer(function EditorInstance({number}) {
                 }
                 try {
                     const data = await fetcher(graphQLParams)
-                    let newSchema = buildClientSchema(data)
+                    let newSchema = buildClientSchema(data.data)
                     setSchema({...schema, [debouncedURL]: newSchema})
                     dispatchQueryStatus('readyToExecute')
                 } catch (error) {
@@ -598,6 +650,7 @@ const EditorInstance = observer(function EditorInstance({number}) {
             fetchSchema()
         }
         if (debouncedURL in schema && queryStatus.schemaError) {
+
             dispatchQueryStatus('readyToExecute')
         }
         // eslint-disable-next-line
@@ -607,11 +660,18 @@ const EditorInstance = observer(function EditorInstance({number}) {
 
     const toggleDocs = () => {
         codeSnippetOpen && setCodeSnippetOpen(false)
+        sqlQueryOpen && setSqlQueryOpen(false)
         setDocExplorerOpen(prev => !prev)
     }
     const toggleCodeSnippet = () => {
         docExplorerOpen && setDocExplorerOpen(false)
+        sqlQueryOpen && setSqlQueryOpen(false)
         setCodeSnippetOpen(prev => !prev)
+    }
+    const toggleSqlQuery = () => {
+        codeSnippetOpen && setCodeSnippetOpen(false)
+        docExplorerOpen && setDocExplorerOpen(false)
+        setSqlQueryOpen(prev => !prev)
     }
 
     const abortRequest = () => {
@@ -637,7 +697,7 @@ const EditorInstance = observer(function EditorInstance({number}) {
 
     const editHeadersHandler = useCallback((handleSubject) => {
         if ('headers' in handleSubject) {
-            updateQuery({ ...query[number], headers: handleSubject.headers, saved: false }, index);
+            updateQuery({...query[number], headers: handleSubject.headers, saved: false}, index);
         }
     }, [query, index]);
 
@@ -657,7 +717,7 @@ const EditorInstance = observer(function EditorInstance({number}) {
                 docExplorerOpen={docExplorerOpen}
                 toggleDocExplorer={toggleDocs}
                 toggleCodeSnippet={toggleCodeSnippet}
-                codeSnippetOpen={codeSnippetOpen}
+                toggleSqlQuery={toggleSqlQuery}
             />
             <div className={'over-wrapper ' + (!currentQuery.layout ? 'active' : '')} ref={overwrap}>
                 <ReactTooltip
@@ -673,7 +733,11 @@ const EditorInstance = observer(function EditorInstance({number}) {
                         data-tip={(queryStatus.activeFetch || queryStatus.activeSubscription) ? 'Interrupt' : 'Execute query (Ctrl-Enter)'}
                         ref={executeButton}
                         disabled={queryStatus.schemaLoading}
-                        onClick={(queryStatus.activeFetch || queryStatus.activeSubscription) ? abortRequest : getResult}
+                        onClick={() => {
+                            setFetchError('');
+                            (queryStatus.activeFetch || queryStatus.activeSubscription) ? abortRequest() : getResult();
+                        }}
+
                 >
                     <InteractionButton
                         queryStatus={queryStatus}
@@ -687,6 +751,7 @@ const EditorInstance = observer(function EditorInstance({number}) {
                     {!currentQuery.layout && <GraphqlEditor
                         readOnly={!!currentQuery?.url && !!currentQuery.id}
                         schema={schema[debouncedURL]}
+                        fetchError={fetchError}
                         query={query[number].query}
                         number={number}
                         variables={query[number].variables}
@@ -741,8 +806,8 @@ const EditorInstance = observer(function EditorInstance({number}) {
                             width={100}
                         />}
                         <QueryErrorIndicator
-                            error={error}
-                            removeError={setError}
+                            error={fetchError}
+                            removeError={setFetchError}
                         />
                         <FullScreen className="widget-display" handle={fullscreenHandle}>
                             <WidgetView
@@ -760,6 +825,7 @@ const EditorInstance = observer(function EditorInstance({number}) {
                 </div>
                 {docExplorerOpen && <DocExplorer schema={schema[debouncedURL]}/>}
                 {codeSnippetOpen && <CodeSnippetComponent/>}
+                {user?.role === 'admin' && sqlQueryOpen && <SqlQueryComponent sqlQuery={sqlQuery}/>}
             </div>
         </div>
     )

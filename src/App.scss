@@ -1612,6 +1612,44 @@ a:focus {
   }
 }
 
+.drop-down-fix {
+  border-left: 1px solid transparent;
+  color: $color-primary-active;
+  border-right: 1px solid $color-primary-active;
+  padding: 0 0 0 5px;
+  margin: 0;
+  height: 34.5px;
+  border-radius: 8px 0 0 5px;
+  background: #ffffff;
+  font-size: 0.9rem;
+  cursor: pointer;
+  border-top: transparent;
+  border-bottom: transparent;
+
+  &:focus, &active, &target, &:hover {
+    @include hover-btn;
+    border-radius: 8px 0 0 8px;
+
+  }
+
+}
+
+.input-url-fix {
+  border: none;
+  height: 31px;
+
+  &:hover, &:focus, &:active {
+    outline: transparent;
+  }
+}
+
+.input-group-fix {
+  background: linear-gradient(180deg, #CA356814 0%, #FFF6F9 100%);
+  height: 34.6px;
+  border: 1px solid $color-primary-active;
+  overflow: hidden;
+}
+
 // Переменные
 $systemFontStack: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;;
 $fontWeightBold: 900;

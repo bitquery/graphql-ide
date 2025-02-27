@@ -15,6 +15,10 @@ import ExploreComponent from './components/ExploreComponent'
 import {TokenPagesAPI} from './components/TokenPagesAPI'
 import {ToastContainer, toast} from 'react-toastify'
 import "react-toastify/dist/ReactToastify.css";
+import PromoBanner from "./components/bitqueditor/components/PromoBanner";
+import '@fortawesome/fontawesome-free/css/all.min.css';
+import MigrationBanner from "./components/bitqueditor/components/MigrationBanner";
+
 
 if (process.env.NODE_ENV === 'development') {
     /* require('@welldone-software/why-did-you-render')(React, {
@@ -47,6 +51,8 @@ const App = observer(function App() {
 
     return (
         <div className="App">
+            <MigrationBanner/>
+
             <ControlPanel/>
             <ToastContainer
                 position={toast.POSITION.TOP_RIGHT}
@@ -74,6 +80,8 @@ const App = observer(function App() {
                     </div>
                 </Route>
             </Switch>
+            <PromoBanner/>
+
         </div>
     )
 })

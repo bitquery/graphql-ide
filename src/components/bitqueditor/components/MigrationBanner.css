@@ -1,0 +1,66 @@
+.migration-banner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #ffcc00;
+    color: #000;
+    padding: 15px;
+    border-radius: 4px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.migration-banner-hide {
+    animation: fadeOut 0.3s ease-in-out;
+}
+
+.migration-banner-content {
+    flex: 1;
+    display: flex;
+    align-items: center;
+}
+
+.migration-banner-text {
+    font-size: 14px;
+    font-weight: 500;
+    margin: 0;
+}
+
+.migration-banner-link {
+    font-weight: bold;
+    text-decoration: underline;
+    color: #007bff;
+    cursor: pointer;
+}
+
+.migration-banner-close {
+    background: none;
+    border: none;
+    font-size: 18px;
+    font-weight: bold;
+    color: #000;
+    cursor: pointer;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+}

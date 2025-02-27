@@ -99,6 +99,7 @@ export default class QueryEditor extends Component {
 			autoCloseBrackets: true,
 			matchBrackets: true,
 			showCursorWhenSelecting: true,
+			fetchError:this.props.fetchError,
 			foldGutter: {
 				minFoldSize: 4,
 			},

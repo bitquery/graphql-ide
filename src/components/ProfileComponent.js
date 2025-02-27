@@ -48,8 +48,9 @@ const [toastLink, setToastLink] = useState(window.location.href)
     ) : (
         <div className="d-none d-lg-flex align-items-center justify-content-end bitquery-profile-button">
             <a className='link__hire bitquery-links mr-1' target='_blank'
-                  href={`https://account.bitquery.io/user/payments/form/${uuid()}`}>Contact Sales</a>
-
+               href={`https://account.bitquery.io/user/payments/form/${uuid()}`}>Contact Sales</a>
+                <a className="nav-link bitquery-links"
+                   href={`${user?.graphql_admin_url}/user/account`}>Account</a>
             <NavDropdown id='profileButton' title={<i className="bi bi-person bitquery-nav_item"></i>}
                          className="cursor-pointer dropdown-toggler border-none navigation-link-color p-0" as={'div'}
                          role="button"

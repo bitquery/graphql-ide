@@ -95,7 +95,7 @@ class CodeEditor extends Component {
 		return (
 			<div className={'flex-col flex w-100 overflow-auto' + (this.props.pluginIndex === 0 ? ' flexone' : '')} >
 				<section
-					className="result-window result-window-json result-window-active"
+					className="result-window  result-window-active"
 					aria-label="Result Window"
 					aria-live="polite"
 					aria-atomic="true"

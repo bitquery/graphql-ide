@@ -12,11 +12,13 @@ const React = require("react");
 
 const getCodeSnippet = (lang, query, variables, headers, key, endpoint_url, token) =>
     new Promise((resolve, reject) => {
-            const customHeaders = typeof headers === 'object' && !Array.isArray(headers) ? headers : {};
+            const keyHeader = endpoint_url === 'https://graphql.bitquery.io' ? {'X-API-KEY': key} : {}
+            const customHeaders = headers ? JSON.parse(headers) : {}
+
             const allHeaders = {
                 'Content-Type': 'application/json',
-                'X-API-KEY': key,
                 'Authorization': `Bearer ${token}`,
+                ...keyHeader,
                 ...customHeaders
             };
             const request = new sdk.Request({
@@ -80,27 +82,40 @@ module.exports = function (app, db, redisClient) {
             : db.query(sql, callback)
     })
 
-    const handleTags = async (query_id, tags, res, msg, update = false, url) => {
-        if (tags) {
-            for (const tag of tags) {
-                if (update) await query('DELETE FROM tags_to_queries WHERE query_id = ?', [query_id])
-                const results = await query('SELECT id FROM tags WHERE tag = ?', [tag])
-                if (!results.length) {
-                    const {insertId: tag_id} = await query('INSERT INTO tags SET ?', {tag})
-                    await query('INSERT INTO tags_to_queries SET ?', {query_id, tag_id})
-                } else {
-                    const tag_id = results[0].id
-                    const queryInstance = await query('SELECT * from tags_to_queries WHERE tag_id = ? AND query_id = ?', [tag_id, query_id])
-                    if (!queryInstance.length) {
-                        await query('INSERT INTO tags_to_queries SET ?', {query_id, tag_id})
-                    }
+    const handleTags = async (query_id, tags, res, msg, update = false) => {
+        if (!tags) {
+            return res.status(400).send({msg: 'Add some tags to your query!'});
+        }
+
+        for (const tag of tags) {
+            if (update) {
+                await query('DELETE FROM tags_to_queries WHERE query_id = ?', [query_id]);
+            }
+
+            const results = await query('SELECT id FROM tags WHERE tag = ?', [tag]);
+
+            if (!results.length) {
+                const {insertId: tag_id} = await query('INSERT INTO tags SET ?', {tag});
+                await query('INSERT INTO tags_to_queries SET ?', {query_id, tag_id});
+            } else {
+                const tag_id = results[0].id;
+                const queryInstance = await query(
+                    'SELECT * FROM tags_to_queries WHERE tag_id = ? AND query_id = ?',
+                    [tag_id, query_id]
+                );
+                if (!queryInstance.length) {
+                    await query('INSERT INTO tags_to_queries SET ?', {query_id, tag_id});
                 }
             }
-            msg ? res.status(201).send(msg) : res.sendStatus(201)
-        } else {
-            res.status(400).send({msg: 'Add some tags to your query!'})
         }
-    }
+
+        if (msg) {
+            return res.status(201).send(msg);
+        } else {
+            return res.sendStatus(201);
+        }
+    };
+
 
     app.get('/api/sitemap', async (req, res) => {
         try {
@@ -198,7 +213,6 @@ module.exports = function (app, db, redisClient) {
     })
 
 
-
     app.get('/api/querytss/:address/:symbol', async (req, res) => {
         let status = 200
         let [queryTemplates, templateSubject] = await Promise.all([
@@ -294,7 +308,6 @@ module.exports = function (app, db, redisClient) {
     app.get('/api/transferedquery/:query', async (req, res) => {
         const query = await redisClient.get(req.params.query)
         if (query !== null) {
-            console.log('there is some query')
             res.status(200).send({transferedQuery: JSON.parse(query)})
         } else {
             res.status(200).send({
@@ -949,9 +962,7 @@ module.exports = function (app, db, redisClient) {
     })
     app.get('/api/getwidgetconfig/:id', async (req, res) => {
         const widgetConfig = await redisClient.get(req.params.id)
-        console.log('widgetConfig', widgetConfig)
         if (widgetConfig !== null) {
-            console.log('there is some widgetconfig')
             res.status(200).send(JSON.parse(widgetConfig))
         } else {
             res.sendStatus(400)
@@ -971,7 +982,6 @@ module.exports = function (app, db, redisClient) {
     app.get('/api/bygraphqlqueryid/:queryid', async (req, res) => {
         const query = await redisClient.get(req.params.queryid)
         if (query !== null) {
-            console.log('there is some query')
             res.status(200).send(JSON.parse(query))
         } else {
             res.sendStatus(400)

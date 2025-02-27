@@ -15,7 +15,7 @@ const GalleryComponent = observer(function GalleryComponent() {
 	const [showBuilder, toggleBuilder] = useState(false)
 	const { currentQuery, showSideBar,
 		toggleSideBar, setSharedQueires, setQueryIsTransfered,
-		queryJustSaved, updateQuery, schema } = QueriesStore
+		queryJustSaved, updateQuery, schema , fetchError } = QueriesStore
 	const { index } = TabsStore
 	const { user } = UserStore
 
@@ -32,6 +32,8 @@ const GalleryComponent = observer(function GalleryComponent() {
 	}, [])
 	
 	useEffect(() => {
+		console.log('fetchError', fetchError)
+
 		const getQueries = async () => {
 			let [data1, data2] = await Promise.all([getAllQueries(), getMyQueries()])
 			if (data1.data.queries.length !== allQueries.length) {
@@ -60,6 +62,7 @@ const GalleryComponent = observer(function GalleryComponent() {
 				minWidth={'300px'}
 				title={'Builder'}
 				schema={schema}
+				fetchError={fetchError}
 				query={currentQuery.query}
 				onEdit={query=>updateQuery({query}, index)}
 				explorerIsOpen={showBuilder}

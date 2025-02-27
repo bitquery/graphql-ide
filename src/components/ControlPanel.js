@@ -90,10 +90,10 @@ const ControlPanel = observer(function ControlPanel() {
                     <img src={bitqueryLogo} alt="logo"/>
                     <span className="bitquery-logo_text">Bitquery</span>
                 </a>
-                <span className="bitquery-divider"></span>
-                <span className="bitquery-graph">Graph
+                <div className="bitquery-divider"></div>
+                <div className="bitquery-graph">Graph
                     <span className="bitquery-graphQL">QL</span>
-                </span>
+                </div>
             </div>
             <button className="navbar-toggler m-2" type="button" data-toggle="collapse"
                     data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
@@ -157,9 +157,7 @@ const ControlPanel = observer(function ControlPanel() {
                         )}
                     </NavDropdown>
                     <span className="bitquery-divider_little"></span>
-
-
-                    <NavDropdown title="Documentation" id="nav-dropdown" className="bitquery-nav_link">
+                    <NavDropdown title="Docs" id="nav-dropdown" className="bitquery-nav_link">
                         <NavDropdown.Item className="bitquery-links" href='https://docs.bitquery.io/v1/docs/intro'
                                           target='_blank'>GraphQL
                             - V1</NavDropdown.Item>
@@ -189,12 +187,33 @@ const ControlPanel = observer(function ControlPanel() {
                     </NavDropdown>
                     <span className="bitquery-divider_little"></span>
 
+                    <NavDropdown title="Apps" id="nav-dropdown" className="bitquery-nav_link">
+                        <NavDropdown.Item className="bitquery-links" href='https://dexrabbit.com/'
+                                          target='_blank'>Dexrabbit
+                        </NavDropdown.Item>
+                        <Dropdown.Divider/>
+                        <NavDropdown.Item className="bitquery-links" href='https://explorer.bitquery.io/'
+                                          target='_blank'>Blockchain Exploerer
+                        </NavDropdown.Item>
+                        <Dropdown.Divider/>
+                        <NavDropdown.Item className="bitquery-links" href='https://lite.bitquery.io/'
+                                          target='_blank'>MoneyFlow Lite
+                        </NavDropdown.Item>
+                        <Dropdown.Divider/>
+                        <NavDropdown.Item className="bitquery-links" href='https://bitquery.io/products/moneyflow'
+                                          target='_blank'>MoneyFlow Ultimate
+                        </NavDropdown.Item>
+
+                    </NavDropdown>
+                    <span className="bitquery-divider_little"></span>
+
 
                     <NavDropdown title="Contact" id="nav-dropdown" className="bitquery-nav_link">
-                        <NavDropdown.Item className="bitquery-links" href={`https://account.bitquery.io/user/payments/form/${uuid()}}`}
+                        <NavDropdown.Item className="bitquery-links"
+                                          href={`https://account.bitquery.io/user/payments/form/${uuid()}}`}
                                           target='_blank'>Contact Sales</NavDropdown.Item>
                         <Dropdown.Divider/>
-                         <NavDropdown.Item className="bitquery-links" href='https://community.bitquery.io/'
+                        <NavDropdown.Item className="bitquery-links" href='https://community.bitquery.io/'
                                           target='_blank'>Forum</NavDropdown.Item>
                         <Dropdown.Divider/>
 
@@ -215,7 +234,6 @@ const ControlPanel = observer(function ControlPanel() {
                             We are hiring!
                         </NavDropdown.Item>
                     </NavDropdown>
-
                     <li className="nav-item d-lg-none" tabIndex='-1'>
                         <a className="nav-link bitquery-links" href="https://discord.gg/EEBVTQnb2E">Discord</a>
                     </li>
@@ -224,7 +242,7 @@ const ControlPanel = observer(function ControlPanel() {
                     </li>
                     <li className="nav-item d-lg-none" tabIndex='-1'>
                         <a className="nav-link bitquery-links"
-                           href="https://streaming.bitquery.io/tutorial/">Documentation</a>
+                           href="https://streaming.bitquery.io/tutorial/">Doc</a>
                     </li>
                     <li className="nav-item d-lg-none" tabIndex='-1'>
                         <a className="nav-link bitquery-links" href="https://community.bitquery.io/">Forum</a>
@@ -242,6 +260,7 @@ const ControlPanel = observer(function ControlPanel() {
                         <a className="nav-link bitquery-links"
                            href={`https://account.bitquery.io/user/payments/form/${uuid()}`}>Contact Sales</a>
                     </li>
+
                     {!user?.id && <li className="nav-item d-lg-none">
                         <a className="nav-link bitquery-links"
                            href={`${user?.graphql_admin_url}/auth/login?redirect_to=${window.location.href}`}>Login</a>
@@ -269,7 +288,9 @@ const ControlPanel = observer(function ControlPanel() {
                 </ul>
                 <ProfileComponent/>
             </div>
+
         </div>
+
     )
 })
 
