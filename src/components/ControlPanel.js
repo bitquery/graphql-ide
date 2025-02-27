@@ -199,7 +199,7 @@ const ControlPanel = observer(function ControlPanel() {
                         <NavDropdown.Item className="bitquery-links" href='https://lite.bitquery.io/'
                                           target='_blank'>MoneyFlow Lite
                         </NavDropdown.Item>
-
+                        <Dropdown.Divider/>
                         <NavDropdown.Item className="bitquery-links" href='https://bitquery.io/products/moneyflow'
                                           target='_blank'>MoneyFlow Ultimate
                         </NavDropdown.Item>
