@@ -42,26 +42,23 @@
 //Buttons
 .bitquery-btn {
   border: 1px solid $color-primary-active;
-  border-radius: 8px;
+  border-radius: $border-radius;
   background-color: #FFFFFF;
   padding: 4px 6px;
   color: $color-primary-active;
   //font-weight: 600;
   font-size: 0.9rem;
   cursor: pointer;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
 
   &:hover, &:focus {
     background-color: $color-primary-active;
     color: #FFFFFF;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
     transform: translateY(-0.5px);
   }
 
   &:active {
     background-color: darken($color-primary-active, 10%);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     transform: translateY(0);
   }
 
@@ -87,7 +84,7 @@
   width: 32px;
   height: 32px;
   border: 1px solid $color-primary-active;
-  border-radius: 8px;
+  border-radius: $border-radius;
   background-color: #FFFFFF;
   color: $color-primary-active;
   font-size: 16px;

@@ -4,10 +4,15 @@ $base-font-color:#171717;
 $base-color-border:  #FFC7DA;
 $base-teg-color: #FFEAF1;
 
-$button-color:#CA3568;
-
- $color-primary-hover: #FF6A9E;
+//$button-color:#CA3568;
+//
+// $color-primary-hover: #FF6A9E;
  $color-primary-active: #CE4372;
+//$color-primary-active: #5D3E68; cool color
+
+$button-color: #D8BFD8;
+$color-primary-hover: #FF6A9E;
+//$color-primary-active: #5D3E68;
 
 $background-gray-l: #f8f8f8;
 $background-gray-m: #f1f1f1;
@@ -16,4 +21,6 @@ $background-gray-d: #c1c1c1;
 $text-color-gray-d:#646464;
 $text-color-gray-l:#828486;
 
-$border-color:#ced4da
+$border-color:#ced4da;
+
+$border-radius: 5px;

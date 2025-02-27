@@ -360,7 +360,7 @@ button.columns_number {
 
 .execute-button {
   position: absolute;
-  border-radius: 8px;
+  border-radius: $border-radius;
   width: 71px;
   height: 54px;
   line-height: 12px;
@@ -374,9 +374,7 @@ button.columns_number {
   border: 1px solid $color-primary-active;
   background: #ffffff;
   transition: all 0.2s ease;
-  //@include transition-btn;
 
-  //background:linear-gradient(180deg, rgba(202, 53, 104, 0.0784313725) 0%, #FFF6F9 100%);
   background-size: 25px 25px;
   background-position-x: 60%;
 

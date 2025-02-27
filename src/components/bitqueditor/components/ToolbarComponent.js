@@ -229,22 +229,25 @@ const ToolbarComponent = observer(({
                     aria-label="endpoint-url"
                     value={currentQuery.endpoint_url}
                     onChange={handleInputURLChange}
-                    className="input-url-fix"
+                    className="input-url-fix bitquery-inputUrl"
                 />
             </InputGroup>
             {user?.id && query[number].graphqlQueryID && <StatisticsButton number={number}/>}
             {user?.role === 'admin' &&
-                <span className="cursor-pointer" aria-label="SQL Query" onClick={toggleSqlQuery}>
+                <span className="bitquery-little-btn" aria-label="SQL Query" onClick={toggleSqlQuery}>
                 <SqlIcon className={"docs_icon" + (sqlQueryOpen ? " active" : '')} data-toggle="tooltip"
                           data-placement="top" title="SQL Query"/>
             </span>}
-            <span className="cursor-pointer" aria-label="Documentation Explorer" onClick={toggleDocExplorer}>
+            <span className=" bitquery-little-btn" aria-label="Documentation Explorer" onClick={toggleDocExplorer}>
                 <DocsIcon className={"docs_icon" + (docExplorerOpen ? " active" : '')} data-toggle="tooltip"
                           data-placement="top" title="Tooltip on top"/>
             </span>
-            <span className="d-flex align-items-center justify-content-center bitquery-little-btn"
+            <span className=" bitquery-little-btn"
                   aria-label="Code Snippet" onClick={toggleCodeSnippet}>
+                <span className="btn_icon">
+
                 <i className={"bi bi-code-slash" + (codeSnippetOpen ? " active" : '')}/>
+                </span>
             </span>
         </div>
     </div>
