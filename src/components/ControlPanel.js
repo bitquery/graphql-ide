@@ -157,9 +157,7 @@ const ControlPanel = observer(function ControlPanel() {
                         )}
                     </NavDropdown>
                     <span className="bitquery-divider_little"></span>
-
-
-                    <NavDropdown title="Documentation" id="nav-dropdown" className="bitquery-nav_link">
+                    <NavDropdown title="Docs" id="nav-dropdown" className="bitquery-nav_link">
                         <NavDropdown.Item className="bitquery-links" href='https://docs.bitquery.io/v1/docs/intro'
                                           target='_blank'>GraphQL
                             - V1</NavDropdown.Item>
@@ -186,6 +184,26 @@ const ControlPanel = observer(function ControlPanel() {
                         <NavDropdown.Item className="bitquery-links"
                                           href='https://status-streaming-eap.bitquery.io/'
                                           target='_blank'>EAP Status</NavDropdown.Item>
+                    </NavDropdown>
+                    <span className="bitquery-divider_little"></span>
+
+                    <NavDropdown title="Apps" id="nav-dropdown" className="bitquery-nav_link">
+                        <NavDropdown.Item className="bitquery-links" href='https://dexrabbit.com/'
+                                          target='_blank'>Dexrabbit
+                        </NavDropdown.Item>
+                        <Dropdown.Divider/>
+                        <NavDropdown.Item className="bitquery-links" href='https://explorer.bitquery.io/'
+                                          target='_blank'>Blockchain Exploerer
+                        </NavDropdown.Item>
+                        <Dropdown.Divider/>
+                        <NavDropdown.Item className="bitquery-links" href='https://lite.bitquery.io/'
+                                          target='_blank'>MoneyFlow Lite
+                        </NavDropdown.Item>
+
+                        <NavDropdown.Item className="bitquery-links" href='https://bitquery.io/products/moneyflow'
+                                          target='_blank'>MoneyFlow Ultimate
+                        </NavDropdown.Item>
+
                     </NavDropdown>
                     <span className="bitquery-divider_little"></span>
 
@@ -224,7 +242,7 @@ const ControlPanel = observer(function ControlPanel() {
                     </li>
                     <li className="nav-item d-lg-none" tabIndex='-1'>
                         <a className="nav-link bitquery-links"
-                           href="https://streaming.bitquery.io/tutorial/">Documentation</a>
+                           href="https://streaming.bitquery.io/tutorial/">Doc</a>
                     </li>
                     <li className="nav-item d-lg-none" tabIndex='-1'>
                         <a className="nav-link bitquery-links" href="https://community.bitquery.io/">Forum</a>
