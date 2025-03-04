@@ -1,12 +1,20 @@
-import React from "react";
+import React, { useEffect } from "react";
 import "./PromoBanner.css";
 
 const PromoBanner = () => {
     const handleClose = () => {
         const banner = document.getElementById("promo-banner");
-        banner.classList.add("promo-banner-hide");
-        setTimeout(() => banner.remove(), 300);
+        if (banner) {
+            banner.classList.add("promo-banner-hide");
+            setTimeout(() => banner.remove(), 300);
+        }
     };
+
+    useEffect(() => {
+        const timer = setTimeout(handleClose, 40000);
+
+        return () => clearTimeout(timer);
+    }, []);
 
     return (
         <div id="promo-banner" className="promo-banner">
