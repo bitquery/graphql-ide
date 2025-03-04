@@ -8,6 +8,42 @@
   align-items: flex-end;
 }
 
+.chat-tooltip {
+  position: absolute;
+  bottom: calc(100% + 10px);
+  right: 0;
+  background-color:#f8f8f8 ;
+  color: #3f3f46;
+  padding: 8px 12px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  font-size: 14px;
+  font-family: 'DM Sans', sans-serif;
+  white-space: nowrap;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+.chat-tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  right: 15px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #f8f8f8 transparent transparent transparent;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .chat-bubble-iframe {
   width: 500px;
   height: calc(100vh - 100px);
@@ -44,7 +80,7 @@
   &:active {
     background-color: $color-primary-active;
     transform: scale(0.95);
-    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
 
   &:focus {

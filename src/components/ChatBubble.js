@@ -2,16 +2,29 @@ import { useEffect, useState } from 'react';
 
 const ChatBubble = ({ iframeSrc, iframeId }) => {
     const [isOpen, setIsOpen] = useState(false);
+    const [showTooltip, setShowTooltip] = useState(true);
 
     useEffect(() => {
-    }, [iframeId]);
+        const timer = setTimeout(() => {
+            setShowTooltip(false);
+        }, 150000);
+
+        return () => clearTimeout(timer);
+    }, []);
 
     const toggleChat = () => {
         setIsOpen((prevState) => !prevState);
+        setShowTooltip(false);
     };
 
     return (
         <div className="chat-bubble-container">
+            {showTooltip && (
+                <div className="chat-tooltip">
+                    <span>Need help? Talk to our AI!</span>
+                </div>
+            )}
+
             {isOpen && (
                 <iframe
                     src={iframeSrc}
