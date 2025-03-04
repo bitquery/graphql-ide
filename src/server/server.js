@@ -76,9 +76,7 @@ redisClient.connect().then(async () => {
 					.replace(/__URL_OF_CODE_SNIPPET_IMAGE__/g, meta.queryURL)
 					.replace(/__DESCRIPTION__/g, meta.description)
 					.replace(/__URL__/g, fullUrl)
-					.replace(/__H1__/g, meta.title
-						? meta.title
-						: 'Blockchain Data API');
+					.replace(/__H1__/g,`${ meta.title} - Blockchain Data API`);
 			}
 			if (url) {
 				fs.readFile(filePath, 'utf8', (err, data) => {

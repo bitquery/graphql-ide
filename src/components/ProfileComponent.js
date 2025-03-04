@@ -29,7 +29,7 @@ const [toastLink, setToastLink] = useState(window.location.href)
                         <a className='bitquery-ico' href={`https://account.bitquery.io/auth/signup?redirect_to=${toastLink}`}> register </a>
                         Logging in will allow you to access all the features and keep track of your activities.
                     </div>
-                ), {autoClose: 3000});
+                ), {autoClose: 4000});
                 setToastShown(true)
             }
         }, 2000);
@@ -40,7 +40,7 @@ const [toastLink, setToastLink] = useState(window.location.href)
     return !user?.id ? (
         <div className="flex profile__menu d-none d-lg-block ml-auto">
             <a className="profile__email bitquery-links"
-               href={`${user?.graphql_admin_url}/auth/login?redirect_to=${window.location.href}`}>
+               href={`https://account.bitquery.io/auth/login?redirect_to=${toastLink}`}>
                 Login
                 <UserIcon/>
             </a>
