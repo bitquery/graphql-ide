@@ -13,6 +13,7 @@ import copy from 'copy-to-clipboard'
 import {Form, InputGroup} from 'react-bootstrap'
 import DocsIcon from '../../icons/DocsIcon'
 import SqlIcon from '../../icons/SqlIcon'
+import ChatBubbleComponent from "../../ChatBubbleComponent";
 
 const ToolbarComponent = observer(({
                                        queryEditor,
@@ -164,6 +165,7 @@ const ToolbarComponent = observer(({
     }
 
     const toolbar = <div className="topBarWrap">
+        <ChatBubbleComponent  endpoint_url={currentQuery?.endpoint_url} />
         <div className="topBar">
             {!tagListIsOpen && <i className="bi bi-chevron-double-right cursor-pointer ml-2" onClick={toggleTagsList}/>}
             {dashboardOwner && !(!currentQuery.id || !currentQuery.saved) && currentQuery.layout

@@ -66,3 +66,5 @@ export const getWidgetConfig = id =>  axios.get(`/api/getwidgetconfig/${id}`)
 export const getQueryTemplates = (address, symbol) => axios.get(`/api/querytss/${address}/${symbol}`)
 
 export const getGenerateQueryImage = queryID => axios.get(`api/generateimage/${queryID}`)
+
+export const getDataAIChat = () => axios.get(`/api/getDataAIChat`);

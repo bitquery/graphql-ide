@@ -35,6 +35,7 @@
     "react-bootstrap": "^2.9.1",
     "react-codemirror2": "^8.0.0",
     "react-dom": "^18.0.2",
+    "react-draggable": "^4.4.6",
     "react-full-screen": "^1.1.1",
     "react-google-recaptcha": "^2.1.0",
     "react-icons": "^5.4.0",

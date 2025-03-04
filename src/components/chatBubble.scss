@@ -1,0 +1,80 @@
+.chat-bubble-container {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.chat-bubble-iframe {
+  width: 500px;
+  height: calc(100vh - 100px);
+  margin-top: 10px;
+  border-radius: 10px;
+  box-shadow: $button-shadow;
+  background: $base-gradient;
+  border: 0.5px solid $base-color-border;
+}
+
+.chat-bubble-button {
+  width: $button-size;
+  height: $button-size;
+  border-radius: 50%;
+  background-color: $button-color;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: $button-shadow;
+  padding: 0;
+  overflow: hidden;
+
+  transition: all 0.3s ease-in-out;
+
+  &:hover {
+    background-color: $color-primary-hover;
+    transform: scale(1.1);
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
+  }
+
+  &:active {
+    background-color: $color-primary-active;
+    transform: scale(0.95);
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  &:focus {
+    outline: none;
+    box-shadow: $button-focus-shadow;
+    transform: scale(1.1);
+  }
+
+  &:focus:not(:active) {
+    transform: scale(1.1);
+  }
+}
+
+.chat-bubble-icon {
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  transition: transform 0.3s ease-in-out;
+
+  .chat-bubble-button:hover & {
+    transform: scale(1.1);
+  }
+}
+
+.chat-bubble-close-icon {
+  width: 60%;
+  height: 60%;
+  transition: transform 0.3s ease-in-out;
+
+  .chat-bubble-button:hover & {
+    transform: scale(1.1);
+  }
+}

@@ -117,6 +117,39 @@ module.exports = function (app, db, redisClient) {
     };
 
 
+    app.get('/api/getDataAIChat', async (req, res) => {
+        try {
+            const secret = process.env.AI_CHAT_SECRET_KEY;
+
+            if (!secret) {
+                return res.status(500).send({ msg: 'AI_CHAT_SECRET_KEY is not set' });
+            }
+
+            const userId = req.account_id;
+
+            if (!userId) {
+                return res.status(401).send({ msg: 'User is not authenticated or Account ID is missing' });
+            }
+            const userResult = await query('SELECT email FROM accounts WHERE id = ?', [userId]);
+
+            if (!userResult.length) {
+                return res.status(404).send({ msg: 'User not found' });
+            }
+
+            const email = userResult[0].email;
+
+            const hash = crypto.createHmac('sha256', secret).update(userId.toString()).digest('hex');
+            console.log('Generated hash:', hash, 'for userId:', userId, 'with email:', email);
+
+            res.status(200).send({ hash, user_id: userId, email });
+        } catch (error) {
+            console.error('Error in /api/getDataAIChat:', error.message, error.stack);
+            res.status(500).send({ msg: 'Internal server error' });
+        }
+    });
+
+
+
     app.get('/api/sitemap', async (req, res) => {
         try {
             const countQuery = await query('SELECT count(id) as count FROM queries WHERE url is not null');
