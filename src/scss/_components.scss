@@ -1,11 +1,7 @@
 //Links
 .bitquery-link_active {
   cursor: default;
-  color: $color-primary-active !important;
-
-  //&:hover, &:focus, &:target {
-  //  color: $color-primary-hover !important;
-  //}
+  color: $text-color-active !important;
 }
 
 .bitquery-nav_item {
@@ -20,7 +16,7 @@
 }
 //Icons
 .bitquery-ico {
-  color: $color-primary-active !important;
+  color: $base-font-color !important;
 
   &:hover,&:active,&:focus {
     color: $color-primary-hover !important;
@@ -41,50 +37,55 @@
 
 //Buttons
 .bitquery-btn {
-  border: 1px solid $color-primary-active;
-  border-radius: 8px;
-  background-color: #FFFFFF;
+  border: 1px solid $border-color;
+  border-radius: $border-radius;
+  background: $base-gradient;
   padding: 4px 10px;
   font-size: 0.9rem;
-  color: $color-primary-active;
-  @include transition-btn;
-  &:hover, &:active, &:focus, &:target {
-    @include hover-btn
+  color: $base-font-color;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
 
+  &:hover {
+    transform: translateY(-0.5px);
+    box-shadow: 0 6px 14px rgba($border-color, 0.25);
+    border-color: $color-primary-hover;
+  }
+
+  &:active {
+    transform: translateY(0px);
+    box-shadow: 0 2px 8px rgba($color-primary-active, 0.2);
+    border-color: $color-primary-hover;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: $color-primary-hover;
+    box-shadow: 0 0 0 3px rgba($border-color, 0.2);
   }
 }
 
-.bitquery-little-btn {
-  @include transition-btn;
-  border: 1px solid $color-primary-active;
-  border-radius: 8px;
-  background-color: #FFFFFF;
-  padding: 4px 10px;
-  color: $color-primary-active;
-  &:hover, &:active, &:focus, &:target {
-    @include hover-btn
 
-  }
-}
-.pressed-btn{
-  @include hover-btn
-
-}
+//.pressed-btn{
+//  @include hover-btn
+//
+//}
 
 //teg
 .bitquery-teg{
   //background-color: $background-gray-m;
-  background-color: $base-teg-color;
+  background:$base-gradient;
   padding: 4px 8px;
-  border-radius: 16px;
+  border-radius: $border-teg-radius;
   color:$text-color-gray-l;
   font-size: 11px;
   line-height: 13px;
 }
 .bitquery-teg-color{
-  background-color: $color-primary-active;
+  //background-color: $color-primary-active;
+  background-color: $text-color-active;
   padding: 4px 8px;
-  border-radius: 16px;
+  border-radius: $border-teg-radius;
   color:#ffffff;
   font-size: 11px;
   line-height: 13px;

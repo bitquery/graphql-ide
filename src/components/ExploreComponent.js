@@ -60,7 +60,7 @@ const ExploreComponent = observer(function ExploreComponent() {
 											role='button'
 											tabIndex={0}
 										>
-											<span style={{wordBreak: 'break-word'}}>{tag_id !==0 && <i  style={{color:'#CE4372'}} className="bi bi-tag"></i>} { tag } </span>
+											<span style={{wordBreak: 'break-word'}}>{tag_id !==0 && <i  style={{color:'#3f1f8a'}} className="bi bi-tag"></i>} { tag } </span>
 											<span className="badge  badge-pill"> { tags_count } </span>
 										</li>
 									))

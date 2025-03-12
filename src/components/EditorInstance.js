@@ -748,6 +748,7 @@ const EditorInstance = observer(function EditorInstance({number}) {
                      ref={workspace}
                      onMouseDown={workspaceResizer}
                 >
+
                     {!currentQuery.layout && <GraphqlEditor
                         readOnly={!!currentQuery?.url && !!currentQuery.id}
                         schema={schema[debouncedURL]}
@@ -785,7 +786,9 @@ const EditorInstance = observer(function EditorInstance({number}) {
                             pluginIndex={0}
                             setWidget={setWidget}
                         />
+
                     </div>
+
                 </div>
                 <div className={'widget-display widget-display-wrapper position-relative' +
                     (isMobile ? ' widget-display-wrapper-fullscreen' : '')}
@@ -797,7 +800,7 @@ const EditorInstance = observer(function EditorInstance({number}) {
                         onMouseDown={handleResizer}
                     >
                     </div>
-                    <div className="flex flex-column w-100 pl-4 result-wrapper" ref={resultWrapper}>
+                    <div className="flex flex-column w-100 pl-3 result-wrapper" ref={resultWrapper}>
                         {queryStatus.activeFetch && <Loader
                             className="view-loader"
                             type="Oval"

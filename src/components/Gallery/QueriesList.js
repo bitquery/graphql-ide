@@ -86,6 +86,7 @@ const QueriesList = observer(function QueriesList() {
             <ul className="list-group bitquery-querylist" role='list' tabIndex={0}>
                 {list && list.map((item, i, arr) => {
                     if (arr.length <= queriesOnPage || i + 1 !== arr.length) {
+                        console.log(`Элемент ${i + 1} из ${arr.length}`);
                         return (
                             <li key={item.id}
                                 className="list-group-item list-group-item-action bitquery-querylist__item">

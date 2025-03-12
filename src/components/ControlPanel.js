@@ -102,7 +102,7 @@ const ControlPanel = observer(function ControlPanel() {
             </button>
 
 
-            <div className="collapse navbar-collapse pl-3" id="navbarSupportedContent">
+            <div className="collapse navbar-collapse" id="navbarSupportedContent">
                 <form className="form-inline my-2 my-lg-0" onSubmit={searchHandler}>
                     <input
                         value={search}

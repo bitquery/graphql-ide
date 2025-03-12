@@ -210,7 +210,6 @@
 }
 
 .nav-bg {
-  //background: linear-gradient(#f9f9f9, #ececec);
   background: #F6F7F8 !important;
 }
 
@@ -667,24 +666,24 @@ li:focus-visible {
   }
 }
 
-.docs_icon {
-  height: 32px;
-  width: 32px;
-  padding: 10px 5px;
-  cursor: pointer;
-  border-radius: 5px;
-  border: 1px solid $color-primary-active;
-  color: $color-primary-active;
-
-  &.active {
-    color: $color-primary-hover;
-    border: 1px solid $color-primary-hover;
-  }
-
-  &:hover, &:active, &:focus, &:target {
-    @include hover-btn
-  }
-}
+//.docs_icon {
+//  height: 32px;
+//  width: 32px;
+//  padding: 10px 5px;
+//  cursor: pointer;
+//  border-radius: 5px;
+//  border: 1px solid $color-primary-active;
+//  color: $color-primary-active;
+//
+//  &.active {
+//    color: $color-primary-hover;
+//    border: 1px solid $color-primary-hover;
+//  }
+//
+//  &:hover, &:active, &:focus, &:target {
+//    @include hover-btn
+//  }
+//}
 
 .bi-code-slash {
   cursor: pointer;
@@ -965,7 +964,7 @@ li:focus-visible {
   font-family: $base-font-family;
 
   td, th, tr, thead {
-    border-color: $base-color-border !important;
+    //border-color: $base-color-border !important;
   }
 
   &__form {
@@ -1083,7 +1082,7 @@ li:focus-visible {
   .metrics {
     &__helper {
       //background: linear-gradient(#f9f9f9, #ececec);
-      background: $base-color-border;
+      background: $base-gradient;
       //box-shadow: inset 0 0 0 1px rgb(0 0 0 / 20%), 0 1px 0 hsl(0deg 0% 100% / 70%), inset 0 1px #fff;
       color: $text-color-gray-d;
       border-radius: 50%;
@@ -1622,43 +1621,9 @@ a:focus {
   }
 }
 
-.drop-down-fix {
-  border-left: 1px solid transparent;
-  color: $color-primary-active;
-  border-right: 1px solid $color-primary-active;
-  padding: 0 0 0 5px;
-  margin: 0;
-  height: 34.5px;
-  border-radius: 8px 0 0 5px;
-  background: #ffffff;
-  font-size: 0.9rem;
-  cursor: pointer;
-  border-top: transparent;
-  border-bottom: transparent;
 
-  &:focus, &active, &target, &:hover {
-    @include hover-btn;
-    border-radius: 8px 0 0 8px;
 
-  }
 
-}
-
-.input-url-fix {
-  border: none;
-  height: 31px;
-
-  &:hover, &:focus, &:active {
-    outline: transparent;
-  }
-}
-
-.input-group-fix {
-  background: linear-gradient(180deg, #CA356814 0%, #FFF6F9 100%);
-  height: 34.6px;
-  border: 1px solid $color-primary-active;
-  overflow: hidden;
-}
 
 // Переменные
 $systemFontStack: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;;

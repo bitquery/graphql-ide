@@ -360,7 +360,7 @@ button.columns_number {
 
 .execute-button {
   position: absolute;
-  border-radius: 8px;
+  border-radius:$border-radius;
   width: 71px;
   height: 54px;
   line-height: 12px;
@@ -368,14 +368,37 @@ button.columns_number {
   z-index: 10;
   top: 45%;
   right: 0;
-  left: calc(50% - 36px);
-  border: 1px solid $color-primary-active;
-  background: #ffffff;
+  left: calc(50% - 35px);
+  border: 0.1px solid transparent;
+
+  background:$base-gradient;
+
   @include transition-btn;
 
   //background:linear-gradient(180deg, rgba(202, 53, 104, 0.0784313725) 0%, #FFF6F9 100%);
   background-size: 25px 25px;
   background-position-x: 60%;
+  &:before {
+    content: "";
+    position: absolute;
+    border-radius:$border-radius;
+
+    inset: 0;
+    background: linear-gradient(135deg, #71D89A, #bda6ff, #dab0ff, #71D89A);
+    background-size: 300% 300%;
+    animation: borderAnimation 4s ease infinite;
+    z-index: -1;
+  }
+
+  &:after {
+    content: "";
+    position: absolute;
+    border-radius:$border-radius;
+
+    inset: 1px;
+    background: linear-gradient(135deg, #FFFFFF, #F4F0FF);
+    z-index: -1;
+  }
 
   img {
     display: block;
@@ -388,22 +411,29 @@ button.columns_number {
   &__text {
     display: flex;
     font-size: 11px;
-    color: $color-primary-active
+    color: $base-font-color;
   }
 
   &:focus {
-    border: 1px solid $color-primary-active;
-    box-shadow: transparent;
+    //border: 1px solid $color-primary-active;
+    box-shadow: none;
     outline: transparent;
 
   }
 
   &:hover, &:active, &:target {
-    @include hover-btn
+    box-shadow: none;
+
+    //@include hover-btn
 
   }
 }
 
+@keyframes borderAnimation {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
 //.execute-button:active:not(:disabled) {
 //  -webkit-box-shadow: rgb(0, 0, 0) 4px 4px 15px 0px inset, 5px 5px 15px 5px rgba(0,0,0,0);
 //  box-shadow: rgb(0, 0, 0) 4px 4px 15px 0px inset, 5px 5px 15px 5px rgba(0,0,0,0);
@@ -471,31 +501,35 @@ div.CodeMirror span.CodeMirror-matchingbracket {
   }
 
   &__button {
-    //box-shadow: inset 0 0 0 1px rgba(0,0,0,.2), 0 1px 0 hsla(0,0%,100%,.7), inset 0 1px #fff;
-    cursor: pointer;
     display: inline-block;
-    //margin: 0 5px;
     padding: 5px 11px 5px;
     text-decoration: none;
     text-overflow: ellipsis;
     white-space: nowrap;
-    border: 1px solid $color-primary-active;
-    border-radius: 8px;
-    background-color: #FFFFFF;
-    color: $color-primary-active;
-    @include transition-btn;
+    border: 1px solid $border-color;
+    border-radius: $border-radius;
+    background: $base-gradient;
+    font-size: 0.9rem;
+    color: $base-font-color;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
 
-    &:hover, &:active, &:focus, &:target {
-      @include hover-btn;
+    &:hover {
+      transform: translateY(-0.5px);
+      box-shadow: 0 6px 14px rgba($border-color, 0.25);
+      border-color: $color-primary-hover;
     }
 
-    &.active {
-      color: $color-primary-active !important;
+    &:active {
+      transform: translateY(0px);
+      box-shadow: 0 2px 8px rgba($color-primary-active, 0.2);
+      border-color: $color-primary-hover;
     }
 
-    &:disabled {
-      opacity: 0.5;
-      cursor: default;
+    &:focus {
+      outline: none;
+      border-color: $color-primary-hover;
+      box-shadow: 0 0 0 3px rgba($border-color, 0.2);
     }
   }
 

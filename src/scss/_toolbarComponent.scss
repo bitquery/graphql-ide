@@ -1,42 +1,103 @@
 .bitquery-inputUrl {
   //background-image: linear-gradient( #CA356814, #FFFFFF);
-//background-color:#CA356814;
-//  background: linear-gradient(180deg, #CA356814 0%, #FFF6F9 100%);
-  background: #ffffff;
-  border-radius: 8px;
-  font-weight: 400;
+  //background-color:#CA356814;
+  //  background: linear-gradient(180deg, #CA356814 0%, #FFF6F9 100%);
+  background: linear-gradient(135deg, #FCFAFF 0%, #F8EFFF 70%);
+  border-radius: $border-radius;
+  //font-weight: 400;
   font-size: 0.9rem;
   line-height: 18px;
   border: none;
 
   &::placeholder {
-    color: $text-color-gray-l;
+    color: $base-font-color;
   }
 
   &:active, &:target, &:focus {
-outline: transparent !important;
+    outline: transparent !important;
     box-shadow: none;
   }
 }
-.bitquery-little-btn{
-  height: 32px;
-  width: 32px;
-  padding: 10px 5px;
-  cursor: pointer;
-  border-radius: 5px;
-  border: 1px solid $color-primary-active;
-  color:$color-primary-active;
 
-  &.active {
-    color:$color-primary-hover;
-    border: 1px solid $color-primary-hover;
-  }
+.input-url-fix {
+  border: none;
+  height: 30px;
+  font-size: 0.9rem;
 
-  &:hover {
-    color:$color-primary-hover;
-    border: 1px solid $color-primary-hover;
+
+  &:hover, &:focus, &:active {
+    outline: transparent;
   }
 }
+
+.input-group-fix {
+  //background: $base-gradient;
+  height: 32.6px;
+  font-size: 0.9rem;
+
+  border: 1px solid $border-color;
+  overflow: hidden;
+}
+
+
+.drop-down-fix {
+  border-left: 1px solid transparent;
+  color: $base-font-color;
+  border-right: 1px solid $border-color;
+  padding: 0 0 3px 3px;
+  margin: 0;
+  height: 34.5px;
+  border-radius: $border-radius 0 0 5px;
+  background:$base-gradient;
+  font-size: 0.9rem;
+  cursor: pointer;
+  border-top: transparent;
+  border-bottom: transparent;
+
+  &:focus, &active, &target, &:hover {
+    //border-radius: $border-radius 0 0 $border-radius;
+    outline: transparent !important;
+    border-color: transparent;
+    box-shadow: none;
+    background-color: transparent;
+    //color: $color-primary-hover;
+  }
+
+}
+
+
+.bitquery-little-btn {
+  height: 32px;
+  width: 32px;
+  cursor: pointer;
+  border: 1px solid $border-color;
+  border-radius: $border-radius;
+  background: $base-gradient;
+  padding: 4px 10px;
+  font-size: 0.8rem;
+  color: $base-font-color;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+
+  &:hover {
+    transform: translateY(-0.5px);
+    box-shadow: 0 4px 10px rgba($color-primary-hover, 0.15);
+    border-color: $color-primary-hover;
+  }
+
+  &:active {
+    transform: translateY(0px);
+    box-shadow: 0 2px 6px rgba($color-primary-active, 0.1);
+    border-color: $color-primary-active;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: $color-primary-hover;
+    box-shadow: 0 0 0 2px rgba($color-primary-hover, 0.15);
+  }
+}
+
 .bi-code-slash:hover {
   background-color: inherit;
 }
+

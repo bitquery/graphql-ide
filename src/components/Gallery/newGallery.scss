@@ -19,8 +19,9 @@
 		align-items: center;
 		border-bottom: 1px solid #d0d0d0;
 		i:hover {
-			color: #000 !important;
-		} 
+			//color: #000 !important;
+			color: $color-primary-hover !important;
+		}
 	}
 	&__close {
 		margin-right: auto;

@@ -3,7 +3,7 @@
   font-size: 0.9rem;
   width: 100%;
   box-shadow: 0 1px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  padding: 7px 13px;
+  padding: 7px 5px;
   margin-bottom: 7px;
   background-color: #ffffff;
 
@@ -11,9 +11,10 @@
   .bitquery-logo {
     @include flex-between-center;
     width: 200px;
+    gap: 0 1px;
 
     &_link {
-      @include flex-between-center;
+      align-items: center;
     }
 
     &_text, &_graph {
@@ -28,11 +29,13 @@
   }
 
   .bitquery-graphQL {
-    color: #CE4372;
+    //color: #CE4372;
+    color: $base-font-color;
   }
 
   .bitquery-graph {
-    margin-top:2px;
+    width: 100%;
+    margin-top: 2px;
     cursor: default;
   }
 
@@ -82,7 +85,8 @@
   @include link-style;
 
   &:after {
-    color: $color-primary-active;
+    //color: $color-primary-active;
+    color: $text-color-active;
   }
 }
 
@@ -95,18 +99,10 @@
 }
 
 #profileButton {
-  @include transition-btn;
-  border: 1px solid transparent;
-  border-radius: 8px;
+  background-color: inherit;
+  @include hover-btn
 
-  &:hover, &:active, &:focus, &:target {
-    cursor: pointer;
-    color: $color-primary-hover !important;
-    background-color: transparent;
-    border-radius: 8px;
-    @include hover-btn
 
-  }
 }
 
 .bitquery-profile-button {
@@ -115,6 +111,7 @@
 
 .profile-email {
   color: $text-color-gray-d !important;
+
   &:hover, &:active, &:focus, &:target {
     cursor: default;
     text-decoration: none;

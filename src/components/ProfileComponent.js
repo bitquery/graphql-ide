@@ -10,7 +10,7 @@ import {toast} from "react-toastify";
 const Profile = observer(() => {
     const {getUser, user} = UserStore;
     const [toastShown, setToastShown] = useState(false)
-const [toastLink, setToastLink] = useState(window.location.href)
+    const [toastLink, setToastLink] = useState(window.location.href)
     useEffect(() => {
         getUser();
         // eslint-disable-next-line
@@ -26,7 +26,8 @@ const [toastLink, setToastLink] = useState(window.location.href)
                         <a className='bitquery-ico'
                            href={`https://account.bitquery.io/auth/login?redirect_to=${toastLink}`}> log
                             in </a> or
-                        <a className='bitquery-ico' href={`https://account.bitquery.io/auth/signup?redirect_to=${toastLink}`}> register </a>
+                        <a className='bitquery-ico'
+                           href={`https://account.bitquery.io/auth/signup?redirect_to=${toastLink}`}> register </a>
                         Logging in will allow you to access all the features and keep track of your activities.
                     </div>
                 ), {autoClose: 4000});
@@ -47,12 +48,12 @@ const [toastLink, setToastLink] = useState(window.location.href)
         </div>
     ) : (
         <div className="d-none d-lg-flex align-items-center justify-content-end bitquery-profile-button">
-            <a className='link__hire bitquery-links mr-1' target='_blank'
+            <a className='nav-link bitquery-links mr-1' target='_blank'
                href={`https://account.bitquery.io/user/payments/form/${uuid()}`}>Contact Sales</a>
-                <a className="nav-link bitquery-links"
-                   href={`${user?.graphql_admin_url}/user/account`}>Account</a>
+            <a className="nav-link bitquery-links"
+               href={`${user?.graphql_admin_url}/user/account`}>Account</a>
             <NavDropdown id='profileButton' title={<i className="bi bi-person bitquery-nav_item"></i>}
-                         className="cursor-pointer dropdown-toggler border-none navigation-link-color p-0" as={'div'}
+                         className="cursor-pointer border-none navigation-link-color p-0" as={'div'}
                          role="button"
                          tabIndex="0" aria-label="account menu">
 

@@ -4,21 +4,22 @@
 
 @mixin link-style {
   display: flex;
+  border-radius: $border-radius;
   align-items: center;
   text-decoration: none !important;
-  color:inherit;
+  color: inherit;
 
   &:hover, &:target {
     cursor: pointer;
-    color: $color-primary-hover !important;
     text-decoration: none;
     border-color: transparent;
-    background-color: transparent !important;
+    color: inherit;
+    background: $base-gradient !important;
   }
 
   &:active, &:focus {
-    color: $color-primary-active !important;
-    background-color: transparent !important;
+    color: inherit;
+    background: $base-gradient !important;
   }
 }
 
@@ -28,12 +29,37 @@
   align-items: center;
 
 }
-@mixin hover-btn{
-  color:$color-primary-hover;
-  border: 1px solid $color-primary-hover;
-  outline: transparent;
-  box-shadow:$color-primary-active 1px 1px 4px -1px inset, 5px 5px 11px 5px rgba(0, 0, 0, 0) !important;
+
+//@mixin hover-btn{
+//  color:$base-font-color;
+//  border: 1px solid $color-primary-hover;
+//  outline: transparent;
+//  box-shadow:$color-primary-active 1px 1px 4px -1px inset, 5px 5px 11px 5px rgba(0, 0, 0, 0) !important;
+//}
+
+@mixin hover-btn {
+  border: 1px solid $border-color;
+  border-radius: $border-radius;
+  background: $base-gradient;
+  font-size: 0.9rem;
+  color: $base-font-color;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+
+  &:hover {
+    transform: translateY(-0.5px);
+    box-shadow: 0 6px 14px rgba($border-color, 0.25);
+    border-color: $color-primary-hover;
+  }
+
+  &:active {
+    transform: translateY(0px);
+    box-shadow: 0 2px 8px rgba($color-primary-active, 0.2);
+    border-color: $color-primary-hover;
+  }
 }
-@mixin transition-btn{
+
+@mixin transition-btn {
   transition: color 0.15s, border 0.15s, box-shadow 0.15s;
+
 }
