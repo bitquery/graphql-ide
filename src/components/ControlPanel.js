@@ -193,7 +193,7 @@ const ControlPanel = observer(function ControlPanel() {
                         </NavDropdown.Item>
                         <Dropdown.Divider/>
                         <NavDropdown.Item className="bitquery-links" href='https://explorer.bitquery.io/'
-                                          target='_blank'>Blockchain Exploerer
+                                          target='_blank'>Blockchain Explorer
                         </NavDropdown.Item>
                         <Dropdown.Divider/>
                         <NavDropdown.Item className="bitquery-links" href='https://lite.bitquery.io/'
