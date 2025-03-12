@@ -203,6 +203,10 @@ const ControlPanel = observer(function ControlPanel() {
                         <NavDropdown.Item className="bitquery-links" href='https://bitquery.io/products/moneyflow'
                                           target='_blank'>MoneyFlow Ultimate
                         </NavDropdown.Item>
+                        <Dropdown.Divider/>
+                        <NavDropdown.Item className="bitquery-links" href='https://bitquery.substack.com/'
+                                          target='_blank'>Bitquery's Substack
+                        </NavDropdown.Item>
 
                     </NavDropdown>
                     <span className="bitquery-divider_little"></span>
