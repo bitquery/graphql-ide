@@ -12,15 +12,16 @@
   position: absolute;
   bottom: calc(100% + 10px);
   right: 0;
-  background-color:#f8f8f8 ;
   color: #3f3f46;
   padding: 8px 12px;
   border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
   font-size: 14px;
   font-family: 'DM Sans', sans-serif;
   white-space: nowrap;
-  animation: fadeIn 0.5s ease-in-out;
+  background: linear-gradient(270deg, #f6eafd, #e3e3ff, #fcecff, #e9e6ff);
+  background-size: 400% 400%;
+  animation: gradientAnimation 10s ease infinite, fadeIn 0.5s ease-in-out;
 }
 
 .chat-tooltip::after {
@@ -30,8 +31,9 @@
   right: 15px;
   border-width: 5px;
   border-style: solid;
-  border-color: #f8f8f8 transparent transparent transparent;
+  border-color: #e3e3ff transparent transparent transparent;
 }
+
 
 @keyframes fadeIn {
   from {
@@ -44,6 +46,26 @@
   }
 }
 
+@keyframes gradientAnimation {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
 .chat-bubble-iframe {
   width: 500px;
   height: calc(100vh - 100px);
@@ -53,46 +75,48 @@
   background: $base-gradient;
   border: 0.5px solid $base-color-border;
 }
-
 .chat-bubble-button {
   width: $button-size;
   height: $button-size;
   border-radius: 50%;
-  background-color: $button-color;
   color: #fff;
   border: none;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: $button-shadow;
   padding: 0;
   overflow: hidden;
+  background: linear-gradient(135deg, #d6b9ff, #bda6ff, #f6b4ff, #dab0ff);
+  background-size: 400% 400%;
+  box-shadow: $button-shadow;
 
-  transition: all 0.3s ease-in-out;
+  animation: buttonGradient 8s ease infinite;
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
 
   &:hover {
-    background-color: $color-primary-hover;
     transform: scale(1.1);
-    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 6px 12px rgba(189,166,255,0.3);
   }
 
   &:active {
-    background-color: $color-primary-active;
     transform: scale(0.95);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 3px 6px rgba(189,166,255,0.2);
   }
 
   &:focus {
     outline: none;
     box-shadow: $button-focus-shadow;
-    transform: scale(1.1);
-  }
-
-  &:focus:not(:active) {
-    transform: scale(1.1);
   }
 }
+
+@keyframes buttonGradient {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+
 
 .chat-bubble-icon {
   width: 100%;

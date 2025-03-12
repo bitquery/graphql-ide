@@ -3,14 +3,14 @@ import { useEffect, useState } from 'react';
 const ChatBubble = ({ iframeSrc, iframeId }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [showTooltip, setShowTooltip] = useState(true);
-
-    useEffect(() => {
-        const timer = setTimeout(() => {
-            setShowTooltip(false);
-        }, 150000);
-
-        return () => clearTimeout(timer);
-    }, []);
+    //
+    // useEffect(() => {
+    //     const timer = setTimeout(() => {
+    //         setShowTooltip(false);
+    //     }, 150000);
+    //
+    //     return () => clearTimeout(timer);
+    // }, []);
 
     const toggleChat = () => {
         setIsOpen((prevState) => !prevState);
@@ -20,8 +20,8 @@ const ChatBubble = ({ iframeSrc, iframeId }) => {
     return (
         <div className="chat-bubble-container">
             {showTooltip && (
-                <div className="chat-tooltip">
-                    <span>Need help? Talk to our AI!</span>
+                <div className="chat-tooltip gradient-border">
+                    <span>✨ Need a quick GraphQL query? Let our AI help!</span>
                 </div>
             )}
 
