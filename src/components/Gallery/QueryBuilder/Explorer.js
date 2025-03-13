@@ -2339,7 +2339,9 @@ class Explorer extends React.PureComponent<Props, State> {
           <p>
             {this.props.fetchError }
           </p>
-          {!this.props.user?.id && <p>Please <a className='bitquery-ico' href={`${this.props.user?.graphql_admin_url}/auth/login?redirect_to=${window.location.href}`}>Sign In</a> To Try API</p>}
+          {/*{!this.props.user?.id && <p>Please <a className='bitquery-ico-popup' href={`${this.props.user?.graphql_admin_url}/auth/login?redirect_to=${window.location.href}`}>Sign In</a> To Try API</p>}*/}
+          {!this.props.user?.id && <p>Please <a className='bitquery-ico-popup' href={`https://account.bitquery.io/auth/login?redirect_to=${window.location.href}`}>Sign In</a> To Try API</p>}
+
         </div>
       );
     }

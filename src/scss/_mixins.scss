@@ -30,12 +30,6 @@
 
 }
 
-//@mixin hover-btn{
-//  color:$base-font-color;
-//  border: 1px solid $color-primary-hover;
-//  outline: transparent;
-//  box-shadow:$color-primary-active 1px 1px 4px -1px inset, 5px 5px 11px 5px rgba(0, 0, 0, 0) !important;
-//}
 
 @mixin hover-btn {
   border: 1px solid $border-color;

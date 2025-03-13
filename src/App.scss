@@ -1131,11 +1131,6 @@ li:focus-visible {
   }
 }
 
-/* .navbar-collapse {
-	flex-grow: 0;
-	flex-basis: 0%;
-	margin-right: 20px;
-} */
 .navbar-brand {
   font-size: 1rem;
 }
@@ -1143,8 +1138,8 @@ li:focus-visible {
 .icon {
   &_user {
     //color: red;
-    width: 35px;
-    height: 35px;
+    width: 20px;
+    height: 20px;
     margin: 0 5px;
     cursor: pointer;
     opacity: .85;
@@ -1355,7 +1350,7 @@ li:focus-visible {
     height: 100%;
   }
 
-  &:hover,&:focus {
+  &:hover, &:focus {
     border-color: transparent;
   }
 
@@ -1622,11 +1617,9 @@ a:focus {
 }
 
 
-
-
-
 // Переменные
-$systemFontStack: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;;
+$systemFontStack: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+;
 $fontWeightBold: 900;
 $opacity: 0.7;
 $colorGray: #9AA1A6;
@@ -1793,7 +1786,7 @@ $borderStyle: 2.5px dotted $colorGray;
 
 .headers-label {
   margin-bottom: 3px;
-  padding-left:5px;
+  padding-left: 5px;
   font-size: 0.9em;
   color: #666;
   display: flex;

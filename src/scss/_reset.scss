@@ -54,5 +54,11 @@ input{
   &:active, &:target, &:focus {
     @include focus-style;
 
+
+  }
+  &:focus{
+    border-color: $text-color-active;
+
+    box-shadow: none;
   }
 }

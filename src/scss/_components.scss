@@ -7,40 +7,59 @@
 .bitquery-nav_item {
   color: $base-font-color !important;
 }
-.bitquery-links-doc{
-  color: $color-primary-active !important;
-&:hover,&:active,&:focus{
-  color: $color-primary-hover !important;
 
+.bitquery-links-doc {
+  color: $color-primary-active !important;
+
+  &:hover, &:active, &:focus {
+    color: $color-primary-hover !important;
+
+  }
 }
+.bitquery-links{
+  text-wrap-mode: nowrap;
+  padding: 7px 3px;
+}
+.bitquery-links-item{
+  padding-left:1rem;
+  font-size:0.9rem;
 }
 //Icons
 .bitquery-ico {
   color: $base-font-color !important;
 
-  &:hover,&:active,&:focus {
+  &:hover, &:active, &:focus {
     color: $color-primary-hover !important;
 
   }
 }
+.bitquery-ico-popup{
+  color: $text-color-active !important;
 
+  &:hover, &:active, &:focus {
+    color: $color-primary-hover !important;
+
+  }
+}
 .bitquery-ico-gray {
   color: $background-gray-d !important;
 }
 
 .bitquery-ico-black {
   color: $base-font-color !important;
-  &:hover,&:focus{
+
+  &:hover, &:focus {
     color: $color-primary-hover !important;
   }
 }
 
 //Buttons
-.bitquery-btn {
-  border: 1px solid $border-color;
-  border-radius: $border-radius;
+
+.save-btn, .bitquery-btn, .cancel-btn {
   background: $base-gradient;
   padding: 4px 10px;
+  border: 1px solid $border-color;
+  border-radius: $border-radius;
   font-size: 0.9rem;
   color: $base-font-color;
   cursor: pointer;
@@ -65,35 +84,55 @@
   }
 }
 
+.save-btn {
+  color: #006400;
+}
 
-//.pressed-btn{
-//  @include hover-btn
-//
-//}
+.cancel-btn {
+  color: #B11A04;
+}
 
 //teg
-.bitquery-teg{
-  //background-color: $background-gray-m;
-  background:$base-gradient;
+.bitquery-teg, .bitquery-teg-edit {
+  background: $base-gradient;
   padding: 4px 8px;
   border-radius: $border-teg-radius;
-  color:$text-color-gray-l;
+  color: $text-color-gray-l;
   font-size: 11px;
   line-height: 13px;
 }
-.bitquery-teg-color{
-  //background-color: $color-primary-active;
+
+.bitquery-teg-edit {
+  font-size: 0.9rem;
+  height: 100%;
+  padding: 5px 8px;
+  border: 1px solid $border-color;
+  border-radius: $border-teg-radius;
+}
+
+.bitquery-teg-color {
   background-color: $text-color-active;
   padding: 4px 8px;
   border-radius: $border-teg-radius;
-  color:#ffffff;
+  color: #ffffff;
   font-size: 11px;
   line-height: 13px;
-  margin-left:auto;
+  margin-left: auto;
 }
 
+.bitquery-teg-list {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  width: 100%;
+  gap: 0 7px;
+  margin: 0.5rem 0;
+  padding: 0 3px;
+  border: 1px solid $border-color;
+  border-radius: $border-radius;
+}
 
-.bitquery-addNewTab{
+.bitquery-addNewTab {
   width: 100%;
   display: flex;
   align-items: center;

@@ -1,10 +1,6 @@
 .bitquery-inputUrl {
-  //background-image: linear-gradient( #CA356814, #FFFFFF);
-  //background-color:#CA356814;
-  //  background: linear-gradient(180deg, #CA356814 0%, #FFF6F9 100%);
   background: linear-gradient(135deg, #FCFAFF 0%, #F8EFFF 70%);
   border-radius: $border-radius;
-  //font-weight: 400;
   font-size: 0.9rem;
   line-height: 18px;
   border: none;
@@ -21,8 +17,9 @@
 
 .input-url-fix {
   border: none;
-  height: 30px;
+  //height: 30px;
   font-size: 0.9rem;
+  width: 100%;
 
 
   &:hover, &:focus, &:active {
@@ -41,26 +38,26 @@
 
 
 .drop-down-fix {
+  flex: 0 0 100px; /* фиксированная ширина, не растягивается */
+  width: 100px;
+  max-width: 70px;
+
+
   border-left: 1px solid transparent;
   color: $base-font-color;
   border-right: 1px solid $border-color;
-  padding: 0 0 3px 3px;
-  margin: 0;
-  height: 34.5px;
   border-radius: $border-radius 0 0 5px;
   background:$base-gradient;
   font-size: 0.9rem;
   cursor: pointer;
   border-top: transparent;
   border-bottom: transparent;
-
+  transition: filter 0.2s ease;
   &:focus, &active, &target, &:hover {
-    //border-radius: $border-radius 0 0 $border-radius;
-    outline: transparent !important;
-    border-color: transparent;
+    border-color:#ffffff !important;
+    outline: none;
     box-shadow: none;
-    background-color: transparent;
-    //color: $color-primary-hover;
+    filter: brightness(0.95);
   }
 
 }
