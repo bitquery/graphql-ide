@@ -822,7 +822,7 @@ div.CodeMirror span.CodeMirror-nonmatchingbracket {color: #f22;}
 }
 
 .CodeMirror-hscrollbar::-webkit-scrollbar-thumb {
-  background: #CE437277;
+  background: #c1c1c1;
   border-radius: 8px;
 }
 
@@ -831,7 +831,8 @@ div.CodeMirror span.CodeMirror-nonmatchingbracket {color: #f22;}
 }
 
 .CodeMirror-hscrollbar::-webkit-scrollbar-track {
-  background: #FFEAF1;
+  border: 1px solid #ece7ff;
+  border-radius: 8px;
 }
 
 .CodeMirror-hscrollbar::-webkit-scrollbar {

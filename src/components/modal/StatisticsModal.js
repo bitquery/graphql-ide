@@ -4,7 +4,7 @@ import { QueriesStore, TabsStore, UserStore } from '../../store/queriesStore'
 import modalStore from '../../store/modalStore'
 import Loader from "react-loader-spinner"
 import { toast } from "react-toastify"
-import { getUser, getCodeSnippet } from '../../api/api'
+import { getUser } from '../../api/api'
 import { useInterval } from '../../utils/useInterval'
 import { Modal, Table, Button } from 'react-bootstrap'
 
@@ -12,9 +12,9 @@ const METRICS_INFO = [
     'Memory consumption by the query.',
     'Number of bytes (the number of bytes before decompression) read from compressed sources (files, network).',
     'RAM volume in bytes used to store a query result.',
-    `Total number of rows read from all tables and table functions participated in query. It includes usual subqueries, subqueries for IN and JOIN. For distributed queries read_rows includes the total number of rows read at all replicas. Each replica sends its read_rows value, and the server-initiator of the query summarizes all received and local values. The cache volumes do not affect this value.`,
+    `Total number of rows read from all tables and table functions participated in query...`,
     'Number of rows in a result of the SELECT query, or a number of rows in the INSERT query.',
-    'CPU time spent seen by OS. Does not include involuntary waits due to virtualization.',
+    'CPU time spent seen by OS. Does not include involuntary waits...',
     'Number of SQL requests.'
 ]
 
@@ -33,6 +33,8 @@ const StatisticsModal = observer(function StatisticsModal({ active }) {
     const getMetrics = async () => {
         if (user?.key && active) {
             updateQuery({ gettingPointsCount: gettingPointsCount + 1 || 0 }, index)
+
+            // Проверяем, не истёк ли токен
             if (user?.accessToken && user?.accessToken?.streaming_expires_on <= Date.now()) {
                 try {
                     await getUser('update_token')
@@ -45,7 +47,9 @@ const StatisticsModal = observer(function StatisticsModal({ active }) {
                     accept: "application/json",
                     "content-type": "application/json",
                     "x-api-key": user.key,
-                    ...(user?.accessToken?.access_token && { 'Authorization': `Bearer ${user?.accessToken?.access_token}` }),
+                    ...(user?.accessToken?.access_token && {
+                        'Authorization': `Bearer ${user?.accessToken?.access_token}`
+                    }),
                 },
                 body: `{"query":"query MyQuery {\\n utilities {\\n  metrics(queryId: \\"${graphqlQueryID}\\", options: {seed: ${new Date().getTime()}}) {\\n    points\\n    id\\n    sqlRequestsCount\\n    list {\\n      cost\\n      max\\n      min\\n      name\\n      price\\n      value\\n      divider\\n      maxUnit\\n      minUnit\\n      valueUnit\\n    } }\\n  }\\n}\\n","variables":"{}"}`,
                 method: "POST",
@@ -60,6 +64,7 @@ const StatisticsModal = observer(function StatisticsModal({ active }) {
         }
     }
 
+    // Запрашиваем метрики каждые 2 секунды, пока не получим данные или не превысим лимит
     useInterval(() => {
         getMetrics()
     }, (!metrics || gettingPointsCount < 9) ? 2000 : null)
@@ -81,7 +86,7 @@ const StatisticsModal = observer(function StatisticsModal({ active }) {
     } else if (metrics) {
         modalBodyContent = (
             <>
-                <Table bordered striped className="statisticsTable">
+                <Table bordered striped hover responsive className="statisticsTable table-sm">
                     <thead>
                     <tr>
                         <th>Metric</th>
@@ -100,10 +105,12 @@ const StatisticsModal = observer(function StatisticsModal({ active }) {
                       onMouseLeave={() => setMetricNumber(null)}
                   >
                     ?
-                  </span>
+                  </span>{' '}
                                 {metric.name}
                             </th>
-                            <td style={{ "--part": `${Math.round(metric.value / metric.max * 100) < 20 ? 20 : Math.round(metric.value / metric.max * 100)}%` }}>
+                            <td style={{
+                                "--part": `${Math.round(metric.value / metric.max * 100) < 20 ? 20 : Math.round(metric.value / metric.max * 100)}%`
+                            }}>
                                 {(metric.cost / metric.price).toFixed(2)}
                             </td>
                             <td>{metric.price.toFixed(2)}</td>
@@ -118,17 +125,21 @@ const StatisticsModal = observer(function StatisticsModal({ active }) {
                     </tr>
                     </tfoot>
                 </Table>
-                <p>Query ID: {graphqlQueryID}</p>
-                {metricNumber !== null && <div className="metrics__info">{METRICS_INFO[metricNumber]}</div>}
+                <p className="mb-0">Query ID: {graphqlQueryID}</p>
+                {metricNumber !== null && (
+                    <div className="metrics__info mt-2">{METRICS_INFO[metricNumber]}</div>
+                )}
             </>
         )
     } else {
         modalBodyContent = (
-            <>
+            <div className="d-flex flex-column align-items-center">
                 <p>Query ID: {graphqlQueryID}</p>
                 <p>Waiting for processing of this query...</p>
                 <Loader type="Triangle" />
-            </>
+            </div>
+
+
         )
     }
 
@@ -138,6 +149,11 @@ const StatisticsModal = observer(function StatisticsModal({ active }) {
                 <Modal.Title>Statistics</Modal.Title>
             </Modal.Header>
             <Modal.Body>{modalBodyContent}</Modal.Body>
+            <Modal.Footer>
+                <Button className='cancel-btn' onClick={closeHandler}>
+                    Close
+                </Button>
+            </Modal.Footer>
         </Modal>
     ) : null
 })

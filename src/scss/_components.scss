@@ -91,6 +91,9 @@
 .cancel-btn {
   color: #B11A04;
 }
+.modal-content{
+  border:none !important;
+}
 
 //teg
 .bitquery-teg, .bitquery-teg-edit {
@@ -137,4 +140,20 @@
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.bitquery-dropdown {
+  > .nav-link.dropdown-toggle {
+    @extend .bitquery-btn;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 4px 10px;
+
+    &::after {
+      border-top-color: $text-color-active;
+    }
+  }
 }

@@ -572,7 +572,6 @@ const EditorInstance = observer(function EditorInstance({number}) {
             const responseTime = new Date().getTime() - start
             const sqlQuery = response.headers.get('x-sql-used') || 'no sql query';
 
-                // console.log('All headers:', Array.from(response.headers.entries()));
             if (!('operationName' in graphQLParams)) {
 
                 const headerValue = response.headers.get('X-GraphQL-Requested')  || response.headers.get('X-Bitquery-Graphql-Requested')
@@ -790,8 +789,10 @@ const EditorInstance = observer(function EditorInstance({number}) {
                     </div>
 
                 </div>
-                <div className={'widget-display widget-display-wrapper position-relative' +
-                    (isMobile ? ' widget-display-wrapper-fullscreen' : '')}
+                <div className={'widget-display widget-display-wrapper position-relative'
+                    // +
+                    // (isMobile ? ' widget-display-wrapper-fullscreen' : '')
+                }
                      ref={widgetDisplay}
                      style={{backgroundColor: '#f6f7f8'}}
                 >
