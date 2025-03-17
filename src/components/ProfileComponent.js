@@ -52,7 +52,6 @@ const Profile = observer(() => {
         return () => clearTimeout(timer);
     }, [toastShown, user?.id, toastLink]);
 
-    // Если пользователь не залогинен, возвращаем простую ссылку для входа
     if (!user?.id) {
         return (
             <div className="d-flex align-items-center justify-content-end">

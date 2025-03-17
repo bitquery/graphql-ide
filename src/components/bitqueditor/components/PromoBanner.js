@@ -1,23 +1,24 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import "./PromoBanner.css";
 
 const PromoBanner = () => {
+    const [visible, setVisible] = useState(true);
+    const [animate, setAnimate] = useState(false);
+
     const handleClose = () => {
-        const banner = document.getElementById("promo-banner");
-        if (banner) {
-            banner.classList.add("promo-banner-hide");
-            setTimeout(() => banner.remove(), 300);
-        }
+        setAnimate(true);
+        setTimeout(() => setVisible(false), 300);
     };
 
     useEffect(() => {
-        const timer = setTimeout(handleClose, 40000);
-
+        const timer = setTimeout(handleClose, 30000);
         return () => clearTimeout(timer);
     }, []);
 
+    if (!visible) return null;
+
     return (
-        <div id="promo-banner" className="promo-banner">
+        <div id="promo-banner" className={`promo-banner ${animate ? "promo-banner-hide" : ""}`}>
             <img
                 src="/dexRabbitLogo.png"
                 alt="DEXrabbit logo"
@@ -33,11 +34,7 @@ const PromoBanner = () => {
                     <span className="promo-banner-link">Rabbit</span>.
                 </p>
             </div>
-            <button
-                onClick={handleClose}
-                className="promo-banner-close"
-                aria-label="Close"
-            >
+            <button onClick={handleClose} className="promo-banner-close" aria-label="Close">
                 ✕
             </button>
         </div>
