@@ -22,19 +22,19 @@ const WidgetEditorControls = observer(
             <ToolbarButton
                 title='JSON'
                 onClick={() => onClick('json.widget')}
-                style={{
-                    color: currentQuery.widget_id === 'json.widget' ? '#171717' : '#B71F54',
-                    boxShadow: currentQuery.widget_id === 'json.widget' ? '#CE4372 1px 1px 4px -1px inset, 5px 5px 11px 5px rgba(0, 0, 0, 0)' : 'none',
-                    marginRight: '4px'
-                }}
+                // style={{
+                //     color: currentQuery.widget_id === 'json.widget' ? '#171717' : '#B71F54',
+                //     boxShadow: currentQuery.widget_id === 'json.widget' ? '#CE4372 1px 1px 4px -1px inset, 5px 5px 11px 5px rgba(0, 0, 0, 0)' : 'none',
+                //     marginRight: '4px'
+                // }}
             />
             <ToolbarButton
                 title='Widget'
                 onClick={() => onClick('config.widget')}
-                style={{
-                    color: currentQuery.widget_id === 'config.widget' ? '#171717' : '#B71F54',
-                    boxShadow: currentQuery.widget_id === 'config.widget' ? '#CE4372 1px 1px 4px -1px inset, 5px 5px 11px 5px rgba(0, 0, 0, 0)' : 'none'
-                }}
+                // style={{
+                //     color: currentQuery.widget_id === 'config.widget' ? '#171717' : '#B71F54',
+                //     boxShadow: currentQuery.widget_id === 'config.widget' ? '#CE4372 1px 1px 4px -1px inset, 5px 5px 11px 5px rgba(0, 0, 0, 0)' : 'none'
+                // }}
 
             />
         </div>

@@ -5,7 +5,7 @@ const ToolbarButton = observer(function ToolbarButton({ visible = true, onClick,
 	return visible && (
 		<button
 			type="button"
-			className="topBar__button"
+			className="topBar__button bitquery-btn"
 			onClick={onClick}
 			disabled={disabled}
 			{...props}

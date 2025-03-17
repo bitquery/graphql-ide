@@ -25,7 +25,6 @@ const QueriesList = observer(function QueriesList() {
 
     const prevSearchParams = useRef({search: '', pathname: ''})
 
-    // При загрузке компонента сохраняем значение ?search= в QueriesStore
     useEffect(() => {
         const search = searchQuery.get('search')
         if (search) {
@@ -40,22 +39,18 @@ const QueriesList = observer(function QueriesList() {
         setList(data)
     }
 
-    // Следим за изменением URL и поискового параметра
     useEffect(() => {
         const main = async () => {
             const search = searchQuery.get('search')
             const pathname = location.pathname
 
-            // Если изменился поисковый запрос или путь
             if (search !== prevSearchParams.current.search || pathname !== prevSearchParams.current.pathname) {
                 if (!search) {
-                    // Нет поискового запроса — получаем список по тегу
                     const queryListType = location.pathname.match(/[a-zA-Z]+/gm)[0]
                     const {data} = await getTaggedQueriesList(currentTag, currentPage * queriesOnPage, queryListType)
                     data.length > queriesOnPage ? setNext(true) : setNext(false)
                     setList(data)
                 } else {
-                    // Есть поисковый запрос — делаем поиск
                     setNext(false)
                     setCurrentPage(0)
                     const {data} = await getSearchResults(search)
@@ -71,14 +66,11 @@ const QueriesList = observer(function QueriesList() {
         history, setCurrentPage
     ])
 
-    // Открыть запрос в новой (или существующей) вкладке
     const handleClick = (queryFromGallery) => {
         const existingIndex = query.findIndex(q => q.id === queryFromGallery.id)
         if (existingIndex === -1) {
-            // Добавляем запрос в список вкладок
             setQuery(queryFromGallery, queryFromGallery.id)
         } else {
-            // Переключаемся на существующую вкладку
             switchTab(tabs[existingIndex].id)
         }
         history.push(`/${queryFromGallery.url || ''}`)
@@ -104,7 +96,9 @@ const QueriesList = observer(function QueriesList() {
             style={{ marginBottom: '15px', fontSize:'0.9rem'}}
             aria-label="list of public queries"
         >
-            <ul className="list-group bitquery-querylist" role="list" tabIndex={0}>
+            <ul
+                className="list-group bitquery-querylist"
+                role="list" tabIndex={0}>
                 {list && list.map((item, i, arr) => {
                     if (arr.length <= queriesOnPage || i + 1 !== arr.length) {
                         return (
@@ -163,9 +157,8 @@ const QueriesList = observer(function QueriesList() {
                 })}
             </ul>
 
-            {/* Пагинация */}
-            <nav className="mt-3">
-                <ul className="pagination justify-content-center">
+            <nav className="mt-1">
+                <ul className="pagination gap-2 justify-content-center">
                     <li
                         className={`page-item mr-2 ${!currentPage ? 'disabled' : ''}`}
                         onClick={prevPage}

@@ -135,24 +135,30 @@ const ControlPanel = observer(function ControlPanel() {
                     >
                         <NavDropdown.Item
                             onClick={() => handleNavClick('/explore/All%20queries', 'explore')}
-                            className={active === 3 ? 'bitquery-link_active' : 'bitquery-nav_item'}
+                            className={active === 3 ? 'bitquery-link_active' : 'bitquery-links bitquery-nav_item'}
                         >
+                                 <span className='ms-2'>
                             {menuItems.explore.icon}Explore
+                                </span>
                         </NavDropdown.Item>
                         {user?.id && (
                             <NavDropdown.Item
                                 onClick={() => handleNavClick('/myqueries/All%20queries', 'myqueries')}
-                                className={active === 4 ? 'bitquery-link_active' : 'bitquery-nav_item'}
+                                className={active === 4 ? 'bitquery-link_active' : 'bitquery-links bitquery-nav_item'}
                             >
-                                {menuItems.myqueries.icon}My Queries
+                               <span className='ms-2'>
+                                   {menuItems.myqueries.icon}My Queries
+                               </span>
                             </NavDropdown.Item>
                         )}
                         {(user?.children_count || user?.ancestry) && (
                             <NavDropdown.Item
                                 onClick={() => handleNavClick('/team/All%20queries', 'teamqueries')}
-                                className={active === 5 ? 'bitquery-link_active' : 'bitquery-nav_item'}
+                                className={active === 5 ? 'bitquery-link_active' : 'bitquery-links bitquery-nav_item'}
                             >
+                                <span className='ms-2'>
                                 {menuItems.teamqueries.icon}Team Queries
+                                </span>
                             </NavDropdown.Item>
                         )}
                     </NavDropdown>
@@ -242,7 +248,7 @@ const ControlPanel = observer(function ControlPanel() {
                             </NavDropdown.Item>
                         </OverlayTrigger>
 
-                        <NavDropdown.Divider />
+                        <NavDropdown.Divider/>
 
                         <OverlayTrigger
                             placement="bottom"
@@ -259,7 +265,7 @@ const ControlPanel = observer(function ControlPanel() {
                             </NavDropdown.Item>
                         </OverlayTrigger>
 
-                        <NavDropdown.Divider />
+                        <NavDropdown.Divider/>
 
                         <OverlayTrigger
                             placement="bottom"
@@ -278,13 +284,12 @@ const ControlPanel = observer(function ControlPanel() {
                     </NavDropdown>
 
 
-
                     <NavDropdown
                         title={
                             <OverlayTrigger
                                 placement="bottom"
                                 overlay={<Tooltip id="apps-tooltip-main">Explore Bitquery applications</Tooltip>}
-                                delay={{ show: 300, hide: 0 }}
+                                delay={{show: 300, hide: 0}}
                             >
                                 <span>Apps</span>
                             </OverlayTrigger>
@@ -294,7 +299,8 @@ const ControlPanel = observer(function ControlPanel() {
                     >
                         <OverlayTrigger
                             placement="bottom"
-                            overlay={<Tooltip id="apps-tooltip-dexrabbit">Dexrabbit: Decentralized exchange aggregator</Tooltip>}
+                            overlay={<Tooltip id="apps-tooltip-dexrabbit">Dexrabbit: Decentralized exchange
+                                aggregator</Tooltip>}
                         >
                             <NavDropdown.Item
                                 className="bitquery-links bitquery-links-item"
@@ -307,11 +313,12 @@ const ControlPanel = observer(function ControlPanel() {
                             </NavDropdown.Item>
                         </OverlayTrigger>
 
-                        <NavDropdown.Divider />
+                        <NavDropdown.Divider/>
 
                         <OverlayTrigger
                             placement="bottom"
-                            overlay={<Tooltip id="apps-tooltip-explorer">Blockchain Explorer: View blockchain data and transactions</Tooltip>}
+                            overlay={<Tooltip id="apps-tooltip-explorer">Blockchain Explorer: View blockchain data and
+                                transactions</Tooltip>}
                         >
                             <NavDropdown.Item
                                 className="bitquery-links bitquery-links-item"
@@ -324,11 +331,12 @@ const ControlPanel = observer(function ControlPanel() {
                             </NavDropdown.Item>
                         </OverlayTrigger>
 
-                        <NavDropdown.Divider />
+                        <NavDropdown.Divider/>
 
                         <OverlayTrigger
                             placement="bottom"
-                            overlay={<Tooltip id="apps-tooltip-moneyflow-lite">MoneyFlow Lite: Quick insights into blockchain money flows</Tooltip>}
+                            overlay={<Tooltip id="apps-tooltip-moneyflow-lite">MoneyFlow Lite: Quick insights into
+                                blockchain money flows</Tooltip>}
                         >
                             <NavDropdown.Item
                                 className="bitquery-links bitquery-links-item"
@@ -341,11 +349,12 @@ const ControlPanel = observer(function ControlPanel() {
                             </NavDropdown.Item>
                         </OverlayTrigger>
 
-                        <NavDropdown.Divider />
+                        <NavDropdown.Divider/>
 
                         <OverlayTrigger
                             placement="bottom"
-                            overlay={<Tooltip id="apps-tooltip-moneyflow-ultimate">MoneyFlow Ultimate: Advanced blockchain money flow analytics</Tooltip>}
+                            overlay={<Tooltip id="apps-tooltip-moneyflow-ultimate">MoneyFlow Ultimate: Advanced
+                                blockchain money flow analytics</Tooltip>}
                         >
                             <NavDropdown.Item
                                 className="bitquery-links bitquery-links-item"
@@ -358,11 +367,12 @@ const ControlPanel = observer(function ControlPanel() {
                             </NavDropdown.Item>
                         </OverlayTrigger>
 
-                        <NavDropdown.Divider />
+                        <NavDropdown.Divider/>
 
                         <OverlayTrigger
                             placement="bottom"
-                            overlay={<Tooltip id="apps-tooltip-substack">Bitquery's Substack: Read curated blockchain insights and updates</Tooltip>}
+                            overlay={<Tooltip id="apps-tooltip-substack">Bitquery's Substack: Read curated blockchain
+                                insights and updates</Tooltip>}
                         >
                             <NavDropdown.Item
                                 className="bitquery-links bitquery-links-item"

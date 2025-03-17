@@ -1829,3 +1829,6 @@ $borderStyle: 2.5px dotted $colorGray;
     width: 100% !important;
   }
 }
+.page-link:hover {
+  color: $text-color-active !important;
+}
