@@ -391,7 +391,7 @@ const ControlPanel = observer(function ControlPanel() {
                         <NavDropdown.Item
                             className="bitquery-links bitquery-links-item"
                             href={`https://account.bitquery.io/user/payments/form/${uuid()}`}
-                            target="_blank"
+                            // target="_blank"
                             rel="noopener noreferrer"
                         >
                             <i className="bi bi-envelope-fill me-2"></i> Contact Sales

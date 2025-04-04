@@ -16,14 +16,17 @@
 
   }
 }
-.bitquery-links{
+
+.bitquery-links {
   text-wrap-mode: nowrap;
   padding: 7px 3px;
 }
-.bitquery-links-item{
-  padding-left:1rem;
-  font-size:0.9rem;
+
+.bitquery-links-item {
+  padding-left: 1rem;
+  font-size: 0.9rem;
 }
+
 //Icons
 .bitquery-ico {
   color: $base-font-color !important;
@@ -33,7 +36,8 @@
 
   }
 }
-.bitquery-ico-popup{
+
+.bitquery-ico-popup {
   color: $text-color-active !important;
 
   &:hover, &:active, &:focus {
@@ -41,6 +45,7 @@
 
   }
 }
+
 .bitquery-ico-gray {
   color: $background-gray-d !important;
 }
@@ -86,14 +91,35 @@
 
 .save-btn {
   color: #006400;
+
+  &:hover {
+    color: $text-color-active;
+  }
+
+  &:active {
+    color: $text-color-active;
+  }
+
+  &:focus {
+    color: $text-color-active;
+  }
 }
 
 .cancel-btn {
   color: #B11A04;
+  &:hover {
+    color: $text-color-active;
+  }
+
+  &:active {
+    color: $text-color-active;
+  }
+
+  &:focus {
+    color: $text-color-active;
+  }
 }
-.modal-content{
-  border:none !important;
-}
+
 
 //teg
 .bitquery-teg, .bitquery-teg-edit {
@@ -159,3 +185,14 @@
 }
 
 
+.modal.show .modal-content:empty {
+  display: none !important;
+}
+
+.modal.show .modal-content:empty {
+  display: none !important;
+}
+
+.modal.show:has(.modal-content:empty) {
+  display: none !important;
+}
