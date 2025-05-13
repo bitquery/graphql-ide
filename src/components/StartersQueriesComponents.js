@@ -67,8 +67,7 @@ function useMarkdownTree(url) {
 
 const StartersQueriesComponents = observer(() => {
     const history = useHistory();
-    const { query, setQuery, updateQuery,openOrSwitch } = QueriesStore;
-    const { tabs, switchTab ,renameCurrentTab, addNewTab} = TabsStore;
+    const {openOrSwitch } = QueriesStore;
     const { toggleStartersQueriesModal } = modalStore
     const [activeTab, setActiveTab] = useState('queries');
     const queriesTree = useMarkdownTree(STARTER_QUERIES_URL);
@@ -86,14 +85,8 @@ const StartersQueriesComponents = observer(() => {
         async (url, title) => {
             const id = extractId(url);
             if (!id) return;
-
-            // 1) открываем или переключаем вкладку
             await openOrSwitch(id, { id, url: id, name: title });
-
-            // 2) пушим в историю
             history.push(`/${id}`);
-
-            // 3) закрываем модалку
             toggleStartersQueriesModal();
         },
         [history, toggleStartersQueriesModal]
