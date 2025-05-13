@@ -6,6 +6,7 @@ class Modal {
 	editDialogIsOpen = false
 	confirmationIsOpen = false
 	statisticsModalIsOpen = false
+	startersQueriesModalIsOpen = false
 	confirmationAction = null
 	confirmationMessage = ''
 
@@ -17,9 +18,11 @@ class Modal {
 			confirmationIsOpen: observable,
 			confirmationMessage: observable,
 			statisticsModalIsOpen: observable,
+			startersQueriesModalIsOpen: observable,
 			toggleModal: action,
 			toggleConfirmation: action,
 			toggleStatisticsModal: action,
+			toggleStartersQueriesModal: action,
 		})
 	}
 
@@ -34,6 +37,9 @@ class Modal {
 
 	toggleStatisticsModal = () => {
 		this.statisticsModalIsOpen = !this.statisticsModalIsOpen
+	}
+	toggleStartersQueriesModal = () => {
+		this.startersQueriesModalIsOpen = !this.startersQueriesModalIsOpen
 	}
 	toggleEditDialog = () => {
 		this.editDialogIsOpen = !this.editDialogIsOpen

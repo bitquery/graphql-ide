@@ -11,6 +11,8 @@ import {GalleryStore} from '../store/galleryStore'
 import {generateTags} from '../utils/generateTags'
 import {useQuery} from '../utils/useQuery'
 import {toast} from "react-toastify"
+import modalStore from "../store/modalStore";
+
 
 
 const TabsComponent = observer(() => {
@@ -19,6 +21,8 @@ const TabsComponent = observer(() => {
     const {queriesListIsOpen, toggleQueriesList} = GalleryStore
     const {user, getUser} = UserStore
     const {tabs, currentTab, switchTab, index} = TabsStore
+    const { startersQueriesModalIsOpen, toggleStartersQueriesModal, toggleModal } = modalStore
+
     const match = useRouteMatch(`/:queryurl`)
     const {
         setQuery,
@@ -32,6 +36,17 @@ const TabsComponent = observer(() => {
     const [editTabName, setEditTabName] = useState(false)
     const [queryName, setQueryName] = useState({[currentTab]: currentQuery.name})
     const [x, setx] = useState(0)
+
+    useEffect(() => {
+        if (
+            location.pathname === '/' &&
+            !sessionStorage.getItem('startersModalShown')
+        ) {
+            modalStore.toggleStartersQueriesModal();
+            sessionStorage.setItem('startersModalShown', 'true');
+        }
+    }, [location.pathname]);
+
 
     useEffect(() => {
         x <= 1 && setx(x => x + 1)
@@ -170,6 +185,7 @@ const TabsComponent = observer(() => {
         // eslint-disable-next-line
     }, [tabs.length])
     const handleEdit = e => setQueryName({...queryName, [currentTab]: e.target.value})
+
     const switchTabHandler = (tabid) => {
         queriesListIsOpen && toggleQueriesList()
         switchTab(tabid)
@@ -177,8 +193,10 @@ const TabsComponent = observer(() => {
         query[id].url ? history.push(`/${query[id].url}`) : history.push('/')
         setEditTabName(false)
     }
+
     const addNewTabHandler = () => {
         queriesListIsOpen && toggleQueriesList()
+        toggleStartersQueriesModal()
         setQuery({
             query: '',
             variables: '{}',

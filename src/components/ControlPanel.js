@@ -19,11 +19,16 @@ import {
 } from 'react-bootstrap';
 import uuid from 'uuid-random';
 import ProfileComponent from './ProfileComponent';
+import modalStore from '../store/modalStore'
+
 
 const ControlPanel = observer(function ControlPanel() {
     const {user} = UserStore;
     const {currentQuery} = QueriesStore;
     const {currentTag} = GalleryStore;
+    const {
+        toggleStartersQueriesModal,
+    } = modalStore
     const [search, setSearch] = useState('');
     const [active, setActive] = useState(1);
     const searchValue = useDebounce(search, 500);
@@ -33,7 +38,7 @@ const ControlPanel = observer(function ControlPanel() {
 
     const menuItems = {
         queries: {name: 'Queries', icon: <i className="bi bi-terminal me-2 bitquery-ico"></i>},
-        explore: {name: 'Explore', icon: <i className="bi bi-terminal me-2 bitquery-ico"></i>},
+        explore: {name: 'All Queries', icon: <i className="bi bi-terminal me-2 bitquery-ico"></i>},
         myqueries: {name: 'My Queries', icon: <i className="bi bi-star me-2 bitquery-ico"></i>},
         teamqueries: {name: 'Team Queries', icon: <i className="bi bi-people me-2 bitquery-ico"></i>}
     };
@@ -134,11 +139,19 @@ const ControlPanel = observer(function ControlPanel() {
                         }
                     >
                         <NavDropdown.Item
+                            onClick={() => toggleStartersQueriesModal()}
+                            className="bitquery-links bitquery-nav_item"
+                        >
+                            <i className="bi bi-lightning-charge me-2 bitquery-ico"></i>
+                            Starter Queries
+                        </NavDropdown.Item>
+                        <NavDropdown.Divider/>
+                        <NavDropdown.Item
                             onClick={() => handleNavClick('/explore/All%20queries', 'explore')}
                             className={active === 3 ? 'bitquery-link_active' : 'bitquery-links bitquery-nav_item'}
                         >
                                  <span className='ms-2'>
-                            {menuItems.explore.icon}Explore
+                            {menuItems.explore.icon}All Queries
                                 </span>
                         </NavDropdown.Item>
                         {user?.id && (
@@ -235,52 +248,68 @@ const ControlPanel = observer(function ControlPanel() {
                     >
                         <OverlayTrigger
                             placement="bottom"
-                            overlay={<Tooltip id="tooltip-api-v1">View API v1 status</Tooltip>}
+                            overlay={<Tooltip id="tooltip-api-v1">View Status page</Tooltip>}
                         >
                             <NavDropdown.Item
                                 className="bitquery-links bitquery-links-item"
-                                href="https://status.bitquery.io/"
+                                href="https://stats.uptimerobot.com/NUB3Mporlh"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                aria-label="View API v1 status (opens in a new tab)"
+                                aria-label="View spatis page (opens in a new tab)"
                             >
-                                API v1 - V1
+                                Status page
                             </NavDropdown.Item>
                         </OverlayTrigger>
 
-                        <NavDropdown.Divider/>
+                        {/*<NavDropdown.Divider/>*/}
+                        {/*<OverlayTrigger*/}
+                        {/*    placement="bottom"*/}
+                        {/*    overlay={<Tooltip id="tooltip-api-v1">View API v1 status</Tooltip>}*/}
+                        {/*>*/}
+                        {/*    <NavDropdown.Item*/}
+                        {/*        className="bitquery-links bitquery-links-item"*/}
+                        {/*        href="https://status.bitquery.io/"*/}
+                        {/*        target="_blank"*/}
+                        {/*        rel="noopener noreferrer"*/}
+                        {/*        aria-label="View API v1 status (opens in a new tab)"*/}
+                        {/*    >*/}
+                        {/*        API v1 - V1*/}
+                        {/*    </NavDropdown.Item>*/}
+                        {/*</OverlayTrigger>*/}
 
-                        <OverlayTrigger
-                            placement="bottom"
-                            overlay={<Tooltip id="tooltip-api-v2">View API v2 status</Tooltip>}
-                        >
-                            <NavDropdown.Item
-                                className="bitquery-links bitquery-links-item"
-                                href="https://bitquery-streaming.statuspage.io/"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                aria-label="View API v2 status (opens in a new tab)"
-                            >
-                                API v2 - V2
-                            </NavDropdown.Item>
-                        </OverlayTrigger>
+                        {/*<NavDropdown.Divider/>*/}
 
-                        <NavDropdown.Divider/>
+                        {/*<OverlayTrigger*/}
+                        {/*    placement="bottom"*/}
+                        {/*    overlay={<Tooltip id="tooltip-api-v2">View API v2 status</Tooltip>}*/}
+                        {/*>*/}
+                        {/*    <NavDropdown.Item*/}
+                        {/*        className="bitquery-links bitquery-links-item"*/}
+                        {/*        href="https://bitquery-streaming.statuspage.io/"*/}
+                        {/*        target="_blank"*/}
+                        {/*        rel="noopener noreferrer"*/}
+                        {/*        aria-label="View API v2 status (opens in a new tab)"*/}
+                        {/*    >*/}
+                        {/*        API v2 - V2*/}
+                        {/*    </NavDropdown.Item>*/}
+                        {/*</OverlayTrigger>*/}
 
-                        <OverlayTrigger
-                            placement="bottom"
-                            overlay={<Tooltip id="tooltip-eap-status">View EAP status</Tooltip>}
-                        >
-                            <NavDropdown.Item
-                                className="bitquery-links bitquery-links-item"
-                                href="https://status-streaming-eap.bitquery.io/"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                aria-label="View EAP status (opens in a new tab)"
-                            >
-                                EAP Status
-                            </NavDropdown.Item>
-                        </OverlayTrigger>
+                        {/*<NavDropdown.Divider/>*/}
+
+                        {/*<OverlayTrigger*/}
+                        {/*    placement="bottom"*/}
+                        {/*    overlay={<Tooltip id="tooltip-eap-status">View EAP status</Tooltip>}*/}
+                        {/*>*/}
+                        {/*    <NavDropdown.Item*/}
+                        {/*        className="bitquery-links bitquery-links-item"*/}
+                        {/*        href="https://status-streaming-eap.bitquery.io/"*/}
+                        {/*        target="_blank"*/}
+                        {/*        rel="noopener noreferrer"*/}
+                        {/*        aria-label="View EAP status (opens in a new tab)"*/}
+                        {/*    >*/}
+                        {/*        EAP Status*/}
+                        {/*    </NavDropdown.Item>*/}
+                        {/*</OverlayTrigger>*/}
                     </NavDropdown>
 
 
@@ -408,15 +437,6 @@ const ControlPanel = observer(function ControlPanel() {
                         <NavDropdown.Divider/>
                         <NavDropdown.Item
                             className="bitquery-links bitquery-links-item"
-                            href="https://discord.gg/EEBVTQnb2E"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                        >
-                            <i className="bi bi-discord me-2"></i> Discord
-                        </NavDropdown.Item>
-                        <NavDropdown.Divider/>
-                        <NavDropdown.Item
-                            className="bitquery-links bitquery-links-item"
                             href="https://t.me/bloxy_info/"
                             target="_blank"
                             rel="noopener noreferrer"
@@ -431,15 +451,6 @@ const ControlPanel = observer(function ControlPanel() {
                             rel="noopener noreferrer"
                         >
                             <i className="bi bi-twitter-x me-2"></i> Twitter
-                        </NavDropdown.Item>
-                        <NavDropdown.Divider/>
-                        <NavDropdown.Item
-                            className="bitquery-links bitquery-links-item"
-                            href="https://angel.co/company/bitquery/jobs"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                        >
-                            <i className="bi bi-briefcase-fill me-2"></i> We are hiring!
                         </NavDropdown.Item>
                     </NavDropdown>
 

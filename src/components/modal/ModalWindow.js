@@ -4,14 +4,17 @@ import { observer } from 'mobx-react-lite'
 import modalStore from '../../store/modalStore'
 import StatisticsModal from './StatisticsModal'
 import { Modal } from 'react-bootstrap'
+import StartersQueriesModal from "./StartersQueriesModal";
 
 const ModalWindow = observer(() => {
 	const {
 		modalIsOpen,
 		editDialogIsOpen,
 		statisticsModalIsOpen,
+		startersQueriesModalIsOpen,
 		toggleModal,
 		toggleStatisticsModal,
+		toggleStartersQueriesModal,
 		toggleEditDialog,
 	} = modalStore
 
@@ -22,6 +25,7 @@ const ModalWindow = observer(() => {
 	}
 
 	return (
+		<>
 		<Modal
 			centered
 			show={modalIsOpen}
@@ -31,6 +35,8 @@ const ModalWindow = observer(() => {
 			<EditDialog active={editDialogIsOpen} />
 			<StatisticsModal active={statisticsModalIsOpen} />
 		</Modal>
+			<StartersQueriesModal active={startersQueriesModalIsOpen}/>
+		</>
 	)
 })
 
