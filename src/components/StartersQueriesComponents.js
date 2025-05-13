@@ -1,11 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { observer } from 'mobx-react-lite';
 import { useHistory } from 'react-router-dom';
-import { QueriesStore, TabsStore } from '../store/queriesStore';
+import { QueriesStore} from '../store/queriesStore';
 import modalStore from '../store/modalStore';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Tooltip from 'react-bootstrap/Tooltip';
-import {getQuery} from "../api/api";
 
 const STARTER_QUERIES_URL =
     'https://raw.githubusercontent.com/bitquery/streaming-data-platform-docs/refs/heads/main/docs/start/starter-queries.md';

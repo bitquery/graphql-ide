@@ -10,10 +10,8 @@ import {
     Navbar,
     Nav,
     NavDropdown,
-    Container,
     Form,
     FormControl,
-    Dropdown,
     Tooltip,
     OverlayTrigger
 } from 'react-bootstrap';
