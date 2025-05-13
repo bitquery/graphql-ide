@@ -5,6 +5,7 @@ import { QueriesStore, TabsStore } from '../store/queriesStore';
 import modalStore from '../store/modalStore';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Tooltip from 'react-bootstrap/Tooltip';
+import {getQuery} from "../api/api";
 
 const STARTER_QUERIES_URL =
     'https://raw.githubusercontent.com/bitquery/streaming-data-platform-docs/refs/heads/main/docs/start/starter-queries.md';
@@ -66,8 +67,9 @@ function useMarkdownTree(url) {
 
 const StartersQueriesComponents = observer(() => {
     const history = useHistory();
-    const { query, setQuery } = QueriesStore;
-    const { tabs, switchTab ,renameCurrentTab} = TabsStore;
+    const { query, setQuery, updateQuery,openOrSwitch } = QueriesStore;
+    const { tabs, switchTab ,renameCurrentTab, addNewTab} = TabsStore;
+    const { toggleStartersQueriesModal } = modalStore
     const [activeTab, setActiveTab] = useState('queries');
     const queriesTree = useMarkdownTree(STARTER_QUERIES_URL);
     const subsTree = useMarkdownTree(STARTER_SUBSCRIPTIONS_URL);
@@ -81,21 +83,22 @@ const StartersQueriesComponents = observer(() => {
     const extractId = url => url.split('/').pop();
 
     const handleItemClick = useCallback(
-        (url, title) => {
-            modalStore.toggleStartersQueriesModal();
+        async (url, title) => {
             const id = extractId(url);
             if (!id) return;
-            const existingIndex = query.findIndex(item => item.id === id);
-            if (existingIndex === -1) {
-                setQuery({ id, url: id, name: title }, id);
-            } else {
-                switchTab(tabs[existingIndex].id);
-                renameCurrentTab(title)
-            }
+
+            // 1) открываем или переключаем вкладку
+            await openOrSwitch(id, { id, url: id, name: title });
+
+            // 2) пушим в историю
             history.push(`/${id}`);
+
+            // 3) закрываем модалку
+            toggleStartersQueriesModal();
         },
-        [history, query, setQuery, switchTab, tabs]
+        [history, toggleStartersQueriesModal]
     );
+
 
     const renderTree = (tree, tabKey) => (
         <ul className="tree-root">

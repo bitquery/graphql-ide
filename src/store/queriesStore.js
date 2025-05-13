@@ -1,6 +1,6 @@
 import {makeObservable, observable, action, computed} from "mobx"
 import axios from 'axios'
-import {getUser, regenerateKey, setDashboard} from "../api/api"
+import {getQuery, getUser, regenerateKey, setDashboard} from "../api/api"
 import {GalleryStore} from './galleryStore'
 import {toast} from "react-toastify";
 
@@ -119,7 +119,8 @@ class Queries {
             setSchema: action,
             setFetchError: action,
             setMobile: action,
-            setQuery: action
+            setQuery: action,
+            openOrSwitch: action
         })
     }
 
@@ -294,6 +295,46 @@ class Queries {
             console.log(e)
         }
     }
+    openOrSwitch = async (id, params) => {
+        const existIdx = this.query.findIndex(q => q.id === id);
+        if (existIdx !== -1) {
+            TabsStore.switchTab(TabsStore.tabs[existIdx].id);
+            TabsStore.renameCurrentTab(params.name);
+            this.setCurrentQuery(existIdx);
+            return;
+        }
+
+        const currentIdx = TabsStore.index;
+        if (this.query[currentIdx].id == null) {
+            this.query[currentIdx] = {
+                ...this.query[currentIdx],
+                ...params,
+                id,
+                saved: true,
+                data_type: 'response'
+            };
+            TabsStore.renameCurrentTab(params.name);
+            this.setCurrentQuery(currentIdx);
+
+            try {
+                const { data } = await getQuery(id);
+                this.updateQuery(data, currentIdx, id);
+            } catch (e) {
+                console.error("Failed to load query by ID", e);
+            }
+            return;
+        }
+
+        this.setQuery(params, id);
+        const newIdx = this.query.length - 1;
+        try {
+            const { data } = await getQuery(id);
+            this.updateQuery(data, newIdx, id);
+        } catch (e) {
+            console.error("Failed to load query by ID", e);
+        }
+    }
+
 
 }
 
@@ -394,6 +435,7 @@ class Tabs {
                 ? this.switchTab(this.tabs[index - 1].id)
                 : this.switchTab(this.tabs[index].id)
     }
+
 }
 
 export let TabsStore = new Tabs()
