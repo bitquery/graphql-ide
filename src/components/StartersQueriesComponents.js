@@ -110,7 +110,9 @@ const StartersQueriesComponents = observer(() => {
                                 {section.children.map((item, j) => {
                                     const tipId = `tooltip-${tabKey}-${idx}-${j}`;
                                     return (
-                                        <li key={`${key}-${j}`} className="tree-child">
+                                        <li key={`${key}-${j}`} className="tree-child"
+                                            onClick={() => handleItemClick(item.url, item.title)}
+                                        >
                                             <OverlayTrigger
                                                 placement="bottom"
                                                 delay={{ show: 250, hide: 100 }}
@@ -118,7 +120,6 @@ const StartersQueriesComponents = observer(() => {
                                             >
                         <span
                             className="child-link"
-                            onClick={() => handleItemClick(item.url, item.title)}
                         ><i className="bi bi-terminal me-2"></i>
                           {item.title}
                         </span>

@@ -65,17 +65,17 @@
 
 .tree-child {
   margin: 0.25rem 0;
-
-
+cursor:pointer;
+  &:hover {
+    color: $text-color-active;
+  }
 }
 
 .child-link {
   position: relative;
   text-decoration: none;
 
-  &:hover {
-    color: $text-color-active;
-  }
+
 }
 
 
