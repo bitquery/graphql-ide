@@ -37,14 +37,14 @@ const TabsComponent = observer(() => {
     const [queryName, setQueryName] = useState({[currentTab]: currentQuery.name})
     const [x, setx] = useState(0)
 
-    useEffect(() => {
-        if (
-            !sessionStorage.getItem('startersModalShown')
-        ) {
-            modalStore.toggleStartersQueriesModal();
-            sessionStorage.setItem('startersModalShown', 'true');
-        }
-    }, [location.pathname]);
+    // useEffect(() => {
+    //     if (
+    //         !sessionStorage.getItem('startersModalShown')
+    //     ) {
+    //         modalStore.toggleStartersQueriesModal();
+    //         sessionStorage.setItem('startersModalShown', 'true');
+    //     }
+    // }, [location.pathname]);
 
 
     useEffect(() => {
@@ -122,6 +122,12 @@ const TabsComponent = observer(() => {
             } else if (!match) {
                 setx(2)
                 setIsLoaded()
+                     if (
+                        !sessionStorage.getItem('startersModalShown')
+                    ) {
+                        modalStore.toggleStartersQueriesModal();
+                        sessionStorage.setItem('startersModalShown', 'true');
+                    }
             } else {
                 async function updateTabs() {
                     const searchParams = new URL(document.location).searchParams
