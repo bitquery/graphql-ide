@@ -39,7 +39,6 @@ const TabsComponent = observer(() => {
 
     useEffect(() => {
         if (
-            location.pathname === '/' &&
             !sessionStorage.getItem('startersModalShown')
         ) {
             modalStore.toggleStartersQueriesModal();
