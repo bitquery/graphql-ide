@@ -269,20 +269,7 @@ const ControlPanel = observer(function ControlPanel() {
                         id="nav-dropdown"
                         className="bitquery-nav_link"
                     >
-                        <OverlayTrigger
-                            placement="bottom"
-                            overlay={<Tooltip id="tooltip-api-v1">View Status page</Tooltip>}
-                        >
-                            <NavDropdown.Item
-                                className="bitquery-links bitquery-links-item"
-                                href="https://stats.uptimerobot.com/NUB3Mporlh"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                aria-label="View spatis page (opens in a new tab)"
-                            >
-                                Status page
-                            </NavDropdown.Item>
-                        </OverlayTrigger>
+
 
                         {/*<NavDropdown.Divider/>*/}
                         {/*<OverlayTrigger*/}
@@ -302,20 +289,20 @@ const ControlPanel = observer(function ControlPanel() {
 
                         {/*<NavDropdown.Divider/>*/}
 
-                        {/*<OverlayTrigger*/}
-                        {/*    placement="bottom"*/}
-                        {/*    overlay={<Tooltip id="tooltip-api-v2">View API v2 status</Tooltip>}*/}
-                        {/*>*/}
-                        {/*    <NavDropdown.Item*/}
-                        {/*        className="bitquery-links bitquery-links-item"*/}
-                        {/*        href="https://bitquery-streaming.statuspage.io/"*/}
-                        {/*        target="_blank"*/}
-                        {/*        rel="noopener noreferrer"*/}
-                        {/*        aria-label="View API v2 status (opens in a new tab)"*/}
-                        {/*    >*/}
-                        {/*        API v2 - V2*/}
-                        {/*    </NavDropdown.Item>*/}
-                        {/*</OverlayTrigger>*/}
+                        <OverlayTrigger
+                            placement="bottom"
+                            overlay={<Tooltip id="tooltip-api-v2">View Streaming status page</Tooltip>}
+                        >
+                            <NavDropdown.Item
+                                className="bitquery-links bitquery-links-item"
+                                href="https://streaming-status.bitquery.io/"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                aria-label="View Streaming status page (opens in a new tab)"
+                            >
+                                Streaming status
+                            </NavDropdown.Item>
+                        </OverlayTrigger>
 
                         {/*<NavDropdown.Divider/>*/}
 
