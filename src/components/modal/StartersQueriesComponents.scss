@@ -40,12 +40,13 @@
 .btn-check:checked + .tree-btn {
   color: $text-color-active;
   background: $base-gradient;
-  border-color: $border-color
+  border-color: $text-color-active;
+  box-shadow: $button-shadow;
 }
 .tree-btn:hover {
   color: $text-color-active;
   background: $color-primary-hover;
-  border-color: $color-primary-hover;
+  border-color: $text-color-active;
 }
 
 
