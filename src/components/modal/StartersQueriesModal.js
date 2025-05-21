@@ -15,7 +15,7 @@ const StartersQueriesModal = observer(() => {
             centered
         >
             <Modal.Header closeButton>
-                <Modal.Title>Starter Queries & Subscriptions</Modal.Title>
+                <Modal.Title>Starter Queries & Websocket (Stream)</Modal.Title>
             </Modal.Header>
             <Modal.Body style={{ padding: 0 }}>
                 <StartersQueriesComponents />

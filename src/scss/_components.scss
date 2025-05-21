@@ -196,3 +196,12 @@
 .modal.show:has(.modal-content:empty) {
   display: none !important;
 }
+
+.bitquery-btn-video{
+  color:$base-font-color;
+  &:hover, &:active, &:focus{
+    color:$text-color-active;
+
+
+  }
+}

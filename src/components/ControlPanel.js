@@ -6,6 +6,7 @@ import {useQuery} from '../utils/useQuery';
 import {Link, useHistory, useLocation} from 'react-router-dom';
 import bitqueryLogo from '../assets/images/bitquery_logo.svg';
 import useDebounce from '../utils/useDebounce';
+import VideoModal from '../components/modal/VideoModal'
 import {
     Navbar,
     Nav,
@@ -33,6 +34,8 @@ const ControlPanel = observer(function ControlPanel() {
     const history = useHistory();
     const location = useLocation();
     const query = useQuery();
+    const [showVideo, setShowVideo] = useState(false)
+
 
     const menuItems = {
         queries: {name: 'Queries', icon: <i className="bi bi-terminal me-2 bitquery-ico"></i>},
@@ -183,6 +186,41 @@ const ControlPanel = observer(function ControlPanel() {
                                  id="nav-dropdown" className="bitquery-nav_link">
                         <OverlayTrigger
                             placement="bottom"
+                            overlay={<Tooltip id="docs-tooltip-getting-started">Getting started with Bitquery
+                                GraphQL</Tooltip>}
+                        >
+                            <NavDropdown.Item
+                                className="bitquery-links bitquery-links-item"
+                                href="https://community.bitquery.io/t/how-to-get-started-with-bitquerys-blockchain-graphql-apis/13"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                aria-label="Open Getting Started guide in a new tab"
+                            >
+                                Getting started
+                            </NavDropdown.Item>
+                        </OverlayTrigger>
+                        <NavDropdown.Divider/>
+                        <OverlayTrigger
+                            placement="bottom"
+                            overlay={
+                                <Tooltip id="docs-tooltip-points-video">
+                                    Watch a quick video on the point system
+                                </Tooltip>
+                            }
+                        >
+                            <NavDropdown.Item
+                                className="bitquery-links bitquery-links-item"
+                                onClick={() => setShowVideo(true)}
+                                aria-label="Watch point system video"
+                            >
+                                Point System Video
+                            </NavDropdown.Item>
+
+                        </OverlayTrigger>
+
+                        <NavDropdown.Divider/>
+                        <OverlayTrigger
+                            placement="bottom"
                             overlay={<Tooltip id="docs-tooltip-v1">Open GraphQL V1 docs</Tooltip>}
                         >
                             <NavDropdown.Item
@@ -213,23 +251,10 @@ const ControlPanel = observer(function ControlPanel() {
                             </NavDropdown.Item>
                         </OverlayTrigger>
 
-                        <NavDropdown.Divider/>
 
-                        <OverlayTrigger
-                            placement="bottom"
-                            overlay={<Tooltip id="docs-tooltip-getting-started">Getting started with Bitquery
-                                GraphQL</Tooltip>}
-                        >
-                            <NavDropdown.Item
-                                className="bitquery-links bitquery-links-item"
-                                href="https://community.bitquery.io/t/how-to-get-started-with-bitquerys-blockchain-graphql-apis/13"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                aria-label="Open Getting Started guide in a new tab"
-                            >
-                                Getting started
-                            </NavDropdown.Item>
-                        </OverlayTrigger>
+
+
+
                     </NavDropdown>
 
                     <NavDropdown
@@ -490,6 +515,11 @@ const ControlPanel = observer(function ControlPanel() {
                 </Nav>
                 <ProfileComponent/>
             </Navbar.Collapse>
+            <VideoModal
+                show={showVideo}
+                onHide={() => setShowVideo(false)}
+                src={'https://www.veed.io/embed/27a10659-dbc9-489c-bc99-fabd4e3f1be8'}
+            />
         </Navbar>
     );
 });

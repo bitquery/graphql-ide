@@ -1,12 +1,13 @@
-import React, { useState, useEffect } from 'react'
-import { observer } from 'mobx-react-lite'
-import { QueriesStore, TabsStore, UserStore } from '../../store/queriesStore'
+import React, {useState, useEffect} from 'react'
+import {observer} from 'mobx-react-lite'
+import {QueriesStore, TabsStore, UserStore} from '../../store/queriesStore'
 import modalStore from '../../store/modalStore'
 import Loader from "react-loader-spinner"
-import { toast } from "react-toastify"
-import { getUser } from '../../api/api'
-import { useInterval } from '../../utils/useInterval'
-import { Modal, Table, Button } from 'react-bootstrap'
+import {toast} from "react-toastify"
+import {getUser} from '../../api/api'
+import {useInterval} from '../../utils/useInterval'
+import {Modal, Table, Button} from 'react-bootstrap'
+import VideoModal from './VideoModal'
 
 const METRICS_INFO = [
     'Memory consumption by the query.',
@@ -18,56 +19,66 @@ const METRICS_INFO = [
     'Number of SQL requests.'
 ]
 
-const StatisticsModal = observer(function StatisticsModal({ active }) {
+const StatisticsModal = observer(function StatisticsModal({active}) {
     const {
-        currentQuery: { graphqlQueryID, graphqlRequested, gettingPointsCount },
+        currentQuery: {graphqlQueryID, graphqlRequested, gettingPointsCount},
         updateQuery,
         queryJustSaved
     } = QueriesStore
-    const { user } = UserStore
-    const { index } = TabsStore
-    const { toggleModal, toggleStatisticsModal } = modalStore
-    const [metrics, setMetrics] = useState(undefined)
+    const {user} = UserStore
+    const {index} = TabsStore
+    const {toggleModal, toggleStatisticsModal} = modalStore
+    const [metrics, setMetrics] = useState()
     const [metricNumber, setMetricNumber] = useState(null)
+    const [showVideo, setShowVideo] = useState(false)
 
     const getMetrics = async () => {
         if (user?.key && active) {
-            updateQuery({ gettingPointsCount: gettingPointsCount + 1 || 0 }, index)
+            updateQuery({gettingPointsCount: gettingPointsCount + 1 || 0}, index)
 
-            // Проверяем, не истёк ли токен
-            if (user?.accessToken && user?.accessToken?.streaming_expires_on <= Date.now()) {
+            // Check token expiry
+            if (user?.accessToken?.streaming_expires_on <= Date.now()) {
                 try {
                     await getUser('update_token')
                 } catch (error) {
                     toast.error('Token refresh failed')
                 }
             }
-            const response = await fetch(user?.graphql_legacy_url, {
-                headers: {
-                    accept: "application/json",
-                    "content-type": "application/json",
-                    "x-api-key": user.key,
-                    ...(user?.accessToken?.access_token && {
-                        'Authorization': `Bearer ${user?.accessToken?.access_token}`
-                    }),
-                },
-                body: `{"query":"query MyQuery {\\n utilities {\\n  metrics(queryId: \\"${graphqlQueryID}\\", options: {seed: ${new Date().getTime()}}) {\\n    points\\n    id\\n    sqlRequestsCount\\n    list {\\n      cost\\n      max\\n      min\\n      name\\n      price\\n      value\\n      divider\\n      maxUnit\\n      minUnit\\n      valueUnit\\n    } }\\n  }\\n}\\n","variables":"{}"}`,
-                method: "POST",
-                mode: "cors",
-            })
-            if (user?.accessToken?.error) toast.error(`Error in accessToken: ${user?.accessToken?.error}`)
 
-            const { data } = await response.json()
-            if (data?.utilities?.metrics && 'points' in data.utilities.metrics) {
+            const response = await fetch(user.graphql_legacy_url, {
+                method: 'POST',
+                mode: 'cors',
+                headers: {
+                    accept: 'application/json',
+                    'content-type': 'application/json',
+                    'x-api-key': user.key,
+                    ...(user.accessToken?.access_token && {Authorization: `Bearer ${user.accessToken.access_token}`})
+                },
+                body: JSON.stringify({
+                    query: `query MyQuery {
+  utilities {
+    metrics(queryId: \"${graphqlQueryID}\", options: {seed: ${Date.now()}}) {
+      points
+      id
+      sqlRequestsCount
+      list { cost max min name price value divider maxUnit minUnit valueUnit }
+    }
+  }
+}`,
+                    variables: {}
+                })
+            })
+
+            if (user.accessToken?.error) toast.error(`Error in accessToken: ${user.accessToken.error}`)
+
+            const {data} = await response.json()
+            if (data?.utilities?.metrics?.points != null) {
                 setMetrics(data.utilities.metrics)
             }
         }
     }
 
-    // Запрашиваем метрики каждые 2 секунды, пока не получим данные или не превысим лимит
-    useInterval(() => {
-        getMetrics()
-    }, (!metrics || gettingPointsCount < 9) ? 2000 : null)
+    useInterval(getMetrics, (!metrics || gettingPointsCount < 9) ? 2000 : null)
 
     const closeHandler = () => {
         toggleModal()
@@ -75,7 +86,6 @@ const StatisticsModal = observer(function StatisticsModal({ active }) {
     }
 
     let modalBodyContent = null
-
     if (!graphqlRequested) {
         modalBodyContent = (
             <>
@@ -99,18 +109,16 @@ const StatisticsModal = observer(function StatisticsModal({ active }) {
                     {metrics.list.map((metric, idx) => (
                         <tr key={idx}>
                             <th>
-                  <span
-                      className="metrics__helper"
-                      onMouseEnter={() => setMetricNumber(idx)}
-                      onMouseLeave={() => setMetricNumber(null)}
-                  >
-                    ?
-                  </span>{' '}
+                                    <span
+                                        className="metrics__helper"
+                                        onMouseEnter={() => setMetricNumber(idx)}
+                                        onMouseLeave={() => setMetricNumber(null)}
+                                    >
+                                        ?
+                                    </span>{' '}
                                 {metric.name}
                             </th>
-                            <td style={{
-                                "--part": `${Math.round(metric.value / metric.max * 100) < 20 ? 20 : Math.round(metric.value / metric.max * 100)}%`
-                            }}>
+                            <td style={{'--part': `${Math.max(Math.round(metric.value / metric.max * 100), 20)}%`}}>
                                 {(metric.cost / metric.price).toFixed(2)}
                             </td>
                             <td>{metric.price.toFixed(2)}</td>
@@ -136,25 +144,31 @@ const StatisticsModal = observer(function StatisticsModal({ active }) {
             <div className="d-flex flex-column align-items-center">
                 <p>Query ID: {graphqlQueryID}</p>
                 <p>Waiting for processing of this query...</p>
-                <Loader type="Triangle" />
+                <Loader type="Triangle"/>
             </div>
-
-
         )
     }
 
     return active ? (
-        <Modal show={active} onHide={closeHandler} centered>
-            <Modal.Header closeButton>
-                <Modal.Title>Statistics</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>{modalBodyContent}</Modal.Body>
-            <Modal.Footer>
-                <Button className='cancel-btn' onClick={closeHandler}>
-                    Close
-                </Button>
-            </Modal.Footer>
-        </Modal>
+        <>
+            <Modal show={active} onHide={closeHandler} centered>
+                <Modal.Header closeButton>
+                    <Modal.Title>Statistics</Modal.Title>
+
+                </Modal.Header>
+                <Modal.Body>{modalBodyContent}</Modal.Body>
+                <Modal.Footer className="d-flex justify-content-between">
+                    <Button onClick={() => setShowVideo(true)} className="bitquery-btn bitquery-btn-video">
+                        <i className="bi bi-play-btn me-2"></i>
+                        Watch video on point system
+                    </Button>
+                    <Button className="cancel-btn" onClick={closeHandler}>Close</Button>
+                </Modal.Footer>
+            </Modal>
+            <VideoModal show={showVideo} onHide={() => setShowVideo(false)}
+                        src={'https://www.veed.io/embed/27a10659-dbc9-489c-bc99-fabd4e3f1be8'}
+            />
+        </>
     ) : null
 })
 

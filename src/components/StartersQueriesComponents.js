@@ -121,7 +121,7 @@ const StartersQueriesComponents = observer(() => {
                         <span
                             className="child-link"
                         ><i className="bi bi-terminal me-2"></i>
-                          {item.title}
+                            {item.title}
                         </span>
                                             </OverlayTrigger>
                                         </li>
@@ -139,7 +139,7 @@ const StartersQueriesComponents = observer(() => {
         <section className='mx-3'>
             <div className="px-2 pb-2">
                 <div className="btn-group" role="group" aria-label="Starter toggle">
-                    {['queries', 'subscriptions'].map(tab => (
+                    {['queries', 'Websocket (Stream)'].map(tab => (
                         <React.Fragment key={tab}>
                             <input
                                 type="radio"
@@ -165,7 +165,7 @@ const StartersQueriesComponents = observer(() => {
             <div className="query-container ">
                 {activeTab === 'queries'
                     ? renderTree(queriesTree, 'queries')
-                    : renderTree(subsTree, 'subscriptions')}
+                    : renderTree(subsTree, 'Websocket (Stream)')}
             </div>
         </section>
     );
