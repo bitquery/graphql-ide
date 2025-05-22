@@ -114,12 +114,13 @@ const EditorInstance = observer(function EditorInstance({number}) {
             queryDispatcher.onquerystarted()
             try {
                 cachedData = cachedData ? cachedData : await fetcher({...payload, variables})
-                setSqlQuery(cachedData?.sqlQuery || 'no sql query')
+                console.log('cachedData',cachedData)
+                setSqlQuery(cachedData?.extensions || 'no sql query')
                 if (queryNotLogged) {
                     logQuery(error)
                 }
                 queryDispatcher.onqueryend()
-                cachedData && callbacks.forEach(cb => cb(cachedData.data, variables, cachedData?.sqlQuery))
+                cachedData && callbacks.forEach(cb => cb(cachedData.data, variables, cachedData?.extensions))
             } catch (error) {
                 queryDispatcher.onerror(error.message)
             }
@@ -570,7 +571,6 @@ const EditorInstance = observer(function EditorInstance({number}) {
             }
 
             const responseTime = new Date().getTime() - start
-            const sqlQuery = response.headers.get('x-sql-used') || 'no sql query';
 
             if (!('operationName' in graphQLParams)) {
 
@@ -599,7 +599,8 @@ const EditorInstance = observer(function EditorInstance({number}) {
                 return;
             }
 
-            const {data, errors} = jsonResponse
+            const {data, errors, extensions} = jsonResponse
+            setSqlQuery( extensions )
             if (errors && errors.length > 0) {
                 setFetchError(errors[0].message);
                 setError(errors[0].message);
@@ -607,7 +608,7 @@ const EditorInstance = observer(function EditorInstance({number}) {
                 setError(null);
             }
 
-            return {data, sqlQuery}
+            return {data, extensions}
         } catch (error) {
             if (error.name === 'AbortError') {
                 setFetchError("Request was aborted");
@@ -829,7 +830,7 @@ const EditorInstance = observer(function EditorInstance({number}) {
                 </div>
                 {docExplorerOpen && <DocExplorer schema={schema[debouncedURL]}/>}
                 {codeSnippetOpen && <CodeSnippetComponent/>}
-                {user?.role === 'admin' && sqlQueryOpen && <SqlQueryComponent sqlQuery={sqlQuery}/>}
+                {user?.role === 'admin' && sqlQueryOpen && <SqlQueryComponent sqlQuery={sqlQuery?.debug || ''}/>}
             </div>
         </div>
     )

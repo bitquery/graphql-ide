@@ -19,9 +19,7 @@ const isProduction = process.env.NODE_ENV === 'production'
 app.use(bodyParser.json())
 app.use(express.static(path.join(__dirname, '../../build'), { index: false }))
 app.use(cors())
-// app.use(cors({
-// 	exposedHeaders: ['X-Sql-Used', 'X-Bitquery-Gql-Query-Id', 'X-Bitquery-Graphql-Requested', 'Access-Control-Allow-Origin', 'Content-Encoding', 'Content-Type', 'Date', 'Vary']
-// }));
+
 
 app.use(cookieParser())
 let redisClient = redis.createClient({
