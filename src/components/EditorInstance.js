@@ -114,7 +114,6 @@ const EditorInstance = observer(function EditorInstance({number}) {
             queryDispatcher.onquerystarted()
             try {
                 cachedData = cachedData ? cachedData : await fetcher({...payload, variables})
-                console.log('cachedData',cachedData)
                 setSqlQuery(cachedData?.extensions || 'no sql query')
                 if (queryNotLogged) {
                     logQuery(error)
