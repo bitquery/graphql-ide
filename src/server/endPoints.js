@@ -988,7 +988,8 @@ module.exports = function (app, db, redisClient) {
             res.set('Location', ps)
         } else {
             const fullUrl = req.protocol + '://' + req.get('host') + ps
-            res.set('Location', `${process.env.GRAPHQL_ADMIN_URL}/auth/login?redirect_to=${encodeURIComponent(fullUrl)}&utm_source=${utm_source}&utm_medium=${utm_medium}&utm_campaign=${utm_campaign}&utm_content=${utm_content}`)
+            // res.set('Location', `${process.env.GRAPHQL_ADMIN_URL}/auth/login?redirect_to=${encodeURIComponent(fullUrl)}&utm_source=${utm_source}&utm_medium=${utm_medium}&utm_campaign=${utm_campaign}&utm_content=${utm_content}`)
+            res.set('Location', `${fullUrl}`)
         }
         res.sendStatus(302)
     })
