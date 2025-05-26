@@ -32,10 +32,16 @@ export const TokenPagesAPI = observer(function TokenPagesAPI() {
 			const metaDesc      = `List of APIs to get ${symbol} data on Ethereum blockchain. We cover all APIs including ${symbol} Transfers, ${symbol} balance, ${symbol} token holders, ${symbol} price`
 			const metaKeywords  = `${symbol} Trace API, track ${symbol} erc20, ${symbol} token address, ${symbol} token price, binance ${symbol} token address, ethereum $token, ${symbol} api, ${symbol} payment api, ERC20 ${symbol} api, ${symbol} transfer, track $token, ${symbol} wallet, ${symbol} price ticker, ${symbol} price on different exchanges, ${symbol} stats`
 
-			document.title = metaTitle
+			document.title = metaTitle;
+
+			const titleTag = document.querySelector('head > title') || document.createElement('title');
+			titleTag.textContent = metaTitle;
+			if (!document.querySelector('head > title')) {
+				document.head.appendChild(titleTag);
+			}
 
 			document.querySelector('meta[name="title"]')
-				.setAttribute('content', metaTitle)
+				.setAttribute('content', metaTitle);
 			document.querySelector('meta[name="description"]')
 				.setAttribute('content', metaDesc)
 			document.querySelector('meta[name="keywords"]')
