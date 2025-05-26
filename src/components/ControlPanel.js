@@ -297,7 +297,7 @@ const ControlPanel = observer(function ControlPanel() {
 
                         <OverlayTrigger
                             placement="bottom"
-                            overlay={<Tooltip id="tooltip-eap-status">View the monitoring page for Streaming API</Tooltip>}
+                            overlay={<Tooltip id="tooltip-eap-status">View the monitoring page for GraphQL Subscriptions</Tooltip>}
                         >
                             <NavDropdown.Item
                                 className="bitquery-links bitquery-links-item"
@@ -306,7 +306,7 @@ const ControlPanel = observer(function ControlPanel() {
                                 rel="noopener noreferrer"
                                 aria-label="View EAP status (opens in a new tab)"
                             >
-                                Streaming API
+                                GraphQL Subscriptions
                             </NavDropdown.Item>
                         </OverlayTrigger>
 
