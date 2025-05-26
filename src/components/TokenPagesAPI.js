@@ -27,17 +27,32 @@ export const TokenPagesAPI = observer(function TokenPagesAPI() {
 				history.replace(`/exploreapi/${symbol}/${data[0].tokenaddress}`)
 			}
 			data && setQts(data)
-			document.title = `${symbol} API ${data[0].tokenaddress}`
-			document.querySelector('meta[name="title"]').setAttribute('content', `${symbol} Token API ${data[0].tokenaddress} - Bitquery`)
-			document.querySelector('meta[name="description"]').setAttribute('content', `List of APIs to get ${symbol} data on Ethereum blockchain. We cover all APIs including ${symbol} Transfers, ${symbol} balance, ${symbol} token holders, ${symbol} price`)
-			document.querySelector('meta[name="keywords"]').setAttribute('content', `${symbol} Trace API, track ${symbol} erc20, ${symbol} token address, ${symbol} token price, binance ${symbol} token address, ethereum $token, ${symbol} api, ${symbol} payment api, ERC20 ${symbol} api, ${symbol} transfer, track $token, ${symbol} wallet, ${symbol} price ticker, ${symbol} price on different exchanges, ${symbol} stats`)
+
+			const tokenAddr = data[0].tokenaddress
+			const metaTitle = `${symbol || tokenAddr} Token API`
+			const metaDescription = `List of APIs to get ${symbol} data on Ethereum blockchain. We cover all APIs including ${symbol} Transfers, ${symbol} balance, ${symbol} token holders, ${symbol} price`
+			const metaKeywords = `${symbol} Trace API, track ${symbol} erc20, ${symbol} token address, ${symbol} token price, binance ${symbol} token address, ethereum $token, ${symbol} api, ${symbol} payment api, ERC20 ${symbol} api, ${symbol} transfer, track $token, ${symbol} wallet, ${symbol} price ticker, ${symbol} price on different exchanges, ${symbol} stats`
+
+			document.title = `${symbol || tokenAddr} Token API`
+			document.querySelector('meta[name="title"]').setAttribute('content', metaTitle)
+			document.querySelector('meta[name="description"]').setAttribute('content', metaDescription)
+			document.querySelector('meta[name="keywords"]').setAttribute('content', metaKeywords)
+
+			document.querySelector('meta[property="og:title"]').setAttribute('content', metaTitle)
+			document.querySelector('meta[property="og:description"]').setAttribute('content', metaDescription)
+
+			document.querySelector('meta[name="twitter:title"]').setAttribute('content', metaTitle)
+			document.querySelector('meta[name="twitter:description"]').setAttribute('content', metaDescription)
+
 			if (hash) {
 				const el = document.querySelector(hash)
-				el && el.scrollIntoView({behavior: 'smooth'})
+				el && el.scrollIntoView({ behavior: 'smooth' })
 			}
 		}
-		symbol && main()
-	}, [])
+
+		if (symbol) main()
+	}, [address, symbol, hash])
+
 
 	return (
 		<div className='token_apis_wrapper overflow-auto'>
