@@ -190,7 +190,7 @@ const ControlPanel = observer(function ControlPanel() {
                                 GraphQL</Tooltip>}
                         >
                             <NavDropdown.Item
-                                className="bitquery-links bitquery-links-item"
+                                className="bitquery-links bitquery-links-item pe-3"
                                 href="https://community.bitquery.io/t/how-to-get-started-with-bitquerys-blockchain-graphql-apis/13"
                                 target="_blank"
                                 rel="noopener noreferrer"
@@ -209,7 +209,7 @@ const ControlPanel = observer(function ControlPanel() {
                             }
                         >
                             <NavDropdown.Item
-                                className="bitquery-links bitquery-links-item"
+                                className="bitquery-links bitquery-links-item pe-3"
                                 onClick={() => setShowVideo(true)}
                                 aria-label="Watch point system video"
                             >
@@ -224,7 +224,7 @@ const ControlPanel = observer(function ControlPanel() {
                             overlay={<Tooltip id="docs-tooltip-v1">Open GraphQL V1 docs</Tooltip>}
                         >
                             <NavDropdown.Item
-                                className="bitquery-links bitquery-links-item"
+                                className="bitquery-links bitquery-links-item pe-3"
                                 href="https://docs.bitquery.io/v1/docs/intro"
                                 target="_blank"
                                 rel="noopener noreferrer"
@@ -239,7 +239,7 @@ const ControlPanel = observer(function ControlPanel() {
                             overlay={<Tooltip id="docs-tooltip-v2">Open Streaming V2 docs</Tooltip>}
                         >
                             <NavDropdown.Item
-                                className="bitquery-links bitquery-links-item"
+                                className="bitquery-links bitquery-links-item pe-3"
                                 href="https://docs.bitquery.io/docs/intro/"
                                 target="_blank"
                                 rel="noopener noreferrer"
@@ -267,7 +267,7 @@ const ControlPanel = observer(function ControlPanel() {
                             overlay={<Tooltip id="tooltip-api-v2">View the monitoring page for All Services Status</Tooltip>}
                         >
                             <NavDropdown.Item
-                                className="bitquery-links bitquery-links-item"
+                                className="bitquery-links bitquery-links-item pe-3"
                                 href="https://status.bitquery.io/"
                                 target="_blank"
                                 rel="noopener noreferrer"
@@ -284,7 +284,7 @@ const ControlPanel = observer(function ControlPanel() {
                             overlay={<Tooltip id="tooltip-eap-status">View the monitoring page for Kafke Streaming</Tooltip>}
                         >
                             <NavDropdown.Item
-                                className="bitquery-links bitquery-links-item"
+                                className="bitquery-links bitquery-links-item pe-3"
                                 href="https://kafka-status.bitquery.io/"
                                 target="_blank"
                                 rel="noopener noreferrer"
@@ -300,7 +300,7 @@ const ControlPanel = observer(function ControlPanel() {
                             overlay={<Tooltip id="tooltip-eap-status">View the monitoring page for GraphQL Subscriptions</Tooltip>}
                         >
                             <NavDropdown.Item
-                                className="bitquery-links bitquery-links-item"
+                                className="bitquery-links bitquery-links-item pe-3"
                                 href="https://streaming-status.bitquery.io/"
                                 target="_blank"
                                 rel="noopener noreferrer"
@@ -316,7 +316,7 @@ const ControlPanel = observer(function ControlPanel() {
                             overlay={<Tooltip id="tooltip-eap-status">View the monitoring page for GraphQL Query API</Tooltip>}
                         >
                             <NavDropdown.Item
-                                className="bitquery-links bitquery-links-item"
+                                className="bitquery-links bitquery-links-item pe-3"
                                 href="https://graphql-status.bitquery.io/"
                                 target="_blank"
                                 rel="noopener noreferrer"
@@ -332,7 +332,7 @@ const ControlPanel = observer(function ControlPanel() {
                             overlay={<Tooltip id="tooltip-eap-status">View the monitoring page for Bitquery Applications</Tooltip>}
                         >
                             <NavDropdown.Item
-                                className="bitquery-links bitquery-links-item"
+                                className="bitquery-links bitquery-links-item pe-3"
                                 href="https://app-status.bitquery.io/"
                                 target="_blank"
                                 rel="noopener noreferrer"
@@ -363,7 +363,7 @@ const ControlPanel = observer(function ControlPanel() {
                                 aggregator</Tooltip>}
                         >
                             <NavDropdown.Item
-                                className="bitquery-links bitquery-links-item"
+                                className="bitquery-links bitquery-links-item pe-3"
                                 href="https://dexrabbit.com/"
                                 target="_blank"
                                 rel="noopener noreferrer"
@@ -381,7 +381,7 @@ const ControlPanel = observer(function ControlPanel() {
                                 transactions</Tooltip>}
                         >
                             <NavDropdown.Item
-                                className="bitquery-links bitquery-links-item"
+                                className="bitquery-links bitquery-links-item pe-3"
                                 href="https://explorer.bitquery.io/"
                                 target="_blank"
                                 rel="noopener noreferrer"
@@ -399,7 +399,7 @@ const ControlPanel = observer(function ControlPanel() {
                                 blockchain money flows</Tooltip>}
                         >
                             <NavDropdown.Item
-                                className="bitquery-links bitquery-links-item"
+                                className="bitquery-links bitquery-links-item pe-3"
                                 href="https://lite.bitquery.io/"
                                 target="_blank"
                                 rel="noopener noreferrer"
@@ -417,7 +417,7 @@ const ControlPanel = observer(function ControlPanel() {
                                 blockchain money flow analytics</Tooltip>}
                         >
                             <NavDropdown.Item
-                                className="bitquery-links bitquery-links-item"
+                                className="bitquery-links bitquery-links-item pe-3"
                                 href="https://bitquery.io/products/moneyflow"
                                 target="_blank"
                                 rel="noopener noreferrer"
@@ -435,7 +435,7 @@ const ControlPanel = observer(function ControlPanel() {
                                 insights and updates</Tooltip>}
                         >
                             <NavDropdown.Item
-                                className="bitquery-links bitquery-links-item"
+                                className="bitquery-links bitquery-links-item pe-3"
                                 href="https://bitquery.substack.com/"
                                 target="_blank"
                                 rel="noopener noreferrer"
