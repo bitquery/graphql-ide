@@ -268,7 +268,7 @@ const ControlPanel = observer(function ControlPanel() {
                         >
                             <NavDropdown.Item
                                 className="bitquery-links bitquery-links-item"
-                                href="https://streaming-status.bitquery.io/"
+                                href="https://status.bitquery.io/"
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 aria-label="View Streaming status page (opens in a new tab)"
