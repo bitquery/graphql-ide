@@ -233,9 +233,7 @@ const ControlPanel = observer(function ControlPanel() {
                                 GraphQL - V1
                             </NavDropdown.Item>
                         </OverlayTrigger>
-
                         <NavDropdown.Divider/>
-
                         <OverlayTrigger
                             placement="bottom"
                             overlay={<Tooltip id="docs-tooltip-v2">Open Streaming V2 docs</Tooltip>}
@@ -250,11 +248,6 @@ const ControlPanel = observer(function ControlPanel() {
                                 Streaming - V2
                             </NavDropdown.Item>
                         </OverlayTrigger>
-
-
-
-
-
                     </NavDropdown>
 
                     <NavDropdown
@@ -269,29 +262,9 @@ const ControlPanel = observer(function ControlPanel() {
                         id="nav-dropdown"
                         className="bitquery-nav_link"
                     >
-
-
-                        {/*<NavDropdown.Divider/>*/}
-                        {/*<OverlayTrigger*/}
-                        {/*    placement="bottom"*/}
-                        {/*    overlay={<Tooltip id="tooltip-api-v1">View API v1 status</Tooltip>}*/}
-                        {/*>*/}
-                        {/*    <NavDropdown.Item*/}
-                        {/*        className="bitquery-links bitquery-links-item"*/}
-                        {/*        href="https://status.bitquery.io/"*/}
-                        {/*        target="_blank"*/}
-                        {/*        rel="noopener noreferrer"*/}
-                        {/*        aria-label="View API v1 status (opens in a new tab)"*/}
-                        {/*    >*/}
-                        {/*        API v1 - V1*/}
-                        {/*    </NavDropdown.Item>*/}
-                        {/*</OverlayTrigger>*/}
-
-                        {/*<NavDropdown.Divider/>*/}
-
                         <OverlayTrigger
                             placement="bottom"
-                            overlay={<Tooltip id="tooltip-api-v2">View Streaming status page</Tooltip>}
+                            overlay={<Tooltip id="tooltip-api-v2">View the monitoring page for All Services Status</Tooltip>}
                         >
                             <NavDropdown.Item
                                 className="bitquery-links bitquery-links-item"
@@ -300,26 +273,74 @@ const ControlPanel = observer(function ControlPanel() {
                                 rel="noopener noreferrer"
                                 aria-label="View Streaming status page (opens in a new tab)"
                             >
-                                Streaming status
+                                All Services Status
                             </NavDropdown.Item>
                         </OverlayTrigger>
 
-                        {/*<NavDropdown.Divider/>*/}
+                        <NavDropdown.Divider/>
 
-                        {/*<OverlayTrigger*/}
-                        {/*    placement="bottom"*/}
-                        {/*    overlay={<Tooltip id="tooltip-eap-status">View EAP status</Tooltip>}*/}
-                        {/*>*/}
-                        {/*    <NavDropdown.Item*/}
-                        {/*        className="bitquery-links bitquery-links-item"*/}
-                        {/*        href="https://status-streaming-eap.bitquery.io/"*/}
-                        {/*        target="_blank"*/}
-                        {/*        rel="noopener noreferrer"*/}
-                        {/*        aria-label="View EAP status (opens in a new tab)"*/}
-                        {/*    >*/}
-                        {/*        EAP Status*/}
-                        {/*    </NavDropdown.Item>*/}
-                        {/*</OverlayTrigger>*/}
+                        <OverlayTrigger
+                            placement="bottom"
+                            overlay={<Tooltip id="tooltip-eap-status">View the monitoring page for Kafke Streaming</Tooltip>}
+                        >
+                            <NavDropdown.Item
+                                className="bitquery-links bitquery-links-item"
+                                href="https://kafka-status.bitquery.io/"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                aria-label="View EAP status (opens in a new tab)"
+                            >
+                                Kafke Streaming
+                            </NavDropdown.Item>
+                        </OverlayTrigger>
+
+
+                        <OverlayTrigger
+                            placement="bottom"
+                            overlay={<Tooltip id="tooltip-eap-status">View the monitoring page for Streaming API</Tooltip>}
+                        >
+                            <NavDropdown.Item
+                                className="bitquery-links bitquery-links-item"
+                                href="https://streaming-status.bitquery.io/"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                aria-label="View EAP status (opens in a new tab)"
+                            >
+                                Streaming API
+                            </NavDropdown.Item>
+                        </OverlayTrigger>
+
+
+                        <OverlayTrigger
+                            placement="bottom"
+                            overlay={<Tooltip id="tooltip-eap-status">View the monitoring page for GraphQL Query API</Tooltip>}
+                        >
+                            <NavDropdown.Item
+                                className="bitquery-links bitquery-links-item"
+                                href="https://graphql-status.bitquery.io/"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                aria-label="View EAP status (opens in a new tab)"
+                            >
+                                GraphQL Query API
+                            </NavDropdown.Item>
+                        </OverlayTrigger>
+
+
+                        <OverlayTrigger
+                            placement="bottom"
+                            overlay={<Tooltip id="tooltip-eap-status">View the monitoring page for Bitquery Applications</Tooltip>}
+                        >
+                            <NavDropdown.Item
+                                className="bitquery-links bitquery-links-item"
+                                href="https://app-status.bitquery.io/"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                aria-label="View EAP status (opens in a new tab)"
+                            >
+                                Applications
+                            </NavDropdown.Item>
+                        </OverlayTrigger>
                     </NavDropdown>
 
 
