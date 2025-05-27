@@ -281,7 +281,7 @@ const ControlPanel = observer(function ControlPanel() {
 
                         <OverlayTrigger
                             placement="bottom"
-                            overlay={<Tooltip id="tooltip-eap-status">View the monitoring page for Kafke Streaming</Tooltip>}
+                            overlay={<Tooltip id="tooltip-eap-status">View the monitoring page for Kafka Streaming</Tooltip>}
                         >
                             <NavDropdown.Item
                                 className="bitquery-links bitquery-links-item pe-3"
@@ -290,7 +290,7 @@ const ControlPanel = observer(function ControlPanel() {
                                 rel="noopener noreferrer"
                                 aria-label="View EAP status (opens in a new tab)"
                             >
-                                Kafke Streaming
+                                Kafka Streaming
                             </NavDropdown.Item>
                         </OverlayTrigger>
 
