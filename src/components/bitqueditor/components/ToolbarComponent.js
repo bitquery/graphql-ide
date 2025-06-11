@@ -222,7 +222,7 @@ const ToolbarComponent = observer(({
                 <Form.Control
                     id="basic-url"
                     aria-label="endpoint-url"
-                    value={currentQuery.endpoint_url}
+                    value={currentQuery.endpoint_url ?? ''}
                     onChange={handleInputURLChange}
                     className="input-url-fix"
                 />
