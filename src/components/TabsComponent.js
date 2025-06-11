@@ -78,7 +78,6 @@ const TabsComponent = observer(() => {
                                     "headers": {
                                         "accept": "application/json",
                                         "content-type": "application/json",
-                                        "x-api-key": user.key,
                                         ...(user?.accessToken?.access_token && {'Authorization': `Bearer ${UserStore.user?.accessToken?.access_token}`}),
                                     },
                                     "body": `{\"query\":\"query MyQuery {\\n\\tsystem {\\n\\t  userRequests(graphqlQueryId: {is: \\\"${queryID}\\\"}) {\\n\\t\\trequest {\\n\\t\\t  json\\n\\t\\t}\\n\\t\\tvariables {\\n\\t\\t  json\\n\\t\\t}\\n\\t  }\\n\\t}\\n  }\",\"variables\":\"{}\"}`,

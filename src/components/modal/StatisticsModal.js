@@ -51,7 +51,6 @@ const StatisticsModal = observer(function StatisticsModal({active}) {
                 headers: {
                     accept: 'application/json',
                     'content-type': 'application/json',
-                    'x-api-key': user.key,
                     ...(user.accessToken?.access_token && {Authorization: `Bearer ${user.accessToken.access_token}`})
                 },
                 body: JSON.stringify({

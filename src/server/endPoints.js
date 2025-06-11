@@ -12,13 +12,11 @@ const React = require("react");
 
 const getCodeSnippet = (lang, query, variables, headers, key, endpoint_url, token) =>
     new Promise((resolve, reject) => {
-            const keyHeader = endpoint_url === 'https://graphql.bitquery.io' ? {'X-API-KEY': key} : {}
             const customHeaders = headers ? JSON.parse(headers) : {}
 
             const allHeaders = {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`,
-                ...keyHeader,
                 ...customHeaders
             };
             const request = new sdk.Request({
