@@ -2,7 +2,7 @@ import {observer} from 'mobx-react-lite'
 import React, {useEffect, useState} from 'react'
 import {useCallback} from 'react'
 import {useHistory, useRouteMatch} from 'react-router-dom'
-import {getQuery, getTransferedQuery, getQueryByID, getWidgetConfig} from '../api/api'
+import {getQuery, getTransferedQuery, getQueryByID, getWidgetConfig, getLoadedQuery} from '../api/api'
 import {TabsStore, QueriesStore, UserStore} from '../store/queriesStore'
 import handleState from '../utils/handleState'
 import useEventListener from '../utils/useEventListener'
@@ -102,7 +102,7 @@ const TabsComponent = observer(() => {
                 const code = history.location.pathname.match(/[0-9a-fA-F]{6}/)[0]
                 const gtf = async () => {
                     const {data} = await getTransferedQuery(code)
-                    //query string goes from explorer JSON.stringify'ed twice
+                    //query string goest from explorer JSON.stringify'ed twice
                     //double JSON.parse to rid off unexpected qoutes
                     const query = JSON.parse(data.transferedQuery.query)
                     const type = query.substr(0, query.indexOf(" ")).toLowerCase()
@@ -119,6 +119,32 @@ const TabsComponent = observer(() => {
                     setIsLoaded()
                 }
                 gtf()
+            } else if (queryParams.get('external_query_key')) {
+                const key = queryParams.get('external_query_key');
+                const getExternalQuery = async () => {
+                    try {
+                        const { data } = await getLoadedQuery(key);
+                        updateQuery({
+                            query: data.query,
+                            variables: data.variables || '{}',
+                            endpoint_url: data.endpoint || 'https://graphql.bitquery.io',
+                            name: 'External Query',
+                            description: '',
+                            headers: '{}',
+                            id: null,
+                            url: null,
+                            saved: false
+                        }, index);
+                    } catch (e) {
+                        console.error("Failed to load external query", e);
+                        toast.error("Failed to load the shared query. It may have expired or been invalid.");
+                    } finally {
+                        history.replace('/'); 
+                        setx(2);
+                        setIsLoaded();
+                    }
+                }
+                getExternalQuery();
             } else if (!match) {
                 setx(2)
                 setIsLoaded()

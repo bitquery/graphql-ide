@@ -1157,4 +1157,28 @@ module.exports = function (app, db, redisClient) {
 
     })
 
+    app.post('/api/load-query', bodyParser.urlencoded({ extended: true }), async (req, res) => {
+        const crypto = require('crypto');
+        const code = crypto.randomBytes(8).toString('hex');
+        const storageTime = 60 * 60;
+        
+        await redisClient.set(`ext-query:${code}`, JSON.stringify(req.body), { EX: storageTime });
+        
+        const host = process.env.FRONTEND_URL || `${req.protocol}://${req.get('host')}`;
+        const fullUrl = `${host}/?external_query_key=${code}`;
+        res.redirect(fullUrl);
+    });
+
+    app.get('/api/get-loaded-query/:key', async (req, res) => {
+        const key = req.params.key;
+        const queryData = await redisClient.get(`ext-query:${key}`);
+        
+        if (queryData) {
+            await redisClient.del(`ext-query:${key}`);
+            res.status(200).send(JSON.parse(queryData));
+        } else {
+            res.status(404).send({ error: 'Query data not found or expired.' });
+        }
+    });
+
 }
