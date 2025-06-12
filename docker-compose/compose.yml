@@ -36,7 +36,6 @@ services:
     volumes:
       - ide-static:/var/www/static
       - ./config-runtime/nginx/default.conf:/etc/nginx/conf.d/default.conf
-      - ./config/nginx/whitelist.conf:/etc/nginx/conf.d/whitelist.conf
     ports:
       - ${LC_COMPOSE_IPADDR}:${LC_COMPOSE_NGINX_PORT}:80
     depends_on:
