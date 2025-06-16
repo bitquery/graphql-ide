@@ -11,10 +11,7 @@ import modalStore from '../../store/modalStore'
 const NewGallery = observer(function NewGallery() {
 
 	const { user } = UserStore
-	const {
-		queriesListIsOpen, currentTag, tagListIsOpen,
-		toggleQueriesList, toggleTagsList, setCurrentTag, setSubMenu
-	} = GalleryStore
+	const { toggleTagsList,  setSubMenu} = GalleryStore
 	const { currentQuery, updateQuery, schema, queryJustSaved, fetchError } = QueriesStore
 	const { index } = TabsStore
 	const [tagsList, setTagsList] = useState([])
@@ -33,27 +30,24 @@ const NewGallery = observer(function NewGallery() {
 		user && onload()
 	}, [queryJustSaved, user])
 
-	const handleSelect = (key) => {
-		setActiveTab(key);
-		if (key === 'popular-queries' || key === 'popular-streams') {
-			toggleModal();
-			toggleStartersQueriesModal();
-			setSubMenu(key === 'popular-streams' ? 1 : 0);
-		}
+	const handlePopularSelect = (key) => {
+		toggleModal()
+		toggleStartersQueriesModal()
+		setSubMenu(key === 'popular-streams' ? 1 : 0)
 	}
 
 	return (
 		<div className="newGallery__root">
 			<div className="newGallery__topbar justify-content-between">
 				<div className="sidebar-button-group">
-					<button className={`sidebar-btn ${activeTab === 'builder' ? 'active' : ''}`} onClick={() => handleSelect('builder')}>
+					<button className={`sidebar-btn ${activeTab === 'builder' ? 'active' : ''}`} onClick={() => setActiveTab('builder')}>
 						Builder
 					</button>
-					<button className={`sidebar-btn ${activeTab === 'popular-queries' ? 'active' : ''}`} onClick={() => handleSelect('popular-queries')}>
-						Popular queries
+					<button className="sidebar-btn" onClick={() => handlePopularSelect('popular-queries')}>
+						Queries
 					</button>
-					<button className={`sidebar-btn ${activeTab === 'popular-streams' ? 'active' : ''}`} onClick={() => handleSelect('popular-streams')}>
-						Popular streams
+					<button className="sidebar-btn" onClick={() => handlePopularSelect('popular-streams')}>
+						Streams
 					</button>
 				</div>
 				<i className="bi bi-chevron-double-left cursor-pointer mr-2 text-primary bitquery-ico" onClick={toggleTagsList} />

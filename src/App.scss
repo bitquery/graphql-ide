@@ -616,7 +616,7 @@ li:focus-visible {
 .graphiql__wrapper {
   display: none;
   flex: 1 1 auto;
-  max-width: calc(100% - 300px);
+  // max-width: calc(100% - 300px);
 
   &.fullwidth {
     max-width: 100%;
@@ -1836,7 +1836,7 @@ $borderStyle: 2.5px dotted $colorGray;
 }
 
 .resizer {
-  width: 5px;
+  width: 3px;
   cursor: col-resize;
   background-color: #e0e0e0;
   border-left: 1px solid #d0d0d0;

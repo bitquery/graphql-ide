@@ -47,7 +47,7 @@ const App = observer(function App() {
         if (isResizing) {
             setSidebarWidth(prevWidth => {
                 const newWidth = prevWidth + e.movementX;
-                if (newWidth > 200 && newWidth < 800) { // Min and max width constraints
+                if (newWidth > 251 && newWidth < 800) { // Min and max width constraints
                     return newWidth;
                 }
                 return prevWidth;
