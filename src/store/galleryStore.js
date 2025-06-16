@@ -7,6 +7,7 @@ class Gallery {
 	tagList = []
 	queryList = []
 	currentTag = 'All queries'
+	subMenu = 0
 
 	constructor() {
 		makeObservable(this, {
@@ -15,9 +16,11 @@ class Gallery {
 			tagList: observable,
 			queryList: observable,
 			currentTag: observable,
+			subMenu: observable,
 			toggleTagsList: action,
 			toggleQueriesList: action,
-			setCurrentTag: action
+			setCurrentTag: action,
+			setSubMenu: action,
 		})
 	}
 
@@ -29,6 +32,7 @@ class Gallery {
 			this.currentTag = tag
 		}
 	}
+	setSubMenu = num => this.subMenu = num
 }
 
 export const GalleryStore = new Gallery()

@@ -1,10 +1,9 @@
-import React from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import './App.scss'
 import ModalWindow from './components/modal/ModalWindow'
 import ControlPanel from './components/ControlPanel'
 import {Route, Switch} from 'react-router-dom'
 import ResetPassword from './pages/ResetPassword'
-import {useEffect} from 'react'
 import {QueriesStore} from './store/queriesStore'
 import {GraphqlExplorer} from './components/GraphqlExplorer'
 import {observer} from 'mobx-react-lite'
@@ -32,6 +31,45 @@ if (process.env.NODE_ENV === 'development') {
 const App = observer(function App() {
     const {query, showSideBar} = QueriesStore
     const {tagListIsOpen} = GalleryStore
+    const [sidebarWidth, setSidebarWidth] = useState(300);
+    const [isResizing, setIsResizing] = useState(false);
+
+    const handleMouseDown = (e) => {
+        e.preventDefault();
+        setIsResizing(true);
+    };
+
+    const handleMouseUp = useCallback(() => {
+        setIsResizing(false);
+    }, []);
+
+    const handleMouseMove = useCallback((e) => {
+        if (isResizing) {
+            setSidebarWidth(prevWidth => {
+                const newWidth = prevWidth + e.movementX;
+                if (newWidth > 200 && newWidth < 800) { // Min and max width constraints
+                    return newWidth;
+                }
+                return prevWidth;
+            });
+        }
+    }, [isResizing]);
+
+    useEffect(() => {
+        if (isResizing) {
+            window.addEventListener('mousemove', handleMouseMove);
+            window.addEventListener('mouseup', handleMouseUp);
+        } else {
+            window.removeEventListener('mousemove', handleMouseMove);
+            window.removeEventListener('mouseup', handleMouseUp);
+        }
+
+        return () => {
+            window.removeEventListener('mousemove', handleMouseMove);
+            window.removeEventListener('mouseup', handleMouseUp);
+        };
+    }, [isResizing, handleMouseMove, handleMouseUp]);
+
     useEffect(() => {
         const handleUnload = e => {
             for (let i = 0; i < query.length; i++) {
@@ -72,7 +110,17 @@ const App = observer(function App() {
                 <Route path={['/:queryurl', '/']}>
                     <TabsComponent/>
                     <div className="content flex">
-                        {tagListIsOpen && <NewGallery/>}
+                        {tagListIsOpen && (
+                            <>
+                                <div style={{ width: `${sidebarWidth}px` }}>
+                                    <NewGallery />
+                                </div>
+                                <div
+                                    className="resizer"
+                                    onMouseDown={handleMouseDown}
+                                />
+                            </>
+                        )}
                         <GraphqlExplorer/>
                     </div>
                 </Route>

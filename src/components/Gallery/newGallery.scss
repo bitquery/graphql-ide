@@ -1,3 +1,5 @@
+@import '../../scss/variables';
+
 @mixin choosen_tag {
 	background-color: hsl(90, 100%, 50%, 50%);
 	font-size: 20px;
@@ -7,21 +9,17 @@
 	&__root {
 		display: flex;
 		flex-direction: column;
-		flex-basis: 15%;
-		min-width: 300px;
-		max-width: 300px;
+		height: 100%;
+		border-right: 1px solid #d6d6d6;
 	}
 	&__topbar {
-		min-height: 44px;
-		background-color: #fff;
-		border: none;
 		display: flex;
+		width: 100%;
 		align-items: center;
+		flex-shrink: 0;
 		border-bottom: 1px solid #d0d0d0;
-		i:hover {
-			//color: #000 !important;
-			color: $color-primary-hover !important;
-		}
+		padding: 5px;
+		height: 44px;
 	}
 	&__close {
 		margin-right: auto;
@@ -57,4 +55,30 @@
 		}
 		transition: all .15s ease;
 	}
+}
+
+.sidebar-button-group {
+	display: flex;
+	gap: 5px;
+	width: 100%;
+}
+
+.sidebar-btn {
+	@extend .bitquery-btn;
+	flex-grow: 1;
+	background: transparent;
+	border-color: transparent;
+	color: $text-color-gray-d;
+
+	&.active {
+		background: $base-gradient;
+		border: 1px solid $border-color;
+		color: $text-color-active;
+		font-weight: bold;
+	}
+}
+
+.sidebar-content {
+	flex-grow: 1;
+	overflow-y: auto;
 }

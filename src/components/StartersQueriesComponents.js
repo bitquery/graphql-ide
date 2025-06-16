@@ -5,6 +5,7 @@ import { QueriesStore} from '../store/queriesStore';
 import modalStore from '../store/modalStore';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Tooltip from 'react-bootstrap/Tooltip';
+import { GalleryStore } from '../store/galleryStore';
 
 const STARTER_QUERIES_URL =
     'https://raw.githubusercontent.com/bitquery/streaming-data-platform-docs/refs/heads/main/docs/start/starter-queries.md';
@@ -68,7 +69,8 @@ const StartersQueriesComponents = observer(() => {
     const history = useHistory();
     const {openOrSwitch } = QueriesStore;
     const { toggleStartersQueriesModal } = modalStore
-    const [activeTab, setActiveTab] = useState('queries');
+    const { subMenu, setSubMenu } = GalleryStore
+    const tabs = ['queries', 'Websocket (Stream)']
     const queriesTree = useMarkdownTree(STARTER_QUERIES_URL);
     const subsTree = useMarkdownTree(STARTER_SUBSCRIPTIONS_URL);
     const [expandedKey, setExpandedKey] = useState(null);
@@ -86,9 +88,10 @@ const StartersQueriesComponents = observer(() => {
             if (!id) return;
             await openOrSwitch(id, { id, url: id, name: title });
             history.push(`/${id}`);
+            modalStore.toggleModal();
             toggleStartersQueriesModal();
         },
-        [history, toggleStartersQueriesModal]
+        [history, openOrSwitch, toggleStartersQueriesModal]
     );
 
 
@@ -139,7 +142,7 @@ const StartersQueriesComponents = observer(() => {
         <section className='mx-3'>
             <div className="px-2 pb-2">
                 <div className="btn-group" role="group" aria-label="Starter toggle">
-                    {['queries', 'Websocket (Stream)'].map(tab => (
+                    {tabs.map((tab, i) => (
                         <React.Fragment key={tab}>
                             <input
                                 type="radio"
@@ -147,8 +150,8 @@ const StartersQueriesComponents = observer(() => {
                                 name="starterToggle"
                                 id={`toggle-${tab}`}
                                 autoComplete="off"
-                                checked={activeTab === tab}
-                                onChange={() => setActiveTab(tab)}
+                                checked={subMenu === i}
+                                onChange={() => setSubMenu(i)}
                             />
                             <label
                                 className="btn tree-btn"
@@ -163,7 +166,7 @@ const StartersQueriesComponents = observer(() => {
             </div>
 
             <div className="query-container ">
-                {activeTab === 'queries'
+                {subMenu === 0
                     ? renderTree(queriesTree, 'queries')
                     : renderTree(subsTree, 'Websocket (Stream)')}
             </div>
