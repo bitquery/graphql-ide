@@ -17,6 +17,15 @@
   }
 }
 
+.bitquery-links-info {
+  color: $text-color-active !important;
+
+  &:hover, &:active, &:focus {
+    color: $color-primary-hover !important;
+
+  }
+}
+
 .bitquery-links {
   text-wrap-mode: nowrap;
   padding: 7px 3px;
