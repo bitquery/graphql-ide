@@ -67,8 +67,8 @@
 .sidebar-btn {
 	@extend .bitquery-btn;
 	flex-grow: 1;
+	line-height: 1;
 	color: $text-color-gray-d;
-
 	&.active {
 		background: $base-gradient;
 		border: 1px solid $border-color;

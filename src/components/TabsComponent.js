@@ -150,6 +150,7 @@ const TabsComponent = observer(() => {
                      if (
                         !sessionStorage.getItem('startersModalShown')
                     ) {
+                        modalStore.toggleModal()
                         modalStore.toggleStartersQueriesModal();
                         sessionStorage.setItem('startersModalShown', 'true');
                     }
@@ -226,6 +227,7 @@ const TabsComponent = observer(() => {
 
     const addNewTabHandler = () => {
         queriesListIsOpen && toggleQueriesList()
+        toggleModal()
         toggleStartersQueriesModal()
         setQuery({
             query: '',

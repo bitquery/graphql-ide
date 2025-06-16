@@ -44,10 +44,10 @@ const NewGallery = observer(function NewGallery() {
 						Builder
 					</button>
 					<button className="sidebar-btn" onClick={() => handlePopularSelect('popular-queries')}>
-						Queries
+						Popular queries
 					</button>
 					<button className="sidebar-btn" onClick={() => handlePopularSelect('popular-streams')}>
-						Streams
+						Popular streams
 					</button>
 				</div>
 				<i className="bi bi-chevron-double-left cursor-pointer mr-2 text-primary bitquery-ico" onClick={toggleTagsList} />
