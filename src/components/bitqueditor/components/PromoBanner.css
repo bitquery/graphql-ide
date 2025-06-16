@@ -18,12 +18,20 @@
 
 .promo-banner-logo {
     width: 36px;
-    height: 36px;
+    height: 30px;
+    margin-right: 15px;
+}
+
+.promo-banner-icon {
+    font-size: 24px;
+    margin-right: 15px;
+    color: #a372f7; /* A color that fits the theme */
 }
 
 .promo-banner-content {
     display: flex;
     flex-direction: column;
+    flex-grow: 1;
     cursor: pointer;
 }
 
