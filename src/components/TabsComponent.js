@@ -227,8 +227,6 @@ const TabsComponent = observer(() => {
 
     const addNewTabHandler = () => {
         queriesListIsOpen && toggleQueriesList()
-        toggleModal()
-        toggleStartersQueriesModal()
         setQuery({
             query: '',
             variables: '{}',

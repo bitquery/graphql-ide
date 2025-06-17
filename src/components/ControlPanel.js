@@ -25,10 +25,6 @@ const ControlPanel = observer(function ControlPanel() {
     const {user} = UserStore;
     const {currentQuery} = QueriesStore;
     const {currentTag} = GalleryStore;
-    const {
-        toggleStartersQueriesModal,
-        toggleModal
-    } = modalStore
     const [search, setSearch] = useState('');
     const [active, setActive] = useState(1);
     const searchValue = useDebounce(search, 500);
@@ -140,17 +136,7 @@ const ControlPanel = observer(function ControlPanel() {
                             : 'bitquery-nav_item'
                         }
                     >
-                        <NavDropdown.Item
-                            onClick={() => {
-                                toggleStartersQueriesModal()
-                                toggleModal()
-                            }}
-                            className="bitquery-links bitquery-nav_item"
-                        >
-                            <i className="bi bi-lightning-charge me-2 bitquery-ico"></i>
-                            Starter Queries
-                        </NavDropdown.Item>
-                        <NavDropdown.Divider/>
+                    
                         <NavDropdown.Item
                             onClick={() => handleNavClick('/explore/All%20queries', 'explore')}
                             className={active === 3 ? 'bitquery-link_active' : 'bitquery-links bitquery-nav_item'}
