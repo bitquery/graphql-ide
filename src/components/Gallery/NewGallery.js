@@ -49,7 +49,6 @@ const NewGallery = observer(function NewGallery() {
 				{activeTab === 'builder' && (
 					<QueryBuilder
 						width={'100%'}
-						minWidth={'100%'}
 						title={'Builder'}
 						fetchError={fetchError}
 						schema={schema[currentQuery.endpoint_url]}
