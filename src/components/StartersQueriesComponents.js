@@ -68,7 +68,6 @@ function useMarkdownTree(url) {
 const StartersQueriesComponents = observer(() => {
     const history = useHistory();
     const {openOrSwitch } = QueriesStore;
-    const { toggleStartersQueriesModal } = modalStore
     const { subMenu, setSubMenu } = GalleryStore
     const tabs = ['queries', 'Websocket (Stream)']
     const queriesTree = useMarkdownTree(STARTER_QUERIES_URL);
@@ -89,9 +88,8 @@ const StartersQueriesComponents = observer(() => {
             await openOrSwitch(id, { id, url: id, name: title });
             history.push(`/${id}`);
             modalStore.toggleModal();
-            toggleStartersQueriesModal();
         },
-        [history, openOrSwitch, toggleStartersQueriesModal]
+        [history, openOrSwitch]
     );
 
 

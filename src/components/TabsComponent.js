@@ -21,7 +21,7 @@ const TabsComponent = observer(() => {
     const {queriesListIsOpen, toggleQueriesList} = GalleryStore
     const {user, getUser} = UserStore
     const {tabs, currentTab, switchTab, index} = TabsStore
-    const { startersQueriesModalIsOpen, toggleStartersQueriesModal, toggleModal } = modalStore
+    const { toggleModal } = modalStore
 
     const match = useRouteMatch(`/:queryurl`)
     const {
@@ -147,13 +147,6 @@ const TabsComponent = observer(() => {
             } else if (!match) {
                 setx(2)
                 setIsLoaded()
-                     if (
-                        !sessionStorage.getItem('startersModalShown')
-                    ) {
-                        modalStore.toggleModal()
-                        modalStore.toggleStartersQueriesModal();
-                        sessionStorage.setItem('startersModalShown', 'true');
-                    }
             } else {
                 async function updateTabs() {
                     const searchParams = new URL(document.location).searchParams
