@@ -67,7 +67,7 @@ function useMarkdownTree(url) {
 
 const StarterQueriesPanel = observer(({ type }) => {
     const history = useHistory();
-    const { updateQuery } = QueriesStore;
+    const { updateQuery, query, setQuery } = QueriesStore;
     const { index } = TabsStore;
     const { user } = UserStore;
     const url = type === 'queries' ? STARTER_QUERIES_URL : STARTER_SUBSCRIPTIONS_URL;
@@ -87,18 +87,24 @@ const StarterQueriesPanel = observer(({ type }) => {
             if (!id) return;
             try {
                 const { data } = await getQuery(id);
-                updateQuery({
+                const queryData = {
                     ...data,
                     isOwner: data.account_id === user?.id,
                     saved: true
-                }, index, data.id);
+                }
+                const isCurrentQueryModified = query[index]?.saved === false;
+                if (isCurrentQueryModified) {
+                    setQuery(queryData, data.id);
+                } else {
+                    updateQuery(queryData, index, data.id);
+                }
                 history.push(`/${id}`);
             } catch (e) {
                 console.error(e);
                 toast.error('Error opening query');
             }
         },
-        [history, updateQuery, index, user]
+        [history, updateQuery, index, user, query, setQuery]
     );
 
     const renderTree = (treeToRender) => (
