@@ -101,26 +101,26 @@ const ControlPanel = observer(function ControlPanel() {
                 <div className="d-flex align-items-center">
                     <Navbar.Brand className="me-0" href="/">
                         <img src={bitqueryLogo} alt="logo"/>
-                        <span className="bitquery-logo_text ms-2">Bitquery</span>
+                        <span className="bitquery-logo_text">Bitquery</span>
                     </Navbar.Brand>
-                    <div className="bitquery-divider mx-2"/>
-                    <span className="bitquery-graph">GraphQL</span>
                 </div>
 
                 <Navbar.Toggle className="bitquery-btn" aria-controls="navbarSupportedContent"/>
             </div>
 
             <Navbar.Collapse id="navbarSupportedContent" className="w-100">
-                <Form className="d-flex flex-grow-1  ms-2 my-2" onSubmit={searchHandler}>
-                    <FormControl
-                        type="search"
-                        placeholder="Search for a query"
-                        className="bitquery-search"
-                        aria-label="Search"
-                        value={search}
-                        onChange={(e) => setSearch(e.target.value)}
-                    />
-                </Form>
+                <div className="flex-grow-1 search-form-wrapper ms-4">
+                    <Form className="d-flex h-100" onSubmit={searchHandler}>
+                        <FormControl
+                            type="search"
+                            placeholder="Search for a query"
+                            className="bitquery-search"
+                            aria-label="Search"
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                        />
+                    </Form>
+                </div>
 
                 <Nav className="ms-auto mt-2 mt-lg-0 bitquery-nav_container">
                     <Nav.Link
