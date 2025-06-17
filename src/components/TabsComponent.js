@@ -37,16 +37,6 @@ const TabsComponent = observer(() => {
     const [queryName, setQueryName] = useState({[currentTab]: currentQuery.name})
     const [x, setx] = useState(0)
 
-    // useEffect(() => {
-    //     if (
-    //         !sessionStorage.getItem('startersModalShown')
-    //     ) {
-    //         modalStore.toggleStartersQueriesModal();
-    //         sessionStorage.setItem('startersModalShown', 'true');
-    //     }
-    // }, [location.pathname]);
-
-
     useEffect(() => {
         x <= 1 && setx(x => x + 1)
         if (x > 1) {
