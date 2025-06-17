@@ -61,7 +61,10 @@ const PromoBanner = () => {
     const promo = promotions[currentIndex];
 
     return (
-        <div id="promo-banner" className={`promo-banner ${isFadingOut ? "promo-banner-hide" : ""}`}>
+        <div
+            id="promo-banner"
+            className={`promo-banner promo-banner-${promo.id} ${isFadingOut ? "promo-banner-hide" : ""}`}
+        >
             {promo.image && (
                 <img
                     src={promo.image}
