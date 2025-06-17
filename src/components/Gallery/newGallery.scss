@@ -59,19 +59,29 @@
 
 .sidebar-button-group {
 	display: flex;
-	gap: 3px;
 	width: 100%;
-	padding: 5px 3px
+	border-bottom: 1px solid $border-color;
+	padding: 0 5px;
 }
 
 .sidebar-btn {
-	@extend .bitquery-btn;
-	flex-grow: 1;
+	font-size:0.9rem;
+	background: none;
+	border: none;
+	border-radius: 0;
+	padding: 6px 8px;
+	margin-bottom: -1px;
 	line-height: 1;
 	color: $text-color-gray-d;
+	transition: all 0.2s ease-in-out;
+
+	&:hover {
+		color: $text-color-active;
+		border-bottom-color: $color-primary-hover;
+	}
+
 	&.active {
-		background: $base-gradient;
-		border: 1px solid $border-color;
+		background: #fff;
 		color: $text-color-active;
 		font-weight: bold;
 	}

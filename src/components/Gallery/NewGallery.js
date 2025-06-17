@@ -6,17 +6,16 @@ import { QueriesStore, TabsStore } from '../../store/queriesStore'
 import { UserStore } from '../../store/queriesStore'
 import { makeDefaultArg, getDefaultScalarArgValue } from "../Gallery/QueryBuilder/CustomArgs"
 import QueryBuilder from '../Gallery/QueryBuilder/index'
-import modalStore from '../../store/modalStore'
+import StarterQueriesPanel from '../StarterQueriesPanel'
 
 const NewGallery = observer(function NewGallery() {
 
 	const { user } = UserStore
-	const { toggleTagsList,  setSubMenu} = GalleryStore
+	const { toggleTagsList } = GalleryStore
 	const { currentQuery, updateQuery, schema, queryJustSaved, fetchError } = QueriesStore
 	const { index } = TabsStore
 	const [tagsList, setTagsList] = useState([])
 	const [activeTab, setActiveTab] = useState('builder');
-	const { toggleStartersQueriesModal, toggleModal } = modalStore
 
 	useEffect(() => {
 		const onload = async () => {
@@ -30,24 +29,18 @@ const NewGallery = observer(function NewGallery() {
 		user && onload()
 	}, [queryJustSaved, user])
 
-	const handlePopularSelect = (key) => {
-		toggleModal()
-		toggleStartersQueriesModal()
-		setSubMenu(key === 'popular-streams' ? 1 : 0)
-	}
-
 	return (
 		<div className="newGallery__root">
 			<div className="newGallery__topbar justify-content-between">
 				<div className="sidebar-button-group">
-					<button className={`sidebar-btn ${activeTab === 'builder' ? 'active' : ''}`} onClick={() => setActiveTab('builder')}>
-						Builder
-					</button>
-					<button className="sidebar-btn" onClick={() => handlePopularSelect('popular-queries')}>
+					<button className={`sidebar-btn ${activeTab === 'queries' ? 'active' : ''}`} onClick={() => setActiveTab('queries')}>
 						Popular queries
 					</button>
-					<button className="sidebar-btn" onClick={() => handlePopularSelect('popular-streams')}>
+					<button className={`sidebar-btn ${activeTab === 'streams' ? 'active' : ''}`} onClick={() => setActiveTab('streams')}>
 						Popular streams
+					</button>
+					<button className={`sidebar-btn ${activeTab === 'builder' ? 'active' : ''}`} onClick={() => setActiveTab('builder')}>
+						Builder
 					</button>
 				</div>
 				<i className="bi bi-chevron-double-left cursor-pointer mr-2 text-primary bitquery-ico" onClick={toggleTagsList} />
@@ -68,6 +61,8 @@ const NewGallery = observer(function NewGallery() {
 						makeDefaultArg={makeDefaultArg}
 					/>
 				)}
+				{activeTab === 'queries' && <StarterQueriesPanel type="queries" />}
+				{activeTab === 'streams' && <StarterQueriesPanel type="subscriptions" />}
 			</div>
 		</div>
 	)

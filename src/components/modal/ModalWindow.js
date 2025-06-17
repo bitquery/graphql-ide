@@ -35,7 +35,7 @@ const ModalWindow = observer(() => {
 		>
 			<EditDialog active={editDialogIsOpen} />
 			<StatisticsModal active={statisticsModalIsOpen} />
-			{startersQueriesModalIsOpen && <StartersQueriesModal active={startersQueriesModalIsOpen}/>}
+			 <StartersQueriesModal active={startersQueriesModalIsOpen}/>
 		</Modal>
 		</>
 	)
