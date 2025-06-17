@@ -1836,11 +1836,11 @@ $borderStyle: 2.5px dotted $colorGray;
 }
 
 .resizer {
-  width: 2px;
+  width: 3px;
   cursor: col-resize;
-  background-color: #e0e0e0;
-  border-left: 1px solid #d0d0d0;
-  border-right: 1px solid #d0d0d0;
+  background-color: #f3f3f3;
+  border-left: 2px solid #f3f3f3;
+  border-right: 2px solid #f3f3f3;
 }
 
 .content.flex {
