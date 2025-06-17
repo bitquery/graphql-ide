@@ -616,7 +616,7 @@ li:focus-visible {
 .graphiql__wrapper {
   display: none;
   flex: 1 1 auto;
-  // max-width: calc(100% - 300px);
+  min-width: 0;
 
   &.fullwidth {
     max-width: 100%;

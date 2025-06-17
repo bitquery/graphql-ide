@@ -34,10 +34,10 @@ const NewGallery = observer(function NewGallery() {
 			<div className="newGallery__topbar justify-content-between">
 				<div className="sidebar-button-group">
 					<button className={`sidebar-btn ${activeTab === 'queries' ? 'active' : ''}`} onClick={() => setActiveTab('queries')}>
-						Popular queries
+						Queries
 					</button>
 					<button className={`sidebar-btn ${activeTab === 'streams' ? 'active' : ''}`} onClick={() => setActiveTab('streams')}>
-						Popular streams
+						Streams
 					</button>
 					<button className={`sidebar-btn ${activeTab === 'builder' ? 'active' : ''}`} onClick={() => setActiveTab('builder')}>
 						Builder
