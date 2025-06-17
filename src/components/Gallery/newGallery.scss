@@ -60,7 +60,6 @@
 .sidebar-button-group {
 	display: flex;
 	width: 100%;
-	border-bottom: 1px solid $border-color;
 	padding: 0 5px;
 }
 
@@ -81,7 +80,6 @@
 	}
 
 	&.active {
-		background: #fff;
 		color: $text-color-active;
 		font-weight: bold;
 	}
