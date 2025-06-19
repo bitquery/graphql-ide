@@ -1,8 +1,8 @@
-import React, {useState, useEffect, useCallback, useRef, useMemo, useReducer} from 'react';
-import {observer} from 'mobx-react-lite'
+import React, { useState, useEffect, useCallback, useRef, useMemo, useReducer } from 'react';
+import { observer } from 'mobx-react-lite'
 import ReactTooltip from 'react-tooltip'
-import {vegaPlugins} from 'vega-widgets'
-import {tablePlugin} from 'table-widget'
+import { vegaPlugins } from 'vega-widgets'
+import { tablePlugin } from 'table-widget'
 import './bitqueditor/App.scss'
 import getQueryFacts from '../utils/getQueryFacts'
 import GraphqlEditor from './bitqueditor/components/GraphqlEditor'
@@ -10,44 +10,44 @@ import {
     visitWithTypeInfo,
     TypeInfo
 } from 'graphql'
-import {visit} from 'graphql/language/visitor'
-import {parse as parseGql} from 'graphql/language'
+import { visit } from 'graphql/language/visitor'
+import { parse as parseGql } from 'graphql/language'
 import CodePlugin from './bitqueditor/components/CodeEditor'
 import ToolbarComponent from './bitqueditor/components/ToolbarComponent'
-import {TabsStore, QueriesStore, UserStore} from '../store/queriesStore'
+import { TabsStore, QueriesStore, UserStore } from '../store/queriesStore'
 import WidgetEditorControls from './bitqueditor/components/WidgetEditorControls'
 import QueryErrorIndicator from './QueryErrorIndicator'
-import {getLeft, getTop} from '../utils/common'
+import { getLeft, getTop } from '../utils/common'
 import "react-loader-spinner/dist/loader/css/react-spinner-loader.css"
 import Loader from "react-loader-spinner"
-import {DocExplorer} from './DocExplorer'
-import {FullScreen, useFullScreenHandle} from "react-full-screen"
+import { DocExplorer } from './DocExplorer'
+import { FullScreen, useFullScreenHandle } from "react-full-screen"
 import FullscreenIcon from './icons/FullscreenIcon'
 import ExitFullscreenIcon from "./icons/ExitFullscreenIcon";
-import {getIntrospectionQuery, buildClientSchema} from 'graphql'
+import { getIntrospectionQuery, buildClientSchema } from 'graphql'
 import useDebounce from '../utils/useDebounce'
 import WidgetView from './bitqueditor/components/WidgetView'
-import {GalleryStore} from '../store/galleryStore.js';
+import { GalleryStore } from '../store/galleryStore.js';
 import CodeSnippetComponent from './CodeSnippetComponent.js';
-import {useHistory, useParams} from 'react-router-dom';
-import {toast} from 'react-toastify'
-import {createClient} from "graphql-ws"
-import {InteractionButton} from './InteractionButton.js';
+import { useHistory, useParams } from 'react-router-dom';
+import { toast } from 'react-toastify'
+import { createClient } from "graphql-ws"
+import { InteractionButton } from './InteractionButton.js';
 import JsonPlugin from "./bitqueditor/components/JsonComponent";
 import SqlQueryComponent from "./SqlQueryComponent";
 
 const queryStatusReducer = (state, action) => {
-    let newState = {...state}
+    let newState = { ...state }
     Object.keys(newState).forEach(status => {
         newState[status] = status === action
     })
     return newState
 }
 
-const EditorInstance = observer(function EditorInstance({number}) {
-    const {tabs, currentTab, index} = TabsStore
-    const {tagListIsOpen} = GalleryStore
-    const {user, getUser} = UserStore
+const EditorInstance = observer(function EditorInstance({ number }) {
+    const { tabs, currentTab, index } = TabsStore
+    const { tagListIsOpen } = GalleryStore
+    const { user, getUser } = UserStore
     const {
         query, updateQuery, currentQuery, isMobile,
         setMobile, showSideBar, schema, setSchema, fetchError, setFetchError, logQuery
@@ -107,7 +107,7 @@ const EditorInstance = observer(function EditorInstance({number}) {
     }
 
     const history = useHistory()
-    const {queryurl} = useParams()
+    const { queryurl } = useParams()
 
     function HistoryDataSource(payload, queryDispatcher) {
         let callbacks = []
@@ -118,7 +118,7 @@ const EditorInstance = observer(function EditorInstance({number}) {
         const getNewData = async () => {
             queryDispatcher.onquerystarted()
             try {
-                cachedData = cachedData ? cachedData : await fetcher({...payload, variables})
+                cachedData = cachedData ? cachedData : await fetcher({ ...payload, variables })
                 setSqlQuery(cachedData?.extensions || 'no sql query')
                 if (queryNotLogged) {
                     logQuery(error)
@@ -136,7 +136,7 @@ const EditorInstance = observer(function EditorInstance({number}) {
 
         this.changeVariables = async deltaVariables => {
             if (deltaVariables) {
-                variables = {...payload.variables, ...deltaVariables}
+                variables = { ...payload.variables, ...deltaVariables }
                 cachedData = null
             }
             await getNewData()
@@ -198,8 +198,8 @@ const EditorInstance = observer(function EditorInstance({number}) {
 
             setError(null)
             // queryDispatcher.onquerystarted()
-            cleanSubscription = client.subscribe({...payload, variables}, {
-                next: ({data, errors}) => {
+            cleanSubscription = client.subscribe({ ...payload, variables }, {
+                next: ({ data, errors }) => {
                     // queryDispatcher.onsubscribe()
 
                     if (errors) {
@@ -253,7 +253,7 @@ const EditorInstance = observer(function EditorInstance({number}) {
 
         this.changeVariables = async deltaVariables => {
             if (deltaVariables) {
-                variables = {...payload.variables, ...deltaVariables}
+                variables = { ...payload.variables, ...deltaVariables }
                 empty()
             }
             this.unsubscribe()
@@ -375,7 +375,7 @@ const EditorInstance = observer(function EditorInstance({number}) {
                         }
                     }
                     depth++
-                    return {...node, typeInfo: typeInfo.getType()}
+                    return { ...node, typeInfo: typeInfo.getType() }
                 }
             },
             leave(node) {
@@ -389,7 +389,7 @@ const EditorInstance = observer(function EditorInstance({number}) {
                     //-------
                     if (queryLength <= 1) {
                         if (queryNodes[index].includes('.')) queryLength += 1
-                        if (queryLength > 1) typesMap = {data: {typeInfo: 'FullResponse'}, ...typesMap}
+                        if (queryLength > 1) typesMap = { data: { typeInfo: 'FullResponse' }, ...typesMap }
                     }
                     if (!depth && queryNodes.length) {
                         if (currentQuery.data_type === 'flatten') {
@@ -416,10 +416,10 @@ const EditorInstance = observer(function EditorInstance({number}) {
                         flatKey = `${splittedKey[splittedKey.length - 2]}${splittedKey[splittedKey.length - 1]}`
                     }
                     flatKey = `data.${flatKey.replaceAll('.', '')}`
-                    flattenModel[flatKey] = {typeInfo: typesMap[key].typeInfo.toString()}
+                    flattenModel[flatKey] = { typeInfo: typesMap[key].typeInfo.toString() }
                 }
             })
-            flattenModel['data.network'] = {typeInfo: 'String'}
+            flattenModel['data.network'] = { typeInfo: 'String' }
             return flattenModel
         }
         return typesMap
@@ -455,14 +455,14 @@ const EditorInstance = observer(function EditorInstance({number}) {
             setError(error.message)
             return;
         }
-        const payload = {query: currentQuery.query, variables}
+        const payload = { query: currentQuery.query, variables }
 
         if (currentQuery.query.match(/subscription[^a-zA-z0-9]/gm)) {
             const subscriptionDataSource = new SubscriptionDataSource(payload, queryDispatcher)
-            setDataSource({subscriptionDataSource})
+            setDataSource({ subscriptionDataSource })
         } else {
             const historyDataSource = new HistoryDataSource(payload, queryDispatcher)
-            setDataSource({historyDataSource})
+            setDataSource({ historyDataSource })
         }
 
         // eslint-disable-next-line
@@ -472,8 +472,8 @@ const EditorInstance = observer(function EditorInstance({number}) {
         if ('query' in handleSubject) {
             const facts = getQueryFacts(schema[debouncedURL], handleSubject.query)
             if (facts) {
-                const {variableToType} = facts
-                const {headerToType} = facts
+                const { variableToType } = facts
+                const { headerToType } = facts
                 if ((JSON.stringify(variableToType) !== JSON.stringify(_variableToType))
                     && _variableToType !== null) {
                     _setVariableToType(variableToType)
@@ -486,13 +486,13 @@ const EditorInstance = observer(function EditorInstance({number}) {
             let queryType = getQueryTypes(handleSubject.query)
             if (JSON.stringify(queryType) !== JSON.stringify(queryTypes)) {
                 (typeof queryType === 'object' && Object.keys(queryType).length)
-                && setQueryTypes(queryType)
+                    && setQueryTypes(queryType)
             }
         }
         if (user && query[index].account_id === user.id) {
-            updateQuery({...handleSubject, saved: false, url: null}, index)
+            updateQuery({ ...handleSubject, saved: false, url: null }, index)
         } else {
-            updateQuery({...handleSubject, saved: false, url: null, account_id: user.id}, index, null)
+            updateQuery({ ...handleSubject, saved: false, url: null, account_id: user.id }, index, null)
         }
         if (queryurl) history.push('/')
         setAccordance(false)
@@ -516,7 +516,7 @@ const EditorInstance = observer(function EditorInstance({number}) {
         abortController.current = new AbortController()
         const key = user ? user.key : null
         const accessToken = user ? UserStore.user?.accessToken?.access_token : null
-        const authorizationHeader = {'Authorization': `Bearer ${accessToken}`}
+        const authorizationHeader = { 'Authorization': `Bearer ${accessToken}` }
         const start = new Date().getTime()
         const customHeaders = currentQuery.headers ? JSON.parse(currentQuery?.headers) : {}
         const headers = {
@@ -544,8 +544,9 @@ const EditorInstance = observer(function EditorInstance({number}) {
                 const errorText = await response.text()
                 try {
                     if (response.status === 402) {
-                        setFetchError('No active billing period')
-                        return setError('No active billing period')
+                        const errorMessage = 'No active billing period##TELEGRAM_LINK##';
+                        setFetchError(errorMessage);
+                        return setError(errorMessage);
                     }
                     if (response.status === 401) {
                         const authErrorMsg = 'You have to use Authorization token as described in the documentation https://docs.bitquery.io/docs/category/authorization';
@@ -564,7 +565,7 @@ const EditorInstance = observer(function EditorInstance({number}) {
                         return;
                     }
 
-                    const {errors} = json;
+                    const { errors } = json;
                     if (errors && errors.length > 0) {
                         setFetchError(errors[0].message);
                         setError(errors[0].message);
@@ -586,7 +587,7 @@ const EditorInstance = observer(function EditorInstance({number}) {
 
             if (!('operationName' in graphQLParams)) {
 
-                const headerValue = response.headers.get('X-GraphQL-Requested')  || response.headers.get('X-Bitquery-Graphql-Requested')
+                const headerValue = response.headers.get('X-GraphQL-Requested') || response.headers.get('X-Bitquery-Graphql-Requested')
                 const graphqlRequested = headerValue
                     ? headerValue.split(',').map(v => v.trim()).includes('true')
                     : headerValue;
@@ -611,8 +612,8 @@ const EditorInstance = observer(function EditorInstance({number}) {
                 return;
             }
 
-            const {data, errors, extensions} = jsonResponse
-            setSqlQuery( extensions )
+            const { data, errors, extensions } = jsonResponse
+            setSqlQuery(extensions)
             if (errors && errors.length > 0) {
                 setFetchError(errors[0].message);
                 setError(errors[0].message);
@@ -620,7 +621,7 @@ const EditorInstance = observer(function EditorInstance({number}) {
                 setError(null);
             }
 
-            return {data, extensions}
+            return { data, extensions }
         } catch (error) {
             if (error.name === 'AbortError') {
                 setFetchError("Request was aborted");
@@ -648,7 +649,7 @@ const EditorInstance = observer(function EditorInstance({number}) {
                 try {
                     const data = await fetcher(graphQLParams)
                     let newSchema = buildClientSchema(data.data)
-                    setSchema({...schema, [debouncedURL]: newSchema})
+                    setSchema({ ...schema, [debouncedURL]: newSchema })
                     dispatchQueryStatus('readyToExecute')
                 } catch (error) {
                     const message = /401 Authorization Required/.test(error.message) ? '401 Authorization Required' : error.message
@@ -709,7 +710,7 @@ const EditorInstance = observer(function EditorInstance({number}) {
 
     const editHeadersHandler = useCallback((handleSubject) => {
         if ('headers' in handleSubject) {
-            updateQuery({...query[number], headers: handleSubject.headers, saved: false}, index);
+            updateQuery({ ...query[number], headers: handleSubject.headers, saved: false }, index);
         }
     }, [query, index]);
 
@@ -742,13 +743,13 @@ const EditorInstance = observer(function EditorInstance({number}) {
                 />
 
                 <button className={`execute-button`}
-                        data-tip={(queryStatus.activeFetch || queryStatus.activeSubscription) ? 'Interrupt' : 'Execute query (Ctrl-Enter)'}
-                        ref={executeButton}
-                        disabled={queryStatus.schemaLoading}
-                        onClick={() => {
-                            setFetchError('');
-                            (queryStatus.activeFetch || queryStatus.activeSubscription) ? abortRequest() : getResult();
-                        }}
+                    data-tip={(queryStatus.activeFetch || queryStatus.activeSubscription) ? 'Interrupt' : 'Execute query (Ctrl-Enter)'}
+                    ref={executeButton}
+                    disabled={queryStatus.schemaLoading}
+                    onClick={() => {
+                        setFetchError('');
+                        (queryStatus.activeFetch || queryStatus.activeSubscription) ? abortRequest() : getResult();
+                    }}
 
                 >
                     <InteractionButton
@@ -757,8 +758,8 @@ const EditorInstance = observer(function EditorInstance({number}) {
                     />
                 </button>
                 <div className="workspace__wrapper"
-                     ref={workspace}
-                     onMouseDown={workspaceResizer}
+                    ref={workspace}
+                    onMouseDown={workspaceResizer}
                 >
 
                     {!currentQuery.layout && <GraphqlEditor
@@ -781,7 +782,7 @@ const EditorInstance = observer(function EditorInstance({number}) {
                             ref3: headersEditor,
                         }}
                     />}
-                    <div className="workspace__sizechanger"/>
+                    <div className="workspace__sizechanger" />
                     <div className={`widget ${widget ? 'd-flex' : 'd-none'}`}>
                         <WidgetEditorControls
                             abortRequest={abortRequest}
@@ -806,8 +807,8 @@ const EditorInstance = observer(function EditorInstance({number}) {
                     // +
                     // (isMobile ? ' widget-display-wrapper-fullscreen' : '')
                 }
-                     ref={widgetDisplay}
-                     style={{backgroundColor: '#f6f7f8'}}
+                    ref={widgetDisplay}
+                    style={{ backgroundColor: '#f6f7f8' }}
                 >
                     <div
                         className="sizeChanger"
@@ -833,16 +834,16 @@ const EditorInstance = observer(function EditorInstance({number}) {
                                 ready={queryStatus.readyToExecute}
                             >
                                 {fullscreenHandle.active ?
-                                    (<ExitFullscreenIcon onClick={fullscreenHandle.exit}/>) :
-                                    (<FullscreenIcon onClick={fullscreenHandle.enter}/>)
+                                    (<ExitFullscreenIcon onClick={fullscreenHandle.exit} />) :
+                                    (<FullscreenIcon onClick={fullscreenHandle.enter} />)
                                 }
                             </WidgetView>
                         </FullScreen>
                     </div>
                 </div>
-                {docExplorerOpen && <DocExplorer schema={schema[debouncedURL]}/>}
-                {codeSnippetOpen && <CodeSnippetComponent/>}
-                {user?.role === 'admin' && sqlQueryOpen && <SqlQueryComponent sqlQuery={sqlQuery?.debug || ''}/>}
+                {docExplorerOpen && <DocExplorer schema={schema[debouncedURL]} />}
+                {codeSnippetOpen && <CodeSnippetComponent />}
+                {user?.role === 'admin' && sqlQueryOpen && <SqlQueryComponent sqlQuery={sqlQuery?.debug || ''} />}
             </div>
         </div>
     )
