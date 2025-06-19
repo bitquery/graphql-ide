@@ -93,8 +93,13 @@ const EditorInstance = observer(function EditorInstance({number}) {
                 let location = error[0].locations[0];
                 let err = `${error[0].message} Location: Line ${location.line}, Column ${location.column}`;
                 setError(err);
+                setFetchError(err);
             } else if (typeof error === 'string') {
                 setError(error);
+                setFetchError(error);
+            } else if (error?.message) {
+                setError(error.message);
+                setFetchError(error.message);
             } else {
                 console.log(error)
             }
@@ -200,9 +205,19 @@ const EditorInstance = observer(function EditorInstance({number}) {
                     if (errors) {
                         logQuery(errors)
                         queryNotLogged = false
-                        queryDispatcher.onerror(errors[0].message)
+                        queryDispatcher.onerror(errors)
                         empty()
+                        return
                     }
+
+                    if (data && data.type === 'error' && data.payload) {
+                        logQuery(data.payload)
+                        queryNotLogged = false
+                        queryDispatcher.onerror(data.payload)
+                        empty()
+                        return
+                    }
+
                     if (queryNotLogged) {
                         logQuery(false)
                         queryNotLogged = false
