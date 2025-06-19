@@ -12,7 +12,7 @@ function QueryErrorIndicator({ error, removeError }) {
                 <>
                     {message}
                     <br />
-                    <a href="https://t.me/Bitquery_sales" target="_blank" rel="noopener noreferrer">
+                    <a style={{ color: '#3f1f8a' }} href="https://t.me/Bitquery_sales" target="_blank" rel="noopener noreferrer">
                         Contact sales via Telegram - Bitquery.io (Bloxy) Network
                     </a>
                 </>
