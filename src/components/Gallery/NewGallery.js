@@ -15,7 +15,7 @@ const NewGallery = observer(function NewGallery() {
 	const { currentQuery, updateQuery, schema, queryJustSaved, fetchError } = QueriesStore
 	const { index } = TabsStore
 	const [tagsList, setTagsList] = useState([])
-	const [activeTab, setActiveTab] = useState('builder');
+	const [activeTab, setActiveTab] = useState('queries');
 
 	useEffect(() => {
 		const onload = async () => {
