@@ -134,13 +134,13 @@ type NewOperationType = 'query' | 'mutation' | 'subscription';
 
 type State = {|
   operation: ?OperationDefinitionNode,
-  newOperationType: NewOperationType,
-  operationToScrollTo: ?string,
+    newOperationType: NewOperationType,
+      operationToScrollTo: ?string,
 |};
 
 type Selections = $ReadOnlyArray<SelectionNode>;
 
-type AvailableFragments = {[key: string]: FragmentDefinitionNode};
+type AvailableFragments = { [key: string]: FragmentDefinitionNode };
 
 function capitalize(string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
@@ -183,7 +183,7 @@ const defaultArrowClosed = (
 
 const defaultCheckboxChecked = (
   <svg
-    style={{marginRight: '3px', marginLeft: '-3px'}}
+    style={{ marginRight: '3px', marginLeft: '-3px' }}
     width="12"
     height="12"
     viewBox="0 0 18 18"
@@ -198,7 +198,7 @@ const defaultCheckboxChecked = (
 
 const defaultCheckboxUnchecked = (
   <svg
-    style={{marginRight: '3px', marginLeft: '-3px'}}
+    style={{ marginRight: '3px', marginLeft: '-3px' }}
     width="12"
     height="12"
     viewBox="0 0 18 18"
@@ -211,7 +211,7 @@ const defaultCheckboxUnchecked = (
   </svg>
 );
 
-function Checkbox(props: {checked: boolean, styleConfig: StyleConfig}) {
+function Checkbox(props: { checked: boolean, styleConfig: StyleConfig }) {
   return props.checked
     ? props.styleConfig.checkboxChecked
     : props.styleConfig.checkboxUnchecked;
@@ -260,7 +260,7 @@ function defaultGetDefaultFieldNames(type: GraphQLObjectType): Array<string> {
   return leafFieldNames.slice(0, 2); // Prevent too many fields from being added
 }
 
-function isRequiredArgument(arg: GraphQLArgument): boolean %checks {
+function isRequiredArgument(arg: GraphQLArgument): boolean {
   return isNonNullType(arg.type) && arg.defaultValue === undefined;
 }
 
@@ -309,9 +309,9 @@ function coerceArgValue(
           try {
             const parsed = JSON.parse(value);
             if (typeof parsed === 'boolean') {
-              return {kind: 'BooleanValue', value: parsed};
+              return { kind: 'BooleanValue', value: parsed };
             } else {
-              return {kind: 'BooleanValue', value: false};
+              return { kind: 'BooleanValue', value: false };
             }
           } catch (e) {
             return {
@@ -327,36 +327,36 @@ function coerceArgValue(
       }
     } catch (e) {
       console.error('error coercing arg value', e, value);
-      return {kind: 'StringValue', value: value};
+      return { kind: 'StringValue', value: value };
     }
   } else {
     try {
       const parsedValue = argType.parseValue(value);
       if (parsedValue) {
-        return {kind: 'EnumValue', value: String(parsedValue)};
+        return { kind: 'EnumValue', value: String(parsedValue) };
       } else {
-        return {kind: 'EnumValue', value: argType.getValues()[0].name};
+        return { kind: 'EnumValue', value: argType.getValues()[0].name };
       }
     } catch (e) {
-      return {kind: 'EnumValue', value: argType.getValues()[0].name};
+      return { kind: 'EnumValue', value: argType.getValues()[0].name };
     }
   }
 }
 
 type InputArgViewProps = {|
   arg: GraphQLArgument,
-  selection: ObjectValueNode,
-  parentField: Field,
-  modifyFields: (
-    fields: $ReadOnlyArray<ObjectFieldNode>,
-    commit: boolean,
-  ) => DocumentNode | null,
-  getDefaultScalarArgValue: GetDefaultScalarArgValue,
-  makeDefaultArg: ?MakeDefaultArg,
-  onRunOperation: void => void,
-  styleConfig: StyleConfig,
-  onCommit: (newDoc: DocumentNode) => void,
-  definition: FragmentDefinitionNode | OperationDefinitionNode,
+    selection: ObjectValueNode,
+      parentField: Field,
+        modifyFields: (
+          fields: $ReadOnlyArray<ObjectFieldNode>,
+          commit: boolean,
+        ) => DocumentNode | null,
+          getDefaultScalarArgValue: GetDefaultScalarArgValue,
+            makeDefaultArg: ?MakeDefaultArg,
+              onRunOperation: void => void,
+                styleConfig: StyleConfig,
+                  onCommit: (newDoc: DocumentNode) => void,
+                    definition: FragmentDefinitionNode | OperationDefinitionNode,
 |};
 
 class InputArgView extends React.PureComponent<InputArgViewProps, {}> {
@@ -368,7 +368,7 @@ class InputArgView extends React.PureComponent<InputArgViewProps, {}> {
   };
 
   _removeArg = () => {
-    const {selection} = this.props;
+    const { selection } = this.props;
     const argSelection = this._getArgSelection();
     this._previousArgSelection = argSelection;
     this.props.modifyFields(
@@ -394,7 +394,7 @@ class InputArgView extends React.PureComponent<InputArgViewProps, {}> {
       const fields = argType.getFields();
       argSelection = {
         kind: 'ObjectField',
-        name: {kind: 'Name', value: arg.name},
+        name: { kind: 'Name', value: arg.name },
         value: {
           kind: 'ObjectValue',
           fields: defaultInputObjectFields(
@@ -408,7 +408,7 @@ class InputArgView extends React.PureComponent<InputArgViewProps, {}> {
     } else if (isLeafType(argType)) {
       argSelection = {
         kind: 'ObjectField',
-        name: {kind: 'Name', value: arg.name},
+        name: { kind: 'Name', value: arg.name },
         value: getDefaultScalarArgValue(parentField, arg, argType),
       };
     }
@@ -423,7 +423,7 @@ class InputArgView extends React.PureComponent<InputArgViewProps, {}> {
     }
   };
 
-  _setArgValue = (event, options: ?{commit: boolean}) => {
+  _setArgValue = (event, options: ?{ commit: boolean }) => {
     let settingToNull = false;
     let settingToVariable = false;
     let settingToLiteralValue = false;
@@ -435,9 +435,9 @@ class InputArgView extends React.PureComponent<InputArgViewProps, {}> {
       } else if (typeof event.kind === 'string') {
         settingToLiteralValue = true;
       }
-    } catch (e) {}
+    } catch (e) { }
 
-    const {selection} = this.props;
+    const { selection } = this.props;
 
     const argSelection = this._getArgSelection();
 
@@ -484,9 +484,9 @@ class InputArgView extends React.PureComponent<InputArgViewProps, {}> {
         const isTarget = field === argSelection;
         const newField = isTarget
           ? {
-              ...field,
-              value: value,
-            }
+            ...field,
+            value: value,
+          }
           : field;
 
         return newField;
@@ -502,12 +502,12 @@ class InputArgView extends React.PureComponent<InputArgViewProps, {}> {
       this.props.selection.fields.map(field =>
         field.name.value === this.props.arg.name
           ? {
-              ...field,
-              value: {
-                kind: 'ObjectValue',
-                fields: fields,
-              },
-            }
+            ...field,
+            value: {
+              kind: 'ObjectValue',
+              fields: fields,
+            },
+          }
           : field,
       ),
       true,
@@ -515,7 +515,7 @@ class InputArgView extends React.PureComponent<InputArgViewProps, {}> {
   };
 
   render() {
-    const {arg, parentField} = this.props;
+    const { arg, parentField } = this.props;
     const argSelection = this._getArgSelection();
 
     return (
@@ -540,18 +540,18 @@ class InputArgView extends React.PureComponent<InputArgViewProps, {}> {
 
 type ArgViewProps = {|
   parentField: Field,
-  arg: GraphQLArgument,
-  selection: FieldNode,
-  modifyArguments: (
-    argumentNodes: $ReadOnlyArray<ArgumentNode>,
-    commit: boolean,
-  ) => DocumentNode | null,
-  getDefaultScalarArgValue: GetDefaultScalarArgValue,
-  makeDefaultArg: ?MakeDefaultArg,
-  onRunOperation: void => void,
-  styleConfig: StyleConfig,
-  onCommit: (newDoc: DocumentNode) => void,
-  definition: FragmentDefinitionNode | OperationDefinitionNode,
+    arg: GraphQLArgument,
+      selection: FieldNode,
+        modifyArguments: (
+          argumentNodes: $ReadOnlyArray<ArgumentNode>,
+          commit: boolean,
+        ) => DocumentNode | null,
+          getDefaultScalarArgValue: GetDefaultScalarArgValue,
+            makeDefaultArg: ?MakeDefaultArg,
+              onRunOperation: void => void,
+                styleConfig: StyleConfig,
+                  onCommit: (newDoc: DocumentNode) => void,
+                    definition: FragmentDefinitionNode | OperationDefinitionNode,
 |};
 
 type ArgViewState = {||};
@@ -560,19 +560,19 @@ export function defaultValue(
   argType: GraphQLEnumType | GraphQLScalarType,
 ): ValueNode {
   if (isEnumType(argType)) {
-    return {kind: 'EnumValue', value: argType.getValues()[0].name};
+    return { kind: 'EnumValue', value: argType.getValues()[0].name };
   } else {
     switch (argType.name) {
       case 'String':
-        return {kind: 'StringValue', value: ''};
+        return { kind: 'StringValue', value: '' };
       case 'Float':
-        return {kind: 'FloatValue', value: '1.5'};
+        return { kind: 'FloatValue', value: '1.5' };
       case 'Int':
-        return {kind: 'IntValue', value: '10'};
+        return { kind: 'IntValue', value: '10' };
       case 'Boolean':
-        return {kind: 'BooleanValue', value: false};
+        return { kind: 'BooleanValue', value: false };
       default:
-        return {kind: 'StringValue', value: ''};
+        return { kind: 'StringValue', value: '' };
     }
   }
 }
@@ -588,14 +588,14 @@ function defaultGetDefaultScalarArgValue(
 class ArgView extends React.PureComponent<ArgViewProps, ArgViewState> {
   _previousArgSelection: ?ArgumentNode;
   _getArgSelection = () => {
-    const {selection} = this.props;
+    const { selection } = this.props;
 
     return (selection.arguments || []).find(
       arg => arg.name.value === this.props.arg.name,
     );
   };
   _removeArg = (commit: boolean): DocumentNode | null => {
-    const {selection} = this.props;
+    const { selection } = this.props;
     const argSelection = this._getArgSelection();
     this._previousArgSelection = argSelection;
     return this.props.modifyArguments(
@@ -620,7 +620,7 @@ class ArgView extends React.PureComponent<ArgViewProps, ArgViewState> {
       const fields = argType.getFields();
       argSelection = {
         kind: 'Argument',
-        name: {kind: 'Name', value: arg.name},
+        name: { kind: 'Name', value: arg.name },
         value: {
           kind: 'ObjectValue',
           fields: defaultInputObjectFields(
@@ -634,7 +634,7 @@ class ArgView extends React.PureComponent<ArgViewProps, ArgViewState> {
     } else if (isLeafType(argType)) {
       argSelection = {
         kind: 'Argument',
-        name: {kind: 'Name', value: arg.name},
+        name: { kind: 'Name', value: arg.name },
         value: getDefaultScalarArgValue(parentField, arg, argType),
       };
     }
@@ -651,7 +651,7 @@ class ArgView extends React.PureComponent<ArgViewProps, ArgViewState> {
   };
   _setArgValue = (
     event: SyntheticInputEvent<*> | VariableDefinitionNode,
-    options: ?{commit: boolean},
+    options: ?{ commit: boolean },
   ) => {
     let settingToNull = false;
     let settingToVariable = false;
@@ -664,8 +664,8 @@ class ArgView extends React.PureComponent<ArgViewProps, ArgViewState> {
       } else if (typeof event.kind === 'string') {
         settingToLiteralValue = true;
       }
-    } catch (e) {}
-    const {selection} = this.props;
+    } catch (e) { }
+    const { selection } = this.props;
     const argSelection = this._getArgSelection();
     if (!argSelection && !settingToVariable) {
       console.error('missing arg selection when setting arg value');
@@ -703,9 +703,9 @@ class ArgView extends React.PureComponent<ArgViewProps, ArgViewState> {
       (selection.arguments || []).map(a =>
         a === argSelection
           ? {
-              ...a,
-              value: value,
-            }
+            ...a,
+            value: value,
+          }
           : a,
       ),
       options,
@@ -713,7 +713,7 @@ class ArgView extends React.PureComponent<ArgViewProps, ArgViewState> {
   };
 
   _setArgFields = (fields, commit: boolean): DocumentNode | null => {
-    const {selection} = this.props;
+    const { selection } = this.props;
     const argSelection = this._getArgSelection();
     if (!argSelection) {
       console.error('missing arg selection when setting arg value');
@@ -724,12 +724,12 @@ class ArgView extends React.PureComponent<ArgViewProps, ArgViewState> {
       (selection.arguments || []).map(a =>
         a === argSelection
           ? {
-              ...a,
-              value: {
-                kind: 'ObjectValue',
-                fields,
-              },
-            }
+            ...a,
+            value: {
+              kind: 'ObjectValue',
+              fields,
+            },
+          }
           : a,
       ),
       commit,
@@ -737,7 +737,7 @@ class ArgView extends React.PureComponent<ArgViewProps, ArgViewState> {
   };
 
   render() {
-    const {arg, parentField} = this.props;
+    const { arg, parentField } = this.props;
     const argSelection = this._getArgSelection();
 
     return (
@@ -771,13 +771,13 @@ function canRunOperation(operationName) {
 
 type ScalarInputProps = {|
   arg: GraphQLArgument,
-  argValue: ValueNode,
-  setArgValue: (
-    SyntheticInputEvent<*> | VariableDefinitionNode,
-    commit: boolean,
+    argValue: ValueNode,
+      setArgValue: (
+        SyntheticInputEvent <*> | VariableDefinitionNode,
+        commit: boolean,
   ) => DocumentNode | null,
   onRunOperation: void => void,
-  styleConfig: StyleConfig,
+    styleConfig: StyleConfig,
 |};
 
 class ScalarInput extends React.PureComponent<ScalarInputProps, {}> {
@@ -800,7 +800,7 @@ class ScalarInput extends React.PureComponent<ScalarInputProps, {}> {
   }
 
   render() {
-    const {arg, argValue, styleConfig} = this.props;
+    const { arg, argValue, styleConfig } = this.props;
     const argType = unwrapInputType(arg.type);
     const value = typeof argValue.value === 'string' ? argValue.value : '';
     const color =
@@ -808,14 +808,14 @@ class ScalarInput extends React.PureComponent<ScalarInputProps, {}> {
         ? styleConfig.colors.string
         : styleConfig.colors.number;
     return (
-      <span style={{color}}>
+      <span style={{ color }}>
         {argType.name === 'String' ? '"' : ''}
         <input
           style={{
             border: 'none',
             borderBottom: '1px solid #888',
             outline: 'none',
-            width: `${Math.max(1, Math.min(15, value.length+1))}ch`,
+            width: `${Math.max(1, Math.min(15, value.length + 1))}ch`,
             color,
           }}
           ref={ref => {
@@ -833,33 +833,33 @@ class ScalarInput extends React.PureComponent<ScalarInputProps, {}> {
 
 type AbstractArgViewProps = {|
   argValue: ?ValueNode,
-  arg: GraphQLArgument,
-  parentField: Field,
-  setArgValue: (
-    SyntheticInputEvent<*> | VariableDefinitionNode,
-    commit: boolean,
+    arg: GraphQLArgument,
+      parentField: Field,
+        setArgValue: (
+          SyntheticInputEvent <*> | VariableDefinitionNode,
+          commit: boolean,
   ) => DocumentNode | null,
   setArgFields: (
     fields: $ReadOnlyArray<ObjectFieldNode>,
     commit: boolean,
   ) => DocumentNode | null,
-  addArg: (commit: boolean) => DocumentNode | null,
-  removeArg: (commit: boolean) => DocumentNode | null,
-  onCommit: (newDoc: DocumentNode) => void,
-  getDefaultScalarArgValue: GetDefaultScalarArgValue,
-  makeDefaultArg: ?MakeDefaultArg,
-  onRunOperation: void => void,
-  styleConfig: StyleConfig,
-  definition: FragmentDefinitionNode | OperationDefinitionNode,
+    addArg: (commit: boolean) => DocumentNode | null,
+      removeArg: (commit: boolean) => DocumentNode | null,
+        onCommit: (newDoc: DocumentNode) => void,
+          getDefaultScalarArgValue: GetDefaultScalarArgValue,
+            makeDefaultArg: ?MakeDefaultArg,
+              onRunOperation: void => void,
+                styleConfig: StyleConfig,
+                  definition: FragmentDefinitionNode | OperationDefinitionNode,
 |};
 
 class AbstractArgView extends React.PureComponent<
   AbstractArgViewProps,
-  {|displayArgActions: boolean|},
+  {| displayArgActions: boolean|},
 > {
-  state = {displayArgActions: false};
+  state = { displayArgActions: false };
   render() {
-    const {argValue, arg, styleConfig} = this.props;
+    const { argValue, arg, styleConfig } = this.props;
     /* TODO: handle List types*/
     const argType = unwrapInputType(arg.type);
 
@@ -867,7 +867,7 @@ class AbstractArgView extends React.PureComponent<
     if (argValue) {
       if (argValue.kind === 'Variable') {
         input = (
-          <span style={{color: styleConfig.colors.variable}}>
+          <span style={{ color: styleConfig.colors.variable }}>
             ${argValue.name.value}
           </span>
         );
@@ -929,7 +929,7 @@ class AbstractArgView extends React.PureComponent<
         if (argValue.kind === 'ObjectValue') {
           const fields = argType.getFields();
           input = (
-            <div style={{marginLeft: 16}}>
+            <div style={{ marginLeft: 16 }}>
               {Object.keys(fields)
                 .sort()
                 .map(fieldName => (
@@ -1037,10 +1037,10 @@ class AbstractArgView extends React.PureComponent<
 
         // We're going to give the variable definition a default value, so we must make its type nullable
         const unwrappedBase = isNonNullable
-          ? {...base, type: base.type.type}
+          ? { ...base, type: base.type.type }
           : base;
 
-        variable = {...unwrappedBase, defaultValue: cleanedDefaultValue};
+        variable = { ...unwrappedBase, defaultValue: cleanedDefaultValue };
       } else {
         variable = base;
       }
@@ -1205,7 +1205,7 @@ class AbstractArgView extends React.PureComponent<
           }
         }}
         style={styleConfig.styles.actionButtonStyle}>
-        <span style={{color: styleConfig.colors.variable}}>{'$'}</span>
+        <span style={{ color: styleConfig.colors.variable }}>{'$'}</span>
       </button>
     );
 
@@ -1221,7 +1221,7 @@ class AbstractArgView extends React.PureComponent<
         data-arg-type={argType.name}
         className={`graphiql-explorer-${arg.name}`}>
         <span
-          style={{cursor: 'pointer'}}
+          style={{ cursor: 'pointer' }}
           onClick={event => {
             const shouldAdd = !argValue;
             if (shouldAdd) {
@@ -1229,7 +1229,7 @@ class AbstractArgView extends React.PureComponent<
             } else {
               this.props.removeArg(true);
             }
-            this.setState({displayArgActions: shouldAdd});
+            this.setState({ displayArgActions: shouldAdd });
           }}>
           {isInputObjectType(argType) ? (
             <span>
@@ -1244,15 +1244,15 @@ class AbstractArgView extends React.PureComponent<
             />
           )}
           <span
-            style={{color: styleConfig.colors.attribute}}
+            style={{ color: styleConfig.colors.attribute }}
             title={arg.description}
             onMouseEnter={() => {
               // Make implementation a bit easier and only show 'variablize' action if arg is already added
               if (argValue !== null && typeof argValue !== 'undefined') {
-                this.setState({displayArgActions: true});
+                this.setState({ displayArgActions: true });
               }
             }}
-            onMouseLeave={() => this.setState({displayArgActions: false})}>
+            onMouseLeave={() => this.setState({ displayArgActions: false })}>
             {arg.name}
             {isRequiredArgument(arg) ? '*' : ''}: {variablizeActionButton}{' '}
           </span>{' '}
@@ -1265,19 +1265,19 @@ class AbstractArgView extends React.PureComponent<
 
 type AbstractViewProps = {|
   implementingType: GraphQLObjectType,
-  selections: Selections,
-  modifySelections: (
     selections: Selections,
-    ?{commit: boolean},
-  ) => DocumentNode | null,
-  schema: GraphQLSchema,
-  getDefaultFieldNames: (type: GraphQLObjectType) => Array<string>,
-  getDefaultScalarArgValue: GetDefaultScalarArgValue,
-  makeDefaultArg: ?MakeDefaultArg,
-  onRunOperation: void => void,
-  onCommit: (newDoc: DocumentNode) => void,
-  styleConfig: StyleConfig,
-  definition: FragmentDefinitionNode | OperationDefinitionNode,
+      modifySelections: (
+        selections: Selections,
+    ?{ commit: boolean },
+      ) => DocumentNode | null,
+        schema: GraphQLSchema,
+          getDefaultFieldNames: (type: GraphQLObjectType) => Array < string >,
+            getDefaultScalarArgValue: GetDefaultScalarArgValue,
+              makeDefaultArg: ?MakeDefaultArg,
+                onRunOperation: void => void,
+                  onCommit: (newDoc: DocumentNode) => void,
+                    styleConfig: StyleConfig,
+                      definition: FragmentDefinitionNode | OperationDefinitionNode,
 |};
 
 class AbstractView extends React.PureComponent<AbstractViewProps, {}> {
@@ -1289,7 +1289,7 @@ class AbstractView extends React.PureComponent<AbstractViewProps, {}> {
         kind: 'InlineFragment',
         typeCondition: {
           kind: 'NamedType',
-          name: {kind: 'Name', value: this.props.implementingType.name},
+          name: { kind: 'Name', value: this.props.implementingType.name },
         },
         selectionSet: {
           kind: 'SelectionSet',
@@ -1297,7 +1297,7 @@ class AbstractView extends React.PureComponent<AbstractViewProps, {}> {
             .getDefaultFieldNames(this.props.implementingType)
             .map(fieldName => ({
               kind: 'Field',
-              name: {kind: 'Name', value: fieldName},
+              name: { kind: 'Name', value: fieldName },
             })),
         },
       },
@@ -1327,7 +1327,7 @@ class AbstractView extends React.PureComponent<AbstractViewProps, {}> {
 
   _modifyChildSelections = (
     selections: Selections,
-    options: ?{commit: boolean},
+    options: ?{ commit: boolean },
   ): DocumentNode | null => {
     const thisSelection = this._getSelection();
     return this.props.modifySelections(
@@ -1338,7 +1338,7 @@ class AbstractView extends React.PureComponent<AbstractViewProps, {}> {
             kind: 'InlineFragment',
             typeCondition: {
               kind: 'NamedType',
-              name: {kind: 'Name', value: this.props.implementingType.name},
+              name: { kind: 'Name', value: this.props.implementingType.name },
             },
             selectionSet: {
               kind: 'SelectionSet',
@@ -1370,18 +1370,18 @@ class AbstractView extends React.PureComponent<AbstractViewProps, {}> {
     return (
       <div className={`graphiql-explorer-${implementingType.name}`}>
         <span
-          style={{cursor: 'pointer'}}
+          style={{ cursor: 'pointer' }}
           onClick={selection ? this._removeFragment : this._addFragment}>
           <Checkbox
             checked={!!selection}
             styleConfig={this.props.styleConfig}
           />
-          <span style={{color: styleConfig.colors.atom}}>
+          <span style={{ color: styleConfig.colors.atom }}>
             {this.props.implementingType.name}
           </span>
         </span>
         {selection ? (
-          <div style={{marginLeft: 16}}>
+          <div style={{ marginLeft: 16 }}>
             {Object.keys(fields)
               .sort()
               .map(fieldName => (
@@ -1410,14 +1410,14 @@ class AbstractView extends React.PureComponent<AbstractViewProps, {}> {
 
 type FragmentViewProps = {|
   fragment: FragmentDefinitionNode,
-  selections: Selections,
-  modifySelections: (
     selections: Selections,
-    ?{commit: boolean},
-  ) => DocumentNode | null,
-  onCommit: (newDoc: DocumentNode) => void,
-  schema: GraphQLSchema,
-  styleConfig: StyleConfig,
+      modifySelections: (
+        selections: Selections,
+    ?{ commit: boolean },
+      ) => DocumentNode | null,
+        onCommit: (newDoc: DocumentNode) => void,
+          schema: GraphQLSchema,
+            styleConfig: StyleConfig,
 |};
 
 class FragmentView extends React.PureComponent<FragmentViewProps, {}> {
@@ -1456,19 +1456,19 @@ class FragmentView extends React.PureComponent<FragmentViewProps, {}> {
   };
 
   render() {
-    const {styleConfig} = this.props;
+    const { styleConfig } = this.props;
     const selection = this._getSelection();
     return (
       <div className={`graphiql-explorer-${this.props.fragment.name.value}`}>
         <span
-          style={{cursor: 'pointer'}}
+          style={{ cursor: 'pointer' }}
           onClick={selection ? this._removeFragment : this._addFragment}>
           <Checkbox
             checked={!!selection}
             styleConfig={this.props.styleConfig}
           />
           <span
-            style={{color: styleConfig.colors.def}}
+            style={{ color: styleConfig.colors.def }}
             className={`graphiql-explorer-${this.props.fragment.name.value}`}>
             {this.props.fragment.name.value}
           </span>
@@ -1480,20 +1480,20 @@ class FragmentView extends React.PureComponent<FragmentViewProps, {}> {
 
 type FieldViewProps = {|
   field: Field,
-  selections: Selections,
-  modifySelections: (
     selections: Selections,
-    ?{commit: boolean},
-  ) => DocumentNode | null,
-  schema: GraphQLSchema,
-  getDefaultFieldNames: (type: GraphQLObjectType) => Array<string>,
-  getDefaultScalarArgValue: GetDefaultScalarArgValue,
-  makeDefaultArg: ?MakeDefaultArg,
-  onRunOperation: void => void,
-  styleConfig: StyleConfig,
-  onCommit: (newDoc: DocumentNode) => void,
-  definition: FragmentDefinitionNode | OperationDefinitionNode,
-  availableFragments: AvailableFragments,
+      modifySelections: (
+        selections: Selections,
+    ?{ commit: boolean },
+      ) => DocumentNode | null,
+        schema: GraphQLSchema,
+          getDefaultFieldNames: (type: GraphQLObjectType) => Array < string >,
+            getDefaultScalarArgValue: GetDefaultScalarArgValue,
+              makeDefaultArg: ?MakeDefaultArg,
+                onRunOperation: void => void,
+                  styleConfig: StyleConfig,
+                    onCommit: (newDoc: DocumentNode) => void,
+                      definition: FragmentDefinitionNode | OperationDefinitionNode,
+                        availableFragments: AvailableFragments,
 |};
 
 function defaultInputObjectFields(
@@ -1513,7 +1513,7 @@ function defaultInputObjectFields(
         const fields = fieldType.getFields();
         nodes.push({
           kind: 'ObjectField',
-          name: {kind: 'Name', value: field.name},
+          name: { kind: 'Name', value: field.name },
           value: {
             kind: 'ObjectValue',
             fields: defaultInputObjectFields(
@@ -1527,7 +1527,7 @@ function defaultInputObjectFields(
       } else if (isLeafType(fieldType)) {
         nodes.push({
           kind: 'ObjectField',
-          name: {kind: 'Name', value: field.name},
+          name: { kind: 'Name', value: field.name },
           value: getDefaultScalarArgValue(parentField, field, fieldType),
         });
       }
@@ -1552,7 +1552,7 @@ function defaultArgs(
         const fields = argType.getFields();
         args.push({
           kind: 'Argument',
-          name: {kind: 'Name', value: arg.name},
+          name: { kind: 'Name', value: arg.name },
           value: {
             kind: 'ObjectValue',
             fields: defaultInputObjectFields(
@@ -1566,7 +1566,7 @@ function defaultArgs(
       } else if (isLeafType(argType)) {
         args.push({
           kind: 'Argument',
-          name: {kind: 'Name', value: arg.name},
+          name: { kind: 'Name', value: arg.name },
           value: getDefaultScalarArgValue(field, arg, argType),
         });
       }
@@ -1577,20 +1577,20 @@ function defaultArgs(
 
 class FieldView extends React.PureComponent<
   FieldViewProps,
-  {|displayFieldActions: boolean|},
+  {| displayFieldActions: boolean|},
 > {
-  state = {displayFieldActions: false};
+  state = { displayFieldActions: false };
 
-  _previousSelection: ?SelectionNode;
+  _previousSelection: ? SelectionNode;
   _addAllFieldsToSelections = rawSubfields => {
     const subFields: Array<FieldNode> = !!rawSubfields
       ? Object.keys(rawSubfields).map(fieldName => {
-          return {
-            kind: 'Field',
-            name: {kind: 'Name', value: fieldName},
-            arguments: [],
-          };
-        })
+        return {
+          kind: 'Field',
+          name: { kind: 'Name', value: fieldName },
+          arguments: [],
+        };
+      })
       : [];
 
     const subSelectionSet: SelectionSetNode = {
@@ -1609,7 +1609,7 @@ class FieldView extends React.PureComponent<
       }),
       {
         kind: 'Field',
-        name: {kind: 'Name', value: this.props.field.name},
+        name: { kind: 'Name', value: this.props.field.name },
         arguments: defaultArgs(
           this.props.getDefaultScalarArgValue,
           this.props.makeDefaultArg,
@@ -1627,7 +1627,7 @@ class FieldView extends React.PureComponent<
       ...this.props.selections,
       this._previousSelection || {
         kind: 'Field',
-        name: {kind: 'Name', value: this.props.field.name},
+        name: { kind: 'Name', value: this.props.field.name },
         arguments: defaultArgs(
           this.props.getDefaultScalarArgValue,
           this.props.makeDefaultArg,
@@ -1680,7 +1680,7 @@ class FieldView extends React.PureComponent<
 
   _setArguments = (
     argumentNodes: $ReadOnlyArray<ArgumentNode>,
-    options: ?{commit: boolean},
+    options: ?{ commit: boolean },
   ): DocumentNode | null => {
     const selection = this._getSelection();
     if (!selection) {
@@ -1691,13 +1691,13 @@ class FieldView extends React.PureComponent<
       this.props.selections.map(s =>
         s === selection
           ? {
-              alias: selection.alias,
-              arguments: argumentNodes,
-              directives: selection.directives,
-              kind: 'Field',
-              name: selection.name,
-              selectionSet: selection.selectionSet,
-            }
+            alias: selection.alias,
+            arguments: argumentNodes,
+            directives: selection.directives,
+            kind: 'Field',
+            name: selection.name,
+            selectionSet: selection.selectionSet,
+          }
           : s,
       ),
       options,
@@ -1706,7 +1706,7 @@ class FieldView extends React.PureComponent<
 
   _modifyChildSelections = (
     selections: Selections,
-    options: ?{commit: boolean},
+    options: ?{ commit: boolean },
   ): DocumentNode | null => {
     return this.props.modifySelections(
       this.props.selections.map(selection => {
@@ -1736,7 +1736,7 @@ class FieldView extends React.PureComponent<
   };
 
   render() {
-    const {field, schema, getDefaultFieldNames, styleConfig} = this.props;
+    const { field, schema, getDefaultFieldNames, styleConfig } = this.props;
     const selection = this._getSelection();
     const type = unwrapOutputType(field.type);
     const args = field.args.sort((a, b) => a.name.localeCompare(b.name));
@@ -1749,7 +1749,7 @@ class FieldView extends React.PureComponent<
     const applicableFragments =
       isObjectType(type) || isInterfaceType(type) || isUnionType(type)
         ? this.props.availableFragments &&
-          this.props.availableFragments[type.name]
+        this.props.availableFragments[type.name]
         : null;
 
     const node = (
@@ -1777,10 +1777,10 @@ class FieldView extends React.PureComponent<
               ).length > 0;
 
             if (containsMeaningfulSubselection) {
-              this.setState({displayFieldActions: true});
+              this.setState({ displayFieldActions: true });
             }
           }}
-          onMouseLeave={() => this.setState({displayFieldActions: false})}>
+          onMouseLeave={() => this.setState({ displayFieldActions: false })}>
           {isObjectType(type) ? (
             <span>
               {!!selection
@@ -1795,7 +1795,7 @@ class FieldView extends React.PureComponent<
             />
           )}
           <span
-            style={{color: styleConfig.colors.property}}
+            style={{ color: styleConfig.colors.property }}
             className="graphiql-explorer-field-view">
             {field.name}
           </span>
@@ -1886,7 +1886,7 @@ class FieldView extends React.PureComponent<
         </span>
         {selection && args.length ? (
           <div
-            style={{marginLeft: 16}}
+            style={{ marginLeft: 16 }}
             className="graphiql-explorer-graphql-arguments">
             {args.map(arg => (
               <ArgView
@@ -1921,25 +1921,25 @@ class FieldView extends React.PureComponent<
       return (
         <div className={`graphiql-explorer-${field.name}`}>
           {node}
-          <div style={{marginLeft: 16}}>
+          <div style={{ marginLeft: 16 }}>
             {!!applicableFragments
               ? applicableFragments.map(fragment => {
-                  const type = schema.getType(
-                    fragment.typeCondition.name.value,
-                  );
-                  const fragmentName = fragment.name.value;
-                  return !type ? null : (
-                    <FragmentView
-                      key={fragmentName}
-                      fragment={fragment}
-                      selections={childSelections}
-                      modifySelections={this._modifyChildSelections}
-                      schema={schema}
-                      styleConfig={this.props.styleConfig}
-                      onCommit={this.props.onCommit}
-                    />
-                  );
-                })
+                const type = schema.getType(
+                  fragment.typeCondition.name.value,
+                );
+                const fragmentName = fragment.name.value;
+                return !type ? null : (
+                  <FragmentView
+                    key={fragmentName}
+                    fragment={fragment}
+                    selections={childSelections}
+                    modifySelections={this._modifyChildSelections}
+                    schema={schema}
+                    styleConfig={this.props.styleConfig}
+                    onCommit={this.props.onCommit}
+                  />
+                );
+              })
               : null}
             {Object.keys(fields)
               .sort()
@@ -1962,25 +1962,25 @@ class FieldView extends React.PureComponent<
               ))}
             {isInterfaceType(type) || isUnionType(type)
               ? schema
-                  .getPossibleTypes(type)
-                  .map(type => (
-                    <AbstractView
-                      key={type.name}
-                      implementingType={type}
-                      selections={childSelections}
-                      modifySelections={this._modifyChildSelections}
-                      schema={schema}
-                      getDefaultFieldNames={getDefaultFieldNames}
-                      getDefaultScalarArgValue={
-                        this.props.getDefaultScalarArgValue
-                      }
-                      makeDefaultArg={this.props.makeDefaultArg}
-                      onRunOperation={this.props.onRunOperation}
-                      styleConfig={this.props.styleConfig}
-                      onCommit={this.props.onCommit}
-                      definition={this.props.definition}
-                    />
-                  ))
+                .getPossibleTypes(type)
+                .map(type => (
+                  <AbstractView
+                    key={type.name}
+                    implementingType={type}
+                    selections={childSelections}
+                    modifySelections={this._modifyChildSelections}
+                    schema={schema}
+                    getDefaultFieldNames={getDefaultFieldNames}
+                    getDefaultScalarArgValue={
+                      this.props.getDefaultScalarArgValue
+                    }
+                    makeDefaultArg={this.props.makeDefaultArg}
+                    onRunOperation={this.props.onRunOperation}
+                    styleConfig={this.props.styleConfig}
+                    onCommit={this.props.onCommit}
+                    definition={this.props.definition}
+                  />
+                ))
               : null}
           </div>
         </div>
@@ -1999,7 +1999,7 @@ function parseQuery(text: string): ?DocumentNode | Error {
       text,
       // Tell graphql to not bother track locations when parsing, we don't need
       // it and it's a tiny bit more expensive.
-      {noLocation: true},
+      { noLocation: true },
     );
   } catch (e) {
     return new Error(e);
@@ -2010,7 +2010,7 @@ const DEFAULT_OPERATION = {
   kind: 'OperationDefinition',
   operation: 'query',
   variableDefinitions: [],
-  name: {kind: 'Name', value: 'MyQuery'},
+  name: { kind: 'Name', value: 'MyQuery' },
   directives: [],
   selectionSet: {
     kind: 'SelectionSet',
@@ -2082,39 +2082,39 @@ const defaultStyles = {
 
 type RootViewProps = {|
   schema: GraphQLSchema,
-  isLast: boolean,
-  fields: ?GraphQLFieldMap<any, any>,
-  operationType: OperationType,
-  name: ?string,
-  onTypeName: ?string,
-  definition: FragmentDefinitionNode | OperationDefinitionNode,
-  onEdit: (
-    operationDef: ?OperationDefinitionNode | ?FragmentDefinitionNode,
-    commit: boolean,
-  ) => DocumentNode,
-  onCommit: (document: DocumentNode) => void,
-  onOperationRename: (query: string) => void,
-  onOperationDestroy: () => void,
-  onOperationClone: () => void,
-  onRunOperation: (name: ?string) => void,
-  onMount: (rootViewElId: string) => void,
-  getDefaultFieldNames: (type: GraphQLObjectType) => Array<string>,
-  getDefaultScalarArgValue: GetDefaultScalarArgValue,
-  makeDefaultArg: ?MakeDefaultArg,
-  styleConfig: StyleConfig,
-  availableFragments: AvailableFragments,
+    isLast: boolean,
+      fields: ?GraphQLFieldMap < any, any >,
+        operationType: OperationType,
+          name: ?string,
+            onTypeName: ?string,
+              definition: FragmentDefinitionNode | OperationDefinitionNode,
+                onEdit: (
+                  operationDef: ?OperationDefinitionNode | ?FragmentDefinitionNode,
+                  commit: boolean,
+                ) => DocumentNode,
+                  onCommit: (document: DocumentNode) => void,
+                    onOperationRename: (query: string) => void,
+                      onOperationDestroy: () => void,
+                        onOperationClone: () => void,
+                          onRunOperation: (name: ?string) => void,
+                            onMount: (rootViewElId: string) => void,
+                              getDefaultFieldNames: (type: GraphQLObjectType) => Array < string >,
+                                getDefaultScalarArgValue: GetDefaultScalarArgValue,
+                                  makeDefaultArg: ?MakeDefaultArg,
+                                    styleConfig: StyleConfig,
+                                      availableFragments: AvailableFragments,
 |};
 
 class RootView extends React.PureComponent<
   RootViewProps,
-  {|newOperationType: NewOperationType, displayTitleActions: boolean|},
+  {| newOperationType: NewOperationType, displayTitleActions: boolean|},
 > {
-  state = {newOperationType: 'query', displayTitleActions: false};
-  _previousOperationDef: ?OperationDefinitionNode | ?FragmentDefinitionNode;
+  state = { newOperationType: 'query', displayTitleActions: false };
+  _previousOperationDef: ? OperationDefinitionNode | ? FragmentDefinitionNode;
 
   _modifySelections = (
     selections: Selections,
-    options: ?{commit: boolean},
+    options: ?{ commit: boolean },
   ): DocumentNode => {
     let operationDef: FragmentDefinitionNode | OperationDefinitionNode = this
       .props.definition;
@@ -2177,7 +2177,7 @@ class RootView extends React.PureComponent<
   };
 
   _rootViewElId = () => {
-    const {operationType, name} = this.props;
+    const { operationType, name } = this.props;
     const rootViewElId = `${operationType}-${name || 'unknown'}`;
     return rootViewElId;
   };
@@ -2219,10 +2219,10 @@ class RootView extends React.PureComponent<
         }}>
         <div
           role="listitem"
-          style={{color: styleConfig.colors.keyword, paddingBottom: 4}}
+          style={{ color: styleConfig.colors.keyword, paddingBottom: 4 }}
           className="graphiql-operation-title-bar"
-          onMouseEnter={() => this.setState({displayTitleActions: true})}
-          onMouseLeave={() => this.setState({displayTitleActions: false})}>
+          onMouseEnter={() => this.setState({ displayTitleActions: true })}
+          onMouseLeave={() => this.setState({ displayTitleActions: false })}>
           {operationType}{' '}
           {!!this.props.onTypeName ? (
             <span>
@@ -2315,7 +2315,7 @@ class Explorer extends React.PureComponent<Props, State> {
   _onEdit = (query: string): void => this.props.onEdit(query);
 
   _setAddOperationType = (value: NewOperationType) => {
-    this.setState({newOperationType: value});
+    this.setState({ newOperationType: value });
   };
 
   _handleRootViewMount = (rootViewElId: string) => {
@@ -2331,16 +2331,16 @@ class Explorer extends React.PureComponent<Props, State> {
   };
 
   render() {
-    const {schema, query, makeDefaultArg} = this.props;
+    const { schema, query, makeDefaultArg } = this.props;
 
     if (!schema) {
       return (
-        <div style={{fontFamily: 'sans-serif'}} className="error-container">
+        <div style={{ fontFamily: 'sans-serif' }} className="error-container">
           <p>
-            {this.props.fetchError }
+            {this.props.fetchError}
           </p>
           {/*{!this.props.user?.id && <p>Please <a className='bitquery-ico-popup' href={`${this.props.user?.graphql_admin_url}/auth/login?redirect_to=${window.location.href}`}>Sign In</a> To Try API</p>}*/}
-          {!this.props.user?.id && <p>Please <a className='bitquery-ico-popup' href={`https://account.bitquery.io/auth/login?redirect_to=${window.location.href}`}>Sign In</a> To Try API</p>}
+          {!this.props.user?.id && <div> <a className='singin-btn' href={`https://account.bitquery.io/auth/login?redirect_to=${window.location.href}`}>Sign In To Try API</a>   </div>}
 
         </div>
       );
@@ -2354,9 +2354,9 @@ class Explorer extends React.PureComponent<Props, State> {
       arrowOpen: this.props.arrowOpen || defaultArrowOpen,
       styles: this.props.styles
         ? {
-            ...defaultStyles,
-            ...this.props.styles,
-          }
+          ...defaultStyles,
+          ...this.props.styles,
+        }
         : defaultStyles,
     };
     const queryType = schema.getQueryType();
@@ -2400,8 +2400,8 @@ class Explorer extends React.PureComponent<Props, State> {
       const newName =
         name == null || name === ''
           ? null
-          : {kind: 'Name', value: name, loc: undefined};
-      const newOperation = {...targetOperation, name: newName};
+          : { kind: 'Name', value: name, loc: undefined };
+      const newOperation = { ...targetOperation, name: newName };
 
       const existingDefs = parsedQuery.definitions;
 
@@ -2438,13 +2438,13 @@ class Explorer extends React.PureComponent<Props, State> {
         loc: undefined,
       };
 
-      const newOperation = {...targetOperation, name: newName};
+      const newOperation = { ...targetOperation, name: newName };
 
       const existingDefs = parsedQuery.definitions;
 
       const newDefinitions = [...existingDefs, newOperation];
 
-      this.setState({operationToScrollTo: `${kind}-${newOperationName}`});
+      this.setState({ operationToScrollTo: `${kind}-${newOperationName}` });
 
       return {
         ...parsedQuery,
@@ -2479,17 +2479,16 @@ class Explorer extends React.PureComponent<Props, State> {
       const MySiblingDefs = viewingDefaultOperation
         ? []
         : existingDefs.filter(def => {
-            if (def.kind === 'OperationDefinition') {
-              return def.operation === kind;
-            } else {
-              // Don't support adding fragments from explorer
-              return false;
-            }
-          });
+          if (def.kind === 'OperationDefinition') {
+            return def.operation === kind;
+          } else {
+            // Don't support adding fragments from explorer
+            return false;
+          }
+        });
 
-      const newOperationName = `My${capitalize(kind)}${
-        MySiblingDefs.length === 0 ? '' : MySiblingDefs.length + 1
-      }`;
+      const newOperationName = `My${capitalize(kind)}${MySiblingDefs.length === 0 ? '' : MySiblingDefs.length + 1
+        }`;
 
       // Add this as the default field as it guarantees a valid selectionSet
       const firstFieldName = '__typename # Placeholder value';
@@ -2516,7 +2515,7 @@ class Explorer extends React.PureComponent<Props, State> {
       const newDefinition = {
         kind: 'OperationDefinition',
         operation: kind,
-        name: {kind: 'Name', value: newOperationName},
+        name: { kind: 'Name', value: newOperationName },
         variableDefinitions: [],
         directives: [],
         selectionSet: selectionSet,
@@ -2535,7 +2534,7 @@ class Explorer extends React.PureComponent<Props, State> {
         definitions: newDefinitions,
       };
 
-      this.setState({operationToScrollTo: `${kind}-${newOperationName}`});
+      this.setState({ operationToScrollTo: `${kind}-${newOperationName}` });
 
       this.props.onEdit(print(newOperationDef));
     };
@@ -2548,231 +2547,231 @@ class Explorer extends React.PureComponent<Props, State> {
           style={styleConfig.styles.buttonStyle}
           type="link"
           value={('query': NewOperationType)}>
-          Query
-        </option>
+            Query
+        </option >
       ) : null,
-      !!mutationFields ? (
-        <option
-          key="mutation"
-          className={'toolbar-button'}
-          style={styleConfig.styles.buttonStyle}
-          type="link"
-          value={('mutation': NewOperationType)}>
-          Mutation
-        </option>
-      ) : null,
-      !!subscriptionFields ? (
-        <option
-          key="subscription"
-          className={'toolbar-button'}
-          style={styleConfig.styles.buttonStyle}
-          type="link"
-          value={('subscription': NewOperationType)}>
-          Subscription
-        </option>
-      ) : null,
+  !!mutationFields ? (
+    <option
+      key="mutation"
+      className={'toolbar-button'}
+      style={styleConfig.styles.buttonStyle}
+      type="link"
+      value={('mutation': NewOperationType)}>
+      Mutation
+    </option>
+  ) : null,
+  !!subscriptionFields ? (
+    <option
+      key="subscription"
+      className={'toolbar-button'}
+      style={styleConfig.styles.buttonStyle}
+      type="link"
+      value={('subscription': NewOperationType)}>
+      Subscription
+    </option>
+  ) : null,
     ].filter(Boolean);
 
-    const actionsEl = null 
+const actionsEl = null
 
-    const availableFragments: AvailableFragments = relevantOperations.reduce(
-      (acc, operation) => {
-        if (operation.kind === 'FragmentDefinition') {
-          const fragmentTypeName = operation.typeCondition.name.value;
-          const existingFragmentsForType = acc[fragmentTypeName] || [];
-          const newFragmentsForType = [
-            ...existingFragmentsForType,
-            operation,
-          ].sort((a, b) => a.name.value.localeCompare(b.name.value));
-          return {
-            ...acc,
-            [fragmentTypeName]: newFragmentsForType,
+const availableFragments: AvailableFragments = relevantOperations.reduce(
+  (acc, operation) => {
+    if (operation.kind === 'FragmentDefinition') {
+      const fragmentTypeName = operation.typeCondition.name.value;
+      const existingFragmentsForType = acc[fragmentTypeName] || [];
+      const newFragmentsForType = [
+        ...existingFragmentsForType,
+        operation,
+      ].sort((a, b) => a.name.value.localeCompare(b.name.value));
+      return {
+        ...acc,
+        [fragmentTypeName]: newFragmentsForType,
+      };
+    }
+
+    return acc;
+  },
+  {},
+);
+
+const attribution = this.props.showAttribution ? <Attribution /> : null;
+
+return (
+  <div
+    ref={ref => {
+      this._ref = ref;
+    }}
+    style={{
+      fontSize: 12,
+      textOverflow: 'ellipsis',
+      whiteSpace: 'nowrap',
+      margin: 0,
+      padding: 8,
+      paddingRight: 0,
+      fontFamily:
+        'Consolas, Inconsolata, "Droid Sans Mono", Monaco, monospace',
+      display: 'flex',
+      flexDirection: 'column',
+      height: '100%',
+    }}
+    className="graphiql-explorer-root">
+    <div
+      style={{
+        flexGrow: '1',
+        // overflow: 'scroll',
+        overflowY: ' auto',
+        overflowX: 'auto',
+      }}>
+      {relevantOperations.map(
+        (
+          operation: OperationDefinitionNode | FragmentDefinitionNode,
+          index,
+        ) => {
+          const operationName =
+            operation && operation.name && operation.name.value;
+
+          const operationType =
+            operation.kind === 'FragmentDefinition'
+              ? 'fragment'
+              : (operation && operation.operation) || 'query';
+
+          const onOperationRename = newName => {
+            const newOperationDef = renameOperation(operation, newName);
+            this.props.onEdit(print(newOperationDef));
           };
-        }
 
-        return acc;
-      },
-      {},
-    );
+          const onOperationClone = () => {
+            const newOperationDef = cloneOperation(operation);
+            this.props.onEdit(print(newOperationDef));
+          };
 
-    const attribution = this.props.showAttribution ? <Attribution /> : null;
+          const onOperationDestroy = () => {
+            const newOperationDef = destroyOperation(operation);
+            this.props.onEdit(print(newOperationDef));
+          };
 
-    return (
-      <div
-        ref={ref => {
-          this._ref = ref;
-        }}
-        style={{
-          fontSize: 12,
-          textOverflow: 'ellipsis',
-          whiteSpace: 'nowrap',
-          margin: 0,
-          padding: 8,
-          paddingRight: 0,
-          fontFamily:
-            'Consolas, Inconsolata, "Droid Sans Mono", Monaco, monospace',
-          display: 'flex',
-          flexDirection: 'column',
-          height: '100%',
-        }}
-        className="graphiql-explorer-root">
-        <div
-          style={{
-            flexGrow: '1',
-            // overflow: 'scroll',
-            overflowY:' auto',
-            overflowX: 'auto',
-          }}>
-          {relevantOperations.map(
-            (
-              operation: OperationDefinitionNode | FragmentDefinitionNode,
-              index,
-            ) => {
-              const operationName =
-                operation && operation.name && operation.name.value;
+          const fragmentType =
+            operation.kind === 'FragmentDefinition' &&
+            operation.typeCondition.kind === 'NamedType' &&
+            schema.getType(operation.typeCondition.name.value);
 
-              const operationType =
-                operation.kind === 'FragmentDefinition'
-                  ? 'fragment'
-                  : (operation && operation.operation) || 'query';
+          const fragmentFields =
+            fragmentType instanceof GraphQLObjectType
+              ? fragmentType.getFields()
+              : null;
 
-              const onOperationRename = newName => {
-                const newOperationDef = renameOperation(operation, newName);
-                this.props.onEdit(print(newOperationDef));
-              };
-
-              const onOperationClone = () => {
-                const newOperationDef = cloneOperation(operation);
-                this.props.onEdit(print(newOperationDef));
-              };
-
-              const onOperationDestroy = () => {
-                const newOperationDef = destroyOperation(operation);
-                this.props.onEdit(print(newOperationDef));
-              };
-
-              const fragmentType =
-                operation.kind === 'FragmentDefinition' &&
-                operation.typeCondition.kind === 'NamedType' &&
-                schema.getType(operation.typeCondition.name.value);
-
-              const fragmentFields =
-                fragmentType instanceof GraphQLObjectType
-                  ? fragmentType.getFields()
-                  : null;
-
-              const fields =
-                operationType === 'query'
-                  ? queryFields
-                  : operationType === 'mutation'
-                  ? mutationFields
-                  : operationType === 'subscription'
+          const fields =
+            operationType === 'query'
+              ? queryFields
+              : operationType === 'mutation'
+                ? mutationFields
+                : operationType === 'subscription'
                   ? subscriptionFields
                   : operation.kind === 'FragmentDefinition'
-                  ? fragmentFields
-                  : null;
+                    ? fragmentFields
+                    : null;
 
-              const fragmentTypeName =
-                operation.kind === 'FragmentDefinition'
-                  ? operation.typeCondition.name.value
-                  : null;
+          const fragmentTypeName =
+            operation.kind === 'FragmentDefinition'
+              ? operation.typeCondition.name.value
+              : null;
 
-              const onCommit = (parsedDocument: DocumentNode) => {
-                const textualNewDocument = print(parsedDocument);
+          const onCommit = (parsedDocument: DocumentNode) => {
+            const textualNewDocument = print(parsedDocument);
 
-                this.props.onEdit(textualNewDocument);
-              };
+            this.props.onEdit(textualNewDocument);
+          };
 
-              return (
-                <RootView
-                  key={index}
-                  isLast={index === relevantOperations.length - 1}
-                  fields={fields}
-                  operationType={operationType}
-                  name={operationName}
-                  definition={operation}
-                  onOperationRename={onOperationRename}
-                  onOperationDestroy={onOperationDestroy}
-                  onOperationClone={onOperationClone}
-                  onTypeName={fragmentTypeName}
-                  onMount={this._handleRootViewMount}
-                  onCommit={onCommit}
-                  onEdit={(
-                    newDefinition: ?DefinitionNode,
-                    options: ?{commit: boolean},
-                  ): DocumentNode => {
-                    let commit;
-                    if (
-                      typeof options === 'object' &&
-                      typeof options.commit !== 'undefined'
-                    ) {
-                      commit = options.commit;
-                    } else {
-                      commit = true;
-                    }
+          return (
+            <RootView
+              key={index}
+              isLast={index === relevantOperations.length - 1}
+              fields={fields}
+              operationType={operationType}
+              name={operationName}
+              definition={operation}
+              onOperationRename={onOperationRename}
+              onOperationDestroy={onOperationDestroy}
+              onOperationClone={onOperationClone}
+              onTypeName={fragmentTypeName}
+              onMount={this._handleRootViewMount}
+              onCommit={onCommit}
+              onEdit={(
+                newDefinition: ?DefinitionNode,
+                options: ?{ commit: boolean },
+              ): DocumentNode => {
+                let commit;
+                if (
+                  typeof options === 'object' &&
+                  typeof options.commit !== 'undefined'
+                ) {
+                  commit = options.commit;
+                } else {
+                  commit = true;
+                }
 
-                    if (!!newDefinition) {
-                      const newQuery: DocumentNode = {
-                        ...parsedQuery,
-                        definitions: parsedQuery.definitions.map(
-                          existingDefinition =>
-                            existingDefinition === operation
-                              ? newDefinition
-                              : existingDefinition,
-                        ),
-                      };
+                if (!!newDefinition) {
+                  const newQuery: DocumentNode = {
+                    ...parsedQuery,
+                    definitions: parsedQuery.definitions.map(
+                      existingDefinition =>
+                        existingDefinition === operation
+                          ? newDefinition
+                          : existingDefinition,
+                    ),
+                  };
 
-                      if (commit) {
-                        onCommit(newQuery);
-                        return newQuery;
-                      } else {
-                        return newQuery;
-                      }
-                    } else {
-                      return parsedQuery;
-                    }
-                  }}
-                  schema={schema}
-                  getDefaultFieldNames={getDefaultFieldNames}
-                  getDefaultScalarArgValue={getDefaultScalarArgValue}
-                  makeDefaultArg={makeDefaultArg}
-                  onRunOperation={() => {
-                    if (!!this.props.onRunOperation) {
-                      this.props.onRunOperation(operationName);
-                    }
-                  }}
-                  styleConfig={styleConfig}
-                  availableFragments={availableFragments}
-                />
-              );
-            },
-          )}
-          {attribution}
-        </div>
+                  if (commit) {
+                    onCommit(newQuery);
+                    return newQuery;
+                  } else {
+                    return newQuery;
+                  }
+                } else {
+                  return parsedQuery;
+                }
+              }}
+              schema={schema}
+              getDefaultFieldNames={getDefaultFieldNames}
+              getDefaultScalarArgValue={getDefaultScalarArgValue}
+              makeDefaultArg={makeDefaultArg}
+              onRunOperation={() => {
+                if (!!this.props.onRunOperation) {
+                  this.props.onRunOperation(operationName);
+                }
+              }}
+              styleConfig={styleConfig}
+              availableFragments={availableFragments}
+            />
+          );
+        },
+      )}
+      {attribution}
+    </div>
 
-        {actionsEl}
-      </div>
-    );
+    {actionsEl}
+  </div>
+);
   }
 }
 
 class ErrorBoundary extends React.Component<
   *,
-  {hasError: boolean, error: any, errorInfo: any},
+  { hasError: boolean, error: any, errorInfo: any },
 > {
-  state = {hasError: false, error: null, errorInfo: null};
+  state = { hasError: false, error: null, errorInfo: null };
 
   componentDidCatch(error, errorInfo) {
-    this.setState({hasError: true, error: error, errorInfo: errorInfo});
+    this.setState({ hasError: true, error: error, errorInfo: errorInfo });
     console.error('Error in component', error, errorInfo);
   }
 
   render() {
     if (this.state.hasError) {
       return (
-        <div style={{padding: 18, fontFamily: 'sans-serif'}}>
+        <div style={{ padding: 18, fontFamily: 'sans-serif' }}>
           <div>Something went wrong</div>
-          <details style={{whiteSpace: 'pre-wrap'}}>
+          <details style={{ whiteSpace: 'pre-wrap' }}>
             {this.state.error ? this.state.error.toString() : null}
             <br />
             {this.state.errorInfo ? this.state.errorInfo.componentStack : null}

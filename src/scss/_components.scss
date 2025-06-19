@@ -69,7 +69,7 @@
 
 //Buttons
 
-.save-btn, .bitquery-btn, .cancel-btn {
+.save-btn, .bitquery-btn, .cancel-btn, .singin-btn {
   background: $base-gradient;
   padding: 4px 10px;
   border: 1px solid $border-color;
@@ -97,7 +97,15 @@
     box-shadow: 0 0 0 3px rgba($border-color, 0.2);
   }
 }
-
+.singin-btn{
+  color: $text-color-active !important;
+  &:hover{
+        color: #46067f !important;
+  }
+  &:active{
+    color: #46067f !important;
+  }
+}
 .save-btn {
   color: #006400;
 
