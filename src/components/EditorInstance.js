@@ -526,7 +526,7 @@ const EditorInstance = observer(function EditorInstance({ number }) {
             ...customHeaders,
         }
 
-        if (user.role === 'admin') {
+        if (user.role === 'admin' || user.role === 'poweruser') {
             headers['X-Sql-Debug'] = 'true';
         }
         try {
@@ -843,7 +843,7 @@ const EditorInstance = observer(function EditorInstance({ number }) {
                 </div>
                 {docExplorerOpen && <DocExplorer schema={schema[debouncedURL]} />}
                 {codeSnippetOpen && <CodeSnippetComponent />}
-                {user?.role === 'admin' && sqlQueryOpen && <SqlQueryComponent sqlQuery={sqlQuery?.debug || ''} />}
+                {(user?.role === 'admin' || user?.role === 'poweruser') && sqlQueryOpen && <SqlQueryComponent sqlQuery={sqlQuery?.debug || ''} />}
             </div>
         </div>
     )

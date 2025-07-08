@@ -228,7 +228,7 @@ const ToolbarComponent = observer(({
                 />
             </InputGroup>
             {user?.id && query[number].graphqlQueryID && <StatisticsButton number={number} />}
-            {user?.role === 'admin' &&
+            {(user?.role === 'admin' || user?.role === 'poweruser') &&
                 <span aria-label="SQL Query" onClick={toggleSqlQuery}>
           <SqlIcon
               className={"bitquery-little-btn" + (sqlQueryOpen ? " active" : '')}
