@@ -26,7 +26,7 @@ const Profile = observer(() => {
                             className="bitquery-ico-popup"
                             href={`https://account.bitquery.io/auth/login?redirect_to=${toastLink}`}
                             aria-label="Log in (opens in a new tab)"
-                            rel="noopener noreferrer"
+                            rel="noopener noreferrer nofollow"
                         >
                             log in
                         </a>{' '}
@@ -36,7 +36,7 @@ const Profile = observer(() => {
                             href={`https://account.bitquery.io/auth/signup?redirect_to=${toastLink}`}
                             aria-label="Register (opens in a new tab)"
                             target="_blank"
-                            rel="noopener noreferrer"
+                            rel="noopener noreferrer nofollow"
                         >
                             register
                         </a>
@@ -59,7 +59,7 @@ const Profile = observer(() => {
                     href={`https://account.bitquery.io/auth/login?redirect_to=${toastLink}`}
                     aria-label="Log in (opens in a new tab)"
                     // target="_blank"
-                    rel="noopener noreferrer"
+                    rel="noopener noreferrer nofollow"
                 >
                     Login <UserIcon />
                 </a>
