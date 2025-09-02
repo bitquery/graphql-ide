@@ -1,9 +1,9 @@
-import React, {useState, useEffect} from 'react';
-import {observer} from 'mobx-react-lite';
-import {QueriesStore, UserStore} from '../store/queriesStore';
-import {GalleryStore} from '../store/galleryStore';
-import {useQuery} from '../utils/useQuery';
-import {Link, useHistory, useLocation} from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { observer } from 'mobx-react-lite';
+import { QueriesStore, UserStore } from '../store/queriesStore';
+import { GalleryStore } from '../store/galleryStore';
+import { useQuery } from '../utils/useQuery';
+import { Link, useHistory, useLocation } from 'react-router-dom';
 import bitqueryLogo from '../assets/images/bitquery_logo.svg';
 import useDebounce from '../utils/useDebounce';
 import VideoModal from '../components/modal/VideoModal'
@@ -22,9 +22,9 @@ import modalStore from '../store/modalStore'
 
 
 const ControlPanel = observer(function ControlPanel() {
-    const {user} = UserStore;
-    const {currentQuery} = QueriesStore;
-    const {currentTag} = GalleryStore;
+    const { user } = UserStore;
+    const { currentQuery } = QueriesStore;
+    const { currentTag } = GalleryStore;
     const [search, setSearch] = useState('');
     const [active, setActive] = useState(1);
     const searchValue = useDebounce(search, 500);
@@ -35,10 +35,10 @@ const ControlPanel = observer(function ControlPanel() {
 
 
     const menuItems = {
-        queries: {name: 'Queries', icon: <i className="bi bi-terminal me-2 bitquery-ico"></i>},
-        explore: {name: 'All Queries', icon: <i className="bi bi-terminal me-2 bitquery-ico"></i>},
-        myqueries: {name: 'My Queries', icon: <i className="bi bi-star me-2 bitquery-ico"></i>},
-        teamqueries: {name: 'Team Queries', icon: <i className="bi bi-people me-2 bitquery-ico"></i>}
+        queries: { name: 'Queries', icon: <i className="bi bi-terminal me-2 bitquery-ico"></i> },
+        explore: { name: 'All Queries', icon: <i className="bi bi-terminal me-2 bitquery-ico"></i> },
+        myqueries: { name: 'My Queries', icon: <i className="bi bi-star me-2 bitquery-ico"></i> },
+        teamqueries: { name: 'Team Queries', icon: <i className="bi bi-people me-2 bitquery-ico"></i> }
     };
     const [queriesMenuTitle, setQueriesMenuTitle] = useState(menuItems.queries);
 
@@ -96,12 +96,12 @@ const ControlPanel = observer(function ControlPanel() {
             <div className="d-flex align-items-center justify-content-between responsive-w-100">
                 <div className="d-flex align-items-center">
                     <Navbar.Brand className="me-0" href="/">
-                        <img src={bitqueryLogo} alt="logo"/>
+                        <img src={bitqueryLogo} alt="logo" />
                         <span className="bitquery-logo_text">Bitquery</span>
                     </Navbar.Brand>
                 </div>
 
-                <Navbar.Toggle className="bitquery-btn" aria-controls="navbarSupportedContent"/>
+                <Navbar.Toggle className="bitquery-btn" aria-controls="navbarSupportedContent" />
             </div>
 
             <Navbar.Collapse id="navbarSupportedContent" className="w-100">
@@ -136,23 +136,23 @@ const ControlPanel = observer(function ControlPanel() {
                             : 'bitquery-nav_item'
                         }
                     >
-                    
+
                         <NavDropdown.Item
                             onClick={() => handleNavClick('/explore/All%20queries', 'explore')}
                             className={active === 3 ? 'bitquery-link_active' : 'bitquery-links bitquery-nav_item'}
                         >
-                                 <span className='ms-2'>
-                            {menuItems.explore.icon}All Queries
-                                </span>
+                            <span className='ms-2'>
+                                {menuItems.explore.icon}All Queries
+                            </span>
                         </NavDropdown.Item>
                         {user?.id && (
                             <NavDropdown.Item
                                 onClick={() => handleNavClick('/myqueries/All%20queries', 'myqueries')}
                                 className={active === 4 ? 'bitquery-link_active' : 'bitquery-links bitquery-nav_item'}
                             >
-                               <span className='ms-2'>
-                                   {menuItems.myqueries.icon}My Queries
-                               </span>
+                                <span className='ms-2'>
+                                    {menuItems.myqueries.icon}My Queries
+                                </span>
                             </NavDropdown.Item>
                         )}
                         {(user?.children_count || user?.ancestry) && (
@@ -161,7 +161,7 @@ const ControlPanel = observer(function ControlPanel() {
                                 className={active === 5 ? 'bitquery-link_active' : 'bitquery-links bitquery-nav_item'}
                             >
                                 <span className='ms-2'>
-                                {menuItems.teamqueries.icon}Team Queries
+                                    {menuItems.teamqueries.icon}Team Queries
                                 </span>
                             </NavDropdown.Item>
                         )}
@@ -169,11 +169,11 @@ const ControlPanel = observer(function ControlPanel() {
 
 
                     <NavDropdown title={<OverlayTrigger placement="bottom"
-                                                        overlay={<Tooltip id="docs-tooltip-main">Links to
-                                                            documentation</Tooltip>}>
+                        overlay={<Tooltip id="docs-tooltip-main">Links to
+                            documentation</Tooltip>}>
                         <span>Docs</span>
                     </OverlayTrigger>}
-                                 id="nav-dropdown" className="bitquery-nav_link">
+                        id="nav-dropdown" className="bitquery-nav_link">
                         <OverlayTrigger
                             placement="bottom"
                             overlay={<Tooltip id="docs-tooltip-getting-started">Getting started with Bitquery
@@ -189,7 +189,7 @@ const ControlPanel = observer(function ControlPanel() {
                                 Getting started
                             </NavDropdown.Item>
                         </OverlayTrigger>
-                        <NavDropdown.Divider/>
+                        <NavDropdown.Divider />
                         <OverlayTrigger
                             placement="bottom"
                             overlay={
@@ -208,7 +208,7 @@ const ControlPanel = observer(function ControlPanel() {
 
                         </OverlayTrigger>
 
-                        <NavDropdown.Divider/>
+                        <NavDropdown.Divider />
                         <OverlayTrigger
                             placement="bottom"
                             overlay={<Tooltip id="docs-tooltip-v1">Open GraphQL V1 docs</Tooltip>}
@@ -223,7 +223,7 @@ const ControlPanel = observer(function ControlPanel() {
                                 GraphQL - V1
                             </NavDropdown.Item>
                         </OverlayTrigger>
-                        <NavDropdown.Divider/>
+                        <NavDropdown.Divider />
                         <OverlayTrigger
                             placement="bottom"
                             overlay={<Tooltip id="docs-tooltip-v2">Open Streaming V2 docs</Tooltip>}
@@ -267,7 +267,7 @@ const ControlPanel = observer(function ControlPanel() {
                             </NavDropdown.Item>
                         </OverlayTrigger>
 
-                        <NavDropdown.Divider/>
+                        <NavDropdown.Divider />
 
                         <OverlayTrigger
                             placement="bottom"
@@ -339,7 +339,7 @@ const ControlPanel = observer(function ControlPanel() {
                             <OverlayTrigger
                                 placement="bottom"
                                 overlay={<Tooltip id="apps-tooltip-main">Explore Bitquery applications</Tooltip>}
-                                delay={{show: 300, hide: 0}}
+                                delay={{ show: 300, hide: 0 }}
                             >
                                 <span>Apps</span>
                             </OverlayTrigger>
@@ -363,7 +363,7 @@ const ControlPanel = observer(function ControlPanel() {
                             </NavDropdown.Item>
                         </OverlayTrigger>
 
-                        <NavDropdown.Divider/>
+                        <NavDropdown.Divider />
 
                         <OverlayTrigger
                             placement="bottom"
@@ -381,7 +381,7 @@ const ControlPanel = observer(function ControlPanel() {
                             </NavDropdown.Item>
                         </OverlayTrigger>
 
-                        <NavDropdown.Divider/>
+                        <NavDropdown.Divider />
 
                         <OverlayTrigger
                             placement="bottom"
@@ -399,7 +399,7 @@ const ControlPanel = observer(function ControlPanel() {
                             </NavDropdown.Item>
                         </OverlayTrigger>
 
-                        <NavDropdown.Divider/>
+                        <NavDropdown.Divider />
 
                         <OverlayTrigger
                             placement="bottom"
@@ -417,7 +417,7 @@ const ControlPanel = observer(function ControlPanel() {
                             </NavDropdown.Item>
                         </OverlayTrigger>
 
-                        <NavDropdown.Divider/>
+                        <NavDropdown.Divider />
 
                         <OverlayTrigger
                             placement="bottom"
@@ -446,7 +446,7 @@ const ControlPanel = observer(function ControlPanel() {
                         >
                             <i className="bi bi-envelope-fill me-2"></i> Contact Sales
                         </NavDropdown.Item>
-                        <NavDropdown.Divider/>
+                        <NavDropdown.Divider />
                         <NavDropdown.Item
                             className="bitquery-links bitquery-links-item"
                             href="https://community.bitquery.io/"
@@ -455,7 +455,7 @@ const ControlPanel = observer(function ControlPanel() {
                         >
                             <i className="bi bi-chat-left-text-fill me-2"></i> Forum
                         </NavDropdown.Item>
-                        <NavDropdown.Divider/>
+                        <NavDropdown.Divider />
                         <NavDropdown.Item
                             className="bitquery-links bitquery-links-item"
                             href="https://t.me/bloxy_info/"
@@ -464,7 +464,7 @@ const ControlPanel = observer(function ControlPanel() {
                         >
                             <i className="bi bi-telegram me-2"></i> Telegram
                         </NavDropdown.Item>
-                        <NavDropdown.Divider/>
+                        <NavDropdown.Divider />
                         <NavDropdown.Item
                             className="bitquery-links bitquery-links-item"
                             href="https://twitter.com/Bitquery_io"
@@ -477,8 +477,9 @@ const ControlPanel = observer(function ControlPanel() {
 
                     {!user?.id && (
                         <Nav.Link as={Link}
-                                  to={`${user?.graphql_admin_url}/auth/login?redirect_to=${window.location.href}`}
-                                  className="d-lg-none">
+                            rel="noopener noreferrer nofollow"
+                            to={`${user?.graphql_admin_url}/auth/login?redirect_to=${window.location.href}`}
+                            className="d-lg-none">
                             Login
                         </Nav.Link>
                     )}
@@ -505,13 +506,14 @@ const ControlPanel = observer(function ControlPanel() {
                     {user?.id && (
                         // <Nav.Link as={Link} to={`${user?.graphql_admin_url}/auth/logout?redirect_to=${window.location.href}`} className="d-lg-none">
                         <Nav.Link as={Link}
-                                  to={`https://account.bitquery.io/auth/login?redirect_to=${window.location.href}`}
-                                  className="d-lg-none">
+                            rel="noopener noreferrer nofollow"
+                            to={`https://account.bitquery.io/auth/login?redirect_to=${window.location.href}`}
+                            className="d-lg-none">
                             Logout
                         </Nav.Link>
                     )}
                 </Nav>
-                <ProfileComponent/>
+                <ProfileComponent />
             </Navbar.Collapse>
             <VideoModal
                 show={showVideo}
