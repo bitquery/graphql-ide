@@ -64,6 +64,7 @@ const EditorInstance = observer(function EditorInstance({ number }) {
     const [widget, setWidget] = useState(null)
     const [sqlQuery, setSqlQuery] = useState(null)
     const [isFullscreen, setIsFullscreen] = useState(false)
+    const [redirectUrl] = useState(window.location.href);
     const debouncedURL = useDebounce(currentQuery.endpoint_url, 500)
     const workspace = useRef(null)
     const overwrap = useRef(null)
@@ -445,8 +446,8 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 
     const getResult = useCallback(async () => {
         if (!user?.id) {
-            window.location = `${user?.graphql_admin_url}/auth/login?redirect_to=${window.location.href}`
-            return
+            window.location = `https://account.bitquery.io/auth/login?redirect_to=${encodeURIComponent(redirectUrl)}`;
+            return;
         }
         let variables;
         try {
