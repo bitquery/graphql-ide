@@ -445,7 +445,7 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 
     const getResult = useCallback(async () => {
         if (!user?.id) {
-            window.location = `https://account.bitquery.io/auth/login?redirect_to=${window.location.href}`
+            window.location = `${user?.graphql_admin_url}/auth/login?redirect_to=${window.location.href}`
             return
         }
         let variables;
