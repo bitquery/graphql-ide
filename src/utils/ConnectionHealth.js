@@ -1,6 +1,6 @@
 import { makeAutoObservable } from 'mobx'
 
-class ConnectionHealthStore {
+export class ConnectionHealthStore {
     status = 'unknown'
     latency = 0
     lastDataAt = Date.now()

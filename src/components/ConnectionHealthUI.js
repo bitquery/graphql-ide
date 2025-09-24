@@ -40,16 +40,17 @@ const statusConfig = {
     }
 }
 
-const ConnectionHealthUI = observer(({ compact = false }) => {
-    const config = statusConfig[connectionHealthStore.status] || statusConfig.unknown
+const ConnectionHealthUI = observer(({ compact = false, store }) => {
+    const s = store || connectionHealthStore
+    const config = statusConfig[s.status] || statusConfig.unknown
 
     useEffect(() => {
-        console.log('ConnectionHealthUI: Current status:', connectionHealthStore.status, 'latency:', connectionHealthStore.latency)
-    }, [connectionHealthStore.status, connectionHealthStore.latency])
+        console.log('ConnectionHealthUI: Current status:', s.status, 'latency:', s.latency)
+    }, [s.status, s.latency])
 
     if (compact) {
-        const tooltipText = connectionHealthStore.latency > 0
-            ? `${config.tooltip} Latency: ${connectionHealthStore.latency}ms`
+        const tooltipText = s.latency > 0
+            ? `${config.tooltip} Latency: ${s.latency}ms`
             : config.tooltip
 
         return (
@@ -59,17 +60,17 @@ const ConnectionHealthUI = observer(({ compact = false }) => {
                 title={tooltipText}
             >
                 <i className={`bi ${config.icon}`} style={{ color: config.color, fontSize: '14px' }}></i>
-                {connectionHealthStore.latency > 0 && (
+                {s.latency > 0 && (
                     <span style={{ color: config.color, marginLeft: 4, fontSize: '14px' }}>
-                        {connectionHealthStore.latency}ms
+                        {s.latency}ms
                     </span>
                 )}
             </div>
         )
     }
 
-    const tooltipText = connectionHealthStore.latency > 0
-        ? `${config.tooltip} Latency: ${connectionHealthStore.latency}ms`
+    const tooltipText = s.latency > 0
+        ? `${config.tooltip} Latency: ${s.latency}ms`
         : config.tooltip
 
     return (
@@ -88,9 +89,9 @@ const ConnectionHealthUI = observer(({ compact = false }) => {
             <span style={{ color: config.color, fontWeight: '500' }}>
                 {config.text}
             </span>
-            {connectionHealthStore.latency > 0 && (
+            {s.latency > 0 && (
                 <span style={{ color: config.color, marginLeft: 4, fontSize: '14px' }}>
-                    {connectionHealthStore.latency}ms
+                    {s.latency}ms
                 </span>
             )}
         </div>

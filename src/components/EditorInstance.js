@@ -35,7 +35,7 @@ import { createClient } from "graphql-ws"
 import { InteractionButton } from './InteractionButton.js';
 import JsonPlugin from "./bitqueditor/components/JsonComponent";
 import SqlQueryComponent from "./SqlQueryComponent";
-import { connectionHealthStore } from '../utils/ConnectionHealth'
+import { ConnectionHealthStore } from '../utils/ConnectionHealth'
 import ConnectionHealthUI from './ConnectionHealthUI'
 
 const queryStatusReducer = (state, action) => {
@@ -77,6 +77,7 @@ const EditorInstance = observer(function EditorInstance({ number }) {
     const widgetDisplay = useRef(null)
     const abortController = useRef(null)
     const resultWrapper = useRef(null)
+    const connectionHealthRef = useRef(new ConnectionHealthStore())
 
     const [queryStatus, dispatchQueryStatus] = useReducer(queryStatusReducer, {
         readyToExecute: Object.keys(schema).length ? true : false,
@@ -150,12 +151,12 @@ const EditorInstance = observer(function EditorInstance({ number }) {
         return this
     }
 
-    function SubscriptionDataSource(payload, queryDispatcher) {
+    function SubscriptionDataSource(payload, queryDispatcher, connectionHealth) {
         let cleanSubscription, clean, empty
         let callbacks = []
         let queryNotLogged = true
         let variables = payload.variables
-        const connectionHealth = connectionHealthStore
+        
 
         const customHeaders = currentQuery.headers ? JSON.parse(currentQuery?.headers) : {}
         const subscribe = async () => {
@@ -201,10 +202,10 @@ const EditorInstance = observer(function EditorInstance({ number }) {
                         this.unsubscribe();
                     },
                     ping: () => {
-                        connectionHealthStore.onPing();
+                        connectionHealth.onPing();
                     },
                     pong: () => {
-                        connectionHealthStore.onPong();
+                        connectionHealth.onPong();
                     }
                 },
             })
@@ -214,7 +215,7 @@ const EditorInstance = observer(function EditorInstance({ number }) {
             cleanSubscription = client.subscribe({ ...payload, variables }, {
                 next: ({ data, errors }) => {
                     // queryDispatcher.onsubscribe()
-                    connectionHealthStore.onData();
+                    connectionHealth.onData();
                     if (errors) {
                         logQuery(errors)
                         queryNotLogged = false
@@ -474,7 +475,7 @@ const EditorInstance = observer(function EditorInstance({ number }) {
         const payload = { query: currentQuery.query, variables }
 
         if (currentQuery.query.match(/subscription[^a-zA-z0-9]/gm)) {
-            const subscriptionDataSource = new SubscriptionDataSource(payload, queryDispatcher)
+            const subscriptionDataSource = new SubscriptionDataSource(payload, queryDispatcher, connectionHealthRef.current)
             setDataSource({ subscriptionDataSource })
         } else {
             const historyDataSource = new HistoryDataSource(payload, queryDispatcher)
@@ -836,7 +837,7 @@ const EditorInstance = observer(function EditorInstance({ number }) {
                                 zIndex: 1000
                             }}
                         >
-                            <ConnectionHealthUI compact={true} />
+                            <ConnectionHealthUI compact={true} store={connectionHealthRef.current} />
                         </div>
                     )}
 
