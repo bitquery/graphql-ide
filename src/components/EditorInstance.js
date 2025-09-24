@@ -35,6 +35,8 @@ import { createClient } from "graphql-ws"
 import { InteractionButton } from './InteractionButton.js';
 import JsonPlugin from "./bitqueditor/components/JsonComponent";
 import SqlQueryComponent from "./SqlQueryComponent";
+import { connectionHealthStore } from '../utils/ConnectionHealth'
+import ConnectionHealthUI from './ConnectionHealthUI'
 
 const queryStatusReducer = (state, action) => {
     let newState = { ...state }
@@ -153,6 +155,8 @@ const EditorInstance = observer(function EditorInstance({ number }) {
         let callbacks = []
         let queryNotLogged = true
         let variables = payload.variables
+        const connectionHealth = connectionHealthStore
+
         const customHeaders = currentQuery.headers ? JSON.parse(currentQuery?.headers) : {}
         const subscribe = async () => {
             if (user?.accessToken && user?.accessToken?.streaming_expires_on <= Date.now()) {
@@ -169,6 +173,7 @@ const EditorInstance = observer(function EditorInstance({ number }) {
             const token = UserStore.user?.accessToken?.access_token;
             const client = createClient({
                 url: `${currentUrl}?token=${token}`,
+                keepAlive: 10_000,
                 connectionParams: () => {
                     if (token) {
                         return {
@@ -183,6 +188,7 @@ const EditorInstance = observer(function EditorInstance({ number }) {
                 on: {
                     connected: () => {
                         queryDispatcher.onsubscribe()
+                        connectionHealth.startDataCheck()
                         setError(null);
                         const message = 'initial data pending...'
                         callbacks.forEach(cb => cb(message, variables))
@@ -194,6 +200,12 @@ const EditorInstance = observer(function EditorInstance({ number }) {
                         empty()
                         this.unsubscribe();
                     },
+                    ping: () => {
+                        connectionHealthStore.onPing();
+                    },
+                    pong: () => {
+                        connectionHealthStore.onPong();
+                    }
                 },
             })
 
@@ -202,7 +214,7 @@ const EditorInstance = observer(function EditorInstance({ number }) {
             cleanSubscription = client.subscribe({ ...payload, variables }, {
                 next: ({ data, errors }) => {
                     // queryDispatcher.onsubscribe()
-
+                    connectionHealthStore.onData();
                     if (errors) {
                         logQuery(errors)
                         queryNotLogged = false
@@ -236,6 +248,7 @@ const EditorInstance = observer(function EditorInstance({ number }) {
                 complete: () => {
                     queryDispatcher.onqueryend()
 
+
                 },
             });
         }
@@ -264,6 +277,8 @@ const EditorInstance = observer(function EditorInstance({ number }) {
         this.unsubscribe = () => {
             cleanSubscription && cleanSubscription()
             cleanSubscription = null
+            connectionHealth.stopDataCheck()
+            connectionHealth.reset()
             queryDispatcher.onqueryend()
             clean()
         }
@@ -811,6 +826,20 @@ const EditorInstance = observer(function EditorInstance({ number }) {
                     ref={widgetDisplay}
                     style={{ backgroundColor: '#f6f7f8' }}
                 >
+                    {/* Индикатор состояния соединения */}
+                    {queryStatus.activeSubscription && (
+                        <div
+                            style={{
+                                position: 'absolute',
+                                top: 5,
+                                right: 12,
+                                zIndex: 1000
+                            }}
+                        >
+                            <ConnectionHealthUI compact={true} />
+                        </div>
+                    )}
+
                     <div
                         className="sizeChanger"
                         onMouseDown={handleResizer}
