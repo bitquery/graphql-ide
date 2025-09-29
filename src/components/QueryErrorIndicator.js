@@ -11,9 +11,9 @@ function QueryErrorIndicator({ error, removeError }) {
             return (
                 <>
                     {message}
-                    <br /> Contact us on Telegram:
-                    <a href="https://t.me/Bloxy_info" target="_blank">Bitquery.io (Bloxy) Network</a> or email us at
-                    <a href="mailto:sales@bitquery.io">sales@bitquery.io</a>
+                    <br /> Contact us on Telegram: 
+                    <a href="https://t.me/Bloxy_info" target="_blank"> Bitquery.io (Bloxy) Network</a> or email us at
+                    <a href="mailto:sales@bitquery.io"> sales@bitquery.io</a>
                 </>
             );
         }
