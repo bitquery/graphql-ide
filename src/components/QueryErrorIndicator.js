@@ -11,10 +11,9 @@ function QueryErrorIndicator({ error, removeError }) {
             return (
                 <>
                     {message}
-                    <br />
-                    <a style={{ color: '#3f1f8a' }} href="https://t.me/Bitquery_sales" target="_blank" rel="noopener noreferrer">
-                        Contact sales via Telegram - Bitquery.io (Bloxy) Network
-                    </a>
+                    <br /> Contact us on Telegram:
+                    <a href="https://t.me/Bloxy_info" target="_blank">Bitquery.io (Bloxy) Network</a> or email us at
+                    <a href="mailto:sales@bitquery.io">sales@bitquery.io</a>
                 </>
             );
         }

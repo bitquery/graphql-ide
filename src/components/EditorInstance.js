@@ -827,7 +827,6 @@ const EditorInstance = observer(function EditorInstance({ number }) {
                     ref={widgetDisplay}
                     style={{ backgroundColor: '#f6f7f8' }}
                 >
-                    {/* Индикатор состояния соединения */}
                     {queryStatus.activeSubscription && (
                         <div
                             style={{
