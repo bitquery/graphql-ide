@@ -32,10 +32,20 @@ const ENDPOINTS_MAP = new Map([
     }],
 ])
 
+const normalizeHostPath = (u = '') => {
+    try {
+        const { hostname, pathname } = new URL(u)
+        return `${hostname}${String(pathname || '').replace(/\/+$/,'')}`
+    } catch (_) {
+        return String(u).replace(/^https?:\/\//,'').replace(/\/+$/,'')
+    }
+}
+
 const findRegionAndApiByUrl = (url = '') => {
+    const target = normalizeHostPath(url)
     for (const [regionKey, region] of ENDPOINTS_MAP) {
         for (const [apiKey, def] of region.endpoints) {
-            if (def.url === url) return { region: regionKey, api: apiKey }
+            if (normalizeHostPath(def.url) === target) return { region: regionKey, api: apiKey }
         }
     }
     return { region: undefined, api: undefined }
