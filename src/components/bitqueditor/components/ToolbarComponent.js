@@ -59,6 +59,12 @@ const ToolbarComponent = observer(({
             case 'https://streaming.bitquery.io/eap':
                 setSelectedUrl('https://streaming.bitquery.io/eap')
                 break
+            case 'asia.graphql.bitquery.io':
+                setSelectedUrl('asia.graphql.bitquery.io')
+                break
+            case 'asia.streaming.bitquery.io':
+                setSelectedUrl('asia.streaming.bitquery.io')
+                break
             default:
                 setSelectedUrl('')
                 break
@@ -217,6 +223,8 @@ const ToolbarComponent = observer(({
                         <option value="https://graphql.bitquery.io">API v1</option>
                         <option value="https://streaming.bitquery.io/graphql">API v2</option>
                         <option value="https://streaming.bitquery.io/eap">EAP</option>
+                        <option value="asia.graphql.bitquery.io">prod-graphql-v1</option>
+                        <option value="asia.streaming.bitquery.io">prod-graphql-v2</option>
                         <option value="">Other...</option>
                     </Form.Control>
                 <Form.Control
