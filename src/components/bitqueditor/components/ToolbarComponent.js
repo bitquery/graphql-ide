@@ -15,18 +15,51 @@ import DocsIcon from '../../icons/DocsIcon'
 import SqlIcon from '../../icons/SqlIcon'
 import ChatBubbleComponent from "../../ChatBubbleComponent";
 
+const ENDPOINTS_MAP = new Map([
+    ['europe', {
+        label: 'Europe',
+        endpoints: new Map([
+            ['v1', { label: 'API v1', url: 'https://graphql.bitquery.io' }],
+            ['v2', { label: 'API v2', url: 'https://streaming.bitquery.io/graphql' }],
+        ])
+    }],
+    ['asia', {
+        label: 'Asia',
+        endpoints: new Map([
+            ['v1', { label: 'API v1', url: 'https://asia.graphql.bitquery.io' }],
+            ['v2', { label: 'API v2', url: 'https://asia.streaming.bitquery.io/graphql' }],
+        ])
+    }],
+])
+
+const findRegionAndApiByUrl = (url = '') => {
+    for (const [regionKey, region] of ENDPOINTS_MAP) {
+        for (const [apiKey, def] of region.endpoints) {
+            if (def.url === url) return { region: regionKey, api: apiKey }
+        }
+    }
+    return { region: undefined, api: undefined }
+}
+
+const buildUrl = (regionKey, apiKey) => {
+    const region = ENDPOINTS_MAP.get(regionKey)
+    if (!region) return ''
+    const def = region.endpoints.get(apiKey)
+    return def?.url || ''
+}
+
 const ToolbarComponent = observer(({
-                                       queryEditor,
-                                       variablesEditor,
-                                       headersEditor,
-                                       docExplorerOpen,
-                                       toggleDocExplorer,
-                                       toggleCodeSnippet,
-                                       toggleSqlQuery,
-                                       sqlQueryOpen,
-                                       codeSnippetOpen,
-                                       number
-                                   }) => {
+    queryEditor,
+    variablesEditor,
+    headersEditor,
+    docExplorerOpen,
+    toggleDocExplorer,
+    toggleCodeSnippet,
+    toggleSqlQuery,
+    sqlQueryOpen,
+    codeSnippetOpen,
+    number
+}) => {
     const {
         currentQuery, updateQuery, setQuery,
         queryIsTransfered, setQueryIsTransfered, queryJustSaved, query
@@ -38,6 +71,8 @@ const ToolbarComponent = observer(({
     const [mode, setMode] = useState(false)
     const [dashboardOwner, setOwner] = useState(false)
     const [selectedUrl, setSelectedUrl] = useState('')
+    const [selectedRegion, setSelectedRegion] = useState('europe')
+    const [selectedApi, setSelectedApi] = useState('v1')
 
     useEffect(() => {
         if (((currentQuery.layout && (currentQuery.account_id === user?.id)) || !currentQuery.id) || !currentQuery.layout) {
@@ -49,26 +84,11 @@ const ToolbarComponent = observer(({
     }, [user, JSON.stringify(currentQuery)])
 
     useEffect(() => {
-        switch (currentQuery.endpoint_url) {
-            case 'https://graphql.bitquery.io':
-                setSelectedUrl('https://graphql.bitquery.io')
-                break
-            case 'https://streaming.bitquery.io/graphql':
-                setSelectedUrl('https://streaming.bitquery.io/graphql')
-                break
-            case 'https://streaming.bitquery.io/eap':
-                setSelectedUrl('https://streaming.bitquery.io/eap')
-                break
-            case 'asia.graphql.bitquery.io':
-                setSelectedUrl('asia.graphql.bitquery.io')
-                break
-            case 'asia.streaming.bitquery.io':
-                setSelectedUrl('asia.streaming.bitquery.io')
-                break
-            default:
-                setSelectedUrl('')
-                break
-        }
+        const url = currentQuery.endpoint_url ?? ''
+        setSelectedUrl(url)
+        const { region, api } = findRegionAndApiByUrl(url)
+        setSelectedRegion(region || 'europe')
+        setSelectedApi(api || (url ? 'v1' : 'other'))
     }, [currentQuery.endpoint_url])
 
     const handleInputURLChange = e => {
@@ -77,6 +97,46 @@ const ToolbarComponent = observer(({
     const handleDropdownSelect = (url) => {
         updateQuery({ endpoint_url: url }, index)
         setSelectedUrl(url)
+    }
+
+    const handleRegionChange = e => {
+        const region = e.target.value
+        setSelectedRegion(region)
+
+        const regionObj = ENDPOINTS_MAP.get(region)
+        let nextApi = selectedApi && regionObj?.endpoints.has(selectedApi) ? selectedApi : Array.from(regionObj?.endpoints.keys() || ['v1'])[0]
+
+        const nextUrl = buildUrl(region, nextApi)
+        updateQuery({ endpoint_url: nextUrl }, index)
+        setSelectedUrl(nextUrl)
+    }
+
+    const getAllApis = () => {
+        const keys = new Set()
+        for (const [, region] of ENDPOINTS_MAP) {
+            for (const [apiKey] of region.endpoints) keys.add(apiKey)
+        }
+        return Array.from(keys)
+    }
+
+    const handleApiChange = e => {
+        const api = e.target.value
+        setSelectedApi(api)
+        if (api === 'other') {
+            setSelectedUrl('')
+            updateQuery({ endpoint_url: '' }, index)
+            return
+        }
+        let region = selectedRegion
+        if (!ENDPOINTS_MAP.get(region)?.endpoints.has(api)) {
+            for (const [rk, r] of ENDPOINTS_MAP) {
+                if (r.endpoints.has(api)) { region = rk; break }
+            }
+            setSelectedRegion(region)
+        }
+        const url = buildUrl(region, api)
+        setSelectedUrl(url)
+        updateQuery({ endpoint_url: url }, index)
     }
 
     const switchMode = () => {
@@ -214,49 +274,66 @@ const ToolbarComponent = observer(({
                 visible={!!currentQuery.graphqlQueryID || !!currentQuery.url}
             />}
             <InputGroup className="input-group-fix bitquery-inputUrl">
+                <Form.Control
+                    as="select"
+                    onChange={handleApiChange}
+                    value={selectedApi}
+                    className="drop-down-fix"
+                    style={{ flex: '0 0 80px', maxWidth: 80, minWidth: 80, paddingRight: 8 }}
+                >
+                    {getAllApis().map(apiKey => (
+                        <option key={apiKey} value={apiKey}>
+                            {Array.from(ENDPOINTS_MAP.values()).find(r => r.endpoints.has(apiKey))?.endpoints.get(apiKey).label}
+                        </option>
+                    ))}
+                    <option value="other">Other...</option>
+                </Form.Control>
+
+                {selectedApi !== 'other' && (
                     <Form.Control
                         as="select"
-                        onChange={e => handleDropdownSelect(e.target.value)}
-                        value={selectedUrl}
+                        onChange={handleRegionChange}
+                        value={selectedRegion}
                         className="drop-down-fix"
+                        style={{ flex: '0 0 80px', maxWidth: 80, minWidth: 80}}
                     >
-                        <option value="https://graphql.bitquery.io">API v1</option>
-                        <option value="https://streaming.bitquery.io/graphql">API v2</option>
-                        <option value="https://streaming.bitquery.io/eap">EAP</option>
-                        <option value="asia.graphql.bitquery.io">prod-graphql-v1</option>
-                        <option value="asia.streaming.bitquery.io">prod-graphql-v2</option>
-                        <option value="">Other...</option>
+                        {Array.from(ENDPOINTS_MAP).filter(([, r]) => r.endpoints.has(selectedApi)).map(([regionKey, region]) => (
+                            <option key={regionKey} value={regionKey}>{region.label}</option>
+                        ))}
                     </Form.Control>
+                )}
+
                 <Form.Control
                     id="basic-url"
                     aria-label="endpoint-url"
                     value={currentQuery.endpoint_url ?? ''}
                     onChange={handleInputURLChange}
                     className="input-url-fix"
+                    placeholder={selectedApi === 'other' ? 'Paste your endpoint URL here' : ''}
                 />
             </InputGroup>
             {user?.id && query[number].graphqlQueryID && <StatisticsButton number={number} />}
             {(user?.role === 'admin' || user?.role === 'poweruser') &&
                 <span aria-label="SQL Query" onClick={toggleSqlQuery}>
-          <SqlIcon
-              className={"bitquery-little-btn" + (sqlQueryOpen ? " active" : '')}
-              data-bs-toggle="tooltip"
-              data-bs-placement="top"
-              title="SQL Query"
-          />
-        </span>}
+                    <SqlIcon
+                        className={"bitquery-little-btn" + (sqlQueryOpen ? " active" : '')}
+                        data-bs-toggle="tooltip"
+                        data-bs-placement="top"
+                        title="SQL Query"
+                    />
+                </span>}
             <span aria-label="Documentation Explorer" onClick={toggleDocExplorer}>
-        <DocsIcon
-            className={"bitquery-little-btn" + (docExplorerOpen ? " active" : '')}
-            data-bs-toggle="tooltip"
-            data-bs-placement="top"
-            title="Documentation Explorer"
-        />
-      </span>
+                <DocsIcon
+                    className={"bitquery-little-btn" + (docExplorerOpen ? " active" : '')}
+                    data-bs-toggle="tooltip"
+                    data-bs-placement="top"
+                    title="Documentation Explorer"
+                />
+            </span>
             <span className="d-flex align-items-center justify-content-center bitquery-little-btn"
-                  aria-label="Code Snippet" onClick={toggleCodeSnippet}>
-        <i className={"bi bi-code-slash" + (codeSnippetOpen ? " active" : '')} />
-      </span>
+                aria-label="Code Snippet" onClick={toggleCodeSnippet}>
+                <i className={"bi bi-code-slash" + (codeSnippetOpen ? " active" : '')} />
+            </span>
         </div>
     </div>
 
