@@ -71,18 +71,44 @@
 	padding: 6px 8px;
 	margin-bottom: -1px;
 	line-height: 1;
-	color: $text-color-gray-d;
+	color: $text-color-active;
 	transition: all 0.2s ease-in-out;
+	// font-weight: bold;
+	position: relative;
+	outline: none;
 
-
-	&:hover {
-		color: $text-color-active;
-		border-bottom-color: $color-primary-hover;
+	&:not(.active) {
+		cursor: pointer;
 	}
 
+	&::after {
+		content: "";
+		position: absolute;
+		left: 8px;
+		right: 8px;
+		bottom: -2px;
+		height: 2px;
+		background: transparent;
+		transform: scaleX(0);
+		transform-origin: center;
+		transition: transform 0.2s ease-in-out, background-color 0.2s ease-in-out;
+	}
+	
+	
+	
+	&:not(.active):hover {
+		// font-weight: bold;
+		&::after {
+			background: $color-primary-hover;
+			transform: scaleX(1);
+		}
+	}
+	
 	&.active {
-		color: $text-color-active;
-		font-weight: bold;
+		color: $text-color-gray-d;
+		cursor: default;
+		font-weight: inherit;
+	
 	}
 }
 
