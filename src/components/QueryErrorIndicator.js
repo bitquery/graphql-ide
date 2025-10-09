@@ -6,8 +6,24 @@ function QueryErrorIndicator({ error, removeError }) {
     }
 
     const renderError = () => {
-        if (error.includes('##TELEGRAM_LINK##')) {
-            const message = error.split('##TELEGRAM_LINK##')[0];
+        const errorText = typeof error === 'string'
+            ? error
+            : (error && typeof error.message === 'string')
+                ? error.message
+                : String(error);
+
+        const linkify = (text) => {
+            const parts = text.split(/(https?:\/\/[^\s)"']+)/g);
+            return parts.map((part, i) => {
+                const isLink = /^https?:\/\//.test(part);
+                return isLink
+                    ? <a key={i} style={{ color: '#3f1f8a' }} href={part} target="_blank" rel="noreferrer">{part}</a>
+                    : part;
+            });
+        };
+
+        if (errorText.includes('##TELEGRAM_LINK##')) {
+            const message = errorText.split('##TELEGRAM_LINK##')[0];
             return (
                 <>
                     {message}
@@ -17,7 +33,7 @@ function QueryErrorIndicator({ error, removeError }) {
                 </>
             );
         }
-        return error;
+        return <>{linkify(errorText)}</>;
     };
 
     return error ?

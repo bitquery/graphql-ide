@@ -63,7 +63,14 @@ export default class JsonComponent {
     }
 
     onHistoryData(data) {
-        this.viewer.setValue(JSON.stringify(data, null, 2))
+        try {
+            const text = typeof data === 'string'
+                ? data
+                : JSON.stringify(data ?? {}, null, 2);
+            this.viewer.setValue(text)
+        } catch (e) {
+            this.viewer.setValue(String(data))
+        }
     }
 
     onSubscriptionData(data) {

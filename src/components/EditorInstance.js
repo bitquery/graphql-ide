@@ -36,6 +36,7 @@ import { InteractionButton } from './InteractionButton.js';
 import JsonPlugin from "./bitqueditor/components/JsonComponent";
 import SqlQueryComponent from "./SqlQueryComponent";
 import { ConnectionHealthStore } from '../utils/ConnectionHealth'
+import { formatGraphQLErrors } from '../utils/graphqlErrorFormatter'
 import ConnectionHealthUI from './ConnectionHealthUI'
 
 const queryStatusReducer = (state, action) => {
@@ -99,6 +100,7 @@ const EditorInstance = observer(function EditorInstance({ number }) {
                 setError(err);
                 setFetchError(err);
             } else if (typeof error === 'string') {
+
                 setError(error);
                 setFetchError(error);
             } else if (error?.message) {
@@ -374,7 +376,13 @@ const EditorInstance = observer(function EditorInstance({ number }) {
                     if (node.alias) {
                         queryNodes.push(node.alias.value)
                     } else {
-                        queryNodes.push(typeInfo.getFieldDef().name)
+                        const fieldDef = typeof typeInfo.getFieldDef === 'function' ? typeInfo.getFieldDef() : undefined
+                        const fieldName = fieldDef?.name || node?.name?.value
+                        if (typeof fieldName === 'string' && fieldName.length > 0) {
+                            queryNodes.push(fieldName)
+                        } else {
+                            return
+                        }
                     }
                     if (depth) {
                         let arr = queryNodes.filter(node => node.split('.').length === depth)
@@ -584,8 +592,9 @@ const EditorInstance = observer(function EditorInstance({ number }) {
 
                     const { errors } = json;
                     if (errors && errors.length > 0) {
-                        setFetchError(errors[0].message);
-                        setError(errors[0].message);
+                        const errMsg = formatGraphQLErrors(errors);
+                        setFetchError(errMsg);
+                        setError(errMsg);
                     } else {
                         const genericErrorMsg = `HTTP Error ${response.status}: ${errorText}`;
                         setFetchError(genericErrorMsg);
@@ -632,8 +641,9 @@ const EditorInstance = observer(function EditorInstance({ number }) {
             const { data, errors, extensions } = jsonResponse
             setSqlQuery(extensions)
             if (errors && errors.length > 0) {
-                setFetchError(errors[0].message);
-                setError(errors[0].message);
+                const errMsg = formatGraphQLErrors(errors);
+                setFetchError(errMsg);
+                setError(errMsg);
             } else {
                 setError(null);
             }
